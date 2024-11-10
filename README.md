@@ -5,5 +5,4 @@ hey World
 first change
 first
 last
-final message
-
+Stage0 Final commit
