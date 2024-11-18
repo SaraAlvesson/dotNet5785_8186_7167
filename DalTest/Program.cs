@@ -117,7 +117,7 @@ namespace DalTest
                             PrintReadVolunteer(VolToPrint);
                             break;
                         case 3:
-                            Volunteer v = GetVolunteerFromUser(); // Get new volunteer data from user
+                            //Volunteer v = GetVolunteerFromUser(); // Get new volunteer data from user
                             List<Volunteer>? VolListToPrint = s_dalVolunteer?.ReadAll();
                             PrintVolunteerList(VolListToPrint); // Display all volunteers
                             break;
@@ -186,7 +186,7 @@ namespace DalTest
                             PrintReadCall(CallToPrint);
                             break;
                         case 3:
-                            Call c = GetCallFromUser();  // Get new Call data from user
+                            //Call c = GetCallFromUser();  // Get new Call data from user
                             List<Call>? CallListToPrint = s_dalCall?.ReadAll();
                             PrintCallList(CallListToPrint); // Display all Calls
                             break;
@@ -254,7 +254,7 @@ namespace DalTest
                             PrintReadAssignment(AssignmentToPrint);
                             break;
                         case 3:
-                            Assignment a = GetAssignmentFromUser();  // Get new Assignment data from user
+                            //Assignment a = GetAssignmentFromUser();  // Get new Assignment data from user
                             List<Assignment>? AssignmentListToPrint = s_dalAssignment?.ReadAll();
                             PrintAssignmentList(AssignmentListToPrint); // Display all Assignment
                             break;
