@@ -5,7 +5,7 @@ using DalApi;
 namespace Dal
 {
     // Implementation of IConfig interface for handling configuration settings
-    public class ConfigImplementation : IConfig
+   internal class ConfigImplementation : IConfig
     {
         // Property to get or set the current system clock
         public DateTime Clock

@@ -1,21 +1,22 @@
-﻿using Dal;
+﻿namespace DalTest;
+
+using Dal;
 using DalApi;
-using Daltest;
+using DalTest;
 using DO;
 
-namespace DalTest
-{
+
+
+
     internal class Program
     {
         // Static fields for DAL interfaces
-        private static IVolunteer? s_dalVolunteer = new VolunteerImplementation(); // DAL for volunteers
-        private static ICall? s_dalCall = new CallImplementation();       // DAL for calls
-        private static IAssignment? s_dalAssignment = new AssignmentImplementation(); // DAL for assignments
-        private static IConfig? s_dalConfig = new ConfigImplementation();         // DAL for configuration
+        static readonly IDal s_dal = new DalList();
         static void Main(string[] args)
         {
             try
             {
+                Initialization.Do(s_dal);   
                 RunMainMenu();
             }
             catch (Exception ex)
@@ -66,7 +67,7 @@ namespace DalTest
                         InitializeDatabase(); // Initialize the database
                         break;
                     case 6:
-                        ShowDatabase(s_dalVolunteer, s_dalCall, s_dalAssignment); // Display the database contents
+                        ShowDatabase(s_dal); // Display the database contents
                         break;
                     case 7:
                         ResetDatabase(); // Reset the database to default state
@@ -107,33 +108,33 @@ namespace DalTest
                     {
                         case 1:
                             Volunteer v1 = GetVolunteerFromUser(); // Get new volunteer data from user
-                            s_dalVolunteer.Create(v1);            // Create the volunteer in the database
+                            s_dal.Volunteer.Create(v1);            // Create the volunteer in the database
                             Console.WriteLine("Volunteer created."); // Notify the user
                             break;
                         case 2:
                             Console.WriteLine("Enter ID to read:");
                             int id = int.Parse(Console.ReadLine());// Get the ID to read
-                            Volunteer? VolToPrint = s_dalVolunteer?.Read(id);  // Fetch and display the volunteer data
+                            Volunteer? VolToPrint = s_dal.Volunteer?.Read(id);  // Fetch and display the volunteer data
                             PrintReadVolunteer(VolToPrint);
                             break;
                         case 3:
                             //Volunteer v = GetVolunteerFromUser(); // Get new volunteer data from user
-                            List<Volunteer>? VolListToPrint = s_dalVolunteer?.ReadAll();
+                            List<Volunteer>? VolListToPrint = s_dal.Volunteer?.ReadAll();
                             PrintVolunteerList(VolListToPrint); // Display all volunteers
                             break;
                         case 4:
                             Volunteer v2 = GetVolunteerFromUser(); // Get updated volunteer data from user
-                            s_dalVolunteer.Update(v2);            // Update the volunteer in the database
+                            s_dal.Volunteer.Update(v2);            // Update the volunteer in the database
                             Console.WriteLine("Volunteer updated."); // Notify the user
                             break;
                         case 5:
                             Console.WriteLine("Enter ID to read:");
                             int id1 = int.Parse(Console.ReadLine()); // Get the ID to delete
-                            s_dalVolunteer.Delete(id1);            // Delete the volunteer from the database
+                            s_dal.Volunteer.Delete(id1);            // Delete the volunteer from the database
                             Console.WriteLine("Volunteer deleted."); // Notify the user
                             break;
                         case 6:
-                            s_dalVolunteer.DeleteAll();            // Delete all volunteers
+                            s_dal.Volunteer.DeleteAll();            // Delete all volunteers
                             Console.WriteLine("All volunteers deleted."); // Notify the user
                             break;
                         case 0:
@@ -176,33 +177,33 @@ namespace DalTest
                     {
                         case 1:
                             Call c1 = GetCallFromUser();      // Get new call data from user
-                            s_dalCall?.Create(c1);           // Create the call in the database
+                            s_dal.call?.Create(c1);           // Create the call in the database
                             Console.WriteLine("Call created."); // Notify the user
                             break;
                         case 2:
                             Console.WriteLine("Enter ID to read:");
                             int id = int.Parse(Console.ReadLine()); // Get the ID to read
-                            Call? CallToPrint = s_dalCall?.Read(id); // Fetch and display the call data
+                            Call? CallToPrint = s_dal.call?.Read(id); // Fetch and display the call data
                             PrintReadCall(CallToPrint);
                             break;
                         case 3:
                             //Call c = GetCallFromUser();  // Get new Call data from user
-                            List<Call>? CallListToPrint = s_dalCall?.ReadAll();
+                            List<Call>? CallListToPrint = s_dal.call?.ReadAll();
                             PrintCallList(CallListToPrint); // Display all Calls
                             break;
                         case 4:
                             Call c2 = GetCallFromUser();      // Get updated call data from user
-                            s_dalCall?.Update(c2);           // Update the call in the database
+                            s_dal.call?.Update(c2);           // Update the call in the database
                             Console.WriteLine("Call updated."); // Notify the user
                             break;
                         case 5:
                             Console.WriteLine("Enter ID to read:");
                             int id1 = int.Parse(Console.ReadLine()); // Get the ID to delete
-                            s_dalCall?.Delete(id1);           // Delete the call from the database
+                            s_dal.call?.Delete(id1);           // Delete the call from the database
                             Console.WriteLine("Call deleted."); // Notify the user
                             break;
                         case 6:
-                            s_dalCall?.DeleteAll();           // Delete all calls
+                            s_dal.call?.DeleteAll();           // Delete all calls
                             Console.WriteLine("All calls deleted."); // Notify the user
                             break;
                         case 0:
@@ -244,33 +245,33 @@ namespace DalTest
                     {
                         case 1:
                             Assignment a1 = GetAssignmentFromUser();
-                            s_dalAssignment?.Create(a1);
+                            s_dal.assignment?.Create(a1);
                             Console.WriteLine("Assignment created.");
                             break;
                         case 2:
                             Console.WriteLine("Enter ID to read:");
                             int id = int.Parse(Console.ReadLine());
-                            Assignment? AssignmentToPrint = s_dalAssignment?.Read(id);
+                            Assignment? AssignmentToPrint = s_dal.assignment?.Read(id);
                             PrintReadAssignment(AssignmentToPrint);
                             break;
                         case 3:
                             //Assignment a = GetAssignmentFromUser();  // Get new Assignment data from user
-                            List<Assignment>? AssignmentListToPrint = s_dalAssignment?.ReadAll();
+                            List<Assignment>? AssignmentListToPrint = s_dal.assignment?.ReadAll();
                             PrintAssignmentList(AssignmentListToPrint); // Display all Assignment
                             break;
                         case 4:
                             Assignment a2 = GetAssignmentFromUser();
-                            s_dalAssignment?.Update(a2);
+                            s_dal.assignment?.Update(a2);
                             Console.WriteLine("Assignment updated.");
                             break;
                         case 5:
                             Console.WriteLine("Enter ID to read:");
                             int id1 = int.Parse(Console.ReadLine());
-                            s_dalAssignment?.Delete(id1);
+                            s_dal.assignment?.Delete(id1);
                             Console.WriteLine("Assignment deleted.");
                             break;
                         case 6:
-                            s_dalAssignment?.DeleteAll();
+                            s_dal.assignment?.DeleteAll();
                             Console.WriteLine("All assignments deleted.");
                             break;
                         case 0:
@@ -312,32 +313,32 @@ namespace DalTest
                         case 1:
                             Console.Write("Enter minutes to advance: ");
                             int minutes = int.Parse(Console.ReadLine());
-                            s_dalConfig.Clock = s_dalConfig.Clock.AddMinutes(minutes);
+                            s_dal.config.Clock = s_dal.config.Clock.AddMinutes(minutes);
                             Console.WriteLine($"Clock advanced by {minutes} minutes.");
                             break;
                         case 2:
                             Console.Write("Enter hours to advance: ");
                             int hours = int.Parse(Console.ReadLine());
-                            s_dalConfig.Clock = s_dalConfig.Clock.AddHours(hours);
+                            s_dal.config.Clock = s_dal.config.Clock.AddHours(hours);
                             Console.WriteLine($"Clock advanced by {hours} hours.");
                             break;
                         case 3:
                             Console.Write("Enter seconds to advance: ");
                             int seconds = int.Parse(Console.ReadLine());
-                            s_dalConfig.Clock = s_dalConfig.Clock.AddSeconds(seconds);
+                            s_dal.config.Clock = s_dal.config.Clock.AddSeconds(seconds);
                             Console.WriteLine($"Clock advanced by {seconds} seconds.");
                             break;
                         case 4:
-                            Console.WriteLine($"Current Clock: {s_dalConfig.Clock}");
+                            Console.WriteLine($"Current Clock: {s_dal.config.Clock}");
                             break;
                         case 5:
                             Console.Write("Enter new Risk Range (hours): ");
                             int riskHours = int.Parse(Console.ReadLine());
-                            s_dalConfig.RiskRange = TimeSpan.FromHours(riskHours);
+                            s_dal.config.RiskRange = TimeSpan.FromHours(riskHours);
                             Console.WriteLine($"Risk Range updated to {riskHours} hours.");
                             break;
                         case 6:
-                            s_dalConfig.Reset();
+                            s_dal.config.Reset();
                             Console.WriteLine("Configurations reset to default.");
                             break;
                         case 7:
@@ -370,10 +371,10 @@ namespace DalTest
             switch (variableChoice)
             {
                 case 1:
-                    Console.WriteLine($"Current Clock: {s_dalConfig.Clock}");
+                    Console.WriteLine($"Current Clock: {s_dal.config.Clock}");
                     break;
                 case 2:
-                    Console.WriteLine($"Current Risk Range: {s_dalConfig.RiskRange}");
+                    Console.WriteLine($"Current Risk Range: {s_dal.config.RiskRange}");
                     break;
             }
         }
@@ -381,16 +382,16 @@ namespace DalTest
 
         private static void InitializeDatabase()///////////////////////////////////
         {
-            Initialization.Do(s_dalVolunteer, s_dalCall, s_dalAssignment, s_dalConfig);
+            Initialization.Do(s_dal);
             Console.WriteLine("Database initialized.");
         }
 
         private static void ResetDatabase()///////////////////////////////
         {
-            s_dalVolunteer.DeleteAll();
-            s_dalCall.DeleteAll();
-            s_dalAssignment.DeleteAll();
-            s_dalConfig.Reset();
+            s_dal.Volunteer.DeleteAll();
+            s_dal.call.DeleteAll();
+            s_dal.assignment.DeleteAll();
+            s_dal.config.Reset();
             Console.WriteLine("Database and configurations reset.");
         }
         public static Volunteer GetVolunteerFromUser()
@@ -549,7 +550,7 @@ namespace DalTest
             while (!int.TryParse(Console.ReadLine(), out id))  // Check if the input is a valid integer
                 Console.WriteLine("Invalid input. Please enter a valid ID:");  // Prompt again if the input is invalid
 
-            Volunteer? volunteer = s_dalVolunteer?.Read(id);  // Try to read the volunteer with the provided ID
+            Volunteer? volunteer = s_dal.Volunteer?.Read(id);  // Try to read the volunteer with the provided ID
 
             if (volunteer != null)  // If a volunteer is found, display their information
                 Console.WriteLine(volunteer);
@@ -605,17 +606,17 @@ namespace DalTest
                 foreach (Assignment asig in assigList)  // Iterate through each volunteer in the list
                     Console.WriteLine(asig);  // Print each volunteer's information
         }
-        public static void ShowDatabase(IVolunteer? s_dalVolunteer, ICall? s_dalCall, IAssignment? s_dalAssignment)
+        public static void ShowDatabase(IDal s_dal)
         {
 
-            PrintCallList(s_dalCall.ReadAll());
-            PrintAssignmentList(s_dalAssignment.ReadAll());
-            PrintVolunteerList(s_dalVolunteer.ReadAll());
+            PrintCallList(s_dal.call.ReadAll());
+            PrintAssignmentList(s_dal.assignment.ReadAll());
+            PrintVolunteerList(s_dal.Volunteer.ReadAll());
 
 
         }
     }
 
 
-}
+
 

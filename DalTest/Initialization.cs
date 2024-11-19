@@ -1,4 +1,4 @@
-﻿namespace Daltest;
+﻿namespace DalTest;
 
 using DalApi;
 using DO;
@@ -6,29 +6,30 @@ using System;
 
 public static class Initialization
 {
-    // Static fields to hold references to the DAL interfaces
-    private static ICall? s_dalCall;
-    private static IAssignment? s_dalAssignment;
-    private static IVolunteer? s_dalVolunteer;
-    private static IConfig? s_dalConfig;
+    //// Static fields to hold references to the DAL interfaces
+    //private static ICall? s_dalCall;
+    //private static IAssignment? s_dalAssignment;
+    //private static IVolunteer? s_dalVolunteer;
+    //private static IConfig? s_dalConfig;
     private static readonly Random s_rand = new(); // Random generator for creating random data
+    private static IDal? s_dal;
 
     // Main initialization method
-    public static void Do(IVolunteer dalVolunteer, ICall dalCall, IAssignment dalAssignment, IConfig dalConfig)
+    public static void Do(IDal dal)
     {
         // Validate and set the interfaces
-        s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL cannot be null!");
-        s_dalCall = dalCall ?? throw new NullReferenceException("DAL cannot be null!");
-        s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL cannot be null!");
-        s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL cannot be null!");
-
+        //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL cannot be null!");
+        //s_dalCall = dalCall ?? throw new NullReferenceException("DAL cannot be null!");
+        //s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL cannot be null!");
+        //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL cannot be null!");
+        s_dal=dal?? throw new NullReferenceException("DAL object can not be null!");
         // Reset all data and configurations
         Console.WriteLine("Reset Configuration values and List values");
-        s_dalConfig.Reset();
-        s_dalAssignment.DeleteAll();
-        s_dalVolunteer.DeleteAll();
-        s_dalCall.DeleteAll();
-
+        //s_dalConfig.Reset();
+        //s_dalAssignment.DeleteAll();
+        //s_dalVolunteer.DeleteAll();
+        //s_dalCall.DeleteAll();
+        s_dal.ResetDB();    
         // Populate volunteers, calls, and assignments
         Console.WriteLine("Initializing Volunteers list, Calls list, Assignment list");
         createVolunteers();
@@ -82,9 +83,9 @@ public static class Initialization
             do
             {
                 id = s_rand.Next(200000000, 400000000); // Generate a valid ID
-            } while (s_dalVolunteer.Read(id) != null); // Ensure the ID is unique
+            } while (s_dal!.Volunteer.Read(id) != null); // Ensure the ID is unique
 
-            s_dalVolunteer.Create(new Volunteer
+            s_dal.Volunteer.Create(new Volunteer
             {
                 Id = id,
                 FullName = volunteerNames[i],
@@ -115,12 +116,12 @@ public static class Initialization
             string[] cities = { "Tel Aviv", "Jerusalem", "Haifa", "Eilat", "Beer Sheva", "Rishon Lezion", "Ashdod" };
             string address = $"{s_rand.Next(1, 100)} {cities[s_rand.Next(cities.Length)]} St.";
 
-            s_dalCall.Create(new Call
+            s_dal!.call.Create(new Call
             {
                 VerbDesc = description,
                 Adress = address,
-                OpenTime = s_dalConfig.Clock.AddHours(-s_rand.Next(1, 6)),
-                MaxTime = s_dalConfig.Clock.AddHours(s_rand.Next(2, 10)),
+                OpenTime = s_dal.config.Clock.AddHours(-s_rand.Next(1, 6)),
+                MaxTime = s_dal.config.Clock.AddHours(s_rand.Next(2, 10)),
                 Latitude = s_rand.NextDouble() * 180 - 90,
                 Longitude = s_rand.NextDouble() * 360 - 180,
                 CallType = callType,
@@ -129,10 +130,11 @@ public static class Initialization
     }
 
     // Creates assignments between volunteers and calls
+    
     public static void createAssignments()
     {
-        List<Call> allCalls = s_dalCall.ReadAll();
-        List<Volunteer> allVolunteers = s_dalVolunteer.ReadAll();
+        List<Call> allCalls = s_dal!.call.ReadAll();
+        List<Volunteer> allVolunteers = s_dal!.Volunteer.ReadAll();
 
         if (allCalls.Count == 0 || allVolunteers.Count == 0)
         {
@@ -170,7 +172,7 @@ public static class Initialization
                                                    FinishAppointmentType.WasTreated :
                                                    FinishAppointmentType.CancellationHasExpired;
 
-                s_dalAssignment.Create(new Assignment
+                s_dal!.assignment.Create(new Assignment
                 {
                     CallId = call.Id,
                     VolunteerId = volunteer.Id,

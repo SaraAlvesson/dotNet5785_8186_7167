@@ -2,7 +2,7 @@
 using DalApi;
 using DO;
 
-public class CallImplementation : ICall
+internal class CallImplementation : ICall
 {
     public void Create(Call item)
     {
