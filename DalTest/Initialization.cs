@@ -4,49 +4,44 @@ using DalApi;
 using DO;
 using System;
 
+/// <summary>
+/// Handles initialization and setup of data in the DAL.
+/// This includes resetting the database and populating it with initial data.
+/// </summary>
 public static class Initialization
 {
-    //// Static fields to hold references to the DAL interfaces
-    //private static ICall? s_dalCall;
-    //private static IAssignment? s_dalAssignment;
-    //private static IVolunteer? s_dalVolunteer;
-    //private static IConfig? s_dalConfig;
-    private static readonly Random s_rand = new(); // Random generator for creating random data
+    private static readonly Random s_rand = new(); // Random generator for generating unique data
     private static IDal? s_dal;
 
-    // Main initialization method
+    /// <summary>
+    /// Main entry point for initializing the DAL.
+    /// - Resets the database to its default state.
+    /// - Populates the database with volunteers, calls, and assignments.
+    /// </summary>
+    /// <param name="dal">The IDal implementation to use for data access.</param>
+    /// <exception cref="NullReferenceException">Thrown if the provided DAL is null.</exception>
     public static void Do(IDal dal)
     {
-        // Validate and set the interfaces
-        //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL cannot be null!");
-        //s_dalCall = dalCall ?? throw new NullReferenceException("DAL cannot be null!");
-        //s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL cannot be null!");
-        //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL cannot be null!");
-        s_dal=dal?? throw new NullReferenceException("DAL object can not be null!");
-        // Reset all data and configurations
-        Console.WriteLine("Reset Configuration values and List values");
-        //s_dalConfig.Reset();
-        //s_dalAssignment.DeleteAll();
-        //s_dalVolunteer.DeleteAll();
-        //s_dalCall.DeleteAll();
-        s_dal.ResetDB();    
-        // Populate volunteers, calls, and assignments
-        Console.WriteLine("Initializing Volunteers list, Calls list, Assignment list");
+        s_dal = dal ?? throw new NullReferenceException("DAL object cannot be null!");
+        Console.WriteLine("Resetting configuration values and data lists.");
+        s_dal.ResetDB();
+        Console.WriteLine("Initializing volunteers, calls, and assignments lists.");
         createVolunteers();
         createCalls();
         createAssignments();
     }
 
-    // Creates a list of volunteers and populates the DAL
+    /// <summary>
+    /// Creates a predefined list of volunteers and adds them to the database.
+    /// - Each volunteer gets a unique ID, random phone number, and other properties.
+    /// - Volunteers are distributed among predefined locations across Israel.
+    /// </summary>
     private static void createVolunteers()
     {
-        // Array of volunteer names
-        string[] volunteerNames = new string[] { "Yosef Cohen", "Shmuel Levi", "Yaakov Goldstein", "Moshe Friedman",
-                                                 "Avraham Stein", "Daniel Green", "David Weiss", "Yonatan Rubin",
-                                                 "Hanan Levy", "Eli Karp", "Uzi Sharoni", "Shimon Ben-David",
-                                                 "Matan Shalev", "Asher Tzukrel", "Oren Regev"};
+        string[] volunteerNames = { "Yosef Cohen", "Shmuel Levi", "Yaakov Goldstein", "Moshe Friedman", "Avraham Stein",
+                                    "Daniel Green", "David Weiss", "Yonatan Rubin", "Hanan Levy", "Eli Karp", 
+                                    "Uzi Sharoni", "Shimon Ben-David", "Matan Shalev", "Asher Tzukrel", "Oren Regev" };
 
-        // List of addresses with their latitude and longitude
         var addresses = new List<Tuple<string, double, double>>()
         {
           new Tuple<string, double, double>("Rothschild Boulevard, Tel Aviv, Israel", 32.0853, 34.7818),
@@ -66,7 +61,6 @@ public static class Initialization
           new Tuple<string, double, double>("Banias Nature Reserve, Golan Heights, Israel", 33.2473, 35.6931),
         };
 
-        // Function to generate random secure passwords
         string GenerateRandomPassword()
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
@@ -75,25 +69,24 @@ public static class Initialization
                 .ToArray());
         }
 
-        // Create volunteers
         var volunteerCount = volunteerNames.Length;
         for (int i = 0; i < volunteerCount; i++)
         {
             int id;
             do
             {
-                id = s_rand.Next(200000000, 400000000); // Generate a valid ID
-            } while (s_dal!.Volunteer.Read(id) != null); // Ensure the ID is unique
+                id = s_rand.Next(200000000, 400000000); // Generate unique ID
+            } while (s_dal!.Volunteer.Read(id) != null);
 
             s_dal.Volunteer.Create(new Volunteer
             {
                 Id = id,
                 FullName = volunteerNames[i],
-                PhoneNumber = $"05{s_rand.Next(10000000, 99999999)}", // Generate a valid phone number
+                PhoneNumber = $"05{s_rand.Next(10000000, 99999999)}",
                 Email = $"volunteer{i + 1}@gmail.com",
                 Location = addresses[i].Item1,
                 MaxDistance = s_rand.Next(5, 20),
-                Position = (i == 0) ? Position.Manager : Position.Volunteer, // First volunteer is a manager
+                Position = (i == 0) ? Position.Manager : Position.Volunteer,
                 Latitude = addresses[i].Item2,
                 Longitude = addresses[i].Item3,
                 Active = true,
@@ -103,7 +96,11 @@ public static class Initialization
         }
     }
 
-    // Creates a list of calls and populates the DAL
+    /// <summary>
+    /// Creates a set of call records in the database.
+    /// - Each call is assigned a random description, type, and location.
+    /// - Open and maximum response times are set based on random offsets.
+    /// </summary>
     private static void createCalls()
     {
         string[] callDescriptions = { "Emergency food delivery", "Fixing equipment", "Medical assistance required",
@@ -129,14 +126,17 @@ public static class Initialization
         }
     }
 
-    // Creates assignments between volunteers and calls
-    
+    /// <summary>
+    /// Assigns volunteers to calls.
+    /// - Ensures each volunteer is assigned to at least one call.
+    /// - Generates random times for appointment and finish time within constraints.
+    /// </summary>
     public static void createAssignments()
     {
-        List<Call> allCalls = s_dal!.call.ReadAll();
-        List<Volunteer> allVolunteers = s_dal!.Volunteer.ReadAll();
+        List<Call> allCalls = s_dal!.call.ReadAll()?.ToList();
+        List<Volunteer> allVolunteers = s_dal!.Volunteer.ReadAll()?.ToList();
 
-        if (allCalls.Count == 0 || allVolunteers.Count == 0)
+        if (allCalls?.Count == 0 || allVolunteers?.Count == 0)
         {
             Console.WriteLine("No calls or volunteers available for assignment.");
             return;

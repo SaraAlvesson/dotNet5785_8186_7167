@@ -1,7 +1,8 @@
 ﻿
 namespace DO;
+
 /// <summary>
-/// 
+/// Defines the types of calls or tasks that can be assigned.
 /// </summary>
 public enum CallType
 {
@@ -15,22 +16,32 @@ public enum CallType
     PackingSupplies // Organizing and packing necessary supplies for distribution.
 }
 
+/// <summary>
+/// Represents the position of a person in the organization.
+/// </summary>
 public enum Position
 {
-    Volunteer,
-    Manager
+    Volunteer, // A person offering their time and services without payment.
+    Manager // A person responsible for overseeing tasks and volunteers.
 }
+
+/// <summary>
+/// Defines the possible outcomes for completing or terminating an appointment.
+/// </summary>
 public enum FinishAppointmentType
 {
-    WasTreated,
-    SelfCancellation,
-    CancelingAnAdministrator,
-    CancellationHasExpired
-
+    WasTreated, // The task or appointment was successfully completed.
+    SelfCancellation, // The appointment was canceled by the user.
+    CancelingAnAdministrator, // An administrator canceled the appointment.
+    CancellationHasExpired // The appointment was automatically canceled due to expiration.
 }
+
+/// <summary>
+/// Specifies the type of distance measurement used.
+/// </summary>
 public enum DistanceType
 {
-    AerialDistance,
-    walkingDistance, 
-    drivingdistance
+    AerialDistance, // Straight-line distance (as the crow flies).
+    WalkingDistance, // Distance calculated for pedestrian routes.
+    DrivingDistance // Distance calculated for vehicular routes.
 }

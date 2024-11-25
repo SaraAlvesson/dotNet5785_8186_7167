@@ -1,7 +1,7 @@
 ﻿
 namespace DO;
 /// <summary>
-/// 
+/// Represents a record for a call or event with various details.
 /// </summary>
 /// <param name="Id"></param>
 /// <param name="Adress"></param>
@@ -20,7 +20,6 @@ public record Call
     DateTime OpenTime,
     CallType CallType,
     string? VerbDesc = null,
-    /// לא יכול להיות פה null
     DateTime? MaxTime = null
 )
 {
@@ -28,5 +27,5 @@ public record Call
     /// Default constructor for the Call record.
     /// </summary>
     public Call()
-        : this(0, string.Empty, 0.0, 0.0, DateTime.MinValue, CallType.PreparingFood) { }
+        : this(0, string.Empty, 0.0, 0.0, DateTime.MinValue, CallType.PreparingFood) { }//ctor
 }

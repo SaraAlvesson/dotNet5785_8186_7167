@@ -1,7 +1,7 @@
 ﻿
 namespace DO;
 /// <summary>
-/// 
+/// Represents a volunteer with personal details, contact information, and location.
 /// </summary>
 /// <param name="Id"></param>
 /// <param name="FullName"></param>
@@ -31,8 +31,10 @@ public record Volunteer
     double? Longitude = null,
     double? MaxDistance = null
 )
-{
-    
+{/// <summary>
+ ///  Default constructor for the Volunteer.
+ /// </summary>
+
     public Volunteer()
-        : this(0, string.Empty, string.Empty, string.Empty, false, DistanceType.AerialDistance, Position.Manager) { }
+        : this(0, string.Empty, string.Empty, string.Empty, false, DistanceType.AerialDistance, Position.Manager) { }//ctor
 }

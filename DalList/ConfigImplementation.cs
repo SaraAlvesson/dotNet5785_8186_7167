@@ -1,11 +1,14 @@
-﻿
-
-using DalApi;
+﻿using DalApi;
 
 namespace Dal
 {
-    // Implementation of IConfig interface for handling configuration settings
-   internal class ConfigImplementation : IConfig
+    /// <summary>
+    /// Implementation of the IConfig interface for handling configuration settings in the system.
+    /// This class provides methods to interact with system configuration, 
+    /// such as getting and setting the system clock, adjusting the risk range, 
+    /// and resetting the configuration to its default state.
+    /// </summary>
+    internal class ConfigImplementation : IConfig
     {
         // Property to get or set the current system clock
         public DateTime Clock
@@ -21,7 +24,10 @@ namespace Dal
             set => Config.RiskRange = value; // Set the new value for RiskRange in Config
         }
 
-        // Method to reset the configuration to its default settings
+        /// <summary>
+        /// Resets the configuration to its default settings, reverting values 
+        /// like Clock and RiskRange to their initial state as defined in the Config class.
+        /// </summary>
         public void Reset()
         {
             Config.Reset(); // Call the Reset method of Config to revert to default settings
