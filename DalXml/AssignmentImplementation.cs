@@ -34,7 +34,7 @@ internal class AssignmentImplementation : IAssignment
     public Assignment? Read(int id)
     {
         List<Assignment> Assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
-        XMLTools.SaveListToXMLSerializer(Assignments, Config.s_assignments_xml);
+        //XMLTools.SaveListToXMLSerializer(Assignments, Config.s_assignments_xml);
         return Assignments.FirstOrDefault(obj => obj.Id == id); // Returns the assignment with the matching Id, or null if not found  
     }
 
@@ -46,7 +46,7 @@ internal class AssignmentImplementation : IAssignment
     public Assignment? Read(Func<Assignment, bool> filter)// Stage 2
     {
         List<Assignment> Assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
-        XMLTools.SaveListToXMLSerializer(Assignments, Config.s_assignments_xml);
+        //XMLTools.SaveListToXMLSerializer(Assignments, Config.s_assignments_xml);
         return Assignments.FirstOrDefault(filter); // Returns the first matching assignment based on the filter
 
     }
@@ -103,3 +103,73 @@ internal class AssignmentImplementation : IAssignment
         XMLTools.SaveListToXMLSerializer(new List<Assignment>(), Config.s_assignments_xml);
     }
 }
+//using Dal;
+//using DalApi;
+//using DO;
+//using System.Xml.Linq;
+
+//internal class AssignmentImplementation : IAssignment
+//{
+//    private List<Assignment> LoadAssignments()
+//    {
+//        return XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
+//    }
+
+//    private void SaveAssignments(List<Assignment> assignments)
+//    {
+//        XMLTools.SaveListToXMLSerializer(assignments, Config.s_assignments_xml);
+//    }
+
+//    public void Create(Assignment item)
+//    {
+//        List<Assignment> assignments = LoadAssignments();
+//        int nextId = Config.NextAssignmentId;
+//        Assignment copy = item with { Id = nextId };
+//        assignments.Add(copy);
+//        SaveAssignments(assignments);
+//    }
+
+//    public Assignment? Read(int id)
+//    {
+//        List<Assignment> assignments = LoadAssignments();
+//        return assignments.FirstOrDefault(obj => obj.Id == id); // Return the first matching assignment or null
+//    }
+
+//    public Assignment? Read(Func<Assignment, bool> filter)
+//    {
+//        List<Assignment> assignments = LoadAssignments();
+//        return assignments.FirstOrDefault(filter); // Return the first matching assignment based on the filter
+//    }
+
+//    public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
+//    {
+//        List<Assignment> assignments = LoadAssignments();
+//        return filter == null ? assignments : assignments.Where(filter); // Return filtered or all assignments
+//    }
+
+//    public void Update(Assignment item)
+//    {
+//        List<Assignment> assignments = LoadAssignments();
+//        Assignment? existingAssignment = assignments.FirstOrDefault(it => it.Id == item.Id);
+//        if (existingAssignment == null)
+//            throw new DalDoesNotExistException($"Assignment with ID={item.Id} does Not exist");
+
+//        assignments.Remove(existingAssignment);
+//        assignments.Add(item);
+//        SaveAssignments(assignments);
+//    }
+
+//    public void Delete(int id)
+//    {
+//        List<Assignment> assignments = LoadAssignments();
+//        if (assignments.RemoveAll(it => it.Id == id) == 0)
+//            throw new DalDoesNotExistException($"Assignment with ID={id} does Not exist");
+
+//        SaveAssignments(assignments);
+//    }
+
+//    public void DeleteAll()
+//    {
+//        SaveAssignments(new List<Assignment>());
+//    }
+//}

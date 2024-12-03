@@ -1,5 +1,4 @@
 ﻿namespace DalTest;
-
 using Dal;
 using DalApi;
 using DalTest;
@@ -12,7 +11,8 @@ using DO;
 internal class Program
 {
     // Static field for accessing the DAL interface
-    static readonly IDal s_dal = new DalList();
+    //static readonly IDal s_dal = new DalList(); //stage 2
+    static readonly IDal s_dal = new DalXml(); //stage 3
 
     /// <summary>
     /// The main entry point of the application.

@@ -39,7 +39,7 @@ public static class Initialization
     private static void createVolunteers()
     {
         string[] volunteerNames = { "Yosef Cohen", "Shmuel Levi", "Yaakov Goldstein", "Moshe Friedman", "Avraham Stein",
-                                    "Daniel Green", "David Weiss", "Yonatan Rubin", "Hanan Levy", "Eli Karp", 
+                                    "Daniel Green", "David Weiss", "Yonatan Rubin", "Hanan Levy", "Eli Karp",
                                     "Uzi Sharoni", "Shimon Ben-David", "Matan Shalev", "Asher Tzukrel", "Oren Regev" };
 
         var addresses = new List<Tuple<string, double, double>>()
@@ -97,7 +97,7 @@ public static class Initialization
     }
 
     /// <summary>
-    /// Creates a set of call records in the database.
+    /// Creates a set of call records in the databasשe.
     /// - Each call is assigned a random description, type, and location.
     /// - Open and maximum response times are set based on random offsets.
     /// </summary>
@@ -126,15 +126,16 @@ public static class Initialization
         }
     }
 
-    /// <summary>
-    /// Assigns volunteers to calls.
-    /// - Ensures each volunteer is assigned to at least one call.
-    /// - Generates random times for appointment and finish time within constraints.
-    /// </summary>
+
+    // <summary>
+    // Assigns volunteers to calls.
+    // - Ensures each volunteer is assigned to at least one call.
+    // - Generates random times for appointment and finish time within constraints.
+    // </summary>
     public static void createAssignments()
     {
-        List<Call> allCalls = s_dal!.call.ReadAll()?.ToList();
-        List<Volunteer> allVolunteers = s_dal!.Volunteer.ReadAll()?.ToList();
+        List<Call>? allCalls = s_dal!.call.ReadAll()?.ToList();
+        List<Volunteer>? allVolunteers = s_dal!.Volunteer.ReadAll()?.ToList();
 
         if (allCalls?.Count == 0 || allVolunteers?.Count == 0)
         {
