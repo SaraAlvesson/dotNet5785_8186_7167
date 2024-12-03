@@ -37,3 +37,8 @@ public class DalDeletionImpossible : Exception
     /// <param name="message">The error message that explains the reason for the exception.</param>
     public DalDeletionImpossible(string? message) : base(message) { } // Passes the message to the base Exception class.
 }
+public class DalXMLFileLoadCreateException:Exception
+{
+
+    public DalXMLFileLoadCreateException(string? message) : base(message) { } 
+}

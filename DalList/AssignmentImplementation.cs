@@ -82,4 +82,6 @@ internal class AssignmentImplementation : IAssignment
     {
         DataSource.Assignments.Clear(); // Clears all items from the list
     }
+
+
 }
