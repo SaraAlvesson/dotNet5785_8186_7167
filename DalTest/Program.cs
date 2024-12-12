@@ -11,8 +11,10 @@ using DO;
 internal class Program
 {
     // Static field for accessing the DAL interface
-    //static readonly IDal s_dal = new DalList(); //stage 2
-    static readonly IDal s_dal = new DalXml(); //stage 3
+    /*static readonly IDal s_dal = new DalList(); *///stage 2
+    //static readonly IDal s_dal = new DalXml(); //stage 3
+    static readonly IDal s_dal = Factory.Get; //stage 4
+
 
     /// <summary>
     /// The main entry point of the application.
@@ -24,7 +26,9 @@ internal class Program
         try
         {
             // Initialize the database using the DAL instance
-            Initialization.Do(s_dal);
+            //Initialization.Do(s_dal);//stage 2
+            Initialization.Do(); //stage 4
+
 
             // Run the main menu
             RunMainMenu();
@@ -440,7 +444,7 @@ internal class Program
     /// </summary>
     private static void InitializeDatabase()
     {
-        Initialization.Do(s_dal);
+        Initialization.Do();
         Console.WriteLine("Database initialized.");
     }
     // End of InitializeDatabase method.

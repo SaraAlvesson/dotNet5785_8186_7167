@@ -1,6 +1,7 @@
 ﻿
 
 using DalApi;
+using System.Diagnostics;
 
 namespace Dal
 {
@@ -10,8 +11,11 @@ namespace Dal
     /// and configuration management. It serves as a central hub for accessing the individual 
     /// implementations of these data operations.
     /// </summary>
-    sealed public class DalXml : IDal
+    sealed internal class DalXml : IDal
     {
+        public static IDal Instance { get; } = new DalXml();
+        private DalXml() { }
+
         // Provides access to the Volunteer data operations (CRUD).
         public IVolunteer Volunteer { get; } = new VolunteerImplementation();
 

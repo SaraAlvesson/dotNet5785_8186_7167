@@ -9,8 +9,11 @@ namespace Dal
     /// and configuration management. It serves as a central hub for accessing the individual 
     /// implementations of these data operations.
     /// </summary>
-    sealed public class DalList : IDal
+    sealed internal class DalList : IDal
     {
+        public static IDal Instance { get; } = new DalList();
+        private DalList() { }
+
         // Provides access to the Volunteer data operations (CRUD).
         public IVolunteer Volunteer { get; } = new VolunteerImplementation();
 

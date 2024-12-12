@@ -20,9 +20,9 @@ public static class Initialization
     /// </summary>
     /// <param name="dal">The IDal implementation to use for data access.</param>
     /// <exception cref="NullReferenceException">Thrown if the provided DAL is null.</exception>
-    public static void Do(IDal dal)
+    public static void Do()
     {
-        s_dal = dal ?? throw new NullReferenceException("DAL object cannot be null!");
+        s_dal = DalApi.Factory.Get; //stage 4
         Console.WriteLine("Resetting configuration values and data lists.");
         s_dal.ResetDB();
         Console.WriteLine("Initializing volunteers, calls, and assignments lists.");
