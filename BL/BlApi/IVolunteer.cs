@@ -14,7 +14,7 @@ public interface IVolunteer
     string Login(string username, string password);
 
     /// <summary>
-    /// Requests a list of volunteers, optionally filtering by active status and sorting by a specific field.
+    /// Requests a list of Avolunteers, optionally filtering by active status and sorting by a specific field.
     /// </summary>
     IEnumerable<VolunteerInList> RequestVolunteerList(bool? isActive, VolunteerInList? sortField=null);
 

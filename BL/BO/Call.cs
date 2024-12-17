@@ -1,23 +1,40 @@
-﻿
-namespace BO;
+﻿using Helpers;
 
-public class Call
+namespace BO
 {
+    public class Call
+    {
+        // מספר מזהה רץ של ישות הקריאה - חייב להיות מספר שלם (לא יכול להיות null)
+        public int Id { get; init; }
 
-    public int Id { get; init; } 
-    public Enum CallType { get; set; }    
-    public string VerbDesc { get; set; } 
-    public string Address { get; set; }    
-    public double Latitude { get; set; }     
-    public double Longitude { get; set; }
-    public DateTime OpenTime{ get; set; }
+        // סוג הקריאה - חייב להיות מוגדר כ-enum, לא יכול להיות null
+        public Enum CallType { get; set; }
 
-    public DateTime MaxFinishTime{ get; set; }
-    public Enum Status{ get; set; }
-    public List<BO.CallAssignInList> callAssignInLists { get; set; }    
+        // תיאור מילולי - יכול להיות null
+        public string? VerbDesc { get; set; }
 
-    public override string ToString() => this.ToStringProperty();
+        // כתובת מלאה של הקריאה - חייבת להיות כתובת תקינה, יכולה להיות null
+        public string? Address { get; set; }
 
+        // קו רוחב - מספק מידע על המקום, יכול להיות null במקרה שאין כתובת
+        public double? Latitude { get; set; }
 
+        // קו אורך - מספק מידע על המקום, יכול להיות null במקרה שאין כתובת
+        public double? Longitude { get; set; }
 
+        // זמן פתיחה - חייב להיות מועד פתיחה לתהליך הקריאה
+        public DateTime OpenTime { get; set; }
+
+        // זמן מקסימלי לסיום הקריאה - יכול להיות null במקרה של קריאה פתוחה או שבוטלה
+        public DateTime? MaxFinishTime { get; set; }
+
+        // סטטוס הקריאה - מחושב על פי סוג סיום הטיפול, זמן מקסימלי לסיום והזמן הנוכחי
+        public Enum CallStatusEnum { get; set; }
+
+        // רשימת ההקצאות עבור הקריאה - אם אין הקצאות, יהיה null
+        public List<BO.CallAssignInList>? CallAssignInLists { get; set; }
+
+        // הצגת פרטי הקריאה כמחרוזת
+        public override string ToString() => this.ToStringProperty();
+    }
 }

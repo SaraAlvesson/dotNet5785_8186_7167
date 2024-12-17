@@ -104,13 +104,13 @@ static class XMLTools
         return num;
     }
     public static int GetAndIncreaseConfigIntVal(string xmlFileName, string elemName)//////////////
-    {  
-        return (AndIncreaseConfigIntVal(xmlFileName, elemName)); 
+    {
+        return (AndIncreaseConfigIntVal(xmlFileName, elemName));
     }
-        //XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
-        //int num = root.ToIntNullable(elemName) ?? throw new FormatException($"can't convert:  {xmlFileName}, {elemName}");
-        //return (num+1);
-    
+    //XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
+    //int num = root.ToIntNullable(elemName) ?? throw new FormatException($"can't convert:  {xmlFileName}, {elemName}");
+    //return (num+1);
+
     public static DateTime GetConfigDateVal(string xmlFileName, string elemName)
     {
         XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);

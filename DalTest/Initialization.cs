@@ -22,13 +22,15 @@ public static class Initialization
     /// <exception cref="NullReferenceException">Thrown if the provided DAL is null.</exception>
     public static void Do()
     {
+        //s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); //stage 2
         s_dal = DalApi.Factory.Get; //stage 4
+
         Console.WriteLine("Resetting configuration values and data lists.");
         s_dal.ResetDB();
         Console.WriteLine("Initializing volunteers, calls, and assignments lists.");
         createVolunteers();
         createCalls();
-        createAssignments();
+        createAssignment();
     }
 
     /// <summary>
@@ -132,56 +134,67 @@ public static class Initialization
     // - Ensures each volunteer is assigned to at least one call.
     // - Generates random times for appointment and finish time within constraints.
     // </summary>
-    public static void createAssignments()
+    private static void createAssignment()
     {
-        List<Call>? allCalls = s_dal!.call.ReadAll()?.ToList();
-        List<Volunteer>? allVolunteers = s_dal!.Volunteer.ReadAll()?.ToList();
-
-        if (allCalls?.Count == 0 || allVolunteers?.Count == 0)
+        // Loop to create 60 assignments
+        for (int i = 0; i < 60; i++)
         {
-            Console.WriteLine("No calls or volunteers available for assignment.");
-            return;
-        }
+            // Randomly select a volunteer from the list
+            //int randVolunteer = s_rand.Next(s_dal!.Volunteer.ReadAll().Count); /stage 1
+            //Volunteer volunteerToAssig = s_dal!.Volunteer.ReadAll()[randVolunteer];
 
-        int allocationCount = 50; // Number of assignments to create
-        List<Volunteer> volunteersWithNoAssignments = new List<Volunteer>(allVolunteers);
+            int randVolunteer = s_rand.Next(s_dal!.Volunteer.ReadAll().Count());
+            Volunteer volunteerToAssig = s_dal!.Volunteer.ReadAll().ElementAt(randVolunteer);
 
-        for (int i = 0; i < allocationCount; i++)
-        {
-            int callIndex = s_rand.Next(0, allCalls.Count);
-            Call call = allCalls[callIndex];
+            // Randomly select a call from the list, excluding the last 15 calls
+            //int randCAll = s_rand.Next(s_dal!.Call.ReadAll().Count - 15);
+            //Call callToAssig = s_dal.Call.ReadAll()[randCAll]; // stage 1
+            int randCAll = s_rand.Next(s_dal!.call.ReadAll().Count() - 15);
+            Call callToAssig = s_dal.call.ReadAll().ElementAt(randCAll);
 
-            Volunteer volunteer;
-            if (volunteersWithNoAssignments.Count > 0)
+            // Ensure the selected call has been opened before the current time
+            while (callToAssig.OpenTime > s_dal!.config.Clock)
             {
-                int volunteerIndex = s_rand.Next(0, volunteersWithNoAssignments.Count);
-                volunteer = volunteersWithNoAssignments[volunteerIndex];
-                volunteersWithNoAssignments.RemoveAt(volunteerIndex);
+                //randCAll = s_rand.Next(s_dal!.Call.ReadAll().Count - 15);
+                //callToAssig = s_dal.Call.ReadAll()[randCAll]; //stage 1
+                randCAll = s_rand.Next(s_dal!.call.ReadAll().Count() - 15);
+                callToAssig = s_dal.call.ReadAll().ElementAt(randCAll);
+            }
+
+            // Declare variables for the finish type and finish time
+            FinishAppointmentType? finish = null;
+            DateTime? finishTime = null;
+
+            // Check if the call has a max time to close and if it is not expired
+            if (callToAssig.MaxTime != null && callToAssig.MaxTime >= s_dal?.config.Clock)
+            {
+                finish = FinishAppointmentType.CancellationHasExpired;
             }
             else
             {
-                int volunteerIndex = s_rand.Next(0, allVolunteers.Count);
-                volunteer = allVolunteers[volunteerIndex];
-            }
-
-            if (call.MaxTime.HasValue)
-            {
-                DateTime entryTime = call.OpenTime.AddMinutes(s_rand.Next(1, call.MaxTime.Value.Minute));
-                DateTime finishTime = entryTime.AddMinutes(s_rand.Next(30, 120));
-
-                FinishAppointmentType finishType = finishTime <= call.MaxTime ?
-                                                   FinishAppointmentType.WasTreated :
-                                                   FinishAppointmentType.CancellationHasExpired;
-
-                s_dal!.assignment.Create(new Assignment
+                // Randomly determine the finish type
+                int randFinish = s_rand.Next(0, 4);
+                switch (randFinish)
                 {
-                    CallId = call.Id,
-                    VolunteerId = volunteer.Id,
-                    AppointmentTime = entryTime,
-                    FinishAppointmentTime = finishTime,
-                    FinishAppointmentType = finishType,
-                });
+                    case 0:
+                        finish = FinishAppointmentType.WasTreated;
+                        finishTime = s_dal!.config.Clock;
+                        break;
+                    case 1: finish = FinishAppointmentType.SelfCancellation; break;
+                    case 2: finish = FinishAppointmentType.CancelingAnAdministrator; break;
+                }
             }
+            s_dal!.assignment.Create(new Assignment
+            {
+                CallId = callToAssig.Id,
+                VolunteerId = volunteerToAssig.Id,
+                AppointmentTime = s_dal!.config.Clock,
+                FinishAppointmentTime = finishTime,
+                FinishAppointmentType = finish,
+            });
+
         }
     }
+
+
 }

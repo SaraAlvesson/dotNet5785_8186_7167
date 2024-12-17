@@ -1,17 +1,17 @@
-﻿
+﻿using Helpers;
+using static BO.Enums;
+
 namespace BO;
 
 public class OpenCallInList
 {
+    public int Id { get; init; } // מספר מזהה רץ של ישות הקריאה
+    public CallTypeEnum CallType { get; set; } // סוג הקריאה
+    public string? VerbDesc { get; set; } // תיאור מילולי (יכול להיות null)
+    public string Address { get; set; } // כתובת מלאה של הקריאה
+    public DateTime OpenTime { get; set; } // זמן פתיחה
+    public DateTime? MaxFinishTime { get; set; } // זמן מקסימלי לסיום הקריאה
+    public double DistanceOfCall { get; set; } // מרחק הקריאה מהמתנדב
 
-    public int Id {  get; init; }    
-    public Enum CallType { get; set; }
-
-    public string VerbDesc { get; set; }    
-    public string Address {  get; set; }    
-    public DateTime OpenTime { get; set; } 
-    public DateTime MaxFinishTime { get; set; }
-    public string DistanceOfCall { get; set; }
     public override string ToString() => this.ToStringProperty();
-
 }
