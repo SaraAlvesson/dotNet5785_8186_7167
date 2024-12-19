@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using static BO.Enums;
 
 namespace BO;
 
@@ -11,7 +12,7 @@ public class VolunteerInList
     public int SumCanceledCalls { get; set; } // סך קריאות שבוטלו
     public int SumExpiredCalls { get; set; } // סך קריאות שפג תוקפן
     public int? CallIdInTreatment { get; set; } // מספר מזהה של הקריאה שבטיפולו (יכול להיות null)
-    public FinishAppointmentType FinishAppointmentType { get; set; } // סוג הקריאה שבטיפולו
+    public CallTypeEnum CallType { get; set; } // סוג הקריאה שבטיפולו
 
     public override string ToString() => this.ToStringProperty();
 }

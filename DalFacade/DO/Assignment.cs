@@ -1,5 +1,6 @@
-﻿namespace DO;
+﻿
 
+namespace DO;
 /// <summary>
 /// Represents an assignment for a volunteer to a call, including appointment times and status.
 /// </summary>
@@ -11,16 +12,17 @@
 /// <param name="FinishAppointmentType"></param>
 public record Assignment
 (
-    int Id,
-    int CallId,
-    int VolunteerId,
-    DateTime AppointmentTime,
-    DateTime? FinishAppointmentTime = null,
-    FinishAppointmentType? FinishAppointmentType = null
+int Id,
+int CallId,
+int VolunteerId,
+DateTime AppointmentTime,
+DateTime? FinishAppointmentTime = null,
+Enum? FinishAppointmentType = null
+
 )
-{
-    /// <summary>
-    /// Default constructor for Assignment.
-    /// </summary>
-    public Assignment() : this(0, 0, 0, DateTime.MinValue) { }
+{/// <summary>
+///  Default constructor for Assignment.
+/// </summary>
+    public Assignment() : this(0,0,0,DateTime.MinValue) { }//ctor
+
 }

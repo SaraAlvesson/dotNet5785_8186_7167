@@ -1,34 +1,66 @@
-﻿
+﻿//using System.Net;
+//using System.Reflection;
+//using System.Text.Json;
+
+//namespace Helpers
+//{
+//    internal static class Tools
+//    {
+//        // מתודת עזר להמיר אובייקט למיתר
+//        public static string ToStringProperty<T>(this T t)
+//        {
+//            return t?.ToString() ?? string.Empty;
+//        }
+
+//        // בדיקה אם כתובת אימייל תקינה
+//        public static bool IsValidEmail(string email)
+//        {
+//            if (string.IsNullOrWhiteSpace(email))
+//                return false;
+
+//            try
+//            {
+//                var addr = new System.Net.Mail.MailAddress(email);
+//                return addr.Address == email;
+//            }
+//            catch
+//            {
+//                return false;
+//            }
+//        }
+
+//        // בדיקה אם מספר תעודת זהות תקין
+//        public static bool IsValidId(int id)
+//        {
+//            string idStr = id.ToString("D9"); // ת.ז. צריכה להיות באורך 9 ספרות
+//            int sum = 0;
+
+//            for (int i = 0; i < idStr.Length; i++)
+//            {
+//                int digit = (idStr[i] - '0') * ((i % 2) + 1);
+//                sum += (digit > 9) ? digit - 9 : digit;
+//            }
+
+//            return sum % 10 == 0;
+//        }
+
+//        // בדיקה אם כתובת תקינה (לפחות 5 תווים)
+//        public static bool IsValidAddress(string address)
+//        {
+//            return !string.IsNullOrWhiteSpace(address) && address.Length > 5;
+//        }
+//    }
+//}
 using BO;
-using DalApi;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using static BO.Exceptions;
 
 namespace Helpers
 {
     internal static class Tools
     {
-        private static IDal s_dal = Factory.Get; //stage 4
 
-        public static BO.CallAssignInList GetCallAssignInList(int id)
-        {
-            
-            var assignment = s_dal.assignment.Read(id);
-
-            return new BO.CallAssignInList
-            {
-                VolunteerId = assignment.VolunteerId,
-                //VolunteerName = assignments.VolunteerId,
-                AppointmentTime = assignment.AppointmentTime,
-                FinishAppointmentTime = assignment.FinishAppointmentTime,
-                FinishAppointmentType = (BO.FinishAppointmentType)assignment.FinishAppointmentType
-
-            };
-        }
-        
 
         // The generic method works for any object, returning a string of its properties
         public static string ToStringProperty<T>(this T t)
@@ -48,8 +80,15 @@ namespace Helpers
             }
             return str;
         }
-
-        public static double[] GetGeolocationCoordinates(string address)
+        /// <summary>
+        /// Retrieves geolocation coordinates (latitude and longitude) for a given address using an external geocoding API.
+        /// </summary>
+        /// <param name="address">Address to search for</param>
+        /// <returns>Array containing latitude and longitude</returns>
+        /// <remarks>
+        /// Written with the help of ChatGPT from OpenAI (https://openai.com).
+        /// </remarks>
+        internal static double[] GetGeolocationCoordinates(string address)
         {
             // Check if the address is valid
             if (string.IsNullOrWhiteSpace(address))
@@ -165,7 +204,7 @@ namespace Helpers
         /// <param name="distanceInKm">Distance in kilometers.</param>
         /// <returns>Distance type: WalkingDistance, DrivingDistance, or AirDistance.</returns>
         /// <author>ChatGPT, OpenAI</author>
-        public static DO.DistanceType GetDistanceType(double distanceInKm)
+        public static DO.Distance GetDistanceType(double distanceInKm)
         {
             // Thresholds for categorizing distances
             const double walkingDistanceThreshold = 3.0;  // <= 3 km for WalkingDistance
@@ -174,88 +213,21 @@ namespace Helpers
 
             if (distanceInKm <= walkingDistanceThreshold)
             {
-                return DO.DistanceType.WalkingDistance; // Walking distance for <= 3 km
+                return DO.Distance.walkingDistance; // Walking distance for <= 3 km
             }
             else if (distanceInKm <= drivingDistanceThreshold)
             {
-                return DO.DistanceType.DrivingDistance; // Driving distance for <= 50 km
+                return DO.Distance.DrivingDistance; // Driving distance for <= 50 km
             }
             else if (distanceInKm <= airDistanceThreshold)
             {
-                return DO.DistanceType.AerialDistance; // Air distance for <= 1000 km
+                return DO.Distance.AirDistance; // Air distance for <= 1000 km
             }
             else
             {
-                return DO.DistanceType.AerialDistance; // Default to AirDistance for greater than 1000 km
+                return DO.Distance.AirDistance; // Default to AirDistance for greater than 1000 km
             }
         }
 
     }
 }
-
-//    internal static BO.VolunteerInList convertDOToBOInList(DO.Volunteer doVolunteer)
-//    {
-//        var call = s_dal.Assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.ID).ToList();
-//        int sumCalls = call.Count(ass => ass.finishT == DO.FinishType.Treated);
-//        int sumCanceld = call.Count(ass => ass.finishT == DO.FinishType.SelfCancel);
-//        int sumExpired = call.Count(ass => ass.finishT == DO.FinishType.ExpiredCancel);
-//        int? idCall = call.Count(ass => ass.finishTreatment == null);
-//        return new()
-//        {
-//            ID = doVolunteer.ID,
-//            fullName = doVolunteer.fullName,
-//            active = doVolunteer.active,
-//            numCallsHandled = sumCalls,
-//            numCallsCancelled = sumCanceld,
-//            numCallsExpired = sumExpired,
-//            CallId = idCall,
-//        };
-//    }
-//}
-//}
-
-//internal static BO.Volunteer convertDOToBOVolunteer(DO.Volunteer doVolunteer)
-//{
-//    var call = s_dal.Assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.ID).ToList();
-//    int sumCalls = call.Count(ass => ass.finishT == DO.FinishType.Treated);
-//    int sumCanceld = call.Count(ass => ass.finishT == DO.FinishType.SelfCancel);
-//    int sumExpired = call.Count(ass => ass.finishT == DO.FinishType.ExpiredCancel);
-//    int? idCall = call.Count(ass => ass.finishTreatment == null);
-//    CallInProgress? c = GetCallIn(doVolunteer);
-//    return new()
-//    {
-//        Id = doVolunteer.ID,
-//        fullName = doVolunteer.fullName,
-//        phone = doVolunteer.phone,
-//        email = doVolunteer.email,
-//        password = doVolunteer.password != null ? Decrypt(doVolunteer.password) : null,
-//        currentAddress = doVolunteer.currentAddress,
-//        Latitude = doVolunteer.Latitude,
-//        Longitude = doVolunteer.Longitude,
-//        role = (BO.RoleType)doVolunteer.role,
-//        active = doVolunteer.active,
-//        numCallsHandled = sumCalls,
-//        numCallsCancelled = sumCanceld,
-//        numCallsExpired = sumExpired,
-//        maxDistance = doVolunteer.maxDistance,
-//        distanceType = (BO.Distance)doVolunteer.distanceType,
-//        callProgress = c
-
-//    };
-//////}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
