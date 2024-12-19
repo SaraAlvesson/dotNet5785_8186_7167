@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static BO.Exceptions;
 
 namespace Helpers
 {
@@ -23,20 +24,20 @@ namespace Helpers
         /// <returns> the BO vlounteerInList  </returns>
         internal static BO.VolunteerInList convertDOToBOInList(DO.Volunteer doVolunteer)
         {
-            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.ID).ToList();
-            int sumCalls = call.Count(ass => ass.finishT == DO.FinishType.Treated);
-            int sumCanceld = call.Count(ass => ass.finishT == DO.FinishType.SelfCancel);
-            int sumExpired = call.Count(ass => ass.finishT == DO.FinishType.ExpiredCancel);
-            int? idCall = call.Count(ass => ass.finishTreatment == null);
+            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
+            int sumCalls = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.WasTreated);
+            int sumCanceld = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator);
+            int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
+            //int? idCall = call.Count(ass => ass.finishTreatment == null);
             return new()
             {
-                ID = doVolunteer.ID,
-                fullName = doVolunteer.fullName,
-                active = doVolunteer.active,
-                numCallsHandled = sumCalls,
-                numCallsCancelled = sumCanceld,
-                numCallsExpired = sumExpired,
-                CallId = idCall,
+                Id = doVolunteer.Id,
+                FullName = doVolunteer.FullName,
+                Active = doVolunteer.Active,
+                SumTreatedCalls= sumCalls,
+                SumCanceledCalls= sumCanceld,
+                SumExpiredCalls=sumExpired,
+                //CallId = idCall,
             };
         }
         /// <summary>
@@ -46,30 +47,30 @@ namespace Helpers
         /// <returns>the bo vlounteer </returns>
         internal static BO.Volunteer convertDOToBOVolunteer(DO.Volunteer doVolunteer)
         {
-            var call = s_dal.Assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.ID).ToList();
-            int sumCalls = call.Count(ass => ass.finishT == DO.FinishType.Treated);
-            int sumCanceld = call.Count(ass => ass.finishT == DO.FinishType.SelfCancel);
-            int sumExpired = call.Count(ass => ass.finishT == DO.FinishType.ExpiredCancel);
-            int? idCall = call.Count(ass => ass.finishTreatment == null);
+            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
+            int sumCalls = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.WasTreated);
+            int sumCanceld = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator);
+            int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
+            //int? idCall = call.Count(ass => ass.finishTreatment == null);
             CallInProgress? c = GetCallIn(doVolunteer);
             return new()
             {
-                Id = doVolunteer.ID,
-                fullName = doVolunteer.fullName,
-                phone = doVolunteer.phone,
-                email = doVolunteer.email,
-                password = doVolunteer.password != null ? Decrypt(doVolunteer.password) : null,
-                currentAddress = doVolunteer.currentAddress,
+                Id = doVolunteer.Id,
+                FullName = doVolunteer.FullName,
+                PhoneNumber = doVolunteer.PhoneNumber,
+                Email = doVolunteer.Email,
+                Password = doVolunteer.Password != null ? Decrypt(doVolunteer.Password) : null,
+                Location = doVolunteer.Location,
                 Latitude = doVolunteer.Latitude,
                 Longitude = doVolunteer.Longitude,
-                role = (BO.RoleType)doVolunteer.role,
-                active = doVolunteer.active,
-                numCallsHandled = sumCalls,
-                numCallsCancelled = sumCanceld,
-                numCallsExpired = sumExpired,
-                maxDistance = doVolunteer.maxDistance,
-                distanceType = (BO.Distance)doVolunteer.distanceType,
-                callProgress = c
+                Position =doVolunteer.Position,
+                Active = doVolunteer.Active,
+                SumCalls = sumCalls,
+                SumCanceled = sumCanceld,
+                SumExpired = sumExpired,
+                MaxDistance = doVolunteer.MaxDistance,
+                DistanceType = doVolunteer.DistanceType,
+                VolunteerTakenCare = c
 
             };
         }
@@ -81,29 +82,29 @@ namespace Helpers
         internal static BO.CallInProgress? GetCallIn(DO.Volunteer doVolunteer)
         {
 
-            var call = s_dal.Assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.ID).ToList();
-            DO.Assignment? assignmentTreat = call.Find(ass => ass.finishTreatment == null);
+            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
+            DO.Assignment? assignmentTreat = call.Find(ass => ass.FinishAppointmentType == null);
 
             if (assignmentTreat != null)
             {
-                DO.Call? callTreat = s_dal.Call.Read(c => c.ID == assignmentTreat.CallId);
+                DO.Call? callTreat = s_dal.call.Read(c => c.Id == assignmentTreat.CallId);
 
                 if (callTreat != null)
                 {
-                    double latitude = doVolunteer.Latitude ?? callTreat.latitude;
-                    double longitude = doVolunteer.Longitude ?? callTreat.longitude;
+                    double latitude = doVolunteer.Latitude ?? callTreat.Latitude;
+                    double longitude = doVolunteer.Longitude ?? callTreat.Longitude;
                     return new()
                     {
-                        ID = assignmentTreat.ID,
+                        Id = assignmentTreat.Id,
                         CallId = assignmentTreat.CallId,
-                        callT = (BO.CallType)callTreat.callT,
-                        verbalDescription = callTreat.verbalDescription,
-                        address = callTreat.address,
-                        openTime = callTreat.openTime,
-                        maxTime = callTreat.maxTime,
-                        startTreatment = assignmentTreat.startTreatment,
-                        CallDistance = Tools.CalculateDistance(callTreat.latitude, callTreat.longitude, latitude, longitude),
-                        statusT = (callTreat.maxTime - ClockManager.Now <= s_dal.Config.RiskRange ? BO.Status.InRiskTreat : BO.Status.InTreat),
+                        CallType = callTreat.CallType,
+                        VerbDesc = callTreat.VerbDesc,
+                        CallAddress = callTreat.Address,
+                        OpenTime = callTreat.OpenTime,
+                        MaxFinishTime = callTreat.MaxTime,
+                        StartAppointmentTime = assignmentTreat.AppointmentTime,
+                        DistanceOfCall = Tools.CalculateDistance(callTreat.Latitude, callTreat.Longitude, latitude, longitude),
+                        Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.c.RiskRange ? BO.Status.InRiskTreat : BO.Status.InTreat),
                     };
                 }
             }
@@ -112,22 +113,22 @@ namespace Helpers
 
         internal static void checkeVolunteerFormat(BO.Volunteer volunteer)
         {
-            if (string.IsNullOrEmpty(volunteer.email) || volunteer.email.Count(c => c == '@') != 1)
+            if (string.IsNullOrEmpty(volunteer.Email) || volunteer.Email.Count(c => c == '@') != 1)
             {
-                throw new BO.EmailDoesNotcoretct($"email :{volunteer.email} have problem with format ");
+                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} incorrect Email ");
             }
 
             string pattern = @"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.com$";
 
-            if (!Regex.IsMatch(volunteer.email, pattern))
+            if (!Regex.IsMatch(volunteer.Email, pattern))
             {
-                throw new BO.EmailDoesNotcoretct($"email :{volunteer.email} have problem with format ");
+                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} incorrect Email ");
             }
-            if (string.IsNullOrEmpty(volunteer.phone) || volunteer.phone.Length < 8 || volunteer.phone.Length > 9 || !(volunteer.phone.All(char.IsDigit)))
-                throw new BO.PhoneDoesNotcoretct($"phone :{volunteer.phone} have problem with format ");
+            if (string.IsNullOrEmpty(volunteer.PhoneNumber) || volunteer.PhoneNumber.Length < 8 || volunteer.PhoneNumber.Length > 9 || !(volunteer.PhoneNumber.All(char.IsDigit)))
+                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"phone :{volunteer.PhoneNumber} incorrect Phone Number ");
 
-            if (volunteer.maxDistance < 0)
-                throw new MaxDistanceDoesNotcoretct("Max Distance can't be negavite ");
+            if (volunteer.MaxDistance < 0)
+                throw new BlMaxDistanceNotCorrect("ERROR- Max Distance cannot be negative ");
 
 
 
@@ -137,9 +138,9 @@ namespace Helpers
         internal static void checkeVolunteerlogic(BO.Volunteer volunteer)
         {
             if (!(IsValidId(volunteer.Id)))
-                throw new BO.IdDoesNotVaildException("the id isnt vaild ");
-            if (volunteer != null && !IsStrongPassword(volunteer.password!))
-                throw new BO.PaswordDoesNotstrongException($" this pasword :{volunteer.password!} doent have at least 6 characters, contains an uppercase letter and a digit");
+                throw new BO.Exceptions.BlIdNotValid("ID not valid ");
+            if (volunteer != null && !IsStrongPassword(volunteer.Password!))
+                throw new BO.Exceptions.BlPasswordNotValid($" The password :{volunteer.Password!} needs to contain at least  8 digits, Uppercase letter and number");
         }
         internal static bool IsValidId(long id)
         {
@@ -184,11 +185,11 @@ namespace Helpers
         internal static DO.Volunteer convertFormBOVolunteerToDo(BO.Volunteer BoVolunteer)
         {
 
-            if (BoVolunteer.currentAddress != null)
+            if (BoVolunteer.Location != null)
             {
 
 
-                double[] cordintes = Tools.GetGeolocationCoordinates(BoVolunteer.currentAddress);
+                double[] cordintes = Tools.GetGeolocationCoordinates(BoVolunteer.Location);
                 BoVolunteer.Latitude = cordintes[0];
                 BoVolunteer.Longitude = cordintes[1];
 
@@ -199,18 +200,18 @@ namespace Helpers
                 BoVolunteer.Longitude = null;
             }
             DO.Volunteer doVl = new(
-                 ID: BoVolunteer.Id,
-                 fullName: BoVolunteer.fullName,
-                  phone: BoVolunteer.phone,
-                 email: BoVolunteer.email,
-                 active: BoVolunteer.active,
-                 role: (DO.RoleType)BoVolunteer.role,
-                distanceType: (DO.Distance)BoVolunteer.distanceType,
-               password: BoVolunteer.password != null ? Encrypt(BoVolunteer.password) : null,
-               currentAddress: BoVolunteer.currentAddress,
+                 Id: BoVolunteer.Id,
+                 FullName: BoVolunteer.FullName,
+                 PhoneNumber: BoVolunteer.PhoneNumber,
+                 Email: BoVolunteer.Email,
+                 Active: BoVolunteer.Active,
+                 Position:BoVolunteer.Position,
+                 DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
+                 Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
+               Location: BoVolunteer.Location,
               Latitude: BoVolunteer.Latitude,
               Longitude: BoVolunteer.Longitude,
-             maxDistance: BoVolunteer.maxDistance
+             MaxDistance: BoVolunteer.MaxDistance
 
                         );
             return doVl;

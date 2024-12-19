@@ -5,7 +5,20 @@ using BO;
 internal class CallImplementation :ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
+    public IEnumerable<int> CallsAmount()
+    {    // שליפת כל הקריאות באמצעות ReadAll
+        var allCalls = GetCallList(null, null, null);
 
+        // קיבוץ וספירה לפי סטטוס, תוך שימוש בערך המספרי של ה-Enum
+        var grouped = allCalls
+            .GroupBy(call => call.Status)
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        // יצירת מערך בגודל ה-Enum, ומילויו בכמויות לפי הסטטוס
+        return Enumerable.Range(0, Enum.GetValues(typeof(BO.Status)).Length)
+                         .Select(index => grouped.ContainsKey(index) ? grouped[index] : 0)
+                         .ToArray(); // ממיר את התוצאה למערך int[]
+    }
     public int[] GetCallQuantitiesByStatus()
     {
         // קבלת כל הקריאות משכבת הנתונים
@@ -24,7 +37,7 @@ internal class CallImplementation :ICall
     }
 
 
-    IEnumerable<CallInList> GetCallList
+    IEnumerable<BO.CallInList> GetCallList
      (
          Enums.CallFieldEnum? filterField = null,
          object filterValue = null,

@@ -46,8 +46,36 @@ internal class Exceptions
         public BLXMLFileLoadCreateException(string? message) : base(message) { }
         public BLXMLFileLoadCreateException(string message, Exception innerException) : base(message, innerException) { }
     }
+    
+    public class BlEmailNotCorrect : Exception
+{
 
+    public BlEmailNotCorrect(string? message) : base(message) { }
+    public BlEmailNotCorrect(string message, Exception innerException) : base(message, innerException) { }
+}
+    public class BlPhoneNumberNotCorrect : Exception
+    {
 
+        public BlPhoneNumberNotCorrect(string? message) : base(message) { }
+        public BlPhoneNumberNotCorrect(string message, Exception innerException) : base(message, innerException) { }
+    }
+    public class BlMaxDistanceNotCorrect : Exception
+    {
 
+        public BlMaxDistanceNotCorrect(string? message) : base(message) { }
+        public BlMaxDistanceNotCorrect(string message, Exception innerException) : base(message, innerException) { }
+    }
+    public class BlIdNotValid : Exception
+    {
+
+        public BlIdNotValid(string? message) : base(message) { }
+        public BlIdNotValid(string message, Exception innerException) : base(message, innerException) { }
+    }
+    public class BlPasswordNotValid : Exception
+    {
+
+        public BlPasswordNotValid(string? message) : base(message) { }
+        public BlPasswordNotValid(string message, Exception innerException) : base(message, innerException) { }
+    }
 
 }
