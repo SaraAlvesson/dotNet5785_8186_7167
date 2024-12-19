@@ -1,6 +1,6 @@
 ﻿using DO;
 using Helpers;
-using static BO.Enums;
+
 
 namespace BO;
 public class Volunteer
@@ -10,10 +10,10 @@ public class Volunteer
     public string PhoneNumber { get; set; }
     public string Email { get; set; }
     public string? Password { get; set; } = null;
-    public string? Address { get; set; } = null;
+    public string? Location { get; set; } = null;
     public double? Latitude { get; set; } = null;
     public double? Longitude { get; set; } = null;
-    public VolunteerTypeEnum Position { get; set; } // Updated casing
+    public Position Position { get; set; } // Updated casing
     public bool Active { get; set; }
     public double? MaxDistance { get; set; } = null;
     public DistanceType DistanceType { get; set; } // Updated to specific enum

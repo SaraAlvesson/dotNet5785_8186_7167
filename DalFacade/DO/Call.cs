@@ -14,7 +14,7 @@ namespace DO;
 public record Call
 (
     int Id,
-    string Adress,
+    string Address,
     double Latitude,
     double Longitude,
     DateTime OpenTime,

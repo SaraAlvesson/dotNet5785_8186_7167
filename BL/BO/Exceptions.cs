@@ -46,8 +46,13 @@ internal class Exceptions
         public BLXMLFileLoadCreateException(string? message) : base(message) { }
         public BLXMLFileLoadCreateException(string message, Exception innerException) : base(message, innerException) { }
     }
+    public class AdressDoesNotExistException : Exception
+    {
 
+        public AdressDoesNotExistException(string? message) : base(message) { }
+        public AdressDoesNotExistException(string message, Exception innerException) : base(message, innerException) { }
+    }
 
-
+  
 
 }

@@ -11,13 +11,13 @@ namespace BO
         public string? VolunteerName { get; set; }
 
         // זמן כניסה לטיפול (חובה)
-        public DateTime OpenTime { get; set; }
+        public DateTime AppointmentTime { get; set; }
 
         // זמן סיום הטיפול בפועל (יכול להיות null אם לא הסתיים)
-        public DateTime? RealFinishTime { get; set; }
+        public DateTime? FinishAppointmentTime { get; set; }
 
         // סוג סיום טיפול (יכול להיות null אם לא הושלם טיפול)
-        public Enum FinishTreatmentType { get; set; }
+        public FinishAppointmentType FinishAppointmentType { get; set; }
 
         // הצגת פרטי ההקצאה כמחרוזת
         public override string ToString() => this.ToStringProperty();

@@ -13,7 +13,7 @@ internal static class ClockManager //stage 4
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
-    internal static DateTime Now { get => _dal.Config.Clock; } //stage 4
+    internal static DateTime Now { get => _dal.config.Clock; } //stage 4
 
     /// <summary>
     /// Method to perform application's clock from any BL class as may be required
@@ -28,8 +28,8 @@ internal static class ClockManager //stage 4
 
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
-        var oldClock = _dal.Config.Clock; //stage 4
-        _dal.Config.Clock = newClock; //stage 4
+        var oldClock = _dal.config.Clock; //stage 4
+        _dal.config.Clock = newClock; //stage 4
 
         //TO_DO:
         //Add calls here to any logic method that should be called periodically,
@@ -38,7 +38,8 @@ internal static class ClockManager //stage 4
         //Go through all students to update properties that are affected by the clock update
         //(students becomes not active after 5 years etc.)
         
-        StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4
+        StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4///////בנוסף, המתודה מזמנת מתודות תקופתיות (אחת או יותר) שיהיו צריכות להיקרא בכל פעם שהזמן של השעון מתקדם.
+
         //etc ...
 
         //Calling all the observers of clock update

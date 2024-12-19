@@ -1,11 +1,58 @@
 ﻿using BO;
 using System.Text.RegularExpressions;
 using DalApi;
+using DO;
 namespace Helpers;
 
 internal static class CallManager
 
 {
+    
+    internal static BO.Call GetCall(int id)
+    {
+         DalApi.IDal s_dal = DalApi.Factory.Get;
+
+         var call = s_dal.call.Read(id);
+         var assignment = s_dal.assignment.Read(id);
+         var volunteer=s_dal.Volunteer.Read(id);
+
+        if (call == null)   
+        throw new ArgumentNullException($"Call with ID {id} does not exist.");
+
+        BO.CallAssignInList CallAssiInList = GetCallAssignInList(assignment, volunteer.FullName);
+        BO.CallInList callList
+
+        var assignments = s_dal.assignment.ReadAll(a => a.CallId == call.Id)
+            .Select(a => CallAssiInList);
+
+        return new BO.Call
+        {
+            Id = call.Id,
+            CallType = (BO.CallType)call.CallType,
+            Address = call.Address,
+            Latitude = call.Latitude,
+            Longitude = call.Longitude,
+            OpenTime = call.OpenTime,
+            MaxTime = call.MaxTime,
+            VerbDesc = call.VerbDesc,
+            CallAssignInLists = assignments == null ? null : assignments.ToList()
+            CallStatus=
+        };
+    }
+    internal static BO.CallAssignInList GetCallAssignInList(DO.Assignment doAssignment, string volunteerName)
+    {
+        if(volunteerName == null) throw new ArgumentNullException(nameof(volunteerName));
+        return new CallAssignInList
+        {
+            VolunteerId = doAssignment.VolunteerId,
+            VolunteerName = volunteerName,
+            AppointmentTime = doAssignment.AppointmentTime,
+            FinishAppointmentTime = doAssignment.FinishAppointmentTime,
+            FinishAppointmentType = (BO.FinishAppointmentType)doAssignment.FinishAppointmentType
+
+        };
+    }
+
 
     private static IDal s_dal = Factory.Get; //stage 4
 
@@ -21,81 +68,48 @@ internal static class CallManager
 
             CallId = doCall.Id,
 
-            CallType = (BO.CallType)doCall.Type,
+            CallType = (BO.Enums.CallType)doCall.CallType,
 
-            Description = doCall.Description,
+            VerbDesc = doCall.VerbDesc,
 
-            FullAddress = doCall.FullAddress,
+            CallAddress = doCall.Address,
 
-            MaxCompletionTime = doCall.MaxTimeToClose,
+            //MaxFinishTime = doCall.MaxFinishTime,
 
-            EntryTime = entryTime,
+            //StartAppointmentTime = doCall.StartAppointmentTime,
 
-            DistanceFromVolunteer = distanceFromVolunteer,
+            DistanceOfCall = distanceFromVolunteer,
 
-            OpeningTime = doCall.TimeOpened
+            StartAppointmentTime = doCall.OpenTime
 
         };
 
     }
 
     internal static BO.ClosedCallInList GetClosedCallInList(DO.Call doCall, DO.Assignment? doAssignment)
-
     {
+        // אם לא קיים Assignment, זרוק חריגה
+        if (doAssignment == null)
+        {
+            throw new Exception($"Assignment missing for Call ID {doCall.Id}");
+        }
 
+        // החזרת אובייקט BO.ClosedCallInList שמממש את פרטי הקריאה והטיפול
         return new BO.ClosedCallInList
-
         {
-
-            Id = doCall.Id,
-
-            CallType = (BO.CallType)doCall.Type,
-
-            FullAddress = doCall.FullAddress,
-
-            OpeningTime = doCall.TimeOpened,
-
-            EntryTime = doAssignment?.TimeStart ?? throw new BO.BlWrongItemtException($"Assignment missing for Call ID {doCall.Id}"),
-
-            CompletionTime = doAssignment?.TimeEnd,
-
-            CompletionType = doAssignment?.TypeEndTreat.HasValue == true
-
-             ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
-
-             : null
-
-
+            Id = doCall.Id,  // מזהה הקריאה
+            Address = doCall.Address,  // כתובת הקריאה
+            CallType = (BO.Enums.CallType)doCall.CallType,  // המרה של סוג הקריאה מ-DO ל-BO
+            OpenTime = doCall.OpenTime,  // זמן פתיחה של הקריאה
+            TreatmentStartTime = doAssignment.AppointmentTime,  // זמן תחילת טיפול
+            RealFinishTime = doAssignment.FinishAppointmentTime,  // זמן סיום טיפול
+            FinishAppointmentType = doAssignment.FinishAppointmentType,
 
         };
-
     }
 
-    internal static CallAssignmentInList GetCallAssignmentInList(DO.Assignment doAssignment, string volunteerName)
 
-    {
-
-        return new CallAssignmentInList
-
-        {
-
-            VolunteerId = doAssignment.VolunteerId,
-
-            VolunteerName = volunteerName,
-
-            StartTime = doAssignment.TimeStart,
-
-            EndTime = doAssignment.TimeEnd,
-
-            CompletionType = doAssignment.TypeEndTreat.HasValue
-
-                ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
-
-                : null
-
-        };
-
-    }
+  
 
     internal static BO.OpenCallInList GetOpenCallInList(DO.Call doCall, double distanceFromVolunteer)
 
@@ -107,17 +121,42 @@ internal static class CallManager
 
             Id = doCall.Id,
 
-            CallType = (BO.CallType)doCall.Type,
+            CallType = (BO.Enums.CallType)doCall.CallType,
 
-            Description = doCall.Description,
+            VerbDesc = doCall.VerbDesc,
 
-            FullAddress = doCall.FullAddress,
+            Address = doCall.Address,
 
-            OpeningTime = doCall.TimeOpened,
+            OpenTime = doCall.OpenTime,
 
-            MaxCompletionTime = doCall.MaxTimeToClose,
+            MaxFinishTime = doCall.MaxTime,
 
-            DistanceFromVolunteer = distanceFromVolunteer
+            DistanceOfCall = distanceFromVolunteer
+
+        };
+
+    }
+    internal static BO.CallInList GetCallInList(DO.Call doCall, double distanceFromVolunteer)
+
+    {
+
+        return new BO.CallInList
+
+        {
+
+            Id = doCall.Id,
+
+            CallType = (BO.Enums.CallType)doCall.CallType,
+
+            VerbDesc = doCall.VerbDesc,
+
+            Address = doCall.Address,
+
+            OpenTime = doCall.OpenTime,
+
+            MaxFinishTime = doCall.MaxTime,
+
+            DistanceOfCall = distanceFromVolunteer
 
         };
 
@@ -127,13 +166,13 @@ internal static class CallManager
 
     {
 
-        if (string.IsNullOrWhiteSpace(doCall.Description))
+        if (string.IsNullOrWhiteSpace(doCall.VerbDesc))
 
             throw new ArgumentException("Description cannot be null or empty.");
 
 
 
-        if (string.IsNullOrWhiteSpace(doCall.FullAddress))
+        if (string.IsNullOrWhiteSpace(doCall.Address))
 
             throw new ArgumentException("FullAddress cannot be null or empty.");
 
@@ -151,7 +190,7 @@ internal static class CallManager
 
 
 
-        if (doCall.MaxTimeToClose.HasValue && doCall.MaxTimeToClose <= doCall.TimeOpened)
+        if (doCall.MaxTime.HasValue && doCall.MaxTime <= doCall.OpenTime)
 
             throw new ArgumentException("MaxTimeToClose must be later than TimeOpened.");
 
@@ -177,19 +216,19 @@ internal static class CallManager
 
             Id = doCall.Id,
 
-            Type = (BO.CallType)doCall.Type,
+            CallType = (BO.CallType)doCall.CallType,
 
-            Description = doCall.Description,
+            VerbDesc = doCall.VerbDesc,
 
-            FullAddress = doCall.FullAddress,
+            Address = doCall.Address,
 
             Latitude = doCall.Latitude,
 
             Longitude = doCall.Longitude,
 
-            OpenTime = doCall.TimeOpened,
+            OpenTime = doCall.OpenTime,
 
-            MaxEndTime = doCall.MaxTimeToClose
+            MaxTime = doCall.MaxTime
 
         };
 

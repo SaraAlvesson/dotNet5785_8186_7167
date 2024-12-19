@@ -28,12 +28,12 @@ public interface ICall
     /// </summary>
     /// <param name="callId">מזהה הקריאה</param>
     /// <returns>פרטי הקריאה כולל פרטי המשימות הקשורות לקריאה</returns>
-   DO. Call GetCallDetails(int callId);
+    BO. Call GetCallDetails(int callId);
     /// <summary>
     /// מעדכן את פרטי הקריאה (למשל: שינוי מצב או מספר קריאה).
     /// </summary>
     /// <param name="call">אובייקט קריאה עם הנתונים המעודכנים</param>
-    void UpdateCall(DO.Call call);
+    void UpdateCall(BO.Call call);
     /// <summary>
     /// מוחק קריאה לפי מזהה קריאה. ניתן למחוק קריאות שנמצאות במצב 'Open' ואין להן משימות משויכות.
     /// </summary>
@@ -53,7 +53,7 @@ public interface ICall
     /// <returns>רשימה של קריאות סגורות שטופלו על ידי המתנדב</returns>
     IEnumerable<ClosedCallInList> GetClosedCallsByVolunteer(
         string volunteerId,
-        Enums.CallTypeEnum? callType = null,
+        Enums.CallType? callType = null,
         Enums.CallFieldEnum? sortField = null
     );
     /// <summary>
@@ -65,7 +65,7 @@ public interface ICall
     /// <returns>רשימה של קריאות פתוחות שניתן לבחור לעבודה על ידי המתנדב</returns>
     IEnumerable<OpenCallInList> GetOpenCallsForVolunteer(
         string volunteerId,
-        Enums.CallTypeEnum? callType = null,
+        Enums.CallType? callType = null,
         Enums.CallFieldEnum? sortField = null
     );
     /// <summary>
@@ -88,4 +88,5 @@ public interface ICall
     void AssignCallToVolunteer(string volunteerId, int callId);
     bool IsFieldEqual(object entity, Enums.CallFieldEnum field, object value);
     object GetFieldValue(object entity, Enums.CallFieldEnum field);
+   
 }

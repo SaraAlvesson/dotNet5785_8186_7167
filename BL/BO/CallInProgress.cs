@@ -11,28 +11,28 @@ namespace BO
         public int CallId { get; init; }
 
         // סוג הקריאה (Enum)
-        public Enum CallType { get; set; }
+        public CallType CallType { get; set; }
 
         // תיאור מילולי (יכול להיות null)
         public string? VerbDesc { get; set; } = null;
 
         // כתובת מלאה של הקריאה
-        public string CallAddress { get; set; }
+        public string Address { get; set; }
 
         // זמן פתיחה של הקריאה
         public DateTime OpenTime { get; set; }
 
         // זמן מקסימלי לסיום הקריאה (יכול להיות null)
-        public DateTime? MaxFinishTime { get; set; }  // שים לב לשינוי ל- DateTime?
+        public DateTime? MaxTime { get; set; }  // שים לב לשינוי ל- DateTime?
 
         // זמן כניסה לטיפול (לא יכול להיות null)
-        public DateTime StartAppointmentTime { get; set; }
+        public DateTime AppointmentTime { get; set; }
 
         // מרחק קריאה מהמתנדב המטפל
         public double DistanceOfCall { get; set; }
 
         // סטטוס הקריאה
-        public Enum Status { get; init; }
+        public TreatmentStatus TreatmentStatus { get; init; }
 
         // המרה לסטראינג (השתמש במתודה שמבצע את ההמרה שלך)
         public override string ToString() => this.ToStringProperty();

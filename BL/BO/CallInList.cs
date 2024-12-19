@@ -11,7 +11,7 @@ namespace BO
         public int CallId { get; set; }
 
         // סוג הקריאה - חייב להיות מסוג Enum, לקוח מ-DO.Call
-        public Enum CallType { get; set; }
+        public CallType CallType { get; set; }
 
         // זמן פתיחה של הקריאה - לקוח מ-DO.Call
         public DateTime OpenTime { get; set; }
@@ -23,10 +23,10 @@ namespace BO
         public string? LastVolunteerName { get; set; }
 
         // סך זמן השלמת הטיפול - TimeSpan של הזמן שחלף מהזמן הפתיחה ועד סיום הקריאה
-        public TimeSpan? SumAppointmentTime { get; set; }  // יכול להיות null אם הקריאה לא הושלמה
+        public TimeSpan? SumLeftAppointmentTime { get; set; }  // יכול להיות null אם הקריאה לא הושלמה
 
         // סטטוס הקריאה - מחושב על פי סטטוס הסיום, זמן מקסימלי, והזמן הנוכחי
-        public Enum Status { get; set; }
+        public CallStatus CallStatus { get; set; }
 
         // סך הקצאות עבור הקריאה - מספר ההקצאות שנעשו לקריאה (כולל בוטלו)
         public int SumAssignment { get; set; }
