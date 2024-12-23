@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using static BO.Enums;
 
 namespace BO
 {
@@ -11,7 +12,7 @@ namespace BO
         public int CallId { get; init; }
 
         // סוג הקריאה (Enum)
-        public Enum CallType { get; set; }
+        public CallTypeEnum CallType { get; set; }
 
         // תיאור מילולי (יכול להיות null)
         public string? VerbDesc { get; set; } = null;
@@ -32,7 +33,7 @@ namespace BO
         public double DistanceOfCall { get; set; }
 
         // סטטוס הקריאה
-        public Enum Status { get; init; }
+        public StatusCallInProgressEnum Status { get; init; }
 
         // המרה לסטראינג (השתמש במתודה שמבצע את ההמרה שלך)
         public override string ToString() => this.ToStringProperty();

@@ -17,7 +17,7 @@ int CallId,
 int VolunteerId,
 DateTime AppointmentTime,
 DateTime? FinishAppointmentTime = null,
-Enum? FinishAppointmentType = null
+FinishAppointmentType? FinishAppointmentType = null
 
 )
 {/// <summary>

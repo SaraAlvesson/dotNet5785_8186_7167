@@ -1,6 +1,7 @@
 ﻿using BO;
 using System.Text.RegularExpressions;
 using DalApi;
+using DO;
 namespace Helpers;
 
 internal static class CallManager
@@ -38,7 +39,7 @@ internal static class CallManager
         };
 
     }
-
+   
     internal static BO.ClosedCallInList GetClosedCallInList(DO.Call doCall, DO.Assignment? doAssignment)
 
     {
@@ -107,17 +108,17 @@ internal static class CallManager
 
             Id = doCall.Id,
 
-            CallType = (BO.CallType)doCall.Type,
+            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
 
-            Description = doCall.Description,
+            VerbDesc = doCall.VerbDesc,
 
-            FullAddress = doCall.FullAddress,
+            Address = doCall.Adress,
 
-            OpeningTime = doCall.TimeOpened,
+            OpenTime = doCall.OpenTime,
 
-            MaxCompletionTime = doCall.MaxTimeToClose,
+            MaxFinishTime = doCall.MaxTime,
 
-            DistanceFromVolunteer = distanceFromVolunteer
+            DistanceOfCall = distanceFromVolunteer
 
         };
 
@@ -159,39 +160,57 @@ internal static class CallManager
 
 
 
-    internal static BO.Call ConvertDOToBO(DO.Call doCall)
+    //internal static BO.Call ConvertDOToBO(DO.Call doCall)
 
-    {
+    //{
 
-        // קריאה לפונקציית העזר לבדיקת תקינות
+    //    // קריאה לפונקציית העזר לבדיקת תקינות
 
-        ValidateCallData(doCall);
+    //    ValidateCallData(doCall);
+    //    // המרה ל־BO
+
+    //    return new BO.Call
+
+    //    {
+
+    //        Id = doCall.Id,
+
+    //        CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
+
+    //        VerbDesc = doCall.VerbDesc,
+
+    //        Address = doCall.Adress,
+
+    //        Latitude = doCall.Latitude,
+
+    //        Longitude = doCall.Longitude,
+
+    //        OpenTime = doCall.OpenTime,
+
+    //        MaxFinishTime = doCall.MaxTime,
 
 
 
-        // המרה ל־BO
 
-        return new BO.Call
+    //    };
+    //}
+         internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment,DO.Call doCall)
+         {
+        if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator
+            || doAssignment.FinishAppointmentType == FinishAppointmentType.SelfCancellation)
+            return BO.Enums.CalltStatusEnum.OPEN;
+        else if (doAssignment.VolunteerId != null)
+            return BO.Enums.CalltStatusEnum.CallIsBeingTreated;
+        else if (doAssignment.FinishAppointmentType == FinishAppointmentType.WasTreated)
+            return BO.Enums.CalltStatusEnum.CLOSED;
+        else if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired)
+            return BO.Enums.CalltStatusEnum.EXPIRED;
+        // else if (doCall.MaxTime)////////////////////////////////////////////////////////////////////////////////////
+        ///////  return;////////////////////////////////
+        else return;
+       
+         }
 
-        {
 
-            Id = doCall.Id,
-
-            Type = (BO.CallType)doCall.Type,
-
-            Description = doCall.Description,
-
-            FullAddress = doCall.FullAddress,
-
-            Latitude = doCall.Latitude,
-
-            Longitude = doCall.Longitude,
-
-            OpenTime = doCall.TimeOpened,
-
-            MaxEndTime = doCall.MaxTimeToClose
-
-        };
-
-    }
+    
 }

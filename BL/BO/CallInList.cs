@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using static BO.Enums;
 
 namespace BO
 {
@@ -11,7 +12,7 @@ namespace BO
         public int CallId { get; set; }
 
         // סוג הקריאה - חייב להיות מסוג Enum, לקוח מ-DO.Call
-        public Enum CallType { get; set; }
+        public CallTypeEnum CallType { get; set; }
 
         // זמן פתיחה של הקריאה - לקוח מ-DO.Call
         public DateTime OpenTime { get; set; }
@@ -26,7 +27,7 @@ namespace BO
         public TimeSpan? SumAppointmentTime { get; set; }  // יכול להיות null אם הקריאה לא הושלמה
 
         // סטטוס הקריאה - מחושב על פי סטטוס הסיום, זמן מקסימלי, והזמן הנוכחי
-        public Enum Status { get; set; }
+        public CalltStatusEnum Status { get; set; }
 
         // סך הקצאות עבור הקריאה - מספר ההקצאות שנעשו לקריאה (כולל בוטלו)
         public int SumAssignment { get; set; }

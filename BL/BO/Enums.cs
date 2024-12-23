@@ -22,39 +22,93 @@ public class Enums
     /// <summary>
     /// Enumeration for different call statuses.
     /// </summary>
-    public enum CallStatusEnum
+    public enum CalltStatusEnum
     {
         OPEN,        // פתוחה
-        IN_PROGRESS, // בתהליך
-        COMPLETED,   // הושלמה
-        CLOSED       // סגורה
+        EXPIRED, // פג תוקף
+        CLOSED,       // סגורה
+        CallIsBeingTreated,    // בטיפול
+        CallAlmostOver, // פתוחה בסיכון
+            CallTreatmentAlmostOver// בטיפול בסיכון
+
     }
     #endregion
-
-    #region CallTypeEnum
     /// <summary>
-    /// Enumeration for different call types.
+    /// Defines the possible outcomes for completing or terminating an appointment.
     /// </summary>
+    public enum FinishAppointmentTypeEnum
+    {
+        WasTreated, // The task or appointment was successfully completed.
+        SelfCancellation, // The appointment was canceled by the user.
+        CancelingAnAdministrator, // An administrator canceled the appointment.
+        CancellationHasExpired // The appointment was automatically canceled due to expiration.
+    }
     public enum CallTypeEnum
     {
-        EMERGENCY,    // חירום
-        NON_EMERGENCY  // לא חירום
+        PreparingFood, // Cooking or assembling meals for those in need.
+        TransportingFood, // Delivering prepared food to designated locations.
+        FixingEquipment, // Repairing essential tools or equipment.
+        ProvidingShelter, // Arranging or offering temporary accommodation.
+        TransportAssistance, // Helping with vehicle issues or emergency rides.
+        MedicalAssistance, // Delivering medical supplies or offering first aid.
+        EmotionalSupport, // Providing mental health support through conversations.
+        PackingSupplies,// Organizing and packing necessary supplies for distribution.
+        none
+    }
+
+
+
+    #region EmergencyTypeEnum
+    // <summary>
+    // Enumeration for different call types.
+    // </summary>
+        public enum StatusCallInProgressEnum
+    {
+        CallIsBeingTreated,    // בטיפול
+        CallAlmostOver  //סיכון
     }
     #endregion
 
-    #region CallFieldEnum
+
     /// <summary>
     /// Enumeration for fields that can be used to filter or sort call lists.
     /// </summary>
+     #region ClosedCallFieldEnum
+    public enum ClosedCallFieldEnum
+    {
+        ID,         // מזהה קריאה
+        Address,     // סטטוס
+        CallType,       // סוג
+        OpenTime,       // תאריך
+        TreatmentStartTime,  // מתנדב
+        RealFinishTime,
+        FinishAppointmentType,
+    }
+    #endregion
     public enum CallFieldEnum
     {
         ID,         // מזהה קריאה
-        STATUS,     // סטטוס
-        TYPE,       // סוג
-        DATE,       // תאריך
-        VOLUNTEER   // מתנדב
+        CallId,     // סטטוס
+        CallType,       // סוג
+        OpenTime,       // תאריך
+        SumTimeUntilFinish,  // מתנדב
+        LastVolunteerName,
+        SumAppointmentTime,
+        Status,
+        SumAssignment,
     }
-    #endregion
+    public enum OpenCallEnum
+    {
+        Id,         // מזהה קריאה
+        CallType,     // סטטוס
+        VerbDesc,       // סוג
+        Address,       // תאריך
+        OpenTime,  // מתנדב
+        MaxFinishTime,
+        DistanceOfCall,
+
+    }
+
 
     #region VolunteerTypeEnum
     /// <summary>
@@ -101,7 +155,14 @@ public class Enums
         COMPLETED,  // הושלמה
         CANCELLED   // בוטלה
     }
+
     #endregion
+    public enum DistanceTypeEnum
+    {
+        AerialDistance, // Straight-line distance (as the crow flies).
+        WalkingDistance, // Distance calculated for pedestrian routes.
+        DrivingDistance // Distance calculated for vehicular routes.
+    }
 }
 
 

@@ -33,7 +33,7 @@ public interface ICall
     /// מעדכן את פרטי הקריאה (למשל: שינוי מצב או מספר קריאה).
     /// </summary>
     /// <param name="call">אובייקט קריאה עם הנתונים המעודכנים</param>
-    void UpdateCall(DO.Call call);
+    void UpdateCall(BO.Call call);
     /// <summary>
     /// מוחק קריאה לפי מזהה קריאה. ניתן למחוק קריאות שנמצאות במצב 'Open' ואין להן משימות משויכות.
     /// </summary>
@@ -43,7 +43,7 @@ public interface ICall
     /// מוסיף קריאה חדשה למערכת. אם קיימת קריאה עם אותו מזהה, לא תתבצע ההוספה.
     /// </summary>
     /// <param name="call">הקריאה להוספה</param>
-    void AddCall(DO.Call call);
+    void AddCall(BO.Call call);
     /// <summary>
     /// מחזיר רשימה של קריאות סגורות שטופלו על ידי מתנדב, עם אפשרות לסינון ומיון.
     /// </summary>

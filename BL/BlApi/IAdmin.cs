@@ -17,7 +17,7 @@ public interface IAdmin
     /// Advances the system clock by the specified time unit (minute, hour, day, month, or year).
     /// </summary>
     /// <param name="timeUnit">The time unit to advance the clock (minute, hour, day, month, or year).</param>
-    void AdvanceClock(Enums.TimeUnitEnum timeUnit);
+    void UpdateClock(Enums.TimeUnitEnum timeUnit);
 
     /// <summary>
     /// Gets the current risk time range configuration.

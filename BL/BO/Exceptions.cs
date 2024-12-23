@@ -78,4 +78,23 @@ internal class Exceptions
         public BlPasswordNotValid(string message, Exception innerException) : base(message, innerException) { }
     }
 
+    public class BlUnauthorizedAccessException : Exception
+    {
+
+        public BlUnauthorizedAccessException(string? message) : base(message) { }
+        public BlUnauthorizedAccessException(string message, Exception innerException) : base(message, innerException) { }
+    }
+    public class BlCantBeErased : Exception
+    {
+
+        public BlCantBeErased(string? message) : base(message) { }
+        public BlCantBeErased(string message, Exception innerException) : base(message, innerException) { }
+    }
+    public class AddressDoesNotExistException : Exception
+    {
+
+        public AddressDoesNotExistException(string? message) : base(message) { }
+        public AddressDoesNotExistException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
 }

@@ -12,7 +12,7 @@ public class ClosedCallInList
     public DateTime OpenTime { get; set; } // זמן פתיחה (לא יכול להיות null)
     public DateTime? TreatmentStartTime { get; set; } // זמן כניסה לטיפול
     public DateTime? RealFinishTime { get; set; } // זמן סיום הטיפול בפועל
-    public FinishAppointmentType? FinishAppointmentType { get; set; } // סוג סיום הטיפול
+    public FinishAppointmentTypeEnum? FinishAppointmentType { get; set; } // סוג סיום הטיפול
 
     public override string ToString() => this.ToStringProperty();
 }

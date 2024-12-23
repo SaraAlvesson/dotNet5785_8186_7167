@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using static BO.Enums;
 
 namespace BO
 {
@@ -17,7 +18,7 @@ namespace BO
         public DateTime? RealFinishTime { get; set; }
 
         // סוג סיום טיפול (יכול להיות null אם לא הושלם טיפול)
-        public Enum FinishTreatmentType { get; set; }
+        public FinishAppointmentTypeEnum FinishAppointmentType { get; set; }
 
         // הצגת פרטי ההקצאה כמחרוזת
         public override string ToString() => this.ToStringProperty();

@@ -119,7 +119,7 @@ namespace Helpers
 
                         if (locationData == null || locationData.Length == 0)
                         {
-                            throw new AdressDoesNotExistException("No geolocation data found for the given address.");
+                            throw new Exceptions.AddressDoesNotExistException("No geolocation data found for the given address.");
                         }
 
                         // Return latitude and longitude
@@ -204,7 +204,7 @@ namespace Helpers
         /// <param name="distanceInKm">Distance in kilometers.</param>
         /// <returns>Distance type: WalkingDistance, DrivingDistance, or AirDistance.</returns>
         /// <author>ChatGPT, OpenAI</author>
-        public static DO.Distance GetDistanceType(double distanceInKm)
+        public static DO.DistanceType GetDistanceType(double distanceInKm)
         {
             // Thresholds for categorizing distances
             const double walkingDistanceThreshold = 3.0;  // <= 3 km for WalkingDistance
@@ -213,19 +213,19 @@ namespace Helpers
 
             if (distanceInKm <= walkingDistanceThreshold)
             {
-                return DO.Distance.walkingDistance; // Walking distance for <= 3 km
+                return DO.DistanceType.WalkingDistance; // Walking distance for <= 3 km
             }
             else if (distanceInKm <= drivingDistanceThreshold)
             {
-                return DO.Distance.DrivingDistance; // Driving distance for <= 50 km
+                return DO.DistanceType.DrivingDistance; // Driving distance for <= 50 km
             }
             else if (distanceInKm <= airDistanceThreshold)
             {
-                return DO.Distance.AirDistance; // Air distance for <= 1000 km
+                return DO.DistanceType.AerialDistance; // Air distance for <= 1000 km
             }
             else
             {
-                return DO.Distance.AirDistance; // Default to AirDistance for greater than 1000 km
+                return DO.DistanceType.AerialDistance; // Default to AirDistance for greater than 1000 km
             }
         }
 

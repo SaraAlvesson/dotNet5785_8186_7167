@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using static BO.Enums;
 
 namespace BO
 {
@@ -8,7 +9,7 @@ namespace BO
         public int Id { get; init; }
 
         // סוג הקריאה - חייב להיות מוגדר כ-enum, לא יכול להיות null
-        public Enum CallType { get; set; }
+        public CallTypeEnum CallType { get; set; }
 
         // תיאור מילולי - יכול להיות null
         public string? VerbDesc { get; set; }
@@ -29,7 +30,7 @@ namespace BO
         public DateTime? MaxFinishTime { get; set; }
 
         // סטטוס הקריאה - מחושב על פי סוג סיום הטיפול, זמן מקסימלי לסיום והזמן הנוכחי
-        public Enum CallStatusEnum { get; set; }
+        public CalltStatusEnum CallStatus { get; set; }
 
         // רשימת ההקצאות עבור הקריאה - אם אין הקצאות, יהיה null
         public List<BO.CallAssignInList>? CallAssignInLists { get; set; }

@@ -4,6 +4,7 @@ using BO;
 using DalApi;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -53,7 +54,7 @@ namespace Helpers
             int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
             //int? idCall = call.Count(ass => ass.finishTreatment == null);
             CallInProgress? c = GetCallIn(doVolunteer);
-            return new()
+            return new BO.Volunteer()
             {
                 Id = doVolunteer.Id,
                 FullName = doVolunteer.FullName,
@@ -63,13 +64,13 @@ namespace Helpers
                 Location = doVolunteer.Location,
                 Latitude = doVolunteer.Latitude,
                 Longitude = doVolunteer.Longitude,
-                Position =doVolunteer.Position,
+                Position = (BO.Enums.VolunteerTypeEnum)doVolunteer.Position,
                 Active = doVolunteer.Active,
                 SumCalls = sumCalls,
                 SumCanceled = sumCanceld,
                 SumExpired = sumExpired,
                 MaxDistance = doVolunteer.MaxDistance,
-                DistanceType = doVolunteer.DistanceType,
+                DistanceType = (BO.Enums.DistanceTypeEnum)doVolunteer.DistanceType,
                 VolunteerTakenCare = c
 
             };
@@ -97,9 +98,9 @@ namespace Helpers
                     {
                         Id = assignmentTreat.Id,
                         CallId = assignmentTreat.CallId,
-                        CallType = callTreat.CallType,
+                        CallType = (BO.Enums.CallTypeEnum)callTreat.CallType,
                         VerbDesc = callTreat.VerbDesc,
-                        CallAddress = callTreat.Address,
+                        CallAddress = callTreat.Adress,
                         OpenTime = callTreat.OpenTime,
                         MaxFinishTime = callTreat.MaxTime,
                         StartAppointmentTime = assignmentTreat.AppointmentTime,
@@ -111,31 +112,57 @@ namespace Helpers
             return null;
         }
 
-        internal static void checkeVolunteerFormat(BO.Volunteer volunteer)
+        internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
+        {
+            // וידוא שלא מדובר במחרוזת ריקה או null
+            if (string.IsNullOrEmpty(volunteer.PhoneNumber))
+                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} is incorrect (empty or null).");
+
+            // וידוא שכל התווים הם ספרות בלבד
+            if (!volunteer.PhoneNumber.All(char.IsDigit))
+                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} contains invalid characters.");
+
+            // וידוא שהאורך מתאים
+            if (volunteer.PhoneNumber.Length < 8 || volunteer.PhoneNumber.Length > 9)
+                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} has an invalid length.");
+
+            // אם כל הבדיקות עברו בהצלחה
+            return true;
+        }
+
+        internal static bool checkVolunteerLocation(BO.Volunteer volunteer)
+        {
+            if (volunteer.MaxDistance < 0)
+                throw new BlMaxDistanceNotCorrect("ERROR- Max Distance cannot be negative ");
+            else
+                return true;
+        }
+
+
+
+
+
+
+        internal static bool checkVolunteerEmail(BO.Volunteer volunteer)
         {
             if (string.IsNullOrEmpty(volunteer.Email) || volunteer.Email.Count(c => c == '@') != 1)
             {
-                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} incorrect Email ");
+                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
+                
             }
-
             string pattern = @"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.com$";
 
             if (!Regex.IsMatch(volunteer.Email, pattern))
             {
-                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} incorrect Email ");
+                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email}  Is incorrect  ");
             }
-            if (string.IsNullOrEmpty(volunteer.PhoneNumber) || volunteer.PhoneNumber.Length < 8 || volunteer.PhoneNumber.Length > 9 || !(volunteer.PhoneNumber.All(char.IsDigit)))
-                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"phone :{volunteer.PhoneNumber} incorrect Phone Number ");
-
-            if (volunteer.MaxDistance < 0)
-                throw new BlMaxDistanceNotCorrect("ERROR- Max Distance cannot be negative ");
-
-
-
-
-
+            else
+                return true;
         }
-        internal static void checkeVolunteerlogic(BO.Volunteer volunteer)
+
+
+
+        internal static void checkVolunteerlogic(BO.Volunteer volunteer)
         {
             if (!(IsValidId(volunteer.Id)))
                 throw new BO.Exceptions.BlIdNotValid("ID not valid ");
@@ -205,7 +232,7 @@ namespace Helpers
                  PhoneNumber: BoVolunteer.PhoneNumber,
                  Email: BoVolunteer.Email,
                  Active: BoVolunteer.Active,
-                 Position:BoVolunteer.Position,
+                 Position:(DO.Position)BoVolunteer.Position,
                  DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
                  Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
                Location: BoVolunteer.Location,
@@ -286,7 +313,12 @@ namespace Helpers
             return password.Any(char.IsUpper) && password.Any(char.IsDigit);
         }
 
+       
 
-    }
+
+   
+      
+
+}
 
 }
