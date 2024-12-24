@@ -608,9 +608,11 @@ internal class Program
 
         Console.Write("Finish Appointment Type (optional, press Enter to skip): ");
         string finishAppointmentTypeInput = Console.ReadLine();
-        Enum? finishAppointmentType = string.IsNullOrWhiteSpace(finishAppointmentTypeInput)
-            ? null
-            : Enum.Parse<FinishAppointmentType>(finishAppointmentTypeInput, true);
+        FinishAppointmentType? finishAppointmentType = null;
+        if (!string.IsNullOrWhiteSpace(finishAppointmentTypeInput))
+        {
+            finishAppointmentType = (FinishAppointmentType)Enum.Parse(typeof(FinishAppointmentType), finishAppointmentTypeInput, true);
+        }
 
         return new Assignment
         {
@@ -622,6 +624,8 @@ internal class Program
             FinishAppointmentType = finishAppointmentType
         };
     }
+
+
     // End of GetAssignmentFromUser method.
 
     /// <summary>

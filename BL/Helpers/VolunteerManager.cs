@@ -2,6 +2,7 @@
 using BlImplementation;
 using BO;
 using DalApi;
+using DO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -35,9 +36,9 @@ namespace Helpers
                 Id = doVolunteer.Id,
                 FullName = doVolunteer.FullName,
                 Active = doVolunteer.Active,
-                SumTreatedCalls= sumCalls,
-                SumCanceledCalls= sumCanceld,
-                SumExpiredCalls=sumExpired,
+                SumTreatedCalls = sumCalls,
+                SumCanceledCalls = sumCanceld,
+                SumExpiredCalls = sumExpired,
                 //CallId = idCall,
             };
         }
@@ -46,71 +47,71 @@ namespace Helpers
         /// </summary>
         /// <param name="doVolunteer"> the Dovolunteer </param>
         /// <returns>the bo vlounteer </returns>
-        internal static BO.Volunteer convertDOToBOVolunteer(DO.Volunteer doVolunteer)
-        {
-            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
-            int sumCalls = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.WasTreated);
-            int sumCanceld = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator);
-            int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
-            //int? idCall = call.Count(ass => ass.finishTreatment == null);
-            CallInProgress? c = GetCallIn(doVolunteer);
-            return new BO.Volunteer()
-            {
-                Id = doVolunteer.Id,
-                FullName = doVolunteer.FullName,
-                PhoneNumber = doVolunteer.PhoneNumber,
-                Email = doVolunteer.Email,
-                Password = doVolunteer.Password != null ? Decrypt(doVolunteer.Password) : null,
-                Location = doVolunteer.Location,
-                Latitude = doVolunteer.Latitude,
-                Longitude = doVolunteer.Longitude,
-                Position = (BO.Enums.VolunteerTypeEnum)doVolunteer.Position,
-                Active = doVolunteer.Active,
-                SumCalls = sumCalls,
-                SumCanceled = sumCanceld,
-                SumExpired = sumExpired,
-                MaxDistance = doVolunteer.MaxDistance,
-                DistanceType = (BO.Enums.DistanceTypeEnum)doVolunteer.DistanceType,
-                VolunteerTakenCare = c
+        //internal static BO.Volunteer convertDOToBOVolunteer(DO.Volunteer doVolunteer)
+        //{
+        //    var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
+        //    int sumCalls = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.WasTreated);
+        //    int sumCanceld = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator);
+        //    int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
+        //    //int? idCall = call.Count(ass => ass.finishTreatment == null);
+        //    CallInProgress? c = GetCallIn(doVolunteer);
+        //    return new BO.Volunteer()
+        //    {
+        //        Id = doVolunteer.Id,
+        //        FullName = doVolunteer.FullName,
+        //        PhoneNumber = doVolunteer.PhoneNumber,
+        //        Email = doVolunteer.Email,
+        //        Password = doVolunteer.Password != null ? Decrypt(doVolunteer.Password) : null,
+        //        Location = doVolunteer.Location,
+        //        Latitude = doVolunteer.Latitude,
+        //        Longitude = doVolunteer.Longitude,
+        //        Position = (BO.Enums.VolunteerTypeEnum)doVolunteer.Position,
+        //        Active = doVolunteer.Active,
+        //        SumCalls = sumCalls,
+        //        SumCanceled = sumCanceld,
+        //        SumExpired = sumExpired,
+        //        MaxDistance = doVolunteer.MaxDistance,
+        //        DistanceType = (BO.Enums.DistanceTypeEnum)doVolunteer.DistanceType,
+        //        VolunteerTakenCare = c
 
-            };
-        }
-        /// <summary>
-        /// get volunteer and return Call in prgers if there is one 
-        /// </summary>
-        /// <param name="doVolunteer"> the volunteer we wnat to check if there is </param>
-        /// <returns>callin progerss th this spsifiec volunteer </returns>
-        internal static BO.CallInProgress? GetCallIn(DO.Volunteer doVolunteer)
-        {
+        //    };
+        //}
+        ///// <summary>
+        ///// get volunteer and return Call in prgers if there is one 
+        ///// </summary>
+        ///// <param name="doVolunteer"> the volunteer we wnat to check if there is </param>
+        ///// <returns>callin progerss th this spsifiec volunteer </returns>
+        //internal static BO.CallInProgress? GetCallIn(DO.Volunteer doVolunteer)
+        //{
 
-            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
-            DO.Assignment? assignmentTreat = call.Find(ass => ass.FinishAppointmentType == null);
+        //    var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
+        //    DO.Assignment? assignmentTreat = call.Find(ass => ass.FinishAppointmentType == null);
 
-            if (assignmentTreat != null)
-            {
-                DO.Call? callTreat = s_dal.call.Read(c => c.Id == assignmentTreat.CallId);
+        //    if (assignmentTreat != null)
+        //    {
+        //        DO.Call? callTreat = s_dal.call.Read(c => c.Id == assignmentTreat.CallId);
 
-                if (callTreat != null)
-                {
-                    double latitude = doVolunteer.Latitude ?? callTreat.Latitude;
-                    double longitude = doVolunteer.Longitude ?? callTreat.Longitude;
-                    return new()
-                    {
-                        Id = assignmentTreat.Id,
-                        CallId = assignmentTreat.CallId,
-                        CallType = (BO.Enums.CallTypeEnum)callTreat.CallType,
-                        VerbDesc = callTreat.VerbDesc,
-                        CallAddress = callTreat.Adress,
-                        OpenTime = callTreat.OpenTime,
-                        MaxFinishTime = callTreat.MaxTime,
-                        StartAppointmentTime = assignmentTreat.AppointmentTime,
-                        DistanceOfCall = Tools.CalculateDistance(callTreat.Latitude, callTreat.Longitude, latitude, longitude),
-                        Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.c.RiskRange ? BO.Status.InRiskTreat : BO.Status.InTreat),
-                    };
-                }
-            }
-            return null;
-        }
+        //        if (callTreat != null)
+        //        {
+        //            double latitude = doVolunteer.Latitude ?? callTreat.Latitude;
+        //            double longitude = doVolunteer.Longitude ?? callTreat.Longitude;
+        //            return new()
+        //            {
+        //                Id = assignmentTreat.Id,
+        //                CallId = assignmentTreat.CallId,
+        //                CallType = (BO.Enums.CallTypeEnum)callTreat.CallType,
+        //                VerbDesc = callTreat.VerbDesc,
+        //                CallAddress = callTreat.Adress,
+        //                OpenTime = callTreat.OpenTime,
+        //                MaxFinishTime = callTreat.MaxTime,
+        //                StartAppointmentTime = assignmentTreat.AppointmentTime,
+        //                DistanceOfCall = Tools.CalculateDistance(callTreat.Latitude, callTreat.Longitude, latitude, longitude),
+        //                Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.? BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver : BO.Enums.CalltStatusEnum.CallIsBeingTreated),
+        //            };
+        //        }
+        //    }
+        //    return null;
+        //}
 
         internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
         {
@@ -148,7 +149,7 @@ namespace Helpers
             if (string.IsNullOrEmpty(volunteer.Email) || volunteer.Email.Count(c => c == '@') != 1)
             {
                 throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
-                
+
             }
             string pattern = @"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.com$";
 
@@ -232,7 +233,7 @@ namespace Helpers
                  PhoneNumber: BoVolunteer.PhoneNumber,
                  Email: BoVolunteer.Email,
                  Active: BoVolunteer.Active,
-                 Position:(DO.Position)BoVolunteer.Position,
+                 Position: (DO.Position)BoVolunteer.Position,
                  DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
                  Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
                Location: BoVolunteer.Location,
@@ -313,12 +314,11 @@ namespace Helpers
             return password.Any(char.IsUpper) && password.Any(char.IsDigit);
         }
 
-       
 
 
-   
-      
 
-}
+
+
+    }
 
 }

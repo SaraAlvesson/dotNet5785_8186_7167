@@ -29,7 +29,8 @@ public class Enums
         CLOSED,       // סגורה
         CallIsBeingTreated,    // בטיפול
         CallAlmostOver, // פתוחה בסיכון
-            CallTreatmentAlmostOver// בטיפול בסיכון
+        CallTreatmentAlmostOver// בטיפול בסיכון
+         UNKNOWN  // מצב ברירת מחדל
 
     }
     #endregion

@@ -42,3 +42,12 @@ public class DalXMLFileLoadCreateException:Exception
 
     public DalXMLFileLoadCreateException(string? message) : base(message) { } 
 }
+public class InvalidCallFormatException : Exception
+{
+    public InvalidCallFormatException(string message) : base(message) { }
+}
+
+public class InvalidCallLogicException : Exception
+{
+    public InvalidCallLogicException(string message) : base(message) { }
+}
