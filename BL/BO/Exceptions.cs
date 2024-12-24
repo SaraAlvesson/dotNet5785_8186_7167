@@ -97,4 +97,24 @@ internal class Exceptions
         public AddressDoesNotExistException(string message, Exception innerException) : base(message, innerException) { }
     }
 
+    public class CannotUpdateCallException : Exception
+    {
+
+        public CannotUpdateCallException(string? message) : base(message) { }
+        public CannotUpdateCallException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class CannotUpdateVolunteerException : Exception
+    {
+
+        public CannotUpdateVolunteerException(string? message) : base(message) { }
+        public CannotUpdateVolunteerException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class BlInvalidLocationException : Exception
+    {
+
+        public BlInvalidLocationException(string? message) : base(message) { }
+        public BlInvalidLocationException(string message, Exception innerException) : base(message, innerException) { }
+    }
 }

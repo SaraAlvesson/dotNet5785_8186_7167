@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using DalApi;
 using DO;
+using static BO.Exceptions;
 namespace Helpers;
 
 internal static class CallManager
@@ -22,19 +23,19 @@ internal static class CallManager
 
             CallId = doCall.Id,
 
-            CallType = (BO.CallType)doCall.Type,
+            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
 
-            Description = doCall.Description,
+            VerbDesc = doCall.VerbDesc,
 
-            FullAddress = doCall.FullAddress,
+            CallAddress = doCall.Adress,
 
-            MaxCompletionTime = doCall.MaxTimeToClose,
+            MaxFinishTime = doCall.MaxTime,
 
-            EntryTime = entryTime,
+            OpenTime = entryTime,
 
-            DistanceFromVolunteer = distanceFromVolunteer,
+            DistanceOfCall = distanceFromVolunteer,
 
-            OpeningTime = doCall.TimeOpened
+            StartAppointmentTime = doCall.OpenTime
 
         };
 
@@ -50,19 +51,19 @@ internal static class CallManager
 
             Id = doCall.Id,
 
-            CallType = (BO.CallType)doCall.Type,
+            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
 
-            FullAddress = doCall.FullAddress,
+            Address = doCall.Adress,
 
-            OpeningTime = doCall.TimeOpened,
+            OpenTime = doCall.OpenTime,
 
-            EntryTime = doAssignment?.TimeStart ?? throw new BO.BlWrongItemtException($"Assignment missing for Call ID {doCall.Id}"),
+            TreatmentStartTime = doAssignment?.AppointmentTime ?? throw new BO.BlWrongItemtException($"Assignment missing for Call ID {doCall.Id}"),
 
-            CompletionTime = doAssignment?.TimeEnd,
+            RealFinishTime = doAssignment?.FinishAppointmentTime,
 
-            CompletionType = doAssignment?.TypeEndTreat.HasValue == true
+            FinishAppointmentType = doAssignment?.FinishAppointmentType.HasValue == true
 
-             ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
+             ? (BO.Enums.FinishAppointmentTypeEnum?)doAssignment.FinishAppointmentType.Value
 
              : null
 
@@ -72,11 +73,11 @@ internal static class CallManager
 
     }
 
-    internal static CallAssignmentInList GetCallAssignmentInList(DO.Assignment doAssignment, string volunteerName)
+    internal static CallAssignInList GetCallAssignmentInList(DO.Assignment doAssignment, string volunteerName)
 
     {
 
-        return new CallAssignmentInList
+        return new CallAssignInList
 
         {
 
@@ -84,13 +85,13 @@ internal static class CallManager
 
             VolunteerName = volunteerName,
 
-            StartTime = doAssignment.TimeStart,
+            OpenTime = doAssignment.AppointmentTime,
 
-            EndTime = doAssignment.TimeEnd,
+            RealFinishTime = doAssignment.FinishAppointmentTime,
 
-            CompletionType = doAssignment.TypeEndTreat.HasValue
+            FinishAppointmentType = doAssignment.FinishAppointmentType.HasValue
 
-                ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
+                ? (BO.Enums.FinishAppointmentTypeEnum?)doAssignment.ty//.Value
 
                 : null
 
@@ -124,19 +125,20 @@ internal static class CallManager
 
     }
 
-    private static void ValidateCallData(DO.Call doCall)
+   
+    public static void checkCallAdress(BO.Call doCall)
 
     {
 
-        if (string.IsNullOrWhiteSpace(doCall.Description))
+        if (string.IsNullOrWhiteSpace(doCall.VerbDesc))
 
             throw new ArgumentException("Description cannot be null or empty.");
 
 
 
-        if (string.IsNullOrWhiteSpace(doCall.FullAddress))
+        if (string.IsNullOrWhiteSpace(doCall.Address))
 
-            throw new ArgumentException("FullAddress cannot be null or empty.");
+            throw new ArgumentException("Full Address cannot be null or empty.");
 
 
 
@@ -152,49 +154,44 @@ internal static class CallManager
 
 
 
-        if (doCall.MaxTimeToClose.HasValue && doCall.MaxTimeToClose <= doCall.TimeOpened)
+        if (doCall.MaxFinishTime.HasValue && doCall.MaxFinishTime <= doCall.OpenTime)
 
-            throw new ArgumentException("MaxTimeToClose must be later than TimeOpened.");
+            throw new ArgumentException("MaxTime  must be later than the open time.");
 
     }
 
 
 
-    //internal static BO.Call ConvertDOToBO(DO.Call doCall)
+    internal static BO.Call ConvertDOToBO(DO.Call doCall)
 
-    //{
+    {
 
-    //    // קריאה לפונקציית העזר לבדיקת תקינות
+        return new BO.Call
 
-    //    ValidateCallData(doCall);
-    //    // המרה ל־BO
+        {
 
-    //    return new BO.Call
+            Id = doCall.Id,
 
-    //    {
+            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
 
-    //        Id = doCall.Id,
+            VerbDesc = doCall.VerbDesc,
 
-    //        CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
+            Address = doCall.Adress,
 
-    //        VerbDesc = doCall.VerbDesc,
+            Latitude = doCall.Latitude,
 
-    //        Address = doCall.Adress,
+            Longitude = doCall.Longitude,
 
-    //        Latitude = doCall.Latitude,
+            OpenTime = doCall.OpenTime,
 
-    //        Longitude = doCall.Longitude,
-
-    //        OpenTime = doCall.OpenTime,
-
-    //        MaxFinishTime = doCall.MaxTime,
+            MaxFinishTime = doCall.MaxTime,
 
 
 
 
-    //    };
-    //}
-         internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment,DO.Call doCall)
+        };
+    }
+    internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment,DO.Call doCall)
          {
         if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator
             || doAssignment.FinishAppointmentType == FinishAppointmentType.SelfCancellation)

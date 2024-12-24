@@ -6,6 +6,7 @@ using DalApi;
 using DO;
 using Helpers;
 using static BO.Enums;
+using static BO.Exceptions;
 
 internal class CallImplementation :ICall
 {
@@ -99,7 +100,7 @@ internal class CallImplementation :ICall
         {
             throw new BO.Exceptions.BlDoesNotExistException($"Volunteer with ID={callId} does not exist");
         }
-        var assignment = _dal.assignment.ReadAll(a => a.CallId == callId).Select(a => FinishAppointmentTime);//////////////////////////////////////////////////////
+        var assignment = _dal.assignment.ReadAll(a => a.CallId == callId).Select(a => a.FinishAppointmentTime);//////////////////////////////////////////////////////
         if (assignment != null )
         {
             BO.Call c = CallManager.CheckStatus(assignment, Call);
@@ -135,18 +136,78 @@ internal class CallImplementation :ICall
     }
 
 
-    public void UpdateCall(BO.Call call)
+    public void UpdateCallDetails(BO.Call callDetails)
     {
+        try
+        {
+            // שלב 1: בקשת רשומת הקריאה משכבת הנתונים
+            var existingCall = _dal.call.ReadAll(v => v.Id == callDetails.Id).FirstOrDefault()
+                ?? throw new DalDoesNotExistException("Call not found.");
 
+            // שלב 2: בדיקת תקינות הערכים (פורמט ולוגיקה)
 
+             CallManager.checkCallAdress(callDetails);
 
-        
+            
+            // שלב 4: המרת אובייקט BO.Call ל-DO.Call
+            DO.Call newCall = new()
+            {
+                Id = callDetails.Id,
+                OpenTime = callDetails.OpenTime,
+                MaxTime = callDetails.MaxFinishTime,
+                Longitude = (double)callDetails.Longitude,
+                CallType=(DO.CallType)callDetails.CallType,
+                VerbDesc = callDetails.VerbDesc,
+                Latitude = (double)callDetails.Latitude,
+                Adress = callDetails.Address,
+            };
+
+            // שלב 5: עדכון הרשומה בשכבת הנתונים
+            _dal.call.Update(newCall);
+        }
+        catch (DO.DalDoesNotExistException ex)
+        {
+            // טיפול בחריגות וזריקתן מחדש עם מידע ברור לשכבת התצוגה
+            throw new CannotUpdateCallException("Error updating call details.", ex);
+        }
+       
     }
+
 
     public void DeleteCall(int callId)
     {
-        _dal.call.Delete(callId); // Delete the call by ID
+        try
+        {
+            // שלב 1: בקשת הקריאה משכבת הנתונים
+            var existingCall = _dal.call.ReadAll(v => v.Id == callId).FirstOrDefault()
+                ?? throw new DalDoesNotExistException("Call not found.");
+            var assignment=_dal.assignment.Read(a=>a.CallId==callId);
+            // שלב 2: בדיקת סטטוס הקריאה והתאמת התנאים למחיקה
+            if ( existingCall.status != Enums.CalltStatusEnum.OPEN  )
+                throw new BLDeletionImpossible("Only open calls can be deleted.");
+
+            // שלב 3: בדיקה אם הקריאה הוקצתה למתנדב
+            if (assignment.VolunteerId != null)
+                throw new BLDeletionImpossible("Cannot delete call as it has been assigned to a volunteer.");
+
+            // שלב 4: ניסיון מחיקת הקריאה משכבת הנתונים
+            try
+            {
+                _dal.call.Delete(callId);
+            }
+            catch (DO.DalDeletionImpossible ex)
+            {
+                // שלב 5: אם יש בעיה במחיקה בשכבת הנתונים, זריקת חריגה מתאימה לכיוון שכבת התצוגה
+                throw new ArgumentException("Error deleting call from data layer.", ex);
+            }
+        }
+        catch (Exception ex)
+        {
+            // שלב 6: טיפול בחריגות וזריקתן מחדש עם מידע ברור לשכבת התצוגה
+            throw new ArgumentException("Error processing delete call request.", ex);
+        }
     }
+
 
     public void AddCall(BO.Call call)
     {
