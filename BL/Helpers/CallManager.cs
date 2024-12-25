@@ -2,7 +2,7 @@
 using System.Text.Json; // שים לב לשימוש ב- System.Text.Json במקום Newtonsoft.Json
 using DalApi;
 using DO;
-namespace Helpers;
+using System.Net.Http;
 
 namespace Helpers
 {
@@ -10,39 +10,42 @@ namespace Helpers
     {
         private static IDal s_dal = Factory.Get; //stage 4
 
-    internal static BO.CallInProgress GetCallInProgress(DO.Call doCall, DateTime entryTime, double distanceFromVolunteer)
-
-    {
-
-        return new BO.CallInProgress
-
+        internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
         {
-
-            Id = doCall.Id,
-
-            CallId = doCall.Id,
-
-            CallType = (BO.CallType)doCall.Type,
-
-            Description = doCall.Description,
-
-            FullAddress = doCall.FullAddress,
-
-            MaxCompletionTime = doCall.MaxTimeToClose,
-
-            EntryTime = entryTime,
-
-            DistanceFromVolunteer = distanceFromVolunteer,
-
-            OpeningTime = doCall.TimeOpened
-
-        };
-
-    }
-   
-    internal static BO.ClosedCallInList GetClosedCallInList(DO.Call doCall, DO.Assignment? doAssignment)
-
-    {
+            // בדיקה אם הקריאה פתוחה - לא בטיפול
+            if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator
+                || doAssignment.FinishAppointmentType == FinishAppointmentType.SelfCancellation)
+            {
+                if (doCall.MaxTime.HasValue && doCall.MaxTime.Value - DateTime.Now <= riskTimeSpan)
+                {
+                    // אם הקריאה פתוחה וקרובה לזמן הסיום
+                    return BO.Enums.CalltStatusEnum.CallAlmostOver; // פתוחה בסיכון
+                }
+                return BO.Enums.CalltStatusEnum.OPEN; // פתוחה
+            }
+            // אם הקריאה בטיפול
+            else if (doAssignment.FinishAppointmentType == FinishAppointmentType.WasTreated)
+            {
+                return BO.Enums.CalltStatusEnum.CLOSED; // סגורה
+            }
+            else if (doAssignment.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired)
+            {
+                return BO.Enums.CalltStatusEnum.EXPIRED; // פג תוקף
+            }
+            else if (doAssignment.VolunteerId != null)
+            {
+                if (doCall.MaxTime.HasValue && doCall.MaxTime.Value - DateTime.Now <= riskTimeSpan)
+                {
+                    // אם הקריאה בטיפול ומתקרבת לזמן הסיום
+                    return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // בטיפול בסיכון
+                }
+                return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // בטיפול
+            }
+            else
+            {
+                return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל
+            }
+        }
 
         public static void checkCallLogic(BO.Call call)
         {
@@ -54,19 +57,28 @@ namespace Helpers
             if (!IsValidAddress(call.Address))
                 throw new InvalidCallLogicException("Address is invalid or does not exist.");
 
-            CallType = (BO.CallType)doCall.Type,
+            // בדיקת התאמה בין כתובת לקואורדינטות
+            double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
 
-            FullAddress = doCall.FullAddress,
+            double expectedLongitude = GeolocationCoordinates[0];
+            double expectedLatitude = GeolocationCoordinates[1];
 
-            OpeningTime = doCall.TimeOpened,
+            // השוואה בין שני ערכים מסוג double
+            if (Math.Abs((double)call.Longitude - expectedLongitude) > 0.0001 || Math.Abs((double)call.Latitude - expectedLatitude) > 0.0001)
+                throw new InvalidCallLogicException("Longitude and Latitude do not match the provided address.");
 
-            EntryTime = doAssignment?.TimeStart ?? throw new BO.BlWrongItemtException($"Assignment missing for Call ID {doCall.Id}"),
+        }
 
-            CompletionTime = doAssignment?.TimeEnd,
 
-            CompletionType = doAssignment?.TypeEndTreat.HasValue == true
+        public static void checkCallFormat(BO.Call call)
+        {
+            // בדיקת מזהה
+            if (call.Id <= 0)
+                throw new InvalidCallFormatException("Call ID must be a positive integer.");
 
-             ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
+            // בדיקת זמן פתיחה
+            if (call.OpenTime == default)
+                throw new InvalidCallFormatException("Open time is not valid.");
 
             // בדיקת זמן מקסימלי
             if (call.MaxFinishTime == default)
@@ -84,7 +96,11 @@ namespace Helpers
                 throw new InvalidCallFormatException("Latitude must be between -90 and 90 degrees.");
         }
 
-    internal static CallAssignmentInList GetCallAssignmentInList(DO.Assignment doAssignment, string volunteerName)
+        public static bool IsValidAddress(string address)
+        {
+            // אם הכתובת ריקה או ארוכה מדי, נחזיר false
+            if (string.IsNullOrWhiteSpace(address) || address.Length > 200)
+                return false;
 
             try
             {
@@ -95,142 +111,64 @@ namespace Helpers
                 var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={apiKey}";
                 var response = httpClient.GetStringAsync(url).Result;
 
-        return new CallAssignmentInList
-
-        {
-
-            VolunteerId = doAssignment.VolunteerId,
-
-            VolunteerName = volunteerName,
-
-            StartTime = doAssignment.TimeStart,
-
-            EndTime = doAssignment.TimeEnd,
-
-            CompletionType = doAssignment.TypeEndTreat.HasValue
-
-                ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
-
-                : null
-
-        };
-
-    }
-
-    internal static BO.OpenCallInList GetOpenCallInList(DO.Call doCall, double distanceFromVolunteer)
-
-    {
-
-        return new BO.OpenCallInList
-
-        {
-
-            Id = doCall.Id,
-
-            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
-
-            VerbDesc = doCall.VerbDesc,
-
-            Address = doCall.Adress,
-
-            OpenTime = doCall.OpenTime,
-
-            MaxFinishTime = doCall.MaxTime,
-
-            DistanceOfCall = distanceFromVolunteer
-
-        };
-
-    }
-
-    private static void ValidateCallData(DO.Call doCall)
-
-    {
-
-        if (string.IsNullOrWhiteSpace(doCall.Description))
-
-            throw new ArgumentException("Description cannot be null or empty.");
-
-
-
-        if (string.IsNullOrWhiteSpace(doCall.FullAddress))
-
-            throw new ArgumentException("FullAddress cannot be null or empty.");
-
-
-
-        if (doCall.Latitude < -90 || doCall.Latitude > 90)
-
-            throw new ArgumentOutOfRangeException(nameof(doCall.Latitude), "Latitude must be between -90 and 90.");
-
-
-
-        if (doCall.Longitude < -180 || doCall.Longitude > 180)
-
-            throw new ArgumentOutOfRangeException(nameof(doCall.Longitude), "Longitude must be between -180 and 180.");
-
-
-
-        if (doCall.MaxTimeToClose.HasValue && doCall.MaxTimeToClose <= doCall.TimeOpened)
-
-            throw new ArgumentException("MaxTimeToClose must be later than TimeOpened.");
-
-    }
-
-
-
-    //internal static BO.Call ConvertDOToBO(DO.Call doCall)
-
-    //{
-
-    //    // קריאה לפונקציית העזר לבדיקת תקינות
-
-    //    ValidateCallData(doCall);
-    //    // המרה ל־BO
-
-    //    return new BO.Call
-
-    //    {
-
-    //        Id = doCall.Id,
-
-    //        CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
-
-    //        VerbDesc = doCall.VerbDesc,
-
-    //        Address = doCall.Adress,
-
-    //        Latitude = doCall.Latitude,
-
-    //        Longitude = doCall.Longitude,
-
-    //        OpenTime = doCall.OpenTime,
-
-    //        MaxFinishTime = doCall.MaxTime,
-
-
-
-
-    //    };
-    //}
-         internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment,DO.Call doCall)
-         {
-        if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator
-            || doAssignment.FinishAppointmentType == FinishAppointmentType.SelfCancellation)
-            return BO.Enums.CalltStatusEnum.OPEN;
-        else if (doAssignment.VolunteerId != null)
-            return BO.Enums.CalltStatusEnum.CallIsBeingTreated;
-        else if (doAssignment.FinishAppointmentType == FinishAppointmentType.WasTreated)
-            return BO.Enums.CalltStatusEnum.CLOSED;
-        else if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired)
-            return BO.Enums.CalltStatusEnum.EXPIRED;
-        // else if (doCall.MaxTime)////////////////////////////////////////////////////////////////////////////////////
-        ///////  return;////////////////////////////////
-        else return;
-       
-         }
+                // אם התקבלה תשובה, נבדוק אם יש תוצאה, כך נוודא שהכתובת תקינה
+                var jsonResponse = JsonSerializer.Deserialize<JsonElement>(response); // שימוש ב-System.Text.Json
+                if (jsonResponse.GetProperty("status").GetString() == "OK")
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                // טיפול בחריגה במידה ויש
+                Console.WriteLine($"Error validating address: {ex.Message}");
+            }
+
+            return false;  // אם הכתובת לא קיימת או לא הצלחנו לאמת אותה, נחזיר false
+        }
+
+        //  מתודת עדכון הקריאות הפתוחות שפג תוקפן
+        //internal static void UpdateExpiredCalls()
+        //{
+        //    var calls = s_dal.call.ReadAll();
+        //    // 1. נלך על כל הקריאות הפתוחות
+        //    foreach (var call in calls) // Assuming _dal.Calls returns the list of calls
+        //    {
+        //        if (call.EndDate < ClockManager.Now) // 2. אם זמן הסיום עבר
+        //        {
+        //            // 3. קריאות שאין להן עדיין הקצאה
+        //            if (call.Assignment == null)
+        //            {
+        //                var newAssignment = new Assignment
+        //                {
+        //                    CallId = call.Id,
+        //                    EndDate = ClockManager.Now,
+        //                    EndReason = "ביטול פג תוקף",
+        //                    VolunteerId = 0 // ת.ז מתנדב
+        //                };
+        //                _dal.assignments.Add(newAssignment); // מוסיפים הקצאה חדשה
+        //            }
+        //            else if (call.Assignment.EndTreatmentDate == null) // 4. קריאות שיש להן הקצאה אך לא הסתיים טיפולן
+        //            {
+        //                call.Assignment.EndTreatmentDate = ClockManager.Now;
+        //                call.Assignment.EndReason = "ביטול פג תוקף"; // עדכון סיום טיפול
+        //                _dal.SaveChanges(); // שומרים את השינויים
+        //            }
+
+        //            // 5. שליחת הודעה למשקיפים על עדכון הקריאה הספציפית (אם יש)
+        //            if (call.Observers != null && call.Observers.Count > 0)
+        //            {
+        //                foreach (var observer in call.Observers)
+        //                {
+        //                    observer?.Invoke(); // שולחים את ההודעה למשקיף
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    // 6. שליחת הודעה על עדכון רשימת הקריאות
+        //    CallListUpdated?.Invoke();
+        //}
 
     }
 }
-
-

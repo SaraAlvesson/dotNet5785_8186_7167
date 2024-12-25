@@ -1,5 +1,4 @@
-﻿
-namespace BlImplementation;
+﻿namespace BlImplementation;
 using BlApi;
 using BO;
 using DO;
@@ -175,7 +174,7 @@ internal class CallImplementation : ICall
 
 
             callDetails.Longitude = GeolocationCoordinates[0];
-            callDetails.Latitude= GeolocationCoordinates[1];
+            callDetails.Latitude = GeolocationCoordinates[1];
 
 
             // שלב 4: המרת אובייקט BO.Call ל-DO.Call
@@ -203,7 +202,6 @@ internal class CallImplementation : ICall
             throw new CannotUpdateCallException("Invalid call details provided.", ex);
         }
     }
-
 
     public void DeleteCall(int callId)
     {
@@ -241,50 +239,52 @@ internal class CallImplementation : ICall
         }
     }
 
+
+
     public void AddCall(BO.Call call)
     {
 
-        
-        
-            // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(call);
-            CallManager.checkCallLogic(call);
-
-            // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
-            var existingCall = _dal.call.Read(v => v.Id == call.Id)
-                ?? throw new DalDoesNotExistException($"Call with ID {call.Id} not found.");
-
-            // שלב 3: בדיקת כתובת ועדכון קואורדינטות
-            if (!CallManager.IsValidAddress(call.Address))
-            {
-                throw new InvalidCallFormatException("Invalid address provided.");
-            }
-
-            // עדכון אורך ורוחב לפי הכתובת
-            double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
 
 
-            call.Longitude = GeolocationCoordinates[0];
-            call.Latitude = GeolocationCoordinates[1];
+        // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
+        CallManager.checkCallFormat(call);
+        CallManager.checkCallLogic(call);
+
+        // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
+        var existingCall = _dal.call.Read(v => v.Id == call.Id)
+            ?? throw new DalDoesNotExistException($"Call with ID {call.Id} not found.");
+
+        // שלב 3: בדיקת כתובת ועדכון קואורדינטות
+        if (!CallManager.IsValidAddress(call.Address))
+        {
+            throw new InvalidCallFormatException("Invalid address provided.");
+        }
+
+        // עדכון אורך ורוחב לפי הכתובת
+        double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
 
 
-            // שלב 4: המרת אובייקט BO.Call ל-DO.Call
-            DO.Call newCall = new()
-            {
-                Id = call.Id,
-                OpenTime = call.OpenTime,
-                MaxTime = call.MaxFinishTime,
-                Longitude = (double)call.Longitude,
-                Latitude = (double)call.Latitude,
-                Adress = call.Address,
-                CallType = (DO.CallType)call.CallType,
-                VerbDesc = call.VerbDesc,
-            };
+        call.Longitude = GeolocationCoordinates[0];
+        call.Latitude = GeolocationCoordinates[1];
 
-            // שלב 5: עדכון הרשומה בשכבת הנתונים
-            _dal.call.Create(newCall);
-        
- 
+
+        // שלב 4: המרת אובייקט BO.Call ל-DO.Call
+        DO.Call newCall = new()
+        {
+            Id = call.Id,
+            OpenTime = call.OpenTime,
+            MaxTime = call.MaxFinishTime,
+            Longitude = (double)call.Longitude,
+            Latitude = (double)call.Latitude,
+            Adress = call.Address,
+            CallType = (DO.CallType)call.CallType,
+            VerbDesc = call.VerbDesc,
+        };
+
+        // שלב 5: עדכון הרשומה בשכבת הנתונים
+        _dal.call.Create(newCall);
+
+
     }
 
     public IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
@@ -495,7 +495,7 @@ internal class CallImplementation : ICall
 
             // בדיקת אם קיימת הקצאה פתוחה על הקריאה
             var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
-            if (existingAssignments!=null)
+            if (existingAssignments != null)
                 throw new BO.Exceptions.BlInvalidOperationException("Call is already assigned to a volunteer.");
 
             // יצירת הקצאה חדשה
@@ -521,7 +521,7 @@ internal class CallImplementation : ICall
             // חריגות שקשורות לפעולה לא חוקית
             throw new BO.Exceptions.BlInvalidOperationException("Error in assignment operation.", ex);
         }
-       
+
     }
 
 

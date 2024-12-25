@@ -9,7 +9,7 @@ public class Enums
     /// Enumeration for time units used in the Admin service.
     /// </summary>
     public enum TimeUnitEnum
-    {
+    {   SECOND,
         MINUTE,   // דקה
         HOUR,     // שעה
         DAY,      // יום
@@ -29,7 +29,7 @@ public class Enums
         CLOSED,       // סגורה
         CallIsBeingTreated,    // בטיפול
         CallAlmostOver, // פתוחה בסיכון
-        CallTreatmentAlmostOver// בטיפול בסיכון
+        CallTreatmentAlmostOver,// בטיפול בסיכון
          UNKNOWN  // מצב ברירת מחדל
 
     }
@@ -117,8 +117,8 @@ public class Enums
     /// </summary>
     public enum VolunteerTypeEnum
     {
-        ADMIN,   // מנהל
-        VOLUNTEER  // רגיל
+        admin,   // מנהל
+        volunteer  // רגיל
     }
     #endregion
 

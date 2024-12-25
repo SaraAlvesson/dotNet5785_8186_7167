@@ -36,6 +36,6 @@ public interface IVolunteer
     /// <summary>
     /// Adds a new volunteer to the system.
     /// </summary>
-    void AddVolunteer(Volunteer volunteerDetails);
+    void AddVolunteer(BO.Volunteer volunteerDetails);
 }
 

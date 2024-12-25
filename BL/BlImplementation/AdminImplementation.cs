@@ -17,6 +17,11 @@ internal class AdminImplementation : IAdmin
         // Switch case to handle different time units
         switch (unit)
         {
+
+            case TimeUnitEnum.SECOND:
+                newTime = ClockManager.Now.AddSeconds(1);
+                break;
+
             case TimeUnitEnum.MINUTE:
                 newTime = ClockManager.Now.AddMinutes(1); // Advance by 1 minute
                 break;
@@ -32,6 +37,7 @@ internal class AdminImplementation : IAdmin
             case TimeUnitEnum.YEAR:
                 newTime = ClockManager.Now.AddYears(1); // Advance by 1 year
                 break;
+                
             default:
                 throw new ArgumentException("Invalid TimeUnit value"); // Handle invalid time unit
         }
