@@ -42,7 +42,7 @@ internal static class ClockManager //stage 4
         CallManager.UpdateExpiredCalls(); // קריאה למתודה שמעדכנת את הקריאות שפג תוקפן
 
         // Calling all the observers of clock update
-        ClockUpdatedObservers?.Invoke(); //prepared for stage 5
+        //ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }
 
     #endregion Stage 4

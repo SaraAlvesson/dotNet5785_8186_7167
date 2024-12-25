@@ -20,7 +20,7 @@ public interface ICall
     IEnumerable<BO.CallInList> GetCallList
     (
         Enums.CallFieldEnum? filter = null,
-        object toFilter = null,
+        object? toFilter = null,
         Enums.CallFieldEnum? toSort = null
     );
     /// <summary>
