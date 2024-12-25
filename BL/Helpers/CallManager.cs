@@ -1,15 +1,14 @@
 ﻿using BO;
-using System.Text.RegularExpressions;
+using System.Text.Json; // שים לב לשימוש ב- System.Text.Json במקום Newtonsoft.Json
 using DalApi;
 using DO;
-using static BO.Exceptions;
 namespace Helpers;
 
-internal static class CallManager
-
+namespace Helpers
 {
-
-    private static IDal s_dal = Factory.Get; //stage 4
+    internal static class CallManager
+    {
+        private static IDal s_dal = Factory.Get; //stage 4
 
     internal static BO.CallInProgress GetCallInProgress(DO.Call doCall, DateTime entryTime, double distanceFromVolunteer)
 
@@ -23,19 +22,19 @@ internal static class CallManager
 
             CallId = doCall.Id,
 
-            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
+            CallType = (BO.CallType)doCall.Type,
 
-            VerbDesc = doCall.VerbDesc,
+            Description = doCall.Description,
 
-            CallAddress = doCall.Adress,
+            FullAddress = doCall.FullAddress,
 
-            MaxFinishTime = doCall.MaxTime,
+            MaxCompletionTime = doCall.MaxTimeToClose,
 
-            OpenTime = entryTime,
+            EntryTime = entryTime,
 
-            DistanceOfCall = distanceFromVolunteer,
+            DistanceFromVolunteer = distanceFromVolunteer,
 
-            StartAppointmentTime = doCall.OpenTime
+            OpeningTime = doCall.TimeOpened
 
         };
 
@@ -45,39 +44,58 @@ internal static class CallManager
 
     {
 
-        return new BO.ClosedCallInList
-
+        public static void checkCallLogic(BO.Call call)
         {
+            // בדיקת יחס זמנים
+            if (call.MaxFinishTime <= call.OpenTime)
+                throw new InvalidCallLogicException("Max finish time must be later than open time.");
 
-            Id = doCall.Id,
+            // בדיקת תקינות הכתובת
+            if (!IsValidAddress(call.Address))
+                throw new InvalidCallLogicException("Address is invalid or does not exist.");
 
-            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
+            CallType = (BO.CallType)doCall.Type,
 
-            Address = doCall.Adress,
+            FullAddress = doCall.FullAddress,
 
-            OpenTime = doCall.OpenTime,
+            OpeningTime = doCall.TimeOpened,
 
-            TreatmentStartTime = doAssignment?.AppointmentTime ?? throw new BO.BlWrongItemtException($"Assignment missing for Call ID {doCall.Id}"),
+            EntryTime = doAssignment?.TimeStart ?? throw new BO.BlWrongItemtException($"Assignment missing for Call ID {doCall.Id}"),
 
-            RealFinishTime = doAssignment?.FinishAppointmentTime,
+            CompletionTime = doAssignment?.TimeEnd,
 
-            FinishAppointmentType = doAssignment?.FinishAppointmentType.HasValue == true
+            CompletionType = doAssignment?.TypeEndTreat.HasValue == true
 
-             ? (BO.Enums.FinishAppointmentTypeEnum?)doAssignment.FinishAppointmentType.Value
+             ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
 
-             : null
+            // בדיקת זמן מקסימלי
+            if (call.MaxFinishTime == default)
+                throw new InvalidCallFormatException("Max finish time is not valid.");
 
+            // בדיקת כתובת
+            if (string.IsNullOrWhiteSpace(call.Address) || call.Address.Length > 200)
+                throw new InvalidCallFormatException("Address is either empty or exceeds the maximum length (200 characters).");
 
+            // בדיקת אורך ורוחב
+            if (call.Longitude < -180 || call.Longitude > 180)
+                throw new InvalidCallFormatException("Longitude must be between -180 and 180 degrees.");
 
-        };
+            if (call.Latitude < -90 || call.Latitude > 90)
+                throw new InvalidCallFormatException("Latitude must be between -90 and 90 degrees.");
+        }
 
-    }
+    internal static CallAssignmentInList GetCallAssignmentInList(DO.Assignment doAssignment, string volunteerName)
 
-    internal static CallAssignInList GetCallAssignmentInList(DO.Assignment doAssignment, string volunteerName)
+            try
+            {
+                // ניתן להשתמש ב-API של Google Maps או שירותים אחרים כדי לבדוק אם הכתובת קיימת
+                // דוגמת שימוש ב-API של Google Maps
+                var httpClient = new HttpClient();
+                var apiKey = "your_api_key";  // המפתח שלך לשירות Google Maps או כל שירות אחר
+                var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={apiKey}";
+                var response = httpClient.GetStringAsync(url).Result;
 
-    {
-
-        return new CallAssignInList
+        return new CallAssignmentInList
 
         {
 
@@ -85,13 +103,13 @@ internal static class CallManager
 
             VolunteerName = volunteerName,
 
-            OpenTime = doAssignment.AppointmentTime,
+            StartTime = doAssignment.TimeStart,
 
-            RealFinishTime = doAssignment.FinishAppointmentTime,
+            EndTime = doAssignment.TimeEnd,
 
-            FinishAppointmentType = doAssignment.FinishAppointmentType.HasValue
+            CompletionType = doAssignment.TypeEndTreat.HasValue
 
-                ? (BO.Enums.FinishAppointmentTypeEnum?)doAssignment.ty//.Value
+                ? (BO.AssignmentCompletionType?)doAssignment.TypeEndTreat.Value
 
                 : null
 
@@ -125,20 +143,19 @@ internal static class CallManager
 
     }
 
-   
-    public static void checkCallAdress(BO.Call doCall)
+    private static void ValidateCallData(DO.Call doCall)
 
     {
 
-        if (string.IsNullOrWhiteSpace(doCall.VerbDesc))
+        if (string.IsNullOrWhiteSpace(doCall.Description))
 
             throw new ArgumentException("Description cannot be null or empty.");
 
 
 
-        if (string.IsNullOrWhiteSpace(doCall.Address))
+        if (string.IsNullOrWhiteSpace(doCall.FullAddress))
 
-            throw new ArgumentException("Full Address cannot be null or empty.");
+            throw new ArgumentException("FullAddress cannot be null or empty.");
 
 
 
@@ -154,44 +171,49 @@ internal static class CallManager
 
 
 
-        if (doCall.MaxFinishTime.HasValue && doCall.MaxFinishTime <= doCall.OpenTime)
+        if (doCall.MaxTimeToClose.HasValue && doCall.MaxTimeToClose <= doCall.TimeOpened)
 
-            throw new ArgumentException("MaxTime  must be later than the open time.");
+            throw new ArgumentException("MaxTimeToClose must be later than TimeOpened.");
 
     }
 
 
 
-    internal static BO.Call ConvertDOToBO(DO.Call doCall)
+    //internal static BO.Call ConvertDOToBO(DO.Call doCall)
 
-    {
+    //{
 
-        return new BO.Call
+    //    // קריאה לפונקציית העזר לבדיקת תקינות
 
-        {
+    //    ValidateCallData(doCall);
+    //    // המרה ל־BO
 
-            Id = doCall.Id,
+    //    return new BO.Call
 
-            CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
+    //    {
 
-            VerbDesc = doCall.VerbDesc,
+    //        Id = doCall.Id,
 
-            Address = doCall.Adress,
+    //        CallType = (BO.Enums.CallTypeEnum)doCall.CallType,
 
-            Latitude = doCall.Latitude,
+    //        VerbDesc = doCall.VerbDesc,
 
-            Longitude = doCall.Longitude,
+    //        Address = doCall.Adress,
 
-            OpenTime = doCall.OpenTime,
+    //        Latitude = doCall.Latitude,
 
-            MaxFinishTime = doCall.MaxTime,
+    //        Longitude = doCall.Longitude,
+
+    //        OpenTime = doCall.OpenTime,
+
+    //        MaxFinishTime = doCall.MaxTime,
 
 
 
 
-        };
-    }
-    internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment,DO.Call doCall)
+    //    };
+    //}
+         internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment,DO.Call doCall)
          {
         if (doAssignment.VolunteerId == null || doAssignment.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator
             || doAssignment.FinishAppointmentType == FinishAppointmentType.SelfCancellation)
@@ -208,6 +230,7 @@ internal static class CallManager
        
          }
 
-
-    
+    }
 }
+
+

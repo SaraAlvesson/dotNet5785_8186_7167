@@ -36,9 +36,9 @@ namespace Helpers
                 Id = doVolunteer.Id,
                 FullName = doVolunteer.FullName,
                 Active = doVolunteer.Active,
-                SumTreatedCalls= sumCalls,
-                SumCanceledCalls= sumCanceld,
-                SumExpiredCalls=sumExpired,
+                SumTreatedCalls = sumCalls,
+                SumCanceledCalls = sumCanceld,
+                SumExpiredCalls = sumExpired,
                 //CallId = idCall,
             };
         }
@@ -149,7 +149,7 @@ namespace Helpers
             if (string.IsNullOrEmpty(volunteer.Email) || volunteer.Email.Count(c => c == '@') != 1)
             {
                 throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
-                
+
             }
             string pattern = @"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.com$";
 
@@ -233,7 +233,7 @@ namespace Helpers
                  PhoneNumber: BoVolunteer.PhoneNumber,
                  Email: BoVolunteer.Email,
                  Active: BoVolunteer.Active,
-                 Position:(DO.Position)BoVolunteer.Position,
+                 Position: (DO.Position)BoVolunteer.Position,
                  DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
                  Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
                Location: BoVolunteer.Location,
@@ -315,7 +315,7 @@ namespace Helpers
         }
 
 
-      
+
 
 
 

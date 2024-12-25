@@ -1,5 +1,4 @@
-﻿
-namespace BlImplementation;
+﻿namespace BlImplementation;
 using BlApi;
 using BO;
 using DO;
@@ -46,11 +45,11 @@ internal class VolunteerImplementation : IVolunteer
         throw new BlDoesNotExistException($"Username {username} not found");
     }
 
-    
- 
-    
 
-   
+
+
+
+
 
 
     public IEnumerable<BO.VolunteerInList> RequestVolunteerList(bool? isActive = null, VolunteerInList? sortField = null)
@@ -391,20 +390,17 @@ internal class VolunteerImplementation : IVolunteer
             MaxDistance = volunteer.MaxDistance,
 
         };
-        try 
-        { _dal.Volunteer.Create(newVolunteer);
+        try
+        {
+            _dal.Volunteer.Create(newVolunteer);
         }
         catch (DO.DalAlreadyExistException ex)
-        { 
-            throw new BLAlreadyExistException($"Volunteer with id {volunteer.Id} already exists");
-        }
+        { throw new BLAlreadyExistException($"Volunteer with id {volunteer.Id} already exists")}
 
     }
-
-  
 }
 
-    
+
 //namespace BlImplementation;
 //    using BlApi;
 //using BO;
@@ -677,7 +673,5 @@ internal class VolunteerImplementation : IVolunteer
 //            };
 
 //            _dal.Volunteer.Create(newVolunteer);
-//        }
-//    }
-
-
+//        }
+//    }
