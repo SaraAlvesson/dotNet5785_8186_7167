@@ -3,6 +3,7 @@ using BlApi;
 using BO;
 using DO;
 using Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using static BO.Exceptions;
@@ -331,7 +332,7 @@ internal class VolunteerImplementation : IVolunteer
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);
-        if (volunteer.Position == Position.Manager)
+        if (volunteer.Position == DO.Position.Manager )
             return true;
         return false;
     }
@@ -369,13 +370,7 @@ internal class VolunteerImplementation : IVolunteer
 
     public void AddVolunteer(BO.Volunteer volunteer)
     {
-
-        if (!(Helpers.VolunteersManager.checkVolunteerEmail(volunteer)))
-            throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!(Helpers.VolunteersManager.IsValidId(volunteer.Id)))
-            throw new BlIdNotValid("Invalid ID format.");
-        if (!(Helpers.VolunteersManager.IsPhoneNumberValid(volunteer)))
-            throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
+        
         DO.Volunteer newVolunteer = new()
 
         {
@@ -390,6 +385,13 @@ internal class VolunteerImplementation : IVolunteer
             MaxDistance = volunteer.MaxDistance,
 
         };
+
+        if (!(Helpers.VolunteersManager.checkVolunteerEmail(volunteer)))
+            throw new BlEmailNotCorrect("Invalid Email format.");
+        if (!(Helpers.VolunteersManager.IsValidId(volunteer.Id)))
+            throw new BlIdNotValid("Invalid ID format.");
+        if (!(Helpers.VolunteersManager.IsPhoneNumberValid(volunteer)))
+            throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
         try
         {
             _dal.Volunteer.Create(newVolunteer);

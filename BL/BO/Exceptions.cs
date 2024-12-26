@@ -1,5 +1,4 @@
-﻿
-namespace BO;
+﻿namespace BO;
 
 internal class Exceptions
 {
@@ -12,10 +11,10 @@ internal class Exceptions
     public class BlDoesNotExistException : Exception
     {
         public BlDoesNotExistException(string? message) : base(message) { }
-        public BlDoesNotExistException(string message, Exception innerException): base(message, innerException) { }
+        public BlDoesNotExistException(string message, Exception innerException) : base(message, innerException) { }
     }
 
-     /// <summary>
+    /// <summary>
     /// Exception thrown when an attempt is made to add an entity that already exists in the DAL.
     /// </summary>
     public class BLAlreadyExistException : Exception
@@ -46,13 +45,13 @@ internal class Exceptions
         public BLXMLFileLoadCreateException(string? message) : base(message) { }
         public BLXMLFileLoadCreateException(string message, Exception innerException) : base(message, innerException) { }
     }
-    
-    public class BlEmailNotCorrect : Exception
-{
 
-    public BlEmailNotCorrect(string? message) : base(message) { }
-    public BlEmailNotCorrect(string message, Exception innerException) : base(message, innerException) { }
-}
+    public class BlEmailNotCorrect : Exception
+    {
+
+        public BlEmailNotCorrect(string? message) : base(message) { }
+        public BlEmailNotCorrect(string message, Exception innerException) : base(message, innerException) { }
+    }
     public class BlPhoneNumberNotCorrect : Exception
     {
 

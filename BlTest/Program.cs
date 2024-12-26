@@ -14,15 +14,15 @@ internal class Program
     static readonly IBl s_bl = BlApi.Factory.Get();
     static void Main(string[] args)
     {
-        try
+        try 
         {
             RunMainMenu();
         }
-        catch (Exception ex)
+        catch(Exception ex)
         { Console.WriteLine($"Error occurred: {ex.Message}"); }
-
+       
     } // הצגת תפריט ראשי
-
+    
 
 
     /// <summary>
@@ -66,12 +66,11 @@ internal class Program
                         return; // Exit the main menu and terminate the program
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Error: {ex.Message}"); }
             }
-        }
-
+            
     }
 
     // תפריט ניהול מנהלים
@@ -106,7 +105,7 @@ internal class Program
                     case 1:
                         // current time
                         Console.WriteLine("Current Time:"); // Notify the user
-                        Console.WriteLine(s_bl.Admin.GetCurrentTime()); // Create the volunteer in the database
+                       Console.WriteLine(s_bl.Admin.GetCurrentTime()); // Create the volunteer in the database
                         break;
 
                     case 2://updare clock
@@ -127,7 +126,7 @@ internal class Program
 
                     case 3:
                         Console.WriteLine("Risk Range:");
-                        Console.WriteLine(s_bl.Admin.GetRiskTimeRange()); // Create the volunteer in the database
+                         Console.WriteLine( s_bl.Admin.GetRiskTimeRange()); // Create the volunteer in the database
 
                         break;
 
@@ -650,11 +649,11 @@ internal class Program
         }
     }
 
+        
+            
+         public static BO.Call GetCallFromUser()
 
-
-    public static BO.Call GetCallFromUser()
-
-    {
+       {
 
         Console.WriteLine("Enter Call Details you want to update:");
         Console.Write("ID: ");
@@ -663,7 +662,7 @@ internal class Program
         Console.Write("Call Type: ");
         string CallType = Console.ReadLine();
         Enums.CallTypeEnum c = (Enums.CallTypeEnum)Enum.Parse(typeof(Enums.CallTypeEnum), CallType.ToUpper());
-
+        
         Console.Write("Verb Description: ");
         string VerbDesc = Console.ReadLine();
 
@@ -678,17 +677,17 @@ internal class Program
 
         Console.Write("Open Time: ");
         DateTime OpenTime = DateTime.Parse(Console.ReadLine());
-
+       
 
         Console.Write("Max Finish Time: ");
-        DateTime MaxFinishTime = DateTime.Parse(Console.ReadLine());
-
+        DateTime MaxFinishTime =  DateTime.Parse( Console.ReadLine());
+        
 
         Console.Write("Call Status: ");
         string CallStatus = Console.ReadLine();
         Enums.CalltStatusEnum s = (Enums.CalltStatusEnum)Enum.Parse(typeof(Enums.CalltStatusEnum), CallStatus.ToUpper());
-
-
+    
+       
         return new BO.Call
         {
             Id = Id,
@@ -699,7 +698,7 @@ internal class Program
             Longitude = longitude,
             OpenTime = OpenTime,
             MaxFinishTime = MaxFinishTime,
-            CallStatus = s,
+            CallStatus=s,
 
         };
 
@@ -716,4 +715,4 @@ internal class Program
 
 
 
-// הפעלת התוכנית
+// הפעלת התוכנית

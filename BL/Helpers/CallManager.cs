@@ -127,50 +127,48 @@ namespace Helpers
             return false;  // אם הכתובת לא קיימת או לא הצלחנו לאמת אותה, נחזיר false
         }
 
-      //  מתודת עדכון הקריאות הפתוחות שפג תוקפן
-        internal static void UpdateExpiredCalls()
-        {
-            var calls = s_dal.call.ReadAll();
-            // 1. נלך על כל הקריאות הפתוחות
-            foreach (var call in calls) // Assuming _dal.Calls returns the list of calls
-            {
-                if (call.EndDate < ClockManager.Now) // 2. אם זמן הסיום עבר
-                {
-                    // 3. קריאות שאין להן עדיין הקצאה
-                    if (call.Assignment == null)
-                    {
-                        var newAssignment = new Assignment
-                        {
-                            CallId = call.Id,
-                            EndDate = ClockManager.Now,
-                            EndReason = "ביטול פג תוקף",
-                            VolunteerId = 0 // ת.ז מתנדב
-                        };
-                        _dal.assignments.Add(newAssignment); // מוסיפים הקצאה חדשה
-                    }
-                    else if (call.Assignment.EndTreatmentDate == null) // 4. קריאות שיש להן הקצאה אך לא הסתיים טיפולן
-                    {
-                        call.Assignment.EndTreatmentDate = ClockManager.Now;
-                        call.Assignment.EndReason = "ביטול פג תוקף"; // עדכון סיום טיפול
-                        _dal.SaveChanges(); // שומרים את השינויים
-                    }
+        //  מתודת עדכון הקריאות הפתוחות שפג תוקפן
+        //internal static void UpdateExpiredCalls()
+        //{
+        //    var calls = s_dal.call.ReadAll();
+        //    // 1. נלך על כל הקריאות הפתוחות
+        //    foreach (var call in calls) // Assuming _dal.Calls returns the list of calls
+        //    {
+        //        if (call.EndDate < ClockManager.Now) // 2. אם זמן הסיום עבר
+        //        {
+        //            // 3. קריאות שאין להן עדיין הקצאה
+        //            if (call.Assignment == null)
+        //            {
+        //                var newAssignment = new Assignment
+        //                {
+        //                    CallId = call.Id,
+        //                    EndDate = ClockManager.Now,
+        //                    EndReason = "ביטול פג תוקף",
+        //                    VolunteerId = 0 // ת.ז מתנדב
+        //                };
+        //                _dal.assignments.Add(newAssignment); // מוסיפים הקצאה חדשה
+        //            }
+        //            else if (call.Assignment.EndTreatmentDate == null) // 4. קריאות שיש להן הקצאה אך לא הסתיים טיפולן
+        //            {
+        //                call.Assignment.EndTreatmentDate = ClockManager.Now;
+        //                call.Assignment.EndReason = "ביטול פג תוקף"; // עדכון סיום טיפול
+        //                _dal.SaveChanges(); // שומרים את השינויים
+        //            }
 
-                    // 5. שליחת הודעה למשקיפים על עדכון הקריאה הספציפית (אם יש)
-                    if (call.Observers != null && call.Observers.Count > 0)
-                    {
-                        foreach (var observer in call.Observers)
-                        {
-                            observer?.Invoke(); // שולחים את ההודעה למשקיף
-                        }
-                    }
-                }
-            }
+        //            // 5. שליחת הודעה למשקיפים על עדכון הקריאה הספציפית (אם יש)
+        //            if (call.Observers != null && call.Observers.Count > 0)
+        //            {
+        //                foreach (var observer in call.Observers)
+        //                {
+        //                    observer?.Invoke(); // שולחים את ההודעה למשקיף
+        //                }
+        //            }
+        //        }
+        //    }
 
-            // 6. שליחת הודעה על עדכון רשימת הקריאות
-            CallListUpdated?.Invoke();
-        }
+        //    // 6. שליחת הודעה על עדכון רשימת הקריאות
+        //    CallListUpdated?.Invoke();
+        //}
 
     }
 }
-
-
