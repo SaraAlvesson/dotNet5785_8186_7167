@@ -1,6 +1,8 @@
 ﻿
 namespace BlApi;
 using BO;
+using static BO.Enums;
+
 /// <summary>
 /// 
 /// </summary>
@@ -16,7 +18,7 @@ public interface IVolunteer
     /// <summary>
     /// Requests a list of volunteers, optionally filtering by active status and sorting by a specific field.
     /// </summary>
-    IEnumerable<VolunteerInList> RequestVolunteerList(bool? isActive, VolunteerInList? sortField=null);
+    IEnumerable<VolunteerInList> RequestVolunteerList(bool? isActive, VolunteerInListField? sortField=null);
 
     /// <summary>
     /// Requests the details of a volunteer by their unique ID.
