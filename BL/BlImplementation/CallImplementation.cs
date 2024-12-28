@@ -265,8 +265,8 @@ internal class CallImplementation : ICall
         CallManager.checkCallLogic(call);
 
         // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
-        var existingCall = _dal.call.Read(v => v.Id == call.Id)
-            ?? throw new DalDoesNotExistException($"Call with ID {call.Id} not found.");
+        var existingCall = _dal.call.Read(v => v.Id != call.Id)
+            ?? throw new DalDoesNotExistException($"Call with ID {call.Id} already exists.");
 
         // שלב 3: בדיקת כתובת ועדכון קואורדינטות
         if (!CallManager.IsValidAddress(call.Address))

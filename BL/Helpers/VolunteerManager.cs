@@ -140,7 +140,8 @@ namespace Helpers
         }
 
 
-
+       
+        
 
 
 
@@ -151,7 +152,7 @@ namespace Helpers
                 throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
 
             }
-            string pattern = @"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.com$";
+            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
 
             if (!Regex.IsMatch(volunteer.Email, pattern))
             {
@@ -163,7 +164,7 @@ namespace Helpers
 
 
 
-       
+
         internal static bool IsValidId(long id)
         {
             /// <summary>
