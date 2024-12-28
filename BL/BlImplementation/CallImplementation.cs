@@ -10,19 +10,32 @@ internal class CallImplementation : ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
     public IEnumerable<int> CallsAmount()
-    {    // שליפת כל הקריאות באמצעות ReadAll
+    {
+        // שליפת כל הקריאות
         var allCalls = GetCallList(null, null, null);
 
         // קיבוץ וספירה לפי סטטוס, תוך שימוש בערך המספרי של ה-Enum
         var grouped = allCalls
-            .GroupBy(call => call.Status)
+            .GroupBy(call => (int)call.Status)  // המרת הסטטוס לערך המספרי של ה-Enum
             .ToDictionary(group => group.Key, group => group.Count());
 
         // יצירת מערך בגודל ה-Enum, ומילויו בכמויות לפי הסטטוס
-        return Enumerable.Range(0, Enum.GetValues(typeof(BO.Enums.CalltStatusEnum)).Length)
-                         .Select(index => grouped.ContainsKey((Enums.CalltStatusEnum)index) ? grouped[(Enums.CalltStatusEnum)index] : 0)
-                         .ToArray(); // ממיר את התוצאה למערך int[]
+        var enumLength = Enum.GetValues(typeof(BO.Enums.CalltStatusEnum)).Length;
+
+        // מוודא שהאינדקסים תואמים לערכים של ה-Enum וממלא את המערך
+        var result = Enumerable.Range(0, enumLength)
+                               .Select(index => grouped.GetValueOrDefault(index, 0))  // השגת הערך או 0 אם לא קיים
+                               .ToArray();
+
+        // הדפסת ערכים לצורכי ניפוי בעיות (אם יש צורך)
+        for (int i = 0; i < enumLength; i++)
+        {
+            Console.WriteLine($"Status {i}: {result[i]} calls");
+        }
+
+        return result;
     }
+
 
 
     public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
@@ -90,6 +103,7 @@ internal class CallImplementation : ICall
         }
         return callInList;
     }
+
 
     public BO.Call GetCallDetails(int callId)
     {
@@ -473,7 +487,7 @@ internal class CallImplementation : ICall
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);
-        if (volunteer.Position == Position.Manager)
+        if (volunteer.Position == DO.Position.Manager)
             return true;
         return false;
     }

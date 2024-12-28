@@ -227,10 +227,10 @@ internal class Program
                             : isActiveInput == "1";
 
                         // המרת callType ל-VolunteerInList? (אם הוזן "null", התוצאה תהיה null)
-                        VolunteerInList? sortField = callTypeInput?.ToLower() == "null"
+                        VolunteerInListField? sortField = callTypeInput?.ToLower() == "null"
                             ? null
-                            : Enum.TryParse(typeof(VolunteerInList), callTypeInput, true, out var result)
-                                ? (VolunteerInList?)result
+                            : Enum.TryParse(typeof(VolunteerInListField), callTypeInput, true, out var result)
+                                ? (VolunteerInListField?)result
                                 : null;
 
                         // קריאה לפונקציה עם הערכים המעובדים
@@ -271,7 +271,7 @@ internal class Program
                         break;
 
                     case 6:
-                        Console.WriteLine("Enter id of volunteer you want to add");
+                      
                         BO.Volunteer VolunteeridToAdd = GetVolunteerFromUser();
                         s_bl.Volunteer.AddVolunteer(VolunteeridToAdd);
                         Console.WriteLine("Volunteer Added:");
@@ -339,9 +339,7 @@ internal class Program
         Console.Write("SumExpired: ");
         int SumExpired = int.Parse(Console.ReadLine());
 
-        Console.Write("Volunteer Taken Care: ");
-
-
+        Console.Write("VolunteerTakenCare: ");
         CallInProgress VolunteerTakenCare = CallInProgress();
 
         return new BO.Volunteer
@@ -366,7 +364,7 @@ internal class Program
     }
     public static CallInProgress CallInProgress()
     {
-        Console.WriteLine("Enter Volunteer Details:");
+        Console.WriteLine("Enter Volunteer call in progress:");
 
         Console.Write("ID: ");
         int Id = int.Parse(Console.ReadLine());

@@ -109,6 +109,17 @@ public class Enums
         DistanceOfCall,
 
     }
+    public enum VolunteerInListField
+    {
+      Id ,
+     FullName,
+     Active ,
+     SumTreatedCalls,
+     SumCanceledCalls,
+     SumExpiredCalls,
+     CallIdInTreatment ,
+     CallType 
+}
 
 
     #region VolunteerTypeEnum
@@ -163,6 +174,10 @@ public class Enums
         AerialDistance, // Straight-line distance (as the crow flies).
         WalkingDistance, // Distance calculated for pedestrian routes.
         DrivingDistance // Distance calculated for vehicular routes.
+    }
+
+    public class Position
+    {
     }
 }
 

@@ -88,6 +88,7 @@ static class XMLTools
         XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
         int nextId = root.ToIntNullable(elemName) ?? throw new FormatException($"can't convert:  {xmlFileName}, {elemName}");
         root.Element(elemName)?.SetValue((nextId + 1).ToString());
+       
         XMLTools.SaveListToXMLElement(root, xmlFileName);
         return nextId;
     }
