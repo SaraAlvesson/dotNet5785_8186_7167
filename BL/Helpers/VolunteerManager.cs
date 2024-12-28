@@ -106,7 +106,7 @@ namespace Helpers
                         MaxFinishTime = callTreat.MaxTime,
                         StartAppointmentTime = assignmentTreat.AppointmentTime,
                         DistanceOfCall = Tools.CalculateDistance(callTreat.Latitude, callTreat.Longitude, latitude, longitude),
-                        Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.? BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver : BO.Enums.CalltStatusEnum.CallIsBeingTreated),
+                        //Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.? BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver : BO.Enums.CalltStatusEnum.CallIsBeingTreated),
                     };
                 }
             }

@@ -370,7 +370,14 @@ internal class VolunteerImplementation : IVolunteer
 
     public void AddVolunteer(BO.Volunteer volunteer)
     {
-        
+        // convertDOToBOVolunteer(volunteer);
+        if (!(Helpers.VolunteersManager.checkVolunteerEmail(volunteer)))
+            throw new BlEmailNotCorrect("Invalid Email format.");
+        if (!(Helpers.VolunteersManager.IsValidId(volunteer.Id)))
+            throw new BlIdNotValid("Invalid ID format.");
+        if (!(Helpers.VolunteersManager.IsPhoneNumberValid(volunteer)))
+            throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
+
         DO.Volunteer newVolunteer = new()
 
         {
@@ -386,12 +393,7 @@ internal class VolunteerImplementation : IVolunteer
 
         };
 
-        if (!(Helpers.VolunteersManager.checkVolunteerEmail(volunteer)))
-            throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!(Helpers.VolunteersManager.IsValidId(volunteer.Id)))
-            throw new BlIdNotValid("Invalid ID format.");
-        if (!(Helpers.VolunteersManager.IsPhoneNumberValid(volunteer)))
-            throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
+        
         try
         {
             _dal.Volunteer.Create(newVolunteer);

@@ -336,10 +336,10 @@ internal class Program
         Console.Write("SumCanceled: ");
         int SumCanceled = int.Parse(Console.ReadLine());
 
-        Console.Write("Longitude: ");
+        Console.Write("SumExpired: ");
         int SumExpired = int.Parse(Console.ReadLine());
 
-        Console.Write("VolunteerTakenCare: ");
+        Console.Write("Volunteer Taken Care: ");
 
 
         CallInProgress VolunteerTakenCare = CallInProgress();
@@ -387,13 +387,13 @@ internal class Program
         Console.Write("OpenTime: ");
         DateTime OpenTime = DateTime.Parse(Console.ReadLine());
 
-        Console.Write("MaxFinishTime: ");
+        Console.Write("Max FinishTime: ");
         DateTime MaxFinishTime = DateTime.Parse(Console.ReadLine());
 
-        Console.Write("StartAppointmentTime: ");
+        Console.Write("Start Appointment Time: ");
         DateTime StartAppointmentTime = DateTime.Parse(Console.ReadLine());
 
-        Console.Write("StartAppointmentTime: ");
+        Console.Write("Distance O fCall: ");
         double DistanceOfCall = double.Parse(Console.ReadLine());
 
         Console.Write("Position: ");
@@ -439,7 +439,7 @@ internal class Program
             Console.Write("Enter your choice: ");
 
             // Parse user input and validate it
-            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > 6)
+            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > 12)
             {
                 Console.WriteLine("Invalid choice, try again."); // Notify user of invalid input
                 continue;
@@ -515,7 +515,7 @@ internal class Program
                         break;
 
                     case 6:
-                        Console.WriteLine("Enter id of call you want to add");
+                       
                         BO.Call CallidToAdd = GetCallFromUser();
                         s_bl.Call.AddCall(CallidToAdd);
                         Console.WriteLine("Call Added:");
@@ -655,7 +655,7 @@ internal class Program
 
        {
 
-        Console.WriteLine("Enter Call Details you want to update:");
+        Console.WriteLine("Enter Call Details you want to add:");
         Console.Write("ID: ");
         int Id = int.Parse(Console.ReadLine());
 
