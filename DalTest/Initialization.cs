@@ -107,8 +107,10 @@ public static class Initialization
     {
         string[] callDescriptions = { "Emergency food delivery", "Fixing equipment", "Medical assistance required",
                                        "Providing shelter to families in need" };
+        Console.WriteLine("Enter num of calls");
+       int userInput =int.Parse(Console.ReadLine());
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < userInput; i++)
         {
             CallType callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length);
             string description = callDescriptions[s_rand.Next(callDescriptions.Length)];
