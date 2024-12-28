@@ -181,7 +181,7 @@ internal class Program
         while (true)
         {
             // Display the Volunteer Menu options
-            Console.WriteLine("\nAdmin Menu:");
+            Console.WriteLine("\nVolunteer Menu:");
             Console.WriteLine("1 - Login");           // Option to create a new volunteer
             Console.WriteLine("2 - Request Volunteer List");             // Option to read a specific volunteer by ID
             Console.WriteLine("3 - Request Volunteer Details");         // Option to read all volunteers
@@ -421,7 +421,7 @@ internal class Program
         while (true)
         {
             // Display the Volunteer Menu options
-            Console.WriteLine("\nAdmin Menu:");
+            Console.WriteLine("\nCall Menu:");
             Console.WriteLine("1 - Calls Amount ");           // Option to create a new volunteer
             Console.WriteLine("2 - Call List ");             // Option to read a specific volunteer by ID
             Console.WriteLine("3 - Call Details");         // Option to read all volunteers

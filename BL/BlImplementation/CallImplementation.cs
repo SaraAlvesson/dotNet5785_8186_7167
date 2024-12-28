@@ -1,6 +1,7 @@
 ﻿namespace BlImplementation;
 using BlApi;
 using BO;
+
 using DO;
 using Helpers;
 using static BO.Enums;
@@ -40,8 +41,10 @@ internal class CallImplementation : ICall
 
     public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
     {
-        var listCall = _dal.call.ReadAll();
-        var listAssignment = _dal.assignment.ReadAll();
+        var listCall = _dal.call.ReadAll()?.ToList();
+        var listAssignment = _dal.assignment.ReadAll()?.ToList();
+
+        // יצירת השאילתה הראשונית
         var callInList = from item in listCall
                          let assignment = listAssignment.Where(s => s.CallId == item.Id).OrderByDescending(s => s.AppointmentTime).FirstOrDefault()
                          let volunteer = assignment != null ? _dal.Volunteer.Read(assignment.VolunteerId) : null
@@ -59,28 +62,28 @@ internal class CallImplementation : ICall
                              SumAssignment = listAssignment.Where(s => s.CallId == item.Id).Count()
                          };
 
-
-        if (filter.HasValue)
+        // אם יש ערך סינון, מבצעים סינון לפי הערך שניתן
+        if (filter.HasValue && toFilter != null)
         {
             callInList = callInList.Where(call =>
             {
                 return filter switch
                 {
-                    BO.Enums.CallFieldEnum.ID => call.Id.Equals(toFilter),
+                    BO.Enums.CallFieldEnum.ID => call.Id?.Equals(toFilter) == true,
                     BO.Enums.CallFieldEnum.CallId => call.CallId.Equals(toFilter),
                     BO.Enums.CallFieldEnum.CallType => call.CallType.Equals(toFilter),
                     BO.Enums.CallFieldEnum.OpenTime => call.OpenTime.Equals(toFilter),
-                    BO.Enums.CallFieldEnum.SumTimeUntilFinish => call.SumTimeUntilFinish.Equals(toFilter),
-                    BO.Enums.CallFieldEnum.LastVolunteerName => call.LastVolunteerName != null && call.LastVolunteerName.Equals(toFilter),
-                    BO.Enums.CallFieldEnum.SumAppointmentTime => call.SumAppointmentTime.Equals(toFilter),
+                    BO.Enums.CallFieldEnum.SumTimeUntilFinish => call.SumTimeUntilFinish?.Equals(toFilter) == true,
+                    BO.Enums.CallFieldEnum.LastVolunteerName => call.LastVolunteerName?.Equals(toFilter) == true,
+                    BO.Enums.CallFieldEnum.SumAppointmentTime => call.SumAppointmentTime?.Equals(toFilter) == true,
                     BO.Enums.CallFieldEnum.Status => call.Status.Equals(toFilter),
                     BO.Enums.CallFieldEnum.SumAssignment => call.SumAssignment.Equals(toFilter),
                     _ => true
                 };
             });
-
         }
 
+        // מיון - אם יש ערך למיון, מבצעים מיון לפי הערך של toSort
         if (toSort.HasValue)
         {
             callInList = toSort switch
@@ -99,9 +102,13 @@ internal class CallImplementation : ICall
         }
         else
         {
+            // אם לא נבחר ערך מיון, מבצעים מיון ברירת מחדל לפי CallId
             callInList = callInList.OrderBy(call => call.CallId);
         }
+
+        // החזרת הרשימה הסופית
         return callInList;
+
     }
 
 
