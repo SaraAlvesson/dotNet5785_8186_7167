@@ -34,6 +34,7 @@ public interface ICall
     /// </summary>
     /// <param name="call">אובייקט קריאה עם הנתונים המעודכנים</param>
     void UpdateCallDetails(BO.Call callDetails);
+
     /// <summary>
     /// מוחק קריאה לפי מזהה קריאה. ניתן למחוק קריאות שנמצאות במצב 'Open' ואין להן משימות משויכות.
     /// </summary>

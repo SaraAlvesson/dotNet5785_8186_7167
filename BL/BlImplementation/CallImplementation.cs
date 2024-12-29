@@ -184,19 +184,18 @@ internal class CallImplementation : ICall
             var existingCall = _dal.call.Read(v => v.Id == callDetails.Id)
                 ?? throw new DalDoesNotExistException($"Call with ID {callDetails.Id} not found.");
 
-            // שלב 3: בדיקת כתובת ועדכון קואורדינטות
-            if (!CallManager.IsValidAddress(callDetails.Address))
-            {
-                throw new InvalidCallFormatException("Invalid address provided.");
-            }
+            //// שלב 3: בדיקת כתובת ועדכון קואורדינטות
+            //bool isValidAddress = CallManager.IsValidAddressAsync(callDetails.Address).Result;  // קריאה סנכרונית לפונקציה אסינכרונית
+            //if (!isValidAddress)
+            //{
+            //    throw new InvalidCallFormatException("Invalid address provided.");
+            //}
 
-            // עדכון אורך ורוחב לפי הכתובת
-            double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(callDetails.Address);
+            //// עדכון אורך ורוחב לפי הכתובת
+            //double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(callDetails.Address);
 
-
-            callDetails.Longitude = GeolocationCoordinates[0];
-            callDetails.Latitude = GeolocationCoordinates[1];
-
+            //callDetails.Longitude = GeolocationCoordinates[0];
+            //callDetails.Latitude = GeolocationCoordinates[1];
 
             // שלב 4: המרת אובייקט BO.Call ל-DO.Call
             DO.Call newCall = new()
@@ -231,82 +230,95 @@ internal class CallImplementation : ICall
             // שלב 1: בקשת הקריאה משכבת הנתונים
             var existingCall = _dal.call.Read(v => v.Id == callId)
                 ?? throw new DalDoesNotExistException("Call not found.");
+
             BO.Call c = GetCallDetails(existingCall.Id);
             var assignment = _dal.assignment.Read(a => a.CallId == callId);
 
             // שלב 2: בדיקת סטטוס הקריאה והתאמת התנאים למחיקה
+            Console.WriteLine($"Call status: {c.CallStatus}");  // הדפסת סטטוס לקריאה
             if (c.CallStatus != Enums.CalltStatusEnum.OPEN)
                 throw new BLDeletionImpossible("Only open calls can be deleted.");
 
             // שלב 3: בדיקה אם הקריאה הוקצתה למתנדב
+            Console.WriteLine($"Assignment VolunteerId: {assignment?.VolunteerId}");  // הדפסת מזהה המתנדב אם קיים
             if (assignment?.VolunteerId != null)
                 throw new BLDeletionImpossible("Cannot delete call as it has been assigned to a volunteer.");
 
             // שלב 4: ניסיון מחיקת הקריאה משכבת הנתונים
             try
             {
+                Console.WriteLine($"Attempting to delete call with ID {callId}");
                 _dal.call.Delete(callId);
             }
             catch (DO.DalDeletionImpossible ex)
             {
                 // שלב 5: אם יש בעיה במחיקה בשכבת הנתונים, זריקת חריגה מתאימה לכיוון שכבת התצוגה
+                Console.WriteLine($"Error deleting call from DAL: {ex.Message}");
                 throw new ArgumentException("Error deleting call from data layer.", ex);
             }
         }
         catch (Exception ex)
         {
             // שלב 6: טיפול בחריגות וזריקתן מחדש עם מידע ברור לשכבת התצוגה
+            Console.WriteLine($"Error processing delete call request for call ID {callId}: {ex.Message}");
             throw new ArgumentException($"Error processing delete call request for call ID {callId}.", ex);
         }
     }
 
 
 
+
     public void AddCall(BO.Call call)
     {
-
-
-
-        // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-        CallManager.checkCallFormat(call);
-        CallManager.checkCallLogic(call);
-
-        // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
-        var existingCall = _dal.call.Read(v => v.Id == call.Id)
-            ?? throw new DalDoesNotExistException($"Call with ID {call.Id} not found.");
-
-        // שלב 3: בדיקת כתובת ועדכון קואורדינטות
-        if (!CallManager.IsValidAddress(call.Address))
+        try
         {
-            throw new InvalidCallFormatException("Invalid address provided.");
+            // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
+            CallManager.checkCallFormat(call);
+            CallManager.checkCallLogic(call);
+
+            // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
+            var existingCall = _dal.call.Read(v => v.Id == call.Id)
+                ?? throw new DalDoesNotExistException($"Call with ID {call.Id} not found.");
+
+            // שלב 3: בדיקת כתובת ועדכון קואורדינטות
+            //Task.Run(async () =>
+            //{
+            //    bool isValidAddress = await CallManager.IsValidAddressAsync(call.Address); // קריאה אסינכרונית לפונקציה
+            //    if (!isValidAddress)
+            //    {
+            //        throw new InvalidCallFormatException("Invalid address provided.");
+            //    }
+
+            //    // עדכון אורך ורוחב לפי הכתובת
+            //    double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
+
+            //    call.Longitude = GeolocationCoordinates[0];
+            //    call.Latitude = GeolocationCoordinates[1];
+            //}).GetAwaiter().GetResult();  // מחכה לסיום לפני המשך הקריאה לפונקציות הבאות
+
+            // שלב 4: המרת אובייקט BO.Call ל-DO.Call
+            DO.Call newCall = new()
+            {
+                Id = call.Id,
+                OpenTime = call.OpenTime,
+                MaxTime = call.MaxFinishTime,
+                Longitude = (double)call.Longitude,
+                Latitude = (double)call.Latitude,
+                Adress = call.Address,
+                CallType = (DO.CallType)call.CallType,
+                VerbDesc = call.VerbDesc,
+            };
+
+            // שלב 5: עדכון הרשומה בשכבת הנתונים
+            _dal.call.Create(newCall);
         }
-
-        // עדכון אורך ורוחב לפי הכתובת
-        double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
-
-
-        call.Longitude = GeolocationCoordinates[0];
-        call.Latitude = GeolocationCoordinates[1];
-
-
-        // שלב 4: המרת אובייקט BO.Call ל-DO.Call
-        DO.Call newCall = new()
+        catch (Exception ex)
         {
-            Id = call.Id,
-            OpenTime = call.OpenTime,
-            MaxTime = call.MaxFinishTime,
-            Longitude = (double)call.Longitude,
-            Latitude = (double)call.Latitude,
-            Adress = call.Address,
-            CallType = (DO.CallType)call.CallType,
-            VerbDesc = call.VerbDesc,
-        };
-
-        // שלב 5: עדכון הרשומה בשכבת הנתונים
-        _dal.call.Create(newCall);
-
-
+            // טיפול בשגיאות אם יש
+            Console.WriteLine($"Error occurred while adding call: {ex.Message}");
+        }
     }
+
 
     public IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
     {

@@ -15,10 +15,10 @@ namespace Helpers
             // טיפול במקרה שבו doAssignment הוא null
             if (doAssignment == null)
             {
-                return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל
+                return BO.Enums.CalltStatusEnum.OPEN; // מצב ברירת מחדל
             }
 
-            // טיפול במקרה שבו doCall הוא null (אם יש צורך)
+           // טיפול במקרה שבו doCall הוא null(אם יש צורך)
             if (doCall == null)
             {
                 throw new ArgumentNullException(nameof(doCall), "doCall cannot be null");
@@ -64,21 +64,24 @@ namespace Helpers
             if (call.MaxFinishTime <= call.OpenTime)
                 throw new InvalidCallLogicException("Max finish time must be later than open time.");
 
-            // בדיקת תקינות הכתובת
-            if (!IsValidAddress(call.Address))
-                throw new InvalidCallLogicException("Address is invalid or does not exist.");
+            // קריאה אסינכרונית לפונקציה בתוך Task.Run
+            //Task.Run(async () =>
+            //{
+            //    if (!await IsValidAddressAsync(call.Address))
+            //        throw new InvalidCallLogicException("Address is invalid or does not exist.");
 
-            // בדיקת התאמה בין כתובת לקואורדינטות
-            double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
+            //    // בדיקת התאמה בין כתובת לקואורדינטות
+            //    double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
 
-            double expectedLongitude = GeolocationCoordinates[0];
-            double expectedLatitude = GeolocationCoordinates[1];
+            //    double expectedLongitude = GeolocationCoordinates[0];
+            //    double expectedLatitude = GeolocationCoordinates[1];
 
-            // השוואה בין שני ערכים מסוג double
-            if (Math.Abs((double)call.Longitude - expectedLongitude) > 0.0001 || Math.Abs((double)call.Latitude - expectedLatitude) > 0.0001)
-                throw new InvalidCallLogicException("Longitude and Latitude do not match the provided address.");
-
+            //    // השוואה בין שני ערכים מסוג double
+            //    if (Math.Abs((double)call.Longitude - expectedLongitude) > 0.0001 || Math.Abs((double)call.Latitude - expectedLatitude) > 0.0001)
+            //        throw new InvalidCallLogicException("Longitude and Latitude do not match the provided address.");
+            //}).GetAwaiter().GetResult(); // מחכה שהמשימה תסתיים לפני המשך הקריאה
         }
+
 
 
         public static void checkCallFormat(BO.Call call)
@@ -107,36 +110,43 @@ namespace Helpers
                 throw new InvalidCallFormatException("Latitude must be between -90 and 90 degrees.");
         }
 
-        public static bool IsValidAddress(string address)
+        public static async Task<bool> IsValidAddressAsync(string address)
         {
-            // אם הכתובת ריקה או ארוכה מדי, נחזיר false
-            if (string.IsNullOrWhiteSpace(address) || address.Length > 200)
+            if (string.IsNullOrWhiteSpace(address))
+            {
                 return false;
+            }
 
             try
             {
-                // ניתן להשתמש ב-API של Google Maps או שירותים אחרים כדי לבדוק אם הכתובת קיימת
-                // דוגמת שימוש ב-API של Google Maps
                 var httpClient = new HttpClient();
-                var apiKey = "your_api_key";  // המפתח שלך לשירות Google Maps או כל שירות אחר
+                var apiKey = "ba9b0180f2cd4da1999edc1820855bdb";  // המפתח שלך
                 var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={apiKey}";
-                var response = httpClient.GetStringAsync(url).Result;
 
-                // אם התקבלה תשובה, נבדוק אם יש תוצאה, כך נוודא שהכתובת תקינה
-                var jsonResponse = JsonSerializer.Deserialize<JsonElement>(response); // שימוש ב-System.Text.Json
-                if (jsonResponse.GetProperty("status").GetString() == "OK")
+                var response = await httpClient.GetStringAsync(url);
+
+                // הפענוח של התשובה בתור JSON
+                var jsonResponse = JsonSerializer.Deserialize<JsonElement>(response);
+                var status = jsonResponse.GetProperty("status").GetString();
+
+                // אם הסטטוס הוא "OK", אז הכתובת קיימת
+                if (status == "OK")
                 {
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                // טיפול בחריגה במידה ויש
-                Console.WriteLine($"Error validating address: {ex.Message}");
+                // אם יש שגיאה בבקשה או במענה
+                Console.WriteLine($"Error occurred: {ex.Message}");
             }
 
-            return false;  // אם הכתובת לא קיימת או לא הצלחנו לאמת אותה, נחזיר false
+            return false; // אם לא מצאנו כתובת או קרתה שגיאה
         }
+
+
+
+
 
         //  מתודת עדכון הקריאות הפתוחות שפג תוקפן
         //internal static void UpdateExpiredCalls()
