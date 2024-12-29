@@ -108,7 +108,7 @@ public static class Initialization
         string[] callDescriptions = { "Emergency food delivery", "Fixing equipment", "Medical assistance required",
                                        "Providing shelter to families in need" };
         Console.WriteLine("Enter num of calls");
-        int userInput = int.Parse(Console.ReadLine());
+        int userInput =int.Parse(Console.ReadLine());
 
         for (int i = 0; i < userInput; i++)
         {
