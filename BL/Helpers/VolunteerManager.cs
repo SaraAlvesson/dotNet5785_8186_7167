@@ -124,7 +124,7 @@ namespace Helpers
                 throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} contains invalid characters.");
 
             // וידוא שהאורך מתאים
-            if (volunteer.PhoneNumber.Length < 8 || volunteer.PhoneNumber.Length > 9)
+            if (volunteer.PhoneNumber.Length < 10 || volunteer.PhoneNumber.Length > 10)
                 throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} has an invalid length.");
 
             // אם כל הבדיקות עברו בהצלחה

@@ -237,10 +237,15 @@ internal class Program
                         IEnumerable<VolunteerInList> VolunteerInList = s_bl.Volunteer.RequestVolunteerList(isActive, sortField);
 
                         Console.WriteLine("Volunteer List:");
-                        // הצגת התוצאה
-                        foreach (var item in VolunteerInList)
+                        if (VolunteerInList != null)
+                            Console.WriteLine("volunteers list is empty.");
+                        else
                         {
-                            Console.WriteLine(item);
+                            // הצגת התוצאה
+                            foreach (var item in VolunteerInList)
+                            {
+                                Console.WriteLine(item);
+                            }
                         }
                         break;
 
