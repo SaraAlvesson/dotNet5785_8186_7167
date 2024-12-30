@@ -90,20 +90,20 @@ namespace Helpers
         /// </remarks>
         internal static double[] GetGeolocationCoordinates(string address)
         {
-            // Check if the address is valid
+            // בדוק אם הכתובת ריקה
             if (string.IsNullOrWhiteSpace(address))
             {
                 throw new ArgumentException("Address cannot be empty or null.", nameof(address));
             }
 
-            string apiKey = "67609238e7135923908907oxh46a576";
+            string apiKey = "67609238e7135923908907oxh46a576";  // המפתח שלך
             string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(requestUrl);
             webRequest.Method = "GET";
 
             try
             {
-                // Send request and get response
+                // שליחת הבקשה וקבלת התשובה
                 using (HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse())
                 {
                     if (webResponse.StatusCode != HttpStatusCode.OK)
@@ -119,11 +119,14 @@ namespace Helpers
 
                         if (locationData == null || locationData.Length == 0)
                         {
-                            throw new Exceptions.AddressDoesNotExistException("No geolocation data found for the given address.");
+                            throw new Exception("No geolocation data found for the given address.");
                         }
 
-                        // Return latitude and longitude
-                        return new double[] { double.Parse(locationData[0].Lat), double.Parse(locationData[0].Lon) };
+                        // החזרת קווי הרוחב והאורך
+                        return new double[] {
+                    double.TryParse(locationData[0].Lat, out var lat) ? lat : throw new Exception("Invalid latitude."),
+                    double.TryParse(locationData[0].Lon, out var lon) ? lon : throw new Exception("Invalid longitude.")
+                };
                     }
                 }
             }
@@ -136,6 +139,7 @@ namespace Helpers
                 throw new Exception("An error occurred: " + ex.Message);
             }
         }
+
 
         /// <summary>
         /// Represents a location result returned by the geocoding service.
