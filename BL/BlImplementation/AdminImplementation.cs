@@ -53,7 +53,7 @@ internal class AdminImplementation : IAdmin
     }
 
     // Method to get the configured risk time range
-    public int GetMaxRange() => AdminManager.MaxRange;
+    
 
 
     // Method to initialize the database by resetting it and adding initial data
@@ -94,22 +94,11 @@ internal class AdminImplementation : IAdmin
     // Method to set a new risk time range configuration
     public void SetRiskTimeRange(TimeSpan maxRange)
     {
-        _dal.config.RiskRange = maxRange; // Update the risk time range in the DAL configuration
+        AdminManager.MaxRange = maxRange; // Update the risk time range in the DAL configuration
     }
 
-    public void AddConfigObserver(Action configObserver)
+    public TimeSpan GetRiskTimeRange()
     {
-        throw new NotImplementedException();
+        return AdminManager.MaxRange;
     }
-
-    public void RemoveConfigObserver(Action configObserver)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void AddClockObserver(Action clockObserver)
-    {
-        throw new NotImplementedException();
-    }
-
 }
