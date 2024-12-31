@@ -21,7 +21,7 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static int MaxRange
+    internal static TimeSpan MaxRange
     {
         get => AdminManager.MaxRange;
         set

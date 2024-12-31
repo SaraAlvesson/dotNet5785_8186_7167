@@ -80,8 +80,6 @@ internal class AdminImplementation : IAdmin
 
     }
 
-    // Method to set a new risk time range configuration
-    public void SetMaxRange(int maxRange) => AdminManager.MaxRange = maxRange;
     #region Stage 5
     public void AddClockObserver(Action clockObserver) =>
     AdminManager.ClockUpdatedObservers += clockObserver;
@@ -92,5 +90,28 @@ internal class AdminImplementation : IAdmin
     public void RemoveConfigObserver(Action configObserver) =>
     AdminManager.ConfigUpdatedObservers -= configObserver;
     #endregion Stage 5
+
+
+
+    // Method to set a new risk time range configuration
+    public void SetRiskTimeRange(TimeSpan maxRange)
+    {
+        _dal.config.RiskRange = maxRange; // Update the risk time range in the DAL configuration
+    }
+
+    public void AddConfigObserver(Action configObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveConfigObserver(Action configObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddClockObserver(Action clockObserver)
+    {
+        throw new NotImplementedException();
+    }
 
 }
