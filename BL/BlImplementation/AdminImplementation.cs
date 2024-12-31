@@ -55,7 +55,7 @@ internal class AdminImplementation : IAdmin
     // Method to get the configured risk time range
     public TimeSpan GetRiskTimeRange()
     {
-        return _dal.config.RiskRange; // Return the current risk time range from the DAL configuration
+        return AdminManager.MaxRange; // Return the current risk time range from the DAL configuration
     }
 
     // Method to initialize the database by resetting it and adding initial data
@@ -80,29 +80,22 @@ internal class AdminImplementation : IAdmin
 
     }
 
+    #region Stage 5
+    public void AddClockObserver(Action clockObserver) =>
+    AdminManager.ClockUpdatedObservers += clockObserver;
+    public void RemoveClockObserver(Action clockObserver) =>
+    AdminManager.ClockUpdatedObservers -= clockObserver;
+    public void AddConfigObserver(Action configObserver) =>
+   AdminManager.ConfigUpdatedObservers += configObserver;
+    public void RemoveConfigObserver(Action configObserver) =>
+    AdminManager.ConfigUpdatedObservers -= configObserver;
+    #endregion Stage 5
+
+
+
     // Method to set a new risk time range configuration
-    public void SetRiskTimeRange(TimeSpan maxRange)
-    {
-        _dal.config.RiskRange = maxRange; // Update the risk time range in the DAL configuration
-    }
+    public void SetMaxRange(int maxRange) => AdminManager.MaxRange = maxRange;
 
-    public void AddConfigObserver(Action configObserver)
-    {
-        throw new NotImplementedException();
-    }
 
-    public void RemoveConfigObserver(Action configObserver)
-    {
-        throw new NotImplementedException();
-    }
 
-    public void AddClockObserver(Action clockObserver)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void RemoveClockObserver(Action clockObserver)
-    {
-        throw new NotImplementedException();
-    }
 }

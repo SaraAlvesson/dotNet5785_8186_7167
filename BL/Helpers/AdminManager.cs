@@ -22,12 +22,12 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static int MaxRange
+    internal static TimeSpan MaxRange
     {
-        get => s_dal.config.RiskRange();
+        get => AdminManager.MaxRange;
         set
         {
-            s_dal.config.RiskRange = value;
+            AdminManager.MaxRange = value;
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }
@@ -50,8 +50,8 @@ internal static class AdminManager //stage 4
 
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
-        var oldClock = s_dal.config.Clock; //stage 4
-        s_dal.config.Clock = newClock; //stage 4
+        var oldClock = AdminManager.Clock; //stage 4
+        AdminManager.Clock = newClock; //stage 4
 
         //TO_DO:
         //Add calls here to any logic method that should be called periodically,
