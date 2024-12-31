@@ -12,30 +12,30 @@ internal class AdminImplementation : IAdmin
     // Method to advance the system clock by a specified time unit
     public void UpdateClock(TimeUnitEnum unit)
     {
-        DateTime newTime = ClockManager.Now; // Get the current time from ClockManager
+        DateTime newTime = AdminManager.Now; // Get the current time from ClockManager
 
         // Switch case to handle different time units
         switch (unit)
         {
 
             case TimeUnitEnum.SECOND:
-                newTime = ClockManager.Now.AddSeconds(1);
+                newTime = AdminManager.Now.AddSeconds(1);
                 break;
 
             case TimeUnitEnum.MINUTE:
-                newTime = ClockManager.Now.AddMinutes(1); // Advance by 1 minute
+                newTime = AdminManager.Now.AddMinutes(1); // Advance by 1 minute
                 break;
             case TimeUnitEnum.HOUR:
-                newTime = ClockManager.Now.AddHours(1); // Advance by 1 hour
+                newTime = AdminManager.Now.AddHours(1); // Advance by 1 hour
                 break;
             case TimeUnitEnum.DAY:
-                newTime = ClockManager.Now.AddDays(1); // Advance by 1 day
+                newTime = AdminManager.Now.AddDays(1); // Advance by 1 day
                 break;
             case TimeUnitEnum.MONTH:
-                newTime = ClockManager.Now.AddMonths(1); // Advance by 1 month
+                newTime = AdminManager.Now.AddMonths(1); // Advance by 1 month
                 break;
             case TimeUnitEnum.YEAR:
-                newTime = ClockManager.Now.AddYears(1); // Advance by 1 year
+                newTime = AdminManager.Now.AddYears(1); // Advance by 1 year
                 break;
                 
             default:
@@ -43,13 +43,13 @@ internal class AdminImplementation : IAdmin
         }
 
         // Update the clock with the new time
-        ClockManager.UpdateClock(newTime);
+        AdminManager.UpdateClock(newTime);
     }
 
     // Method to get the current system time
     public DateTime GetCurrentTime()
     {
-        return ClockManager.Now; // Return the current time from ClockManager
+        return AdminManager.Now; // Return the current time from ClockManager
     }
 
     // Method to get the configured risk time range
@@ -63,18 +63,46 @@ internal class AdminImplementation : IAdmin
     {
         ResetDatabase(); // First, reset the database
         DalTest.Initialization.Do(); // Add the initial data
-        ClockManager.UpdateClock(ClockManager.Now); // Ensure the clock is updated after initialization
+        AdminManager.UpdateClock(AdminManager.Now); // Ensure the clock is updated after initialization
+        DalTest.Initialization.Do();
+        AdminManager.UpdateClock(AdminManager.Now);
+        AdminManager.MaxRange = AdminManager.MaxRange;
+
     }
 
     // Method to reset the database (clear all data and reset configurations)
     public void ResetDatabase()
     {
         _dal.ResetDB(); // Reset the database through the DAL
+        DalTest.Initialization.Do();
+        AdminManager.UpdateClock(AdminManager.Now);
+        AdminManager.MaxRange = AdminManager.MaxRange;
+
     }
 
     // Method to set a new risk time range configuration
     public void SetRiskTimeRange(TimeSpan maxRange)
     {
         _dal.config.RiskRange = maxRange; // Update the risk time range in the DAL configuration
+    }
+
+    public void AddConfigObserver(Action configObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveConfigObserver(Action configObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddClockObserver(Action clockObserver)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveClockObserver(Action clockObserver)
+    {
+        throw new NotImplementedException();
     }
 }

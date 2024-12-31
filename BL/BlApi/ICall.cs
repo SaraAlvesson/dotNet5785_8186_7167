@@ -3,7 +3,7 @@ using BO;
 /// <summary>
 /// 
 /// </summary>
-public interface ICall
+public interface ICall:IObservable
 {
     /// <summary>
     /// מבצע חישוב של כמות הקריאות לכל מצב (Status), ומחזיר מערך עם הכמויות עבור כל מצב.
