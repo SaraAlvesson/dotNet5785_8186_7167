@@ -1,5 +1,4 @@
-﻿
-using BlImplementation;
+﻿using BlImplementation;
 using BO;
 using DalApi;
 namespace Helpers;
@@ -35,7 +34,7 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
-    internal static DateTime Now { get => s_dal.config.Clock; } //stage 4
+    internal static DateTime Now { get => AdminManager.Clock; } //stage 4
 
     /// <summary>
     /// Method to perform application's clock from any BL class as may be required
@@ -50,8 +49,8 @@ internal static class AdminManager //stage 4
 
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
-        var oldClock = AdminManager.updateClock; //stage 4
-        AdminManager. = newClock; //stage 4
+        var oldClock = AdminManager.Clock; //stage 4
+        AdminManager.Clock = newClock; //stage 4
 
         //TO_DO:
         //Add calls here to any logic method that should be called periodically,
@@ -104,11 +103,11 @@ internal static class AdminManager //stage 4
         {
             UpdateClock(Now.AddMinutes(s_interval));
 
-            #region Stage 7
-            //TO_DO:
-            //Add calls here to any logic simulation that was required in stage 7
-            //for example: course registration simulation
-           // StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
+            //#region Stage 7
+            ////TO_DO:
+            ////Add calls here to any logic simulation that was required in stage 7
+            ////for example: course registration simulation
+            //CallManager.SimulateCourseRegistrationAndGrade(); //stage 7
 
             //etc...
             #endregion Stage 7
@@ -120,5 +119,7 @@ internal static class AdminManager //stage 4
             catch (ThreadInterruptedException) { }
         }
     }
-    #endregion Stage 7 base
+//#endregion Stage 7 base
 }
+  
+

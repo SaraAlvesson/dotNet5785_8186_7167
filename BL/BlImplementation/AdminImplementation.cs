@@ -75,6 +75,8 @@ internal class AdminImplementation : IAdmin
         DalTest.Initialization.Do();
         AdminManager.UpdateClock(AdminManager.Now);
         AdminManager.MaxRange = AdminManager.MaxRange;
+ 
+
 
     }
 
