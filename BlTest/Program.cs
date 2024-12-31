@@ -237,7 +237,7 @@ internal class Program
                         IEnumerable<VolunteerInList> VolunteerInList = s_bl.Volunteer.RequestVolunteerList(isActive, sortField);
 
                         Console.WriteLine("Volunteer List:");
-                        if (VolunteerInList != null)
+                        if (VolunteerInList == null)
                             Console.WriteLine("volunteers list is empty.");
                         else
                         {
