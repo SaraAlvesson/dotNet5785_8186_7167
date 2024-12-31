@@ -7,7 +7,7 @@ using static BO.Enums;
 /// 
 /// </summary>
 // Interface for the Volunteer service layer
-public interface IVolunteer
+public interface IVolunteer: IObservable
 {
     /// <summary>
     /// Logs in a user by validating username and password.

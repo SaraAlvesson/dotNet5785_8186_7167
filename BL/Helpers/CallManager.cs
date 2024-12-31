@@ -6,9 +6,15 @@ using System.Net.Http;
 
 namespace Helpers
 {
-    internal static class CallManager
+    internal static class CallManager 
     {
         private static IDal s_dal = Factory.Get; //stage 4
+
+        internal static ObserverManager Observers = new(); //stage 5 
+
+
+
+
 
         internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
         {
@@ -18,7 +24,7 @@ namespace Helpers
                 return BO.Enums.CalltStatusEnum.OPEN; // מצב ברירת מחדל
             }
 
-           // טיפול במקרה שבו doCall הוא null(אם יש צורך)
+            // טיפול במקרה שבו doCall הוא null(אם יש צורך)
             if (doCall == null)
             {
                 throw new ArgumentNullException(nameof(doCall), "doCall cannot be null");
@@ -147,49 +153,55 @@ namespace Helpers
 
 
 
+        internal static void UpdateExpired()
+        {
+            // Step 1: Retrieve all calls where MaxTimeToEnd has passed and need handling
+            var expiredCalls = s_dal.call.ReadAll(c => c.MaxTime < AdminManager.Now);
 
-        //  מתודת עדכון הקריאות הפתוחות שפג תוקפן
-        //internal static void UpdateExpiredCalls()
-        //{
-        //    var calls = s_dal.call.ReadAll();
-        //    // 1. נלך על כל הקריאות הפתוחות
-        //    foreach (var call in calls) // Assuming _dal.Calls returns the list of calls
-        //    {
-        //        if (call.EndDate < ClockManager.Now) // 2. אם זמן הסיום עבר
-        //        {
-        //            // 3. קריאות שאין להן עדיין הקצאה
-        //            if (call.Assignment == null)
-        //            {
-        //                var newAssignment = new Assignment
-        //                {
-        //                    CallId = call.Id,
-        //                    EndDate = ClockManager.Now,
-        //                    EndReason = "ביטול פג תוקף",
-        //                    VolunteerId = 0 // ת.ז מתנדב
-        //                };
-        //                _dal.assignments.Add(newAssignment); // מוסיפים הקצאה חדשה
-        //            }
-        //            else if (call.Assignment.EndTreatmentDate == null) // 4. קריאות שיש להן הקצאה אך לא הסתיים טיפולן
-        //            {
-        //                call.Assignment.EndTreatmentDate = ClockManager.Now;
-        //                call.Assignment.EndReason = "ביטול פג תוקף"; // עדכון סיום טיפול
-        //                _dal.SaveChanges(); // שומרים את השינויים
-        //            }
+            // Step 2: Handle calls without assignments
+            foreach (var call in expiredCalls)
+            {
+                var hasAssignment = s_dal.assignment.ReadAll(a => a.CallId == call.Id).Any();
 
-        //            // 5. שליחת הודעה למשקיפים על עדכון הקריאה הספציפית (אם יש)
-        //            if (call.Observers != null && call.Observers.Count > 0)
-        //            {
-        //                foreach (var observer in call.Observers)
-        //                {
-        //                    observer?.Invoke(); // שולחים את ההודעה למשקיף
-        //                }
-        //            }
-        //        }
-        //    }
+                if (!hasAssignment)
+                {
+                    var newAssignment = new DO.Assignment
+                    {
+                        Id = 0,  // New ID will be generated
+                        CallId = call.Id,
+                        VolunteerId = 0,
+                        AppointmentTime = AdminManager.Now,
+                        FinishAppointmentType = DO.FinishAppointmentType.CancellationHasExpired
+                    };
+                    s_dal.assignment.Create(newAssignment);
+                }
+            }
 
-        //    // 6. שליחת הודעה על עדכון רשימת הקריאות
-        //    CallListUpdated?.Invoke();
-        //}
+            // Step 3: Update existing assignments with null FinishAppointmentTime
+            var assignmentsToUpdate = s_dal.assignment.ReadAll(a => a.FinishAppointmentTime == null);
 
+            foreach (var assignment in assignmentsToUpdate)
+            {
+                var call = expiredCalls.FirstOrDefault(c => c.Id == assignment.CallId);
+                if (call != null)
+                {
+                    var updatedAssignment = assignment with
+                    {
+                        FinishAppointmentTime = AdminManager.Now,
+                        FinishAppointmentType = DO.FinishAppointmentType.CancellationHasExpired
+                    };
+                    s_dal.assignment.Update(updatedAssignment);
+
+                    // Notify specific item update
+                    Observers.NotifyItemUpdated(updatedAssignment.Id);
+                }
+            }
+
+            // Step 5: Notify observers for list update
+            Observers.NotifyListUpdated();
+        }
+
+       
     }
-}
+
+   }

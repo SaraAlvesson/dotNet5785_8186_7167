@@ -15,6 +15,19 @@ internal class VolunteerImplementation : IVolunteer
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
+
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    VolunteersManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    VolunteersManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    VolunteersManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+   VolunteersManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
+
     //public string Login(string username, string password)
     //{
 
@@ -301,6 +314,9 @@ internal class VolunteerImplementation : IVolunteer
 
             // שלב 7: עדכון רשומת המתנדב בשכבת הנתונים
             _dal.Volunteer.Update(newVolunteer);
+            VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  //stage 5
+            VolunteersManager.Observers.NotifyListUpdated();  //stage 5
+
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -341,6 +357,7 @@ internal class VolunteerImplementation : IVolunteer
 
             // שלב 2: ניסיון למחוק את המתנדב אם הוא לא מטפל בהקצאה פעילה
             _dal.Volunteer.Delete(volunteerId); // מנסה למחוק את המתנדב 
+            VolunteersManager.Observers.NotifyListUpdated();  //stage 5  
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -380,6 +397,7 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             _dal.Volunteer.Create(newVolunteer);
+            VolunteersManager.Observers.NotifyListUpdated(); //stage 5   
         }
         catch (DO.DalAlreadyExistException ex)
         {

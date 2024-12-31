@@ -1,19 +1,41 @@
-﻿using BlImplementation;
+﻿
+using BlImplementation;
 using BO;
+using DalApi;
 namespace Helpers;
 
 /// <summary>
 /// Internal BL manager for all Application's Clock logic policies
 /// </summary>
-internal static class ClockManager //stage 4
+internal static class AdminManager //stage 4
 {
     #region Stage 4
-    private static readonly DalApi.IDal _dal = DalApi.Factory.Get; //stage 4
+    private static readonly DalApi.IDal s_dal = DalApi.Factory.Get; //stage 4
+    #endregion Stage 4
+
+    #region Stage 5
+    internal static event Action? ConfigUpdatedObservers; //prepared for stage 5 - for config update observers
+    internal static event Action? ClockUpdatedObservers; //prepared for stage 5 - for clock update observers
+    #endregion Stage 5
+
+    #region Stage 4
+    /// <summary>
+    /// Property for providing/setting current configuration variable value for any BL class that may need it
+    /// </summary>
+    internal static int MaxRange
+    {
+        get => s_dal.config.RiskRange();
+        set
+        {
+            s_dal.config.RiskRange = value;
+            ConfigUpdatedObservers?.Invoke(); // stage 5
+        }
+    }
 
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
-    internal static DateTime Now { get => _dal.config.Clock; } //stage 4
+    internal static DateTime Now { get => s_dal.config.Clock; } //stage 4
 
     /// <summary>
     /// Method to perform application's clock from any BL class as may be required
@@ -28,39 +50,30 @@ internal static class ClockManager //stage 4
 
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
-        var oldClock = _dal.config.Clock; //stage 4
-        _dal.config.Clock = newClock; //stage 4
+        var oldClock = s_dal.config.Clock; //stage 4
+        s_dal.config.Clock = newClock; //stage 4
 
-        // TO_DO:
-        // Add calls here to any logic method that should be called periodically,
-        // after each clock update
-        // for example, Periodic students' updates:
-        // Go through all students to update properties that are affected by the clock update
+        //TO_DO:
+        //Add calls here to any logic method that should be called periodically,
+        //after each clock update
+        //for example, Periodic students' updates:
+        //Go through all students to update properties that are affected by the clock update
         //(students becomes not active after 5 years etc.)
 
-        // Calling the UpdateExpiredCalls method from CallManager
-        //////////////CallManager.UpdateExpiredCalls(); // קריאה למתודה שמעדכנת את הקריאות שפג תוקפן
+        CallManager.UpdateExpired(); //stage 4
+        //etc ...
 
-        // Calling all the observers of clock update
-        //ClockUpdatedObservers?.Invoke(); //prepared for stage 5
+        //Calling all the observers of clock update
+        ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }
-
     #endregion Stage 4
-
-
-    #region Stage 5
-
-    internal static event Action? ClockUpdatedObservers; //prepared for stage 5 - for clock update observers
-
-    #endregion Stage 5
-
 
     #region Stage 7 base
     internal static readonly object blMutex = new();
     private static Thread? s_thread;
     private static int s_interval { get; set; } = 1; //in minutes by second    
     private static volatile bool s_stop = false;
-    private static object mutex = new();
+    private static readonly object mutex = new();
 
     internal static void Start(int interval)
     {
@@ -95,8 +108,7 @@ internal static class ClockManager //stage 4
             //TO_DO:
             //Add calls here to any logic simulation that was required in stage 7
             //for example: course registration simulation
-
-            //StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7///////////////////////////////////////////
+           // StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
 
             //etc...
             #endregion Stage 7

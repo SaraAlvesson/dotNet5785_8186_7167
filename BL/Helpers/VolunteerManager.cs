@@ -18,6 +18,9 @@ namespace Helpers
 {
     internal static class VolunteersManager
     {
+
+        internal static ObserverManager Observers = new(); //stage 5 
+
         private static IDal s_dal = DalApi.Factory.Get; //stage 4
         /// <summary>
         /// convert volunteer form Do to volunteerINList  from BO

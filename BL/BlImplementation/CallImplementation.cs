@@ -10,6 +10,18 @@ using static BO.Exceptions;
 internal class CallImplementation : ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
+
+
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    CallManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    CallManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    CallManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    CallManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
     public IEnumerable<int> CallsAmount()
     {
         // שליפת כל הקריאות
@@ -48,7 +60,7 @@ internal class CallImplementation : ICall
         var callInList = from item in listCall
                          let assignment = listAssignment.Where(s => s.CallId == item.Id).OrderByDescending(s => s.AppointmentTime).FirstOrDefault()
                          let volunteer = assignment != null ? _dal.Volunteer.Read(assignment.VolunteerId) : null
-                         let TempTimeToEnd = item.MaxTime - (ClockManager.Now)
+                         let TempTimeToEnd = item.MaxTime - (AdminManager.Now)
                          select new BO.CallInList
                          {
                              Id = assignment != null ? assignment.Id : null,
@@ -212,6 +224,9 @@ internal class CallImplementation : ICall
 
             // שלב 5: עדכון הרשומה בשכבת הנתונים
             _dal.call.Update(newCall);
+            CallManager.Observers.NotifyItemUpdated(newCall.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
+
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -249,6 +264,7 @@ internal class CallImplementation : ICall
             {
                 Console.WriteLine($"Attempting to delete call with ID {callId}");
                 _dal.call.Delete(callId);
+                CallManager.Observers.NotifyListUpdated();  //stage 5  
             }
             catch (DO.DalDeletionImpossible ex)
             {
@@ -270,6 +286,7 @@ internal class CallImplementation : ICall
 
     public void AddCall(BO.Call call)
     {
+         
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
@@ -311,6 +328,7 @@ internal class CallImplementation : ICall
 
             // שלב 5: עדכון הרשומה בשכבת הנתונים
             _dal.call.Create(newCall);
+            CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
         catch (Exception ex)
         {
