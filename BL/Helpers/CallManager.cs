@@ -153,7 +153,7 @@ namespace Helpers
 
 
 
-        internal static void UpdateExpired()
+        public static void UpdateExpired()
         {
             // Step 1: Retrieve all calls where MaxTimeToEnd has passed and need handling
             var expiredCalls = s_dal.call.ReadAll(c => c.MaxTime < AdminManager.Now);
