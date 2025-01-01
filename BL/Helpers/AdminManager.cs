@@ -1,5 +1,4 @@
-﻿
-using BlImplementation;
+﻿using BlImplementation;
 using BO;
 using DalApi;
 namespace Helpers;
@@ -22,15 +21,16 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static TimeSpan MaxRange
+    internal static int MaxRange
     {
-        get => s_dal.config.RiskRange;
+        get => (int)s_dal.config.RiskRange.TotalMinutes; // אם רוצים את הערך במינוטים
         set
         {
-            s_dal.config.RiskRange = value;
+            AdminManager.MaxRange = value;
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }
+
 
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
@@ -104,11 +104,11 @@ internal static class AdminManager //stage 4
         {
             UpdateClock(Now.AddMinutes(s_interval));
 
-            #region Stage 7
-            //TO_DO:
-            //Add calls here to any logic simulation that was required in stage 7
-            //for example: course registration simulation
-           // StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
+            //#region Stage 7
+            ////TO_DO:
+            ////Add calls here to any logic simulation that was required in stage 7
+            ////for example: course registration simulation
+            //CallManager.SimulateCourseRegistrationAndGrade(); //stage 7
 
             //etc...
             #endregion Stage 7
@@ -120,5 +120,7 @@ internal static class AdminManager //stage 4
             catch (ThreadInterruptedException) { }
         }
     }
-    #endregion Stage 7 base
+//#endregion Stage 7 base
 }
+  
+

@@ -75,6 +75,8 @@ internal class AdminImplementation : IAdmin
         DalTest.Initialization.Do();
         AdminManager.UpdateClock(AdminManager.Now);
         AdminManager.MaxRange = AdminManager.MaxRange;
+ 
+
 
     }
 
@@ -90,16 +92,16 @@ internal class AdminImplementation : IAdmin
     #endregion Stage 5
 
 
-
     // SetRiskTimeRange - מקבל TimeSpan וממיר אותו לאינט (לדוג' דקות)
     public void SetRiskTimeRange(TimeSpan maxRange)
     {
-        AdminManager.MaxRange = maxRange; // או TotalSeconds, TotalHours, תלוי מה אתה רוצה
+        AdminManager.MaxRange = maxRange; // Update the risk time range in the DAL configuration
     }
 
     // GetRiskTimeRange - מחזיר את הערך כ- TimeSpan (למשל, דקות)
     public TimeSpan GetRiskTimeRange()
     {
-        return TimeSpan.MaxRange; // ממיר בחזרה ל- TimeSpan (לדוג' דקות)
+        return AdminManager.MaxRange;
     }
+
 }
