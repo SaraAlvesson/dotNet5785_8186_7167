@@ -50,7 +50,7 @@ internal static class AdminManager //stage 4
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
         var oldClock = s_dal.config.Clock; //stage 4
-        AdminManager.s_dal.config.Clock = newClock; //stage 4
+        s_dal.config.Clock= newClock; //stage 4
 
         //TO_DO:
         //Add calls here to any logic method that should be called periodically,
