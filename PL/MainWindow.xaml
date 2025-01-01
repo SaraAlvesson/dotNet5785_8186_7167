@@ -20,27 +20,8 @@
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
-
-
-
-            <!--Internal, Upper Grid-->
-            <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="0" VerticalAlignment="Stretch" Width="auto">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20"/>
-                <ComboBox Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
-            </Grid>
-            <ListView Grid.Row="1" >
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <Button Content="Add" Grid.Row="4" HorizontalAlignment="Left" Height="50" Width="100" Margin="63,33,0,17"/>
+            
+            
             <Label Content="שעון מערכת" HorizontalAlignment="Left" Margin="89,74,0,0" Grid.Row="5" VerticalAlignment="Top"/>
             <Button Content="קידום בדקה" HorizontalAlignment="Left" Margin="178,24,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddMin"/>
             <Button Content="קידום בשעה" HorizontalAlignment="Left" Margin="94,25,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddHour"/>
@@ -50,10 +31,10 @@
             <TextBox Name="textrr" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" 
              HorizontalAlignment="Left" Margin="536,72,0,0"  TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"  
              Grid.Row="3"   />
-            <Button Content="Initialize DB" HorizontalAlignment="Left" Margin="670,30,0,0" Grid.Row="4" VerticalAlignment="Top"/>
+            <Button Content="Initialize DB" HorizontalAlignment="Left" Margin="670,30,0,0" Grid.Row="4" VerticalAlignment="Top" Click="btnInit"/>
             <Button Content="update" HorizontalAlignment="Left" Margin="682,70,0,0" Grid.Row="3" VerticalAlignment="Top" RenderTransformOrigin="2.529,1.333" Click="update_click"/>
-            <Button Content="View List" HorizontalAlignment="Left" Margin="563,68,0,0" Grid.Row="4" VerticalAlignment="Top" Width="73"/>
-            <Button Content="Reset DB" HorizontalAlignment="Left" Margin="670,68,0,0" Grid.Row="4" VerticalAlignment="Top" RenderTransformOrigin="3.016,-0.03" Width="66"/>
+            <Button Content="Handle volunteers" HorizontalAlignment="Left" Margin="563,68,0,0" Grid.Row="4" VerticalAlignment="Top" Width="73" Click="btnVolunteerList"/>
+            <Button Content="Reset DB" HorizontalAlignment="Left" Margin="670,68,0,0" Grid.Row="4" VerticalAlignment="Top" RenderTransformOrigin="3.016,-0.03" Width="66" Click="btnReset"/>
 
 
 
