@@ -29,7 +29,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Label Content="Label" Grid.Column="0" HorizontalAlignment="Left" Margin="130,0,0,0" VerticalAlignment="Center"/>
+                <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20"/>
                 <ComboBox Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
             </Grid>
@@ -42,14 +42,16 @@
             </ListView>
             <Button Content="Add" Grid.Row="4" HorizontalAlignment="Left" Height="50" Width="100" Margin="63,33,0,17"/>
             <Label Content="שעון מערכת" HorizontalAlignment="Left" Margin="89,74,0,0" Grid.Row="5" VerticalAlignment="Top"/>
-            <Button Content="קידום בדקה" HorizontalAlignment="Left" Margin="178,24,0,0" Grid.Row="6" VerticalAlignment="Top"/>
-            <Button Content="קידום בשעה" HorizontalAlignment="Left" Margin="94,25,0,0" Grid.Row="6" VerticalAlignment="Top"/>
-            <Button Content="קידום ביום" HorizontalAlignment="Left" Margin="10,24,0,0" Grid.Row="6" VerticalAlignment="Top"/>
-            <Button Content="קידום בחודש" HorizontalAlignment="Left" Margin="145,50,0,0" Grid.Row="6" VerticalAlignment="Top"/>
-            <Button Content="קידום בשנה" HorizontalAlignment="Left" Margin="44,50,0,0" Grid.Row="6" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Margin="536,72,0,0" Grid.Row="3" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+            <Button Content="קידום בדקה" HorizontalAlignment="Left" Margin="178,24,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddMin"/>
+            <Button Content="קידום בשעה" HorizontalAlignment="Left" Margin="94,25,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddHour"/>
+            <Button Content="קידום ביום" HorizontalAlignment="Left" Margin="10,24,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddDay"/>
+            <Button Content="קידום בחודש" HorizontalAlignment="Left" Margin="145,50,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddMonth"/>
+            <Button Content="קידום בשנה" HorizontalAlignment="Left" Margin="44,50,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddYear"/>
+            <TextBox Name="textrr" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" 
+             HorizontalAlignment="Left" Margin="536,72,0,0"  TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"  
+             Grid.Row="3"   />
             <Button Content="Initialize DB" HorizontalAlignment="Left" Margin="670,30,0,0" Grid.Row="4" VerticalAlignment="Top"/>
-            <Button Content="update" HorizontalAlignment="Left" Margin="682,70,0,0" Grid.Row="3" VerticalAlignment="Top" RenderTransformOrigin="2.529,1.333"/>
+            <Button Content="update" HorizontalAlignment="Left" Margin="682,70,0,0" Grid.Row="3" VerticalAlignment="Top" RenderTransformOrigin="2.529,1.333" Click="update_click"/>
             <Button Content="View List" HorizontalAlignment="Left" Margin="563,68,0,0" Grid.Row="4" VerticalAlignment="Top" Width="73"/>
             <Button Content="Reset DB" HorizontalAlignment="Left" Margin="670,68,0,0" Grid.Row="4" VerticalAlignment="Top" RenderTransformOrigin="3.016,-0.03" Width="66"/>
 
