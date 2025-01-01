@@ -69,7 +69,7 @@ namespace PL
               nameof(RiskRange),
               typeof(TimeSpan),
               typeof(MainWindow),
-              new PropertyMetadata(config.RiskRange));
+              new PropertyMetadata(s_bl.Admin.GetRiskTimeRange()));
 
         // פעולות הקידום
         private void btnAddDay(object sender, RoutedEventArgs e)

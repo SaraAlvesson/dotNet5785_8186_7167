@@ -24,10 +24,10 @@ internal static class AdminManager //stage 4
     /// </summary>
     internal static TimeSpan MaxRange
     {
-        get => AdminManager.MaxRange;
+        get => s_dal.config.RiskRange;
         set
         {
-            AdminManager.MaxRange = value;
+            s_dal.config.RiskRange = value;
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }
