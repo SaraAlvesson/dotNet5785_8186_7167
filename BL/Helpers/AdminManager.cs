@@ -26,7 +26,7 @@ internal static class AdminManager //stage 4
         get => (int)s_dal.config.RiskRange.TotalMinutes; // אם רוצים את הערך במינוטים
         set
         {
-            s_dal.config.RiskRange = TimeSpan.FromMinutes(value); // המרת ערך מסוג int חזרה ל-TimeSpan
+            AdminManager.MaxRange = value;
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }

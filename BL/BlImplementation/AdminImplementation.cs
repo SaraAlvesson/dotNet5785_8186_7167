@@ -95,13 +95,13 @@ internal class AdminImplementation : IAdmin
     // SetRiskTimeRange - מקבל TimeSpan וממיר אותו לאינט (לדוג' דקות)
     public void SetRiskTimeRange(TimeSpan maxRange)
     {
-        AdminManager.MaxRange = (int)maxRange.TotalMinutes; // או TotalSeconds, TotalHours, תלוי מה אתה רוצה
+        AdminManager.MaxRange = maxRange; // Update the risk time range in the DAL configuration
     }
 
     // GetRiskTimeRange - מחזיר את הערך כ- TimeSpan (למשל, דקות)
     public TimeSpan GetRiskTimeRange()
     {
-        return TimeSpan.FromMinutes(AdminManager.MaxRange); // ממיר בחזרה ל- TimeSpan (לדוג' דקות)
+        return AdminManager.MaxRange;
     }
 
 }
