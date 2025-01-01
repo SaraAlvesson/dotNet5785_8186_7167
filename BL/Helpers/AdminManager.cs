@@ -34,7 +34,7 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
     /// </summary>
-    internal static DateTime Now { get => AdminManager.Clock; } //stage 4
+    internal static DateTime Now { get => s_dal.config.Clock; } //stage 4
 
     /// <summary>
     /// Method to perform application's clock from any BL class as may be required
@@ -49,8 +49,8 @@ internal static class AdminManager //stage 4
 
     private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
     {
-        var oldClock = AdminManager.Clock; //stage 4
-        AdminManager.Clock = newClock; //stage 4
+        var oldClock = s_dal.config.Clock; //stage 4
+        AdminManager.s_dal.config.Clock = newClock; //stage 4
 
         //TO_DO:
         //Add calls here to any logic method that should be called periodically,
