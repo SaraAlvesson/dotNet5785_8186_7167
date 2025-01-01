@@ -21,15 +21,16 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static TimeSpan MaxRange
+    internal static int MaxRange
     {
-        get => AdminManager.MaxRange;
+        get => (int)s_dal.config.RiskRange.TotalMinutes; // אם רוצים את הערך במינוטים
         set
         {
-            AdminManager.MaxRange = value;
+            s_dal.config.RiskRange = TimeSpan.FromMinutes(value); // המרת ערך מסוג int חזרה ל-TimeSpan
             ConfigUpdatedObservers?.Invoke(); // stage 5
         }
     }
+
 
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
