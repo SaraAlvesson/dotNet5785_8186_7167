@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using BlApi;
 using DalApi;
+using PL.Admin;
 
 namespace PL
 {
@@ -41,12 +43,24 @@ namespace PL
             s_bl.Admin.AddConfigObserver(configObserver);
         }
 
+        // סגירת כל החלונות הפתוחים חוץ מהחלון הראשי
+        private void CloseAllOtherWindows()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                // סגור את כל החלונות חוץ מהחלון הראשי
+                if (window != this)
+                {
+                    window.Close();
+                }
+            }
+        }
+
         // מתודת סגירת החלון
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            // הסרת המשקיפים בסגירת החלון
-            s_bl.Admin.RemoveClockObserver(clockObserver);
-            s_bl.Admin.RemoveConfigObserver(configObserver);
+            // סגירת כל החלונות חוץ מהחלון הראשי
+            CloseAllOtherWindows();
         }
 
         // רכיבי ממשק המשתמש
@@ -70,7 +84,6 @@ namespace PL
               typeof(TimeSpan),
               typeof(MainWindow),
             new PropertyMetadata(s_bl.Admin.GetRiskTimeRange())); // או מתודה אחרת שמחזירה את הערך
-
 
         // פעולות הקידום
         private void btnAddDay(object sender, RoutedEventArgs e)
@@ -103,6 +116,70 @@ namespace PL
         {
             TimeSpan RiskRangetxt = TimeSpan.Parse(textrr.Text);
             s_bl.Admin.SetRiskTimeRange(RiskRangetxt);
+        }
+
+        private void btnVolunteerList(object sender, RoutedEventArgs e)
+        {
+            new VolunteerListWindow().Show();
+        }
+
+        private void btnReset(object sender, RoutedEventArgs e)
+        {
+            // בקשה לאישור מהמשתמש
+            var result = MessageBox.Show("האם אתה בטוח שברצונך לאפס את בסיס הנתונים?", "אישור איפוס", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                // שינוי אייקון העכבר לשעון חול
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
+                CloseAllOtherWindows();
+
+                try
+                {
+                    // קריאה לפוקנציה של איפוס בסיס הנתונים ב-BL
+                    s_bl.Admin.ResetDatabase();
+                    MessageBox.Show("האיפוס בוצע בהצלחה!", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"אירעה שגיאה בעת איפוס בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    // החזרת אייקון העכבר לברירת המחדל
+                    Mouse.OverrideCursor = null;
+                }
+            }
+        }
+
+        private void btnInit(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Do you want to Initialize DataBase?", "אישור אתחול", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                // שינוי אייקון העכבר לשעון חול
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
+                CloseAllOtherWindows();
+
+                try
+                {
+                    // קריאה לפוקנציה של אתחול בסיס הנתונים ב-BL
+                    s_bl.Admin.InitializeDatabase();
+                    MessageBox.Show("האתחול בוצע בהצלחה!", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"אירעה שגיאה בעת אתחול בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    // החזרת אייקון העכבר לברירת המחדל
+                    Mouse.OverrideCursor = null;
+                }
+            }
         }
     }
 }
