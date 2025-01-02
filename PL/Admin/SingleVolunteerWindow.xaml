@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Admin"
         mc:Ignorable="d"
-        Title="SingleVolunteerWindow" Height="640" Width="800">
+        Title="SingleVolunteerWindow" Height="640" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+
+    
     <Grid>
         <Label Content="Id:" HorizontalAlignment="Left" Margin="52,56,0,0" VerticalAlignment="Top" RenderTransformOrigin="-15.373,-1.734" Height="29" Width="129"/>
         <TextBox HorizontalAlignment="Left" Margin="253,56,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129" Height="29"/>
@@ -28,23 +31,23 @@
         <Label Content="Position:" HorizontalAlignment="Left" Margin="52,390,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.027,-0.043" Width="90" Height="27"/>
         <Label Content="SumCalls:" HorizontalAlignment="Left" Margin="62,517,0,0" VerticalAlignment="Top" RenderTransformOrigin="-4.75,1.26"/>
         <Label Content="PhoneNumber:" HorizontalAlignment="Left" Margin="52,139,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="258,112,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="263,152,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="258,112,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.FullName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="263,152,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
         <ComboBox HorizontalAlignment="Left" Margin="263,390,0,0" VerticalAlignment="Top" Width="120"/>
         <ComboBox HorizontalAlignment="Left" Margin="280,496,0,0" VerticalAlignment="Top" Width="120"/>
         <Label Content="Active:" HorizontalAlignment="Left" Margin="52,435,0,0" VerticalAlignment="Top" Width="192"/>
         <Label HorizontalAlignment="Left" Margin="52,448,0,0" VerticalAlignment="Top" Width="246">
             <Label Content="MaxDistance:" Height="23" Width="217"/>
         </Label>
-        <TextBox HorizontalAlignment="Left" Margin="262,189,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="263,235,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="26"/>
-        <TextBox HorizontalAlignment="Left" Margin="268,261,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="30"/>
+        <TextBox HorizontalAlignment="Left" Margin="262,189,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.Email, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="263,235,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.Password, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120" Height="26"/>
+        <TextBox HorizontalAlignment="Left" Margin="268,261,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120" Height="30"/>
         <Label Content="Location:" HorizontalAlignment="Left" Margin="52,268,0,0" VerticalAlignment="Top" Width="141"/>
-        <TextBox HorizontalAlignment="Left" Margin="268,307,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="268,348,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="268,307,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.Latitude, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="268,348,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.Longitude, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
         <CheckBox Content="CheckBox" HorizontalAlignment="Left" Margin="280,435,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="268,464,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="144" Height="18"/>
-        <TextBox HorizontalAlignment="Left" Margin="292,530,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="268,464,0,0" TextWrapping="Wrap" Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="144" Height="18"/>
+        <TextBox HorizontalAlignment="Left" Margin="292,530,0,0" TextWrapping="Wrap" Text="{Binding CurrentVolunteer.SumCalls, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
         <Label Content="SumCanceled:" HorizontalAlignment="Left" Margin="62,543,0,0" VerticalAlignment="Top" Width="201" RenderTransformOrigin="0.5,0.5">
             <Label.RenderTransform>
                 <TransformGroup>
@@ -55,9 +58,11 @@
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
-        <TextBox HorizontalAlignment="Left" Margin="292,569,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="150,569,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.SumExpired, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
         <Label Content="SumExpired:" HorizontalAlignment="Left" Margin="42,560,0,0" VerticalAlignment="Top" Width="122"/>
         <Label Content="VolunteerTakenCare:" HorizontalAlignment="Left" Margin="87,587,0,0" VerticalAlignment="Top" Width="127"/>
+        <Button Content="{Binding ButtonText}" HorizontalAlignment="Left" Margin="661,417,0,0" VerticalAlignment="Top" Click="btnAddUpdate"/>
+        <TextBox HorizontalAlignment="Left" Margin="328,560,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.SumCanceled, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
 
     </Grid>
 </Window>

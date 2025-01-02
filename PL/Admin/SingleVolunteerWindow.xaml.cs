@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PL.Admin
 {
@@ -19,19 +8,54 @@ namespace PL.Admin
     /// </summary>
     public partial class SingleVolunteerWindow : Window
     {
-        public SingleVolunteerWindow()
+        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        // תכונה (Property) שמייצגת את הטקסט שעל הכפתור
+        public string ButtonText { get; set; }
+
+        // קונסטרוקטור של החלון
+        public SingleVolunteerWindow(int id=0)
         {
+
+            // קביעת הטקסט של הכפתור לפי ה-id
+            ButtonText = id == 0 ? "Add" : "Update";
+            // חיבור התכונה למנגנון Binding, כדי שה-XAML יקבל את הערך שלה
+            this.DataContext = this;
+            try
+            {
+                if (id == 0)
+                {
+                    // אם מדובר בהוספה, יוצר אובייקט חדש עם ערכים ברירת מחדל
+                    CurrentVolunteer = new BO.Volunteer(); // BO - namespace שלך
+                }
+                else
+                {
+                    // אם מדובר בעדכון, קורא ל- BL כדי להביא את הישות לפי ה-Id
+                    CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id); // YourBL הוא מחלקת ה- BL שלך
+                }
+            }
+            catch (Exception ex)
+            {
+                // טיפול בחריגות (למשל, במקרה שה-Id לא נמצא או יש שגיאה בטעינה)
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             InitializeComponent();
+
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        // פעולה שנקראת כאשר הכפתור נלחץ
+        private void btnAddUpdate(object sender, RoutedEventArgs e)
         {
-
+            // פעולה להוספה או עדכון של הישות
         }
-
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        public BO.Volunteer? CurrentVolunteer
         {
-
+            get { return (BO.Volunteer?)GetValue(CurrentVolunteerProperty); }
+            set { SetValue(CurrentVolunteerProperty, value); }
         }
+
+        public static readonly DependencyProperty CurrentVolunteerProperty =
+            DependencyProperty.Register("CurrentVolunteer", typeof(BO.Volunteer), typeof(SingleVolunteerWindow), new PropertyMetadata(null));
+
+        
     }
 }
