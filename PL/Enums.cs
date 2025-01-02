@@ -1,16 +1,20 @@
-﻿
+﻿using System.Collections;  // עבור IEnumerable
 
-namespace PL;
-
-class Enums
+namespace PL
 {
-    
-internal class VolunteerCollection : IEnumerable
-{
-    static readonly IEnumerable<BO.Enums.VolunteerInListField.> s_enums =
-(Enum.GetValues(typeof(BO.Volunteer)) as IEnumerable<BO.Volunteer>)!;
+    public class Enums  // וודא שהמחלקה Enums היא public אם אתה צריך לגשת אליה משם
+    {
+        public class VolunteerCollection : IEnumerable<BO.Enums.VolunteerInListField>
+        {
+            // המרת הערכים של ה-Enum ל-IEnumerable גנרי
+            private static readonly BO.Enums.VolunteerInListField[] s_enums =
+                (BO.Enums.VolunteerInListField[])Enum.GetValues(typeof(BO.Enums.VolunteerInListField));
 
-    public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
-}
+            // מימוש המתודה GetEnumerator של IEnumerable גנרי
+            public IEnumerator<BO.Enums.VolunteerInListField> GetEnumerator() => ((IEnumerable<BO.Enums.VolunteerInListField>)s_enums).GetEnumerator();
 
+            // מימוש המתודה GetEnumerator של IEnumerable לא גנרי
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+    }
 }

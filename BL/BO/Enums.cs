@@ -118,7 +118,8 @@ public class Enums
      SumCanceledCalls,
      SumExpiredCalls,
      CallIdInTreatment ,
-     CallType 
+     CallType ,
+      None
 }
 
 

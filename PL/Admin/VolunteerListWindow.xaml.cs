@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using BO;
+using static BO.Enums;
 
 namespace PL.Admin
 {
@@ -21,6 +22,7 @@ namespace PL.Admin
     public partial class VolunteerListWindow : Window
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        public VolunteerInListField Field { get; set; } = VolunteerInListField.None;
 
         public VolunteerListWindow()
         {
@@ -42,6 +44,25 @@ namespace PL.Admin
             var volunteers = s_bl.Volunteer.RequestVolunteerList;  // ודא שזה השם הנכון של הפונקציה בשכבת ה-BL
             SetValue(VolunteerListProperty, volunteers);  // עדכון תכונת התלות
         }
+        public void OnFieldChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // עדכון הערך של selectedVolunteerField בהתבסס על הבחירה ב-ComboBox
+            var selectedVolunteerField = (BO.Enums.VolunteerInListField)((ComboBox)sender).SelectedItem;
+
+            // ביצוע שאילתא מחדש על בסיס הבחירה
+            if (selectedVolunteerField == BO.Enums.VolunteerInListField.None)
+            {
+                // אם לא נבחר שדה מסוים (None), מחזירים את כל המתנדבים ללא סינון
+                VolunteerList = s_bl?.Volunteer.RequestVolunteerList(null);
+            }
+            else
+            {
+                // אם נבחר שדה, מבצעים את הסינון לפי השדה שנבחר
+                VolunteerList = s_bl?.Volunteer.RequestVolunteerList(null, selectedVolunteerField);
+            }
+        }
+
+
 
         // הגדרת תכונת תלות עבור רשימת המתנדבים
         public static readonly DependencyProperty VolunteerListProperty =
