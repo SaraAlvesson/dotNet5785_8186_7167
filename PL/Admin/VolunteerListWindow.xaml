@@ -9,34 +9,57 @@
      DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Window.Resources>
+        <!-- הגדרת מקור נתונים עבור המתנדבים -->
         <local:VolunteerCollection x:Key="VolunteerCollectionKey" />
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40*" />
             <RowDefinition Height="500*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <!-- ComboBox להבחנה בין המתנדבים -->
         <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerCollectionKey}}"
-          Grid.Column="1"
-          SelectedValue="{Binding SelectedVolunteerField, Mode=TwoWay}"
-          HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch"
-          SelectionChanged="OnFieldChanged"/>
+                  Grid.Column="1"
+                  SelectedValue="{Binding SelectedVolunteerField, Mode=TwoWay}"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  SelectionChanged="OnFieldChanged"/>
 
-
-
+        <!-- ListView להצגת המתנדבים -->
         <ListView Grid.Row="1"
-          Margin="5"
-          ItemsSource="{Binding Path=CourseList}">
+                  Margin="5"
+                  ItemsSource="{Binding Path=CourseList}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Column 1" DisplayMemberBinding="{Binding Field1}" />
-                    <GridViewColumn Header="Column 2" DisplayMemberBinding="{Binding Field2}" />
+                    <!-- עמודת שם המתנדב -->
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="Auto"/>
+
+                    <!-- עמודת גיל המתנדב -->
+                    <GridViewColumn Header="Age" DisplayMemberBinding="{Binding Age}" Width="Auto"/>
+
+                    <!-- עמודת מצב המתנדב (האם פעיל או לא) -->
+                    <GridViewColumn Header="Is Active">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsActive}" IsEnabled="False"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <!-- עמודת תכונה אחרת אם יש -->
+                    <GridViewColumn Header="Other Property">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding OtherProperty}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
-
 
         <!-- כפתור הוספה -->
         <Button Grid.Row="2"
