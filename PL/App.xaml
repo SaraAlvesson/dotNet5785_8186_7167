@@ -4,8 +4,7 @@
              xmlns:local="clr-namespace:PL"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <!-- הגדרת המשאב של אוסף המתנדבים -->
         <local:VolunteerCollection x:Key="VolunteerCollectionKey" />
     </Application.Resources>
-
-
 </Application>
