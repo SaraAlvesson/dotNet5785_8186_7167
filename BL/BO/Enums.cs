@@ -177,9 +177,7 @@ public class Enums
         DrivingDistance // Distance calculated for vehicular routes.
     }
 
-    public class Position
-    {
-    }
+    
 }
 
 
