@@ -39,5 +39,6 @@ public interface IVolunteer: IObservable
     /// Adds a new volunteer to the system.
     /// </summary>
     void AddVolunteer(BO.Volunteer volunteerDetails);
+    IEnumerable<VolunteerInList> RequestVolunteerList();
 }
 

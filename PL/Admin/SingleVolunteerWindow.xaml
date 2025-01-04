@@ -12,7 +12,7 @@
     <Grid>
         <Label Content="Id:" HorizontalAlignment="Left" Margin="52,56,0,0" VerticalAlignment="Top" RenderTransformOrigin="-15.373,-1.734" Height="29" Width="129"/>
 
-        <TextBox HorizontalAlignment="Left" Margin="253,56,0,0" TextWrapping="Wrap" Text="{Binding CurrentVolunteer.Id, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" IsReadOnly="{Binding ButtonText, Converter={StaticResource ConvertUpdateToTrueKey}}"
+        <TextBox HorizontalAlignment="Left" Margin="253,56,0,0" TextWrapping="Wrap" Text="{Binding CurrentVolunteer.Id, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"
  VerticalAlignment="Top" Width="129" Height="29"/>
         <Label Content="Email:" HorizontalAlignment="Left" Margin="52,185,0,0" VerticalAlignment="Top" RenderTransformOrigin="-7.831,-0.721" Width="129"/>
         <Label Content="FullName:" HorizontalAlignment="Left" Margin="52,108,0,0" VerticalAlignment="Top" Width="129"/>
@@ -26,12 +26,12 @@
         <Label Content="PhoneNumber:" HorizontalAlignment="Left" Margin="52,139,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Margin="258,112,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.FullName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
         <TextBox HorizontalAlignment="Left" Margin="263,152,0,0" TextWrapping="Wrap"  Text="{Binding CurrentVolunteer.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"   VerticalAlignment="Top" Width="120"/>
-        <ComboBox HorizontalAlignment="Left" Margin="263,390,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding Source={StaticResource volunteerTypeEnum }}" 
+        <ComboBox HorizontalAlignment="Left" Margin="263,390,0,0" VerticalAlignment="Top" Width="120"  
           SelectedValue="{Binding CurrentVolunteer.Position, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"
        />
 
 
-        <ComboBox HorizontalAlignment="Left" Margin="280,496,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding Source={StaticResource distancetypeEnum}}" 
+        <ComboBox HorizontalAlignment="Left" Margin="280,496,0,0" VerticalAlignment="Top" Width="120"  
         SelectedValue="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
         
         <Label HorizontalAlignment="Left" Margin="52,448,0,0" VerticalAlignment="Top" Width="246">

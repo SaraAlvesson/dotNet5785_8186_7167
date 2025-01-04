@@ -19,9 +19,9 @@ public interface ICall:IObservable
     /// <returns>רשימה של קריאות לאחר סינון ומיון, אם נדרש</returns>
     IEnumerable<BO.CallInList> GetCallList
     (
-        Enums.CallFieldEnum? filter = null,
+        Enums.CallTypeEnum? filter = null,
         object? toFilter = null,
-        Enums.CallFieldEnum? toSort = null
+        Enums.CallTypeEnum? toSort = null
     );
     /// <summary>
     /// מחזיר את פרטי הקריאה עבור מזהה קריאה נתון.

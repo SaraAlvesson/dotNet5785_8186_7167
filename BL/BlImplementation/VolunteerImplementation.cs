@@ -4,9 +4,6 @@ using BO;
 using DO;
 using Helpers;
 using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using static BO.Enums;
 using static BO.Exceptions;
 
@@ -406,7 +403,10 @@ internal class VolunteerImplementation : IVolunteer
 
     }
 
-
+    public IEnumerable<VolunteerInList> RequestVolunteerList()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

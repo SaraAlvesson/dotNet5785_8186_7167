@@ -5,6 +5,7 @@
              StartupUri="MainWindow.xaml" >
     <Application.Resources>
         <!-- Collection for call types -->
+
         <local:CallTypeCollection x:Key="CallTypeCollectionKey"/>
         <!-- Collection for position types -->
         <local:PositionCollection x:Key="PositionCollectionKey"/>
@@ -12,6 +13,8 @@
         <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey"/>
         <!-- Converter for object ID to true/false -->
         <local:ConvertIdToTF x:Key="ConvertIdToTFkey" />
+
+        <local:VolunteerCollection x:Key="VolunteerCollectionKey"/>
         <!-- Default style for buttons -->
         <Style TargetType="Button">
             <!-- Set button background color -->
