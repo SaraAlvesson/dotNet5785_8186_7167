@@ -2,29 +2,52 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PL"
-             StartupUri="MainWindow.xaml" >
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!-- Collection for call types -->
+        <!-- הגדרת ConvertIdToTFkey פעם אחת בלבד -->
+        <local:IdToReadOnlyConverter x:Key="IdToReadOnlyConverter"/>
 
-        <local:CallTypeCollection x:Key="CallTypeCollectionKey"/>
-        <!-- Collection for position types -->
-        <local:PositionCollection x:Key="PositionCollectionKey"/>
-        <!-- Collection for distance types -->
-        <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey"/>
-        <!-- Converter for object ID to true/false -->
-        <local:ConvertIdToTF x:Key="ConvertIdToTFkey" />
+        <!-- הגדרת מערכים עבור CallTypeEnum, distancetypeEnum, VolunteerTypeEnum -->
+        <x:Array x:Key="CallTypeEnum" Type="sys:String">
+            <sys:String>PreparingFood</sys:String>
+            <sys:String>TransportingFood</sys:String>
+            <sys:String>FixingEquipment</sys:String>
+            <sys:String>ProvidingShelter</sys:String>
+            <sys:String>TransportAssistance</sys:String>
+            <sys:String>MedicalAssistance</sys:String>
+            <sys:String>EmotionalSupport</sys:String>
+            <sys:String>PackingSupplies</sys:String>
+            <sys:String>none</sys:String>
+            <!-- כאן תיקון לאותיות קטנות של "none" -->
+        </x:Array>
 
-        <local:VolunteerCollection x:Key="VolunteerCollectionKey"/>
+        <x:Array x:Key="distancetypeEnum" Type="sys:String">
+            <sys:String>AerialDistance</sys:String>
+            <sys:String>WalkingDistance</sys:String>
+            <sys:String>DrivingDistance</sys:String>
+        </x:Array>
+
+        <x:Array x:Key="VolunteerTypeEnum" Type="sys:String">
+            <sys:String>Admin</sys:String>
+            <!-- תיקון לאותיות גדולות ב-"Admin" -->
+            <sys:String>Volunteer</sys:String>
+            <!-- תיקון לאותיות גדולות ב-"Volunteer" -->
+        </x:Array>
+
+        <!-- הגדרת אוספים לקטגוריות -->
+        <local:CallTypeCollection x:Key="CallTypeCollection"/>
+        <local:PositionCollection x:Key="PositionCollection"/>
+        <local:DistanceTypeCollection x:Key="DistanceTypeCollection"/>
+
         <!-- Default style for buttons -->
         <Style TargetType="Button">
-            <!-- Set button background color -->
-            <Setter Property="Background"  Value="#A3C77F" />
-            <!-- Set button foreground (text) color -->
+            <Setter Property="Background" Value="#A3C77F" />
             <Setter Property="Foreground" Value="#0D1821" />
         </Style>
+
         <!-- Default style for labels -->
         <Style TargetType="Label">
-            <!-- Set label foreground (text) color -->
             <Setter Property="Foreground" Value="#0D1821" />
         </Style>
     </Application.Resources>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using BO;
 using static BO.Enums;
 
@@ -14,24 +13,22 @@ public partial class VolunteerListWindow : Window, INotifyPropertyChanged
 
     private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
 
-    public VolunteerListWindow()
-    {
-        InitializeComponent();
-        LoadVolunteerList();  // טוען את רשימת המתנדבים עם הערכים הראשונים
-    }
-    // הרשמה לאירוע טעינת המסך (Loaded)
-   
-    private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);  // נרשמים למשקיף
-        ObserveVolunteerListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
-    }
+        public VolunteerListWindow()
+        {
+            InitializeComponent();
+            LoadVolunteerList();  // טוען את רשימת המתנדבים עם הערכים הראשונים
+        }
 
-    // הסרה מהמשקיף באירוע סגירת החלון (Closed)
-    private void Window_Closed(object sender, EventArgs e)
-    {
-        s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);  // מסירים את המשקיף
-    }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);  // נרשמים למשקיף
+            ObserveVolunteerListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);  // מסירים את המשקיף
+        }
 
 
     // תכונת תלות לרשימת המתנדבים
