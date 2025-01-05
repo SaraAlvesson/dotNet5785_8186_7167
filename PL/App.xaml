@@ -6,14 +6,17 @@
 
     <Application.Resources>
         <!-- Collection for call types -->
-            <local:Enums.CallTypeCollection x:Key="CallTypeCollectionKey"/>
+        <local:CallTypeCollection x:Key="CallTypeCollectionKey"/>
         <!-- Collection for role types -->
         <local:PositionCollection x:Key="PositionCollectionKey"/>
         <!-- Collection for distance types -->
         <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey"/>
         <!-- Converter for object ID to true/false -->
         <local:ConvertObjIdToTF x:Key="ConvertObjIdToTFkey" />
-      
+
+        <local:IntToStringConverter x:Key="IntToStringConverterKey" />
+
+        
         <!-- Default style for buttons -->
         <Style TargetType="Button">
             <!-- Set button background color -->

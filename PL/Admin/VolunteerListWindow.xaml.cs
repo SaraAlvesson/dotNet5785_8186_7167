@@ -10,13 +10,15 @@ namespace PL.Admin
 {
     public partial class VolunteerListWindow : Window, INotifyPropertyChanged
     {
-        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private CallTypeEnum _selectedCallType = CallTypeEnum.None;
+
+        private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
 
         public VolunteerListWindow()
         {
             InitializeComponent();
-            this.DataContext = new VolunteerListViewModel();  // הגדרת DataContext
+            this.DataContext = new VolunteerListWindow();  // הגדרת DataContext
             LoadVolunteerList();  // טוען את רשימת המתנדבים עם הערכים הראשונים
         }
 
@@ -31,137 +33,72 @@ namespace PL.Admin
             s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);  // מסירים את המשקיף
         }
 
+        // תכונת תלות לרשימת המתנדבים
         public IEnumerable<VolunteerInList> VolunteerList
         {
-            get { return (IEnumerable<VolunteerInList>)GetValue(VolunteerListProperty); }
-            set { SetValue(VolunteerListProperty, value); OnPropertyChanged(nameof(VolunteerList)); }
-        }
-
-        public static readonly DependencyProperty VolunteerListProperty =
-            DependencyProperty.Register("VolunteerList", typeof(IEnumerable<VolunteerInList>), typeof(VolunteerListWindow), new PropertyMetadata(null));
-
-        // קריאה לשכבת ה-BL כדי להוריד את הרשימה
-        private void LoadVolunteerList()
-        {
-            UpdateVolunteerListBasedOnSelectedType();  // טוען את הרשימה הראשונית עם סינון לפי CallType
-        }
-
-        // אירוע שינוי בחירת שדה מתוך ComboBox
-        public CallTypeEnum SelectedCallTypeEnumField
-        {
-            get { return _selectedCallType; }
+            get => (IEnumerable<VolunteerInList>)GetValue(VolunteerListProperty);
             set
             {
-                if (_selectedCallType != value)
+                SetValue(VolunteerListProperty, value ?? new List<VolunteerInList>());  // טיפול במקרה של null
+                OnPropertyChanged(nameof(VolunteerList));
+            }
+        }
+
+        private void LoadVolunteerList()
+        {
+            UpdateVolunteerList(null);  // טוען את הרשימה הראשונית ללא סינון
+        }
+
+        public VolunteerInListField SelectedVolunteerField
+        {
+            get => _selectedVolunteerField;
+            set
+            {
+                if (_selectedVolunteerField != value)
                 {
-                    _selectedCallType = value;
-                    UpdateVolunteerListBasedOnSelectedType(); // עדכון הרשימה בהתבסס על השדה החדש
+                    _selectedVolunteerField = value;
+                    OnFieldChanged();  // עדכון הרשימה בהתבסס על השדה החדש
                 }
             }
         }
 
-        // מתודה לעדכון הרשימה לפי השדה הנבחר
-        private void UpdateVolunteerListBasedOnSelectedType()
+        public void OnFieldChanged()
         {
-            // עדכון רשימת המתנדבים בהתבסס על סוג הקריאה הנבחר
-            VolunteerList = GetCallTypeEnumByFilter(_selectedCallType);
+            UpdateVolunteerList(_selectedVolunteerField);
         }
 
-        private IEnumerable<VolunteerInList> GetCallTypeEnumByFilter(CallTypeEnum selectedCallType)
+        public void UpdateVolunteerList(VolunteerInListField? field)
         {
-            if (selectedCallType == CallTypeEnum.None)
+            try
             {
-                // במקרה של "None", לא עושים סינון, משדרים null לסינון
-                return s_bl?.Volunteer.RequestVolunteerList(null, null);
+                VolunteerList = field == VolunteerInListField.None
+                    ? s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>()  // טיפול במקרה של null
+                    : s_bl?.Volunteer.RequestVolunteerList(null, field) ?? new List<VolunteerInList>();
             }
-            else
+            catch (Exception ex)
             {
-                // במקרה של סוג קריאה שנבחר, מעבירים את סוג הקריאה לסינון המתנדבים
-                return s_bl?.Volunteer.RequestVolunteerList(null, (VolunteerInListField)selectedCallType);
+                MessageBox.Show($"Error updating volunteer list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                VolunteerList = new List<VolunteerInList>();  // רשימה ריקה במקרה של כשל
             }
         }
 
-        // מתודה שתשקיף על שינויים ברשימת המתנדבים
         private void ObserveVolunteerListChanges()
         {
-            UpdateVolunteerListBasedOnSelectedType();  // עדכון הרשימה על פי השדה הנבחר
+            UpdateVolunteerList(_selectedVolunteerField);
         }
 
-        // הגדרת תכונת תלות עבור רשימת המתנדבים
-        public CallTypeEnum vol { get; set; } = CallTypeEnum.None;
-
-        // אירוע שינוי ערך ב-ComboBox
-        private void cbCallType(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
-            {
-                var selectedItem = (CallTypeEnum)e.AddedItems[0];
-                if (_selectedCallType != selectedItem)
-                {
-                    _selectedCallType = selectedItem;
-                    UpdateVolunteerListBasedOnSelectedType();  // עדכון הרשימה על פי הערך החדש ב-ComboBox
-                }
-            }
-        }
-
-        // מימוש של PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // אם יש פריט שנבחר, נקבל אותו
-            var selectedVolunteer = (VolunteerInList)((ListView)sender).SelectedItem;
-
-            // אם נבחר מתנדב (לא null), ניתן לבצע פעולות נוספות
-            if (selectedVolunteer != null)
-            {
-                // לדוגמה, עדכון פרטי המתנדב
-                DisplayVolunteerDetails(selectedVolunteer);
-            }
-            else
-            {
-                MessageBox.Show("No volunteer selected.");
-            }
-        }
-
-        private void DisplayVolunteerDetails(VolunteerInList volunteer)
-        {
-            // כאן תוכל להוסיף את הלוגיקה להציג את פרטי המתנדב, כמו הצגת מידע נוסף על המסך
-            // לדוגמה:
-            MessageBox.Show($"Selected Volunteer: {volunteer.FullName}, Calls Treated: {volunteer.SumTreatedCalls}");
-        }
-
-        // ViewModel לעדכון הרשימה
-        public class VolunteerListViewModel : INotifyPropertyChanged
-        {
-            private IEnumerable<CallTypeEnum> _callTypes;
-
-            public IEnumerable<CallTypeEnum> CallTypes
-            {
-                get { return _callTypes; }
-                set
-                {
-                    _callTypes = value;
-                    OnPropertyChanged(nameof(CallTypes));
-                }
-            }
-
-            public VolunteerListViewModel()
-            {
-                // כאן אתה יכול להגדיר את אוסף ה-callTypes מהמנהל שלך
-                CallTypes = Enum.GetValues(typeof(CallTypeEnum)) as IEnumerable<CallTypeEnum>;
-            }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected void OnPropertyChanged(string name)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            }
-        }
+        public static readonly DependencyProperty VolunteerListProperty =
+            DependencyProperty.Register(
+                "VolunteerList",
+                typeof(IEnumerable<VolunteerInList>),
+                typeof(VolunteerListWindow),
+                new PropertyMetadata(null));
     }
+
 }

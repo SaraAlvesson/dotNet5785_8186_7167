@@ -8,6 +8,11 @@
         Title="VolunteerListWindow" Height="3130" Width="3590"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
+    <!--<Window.Resources>
+         הגדרת מקור נתונים עבור המתנדבים 
+        <local:VolunteerCollection x:Key="VolunteerCollectionKey" />
+    </Window.Resources>-->
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40*" />
@@ -24,8 +29,8 @@
 
         <!-- ListView להצגת המתנדבים -->
         <ListView Grid.Row="1" 
-                  Margin="5,11,5,65" 
-                  ItemsSource="{Binding VolunteerList}" SelectionChanged="ListView_SelectionChanged" Grid.RowSpan="2">
+                  Margin="5,1,5,5" 
+                  ItemsSource="{Binding VolunteerList}">
             <ListView.View>
                 <GridView>
                     <!-- עמודת שם המתנדב -->
