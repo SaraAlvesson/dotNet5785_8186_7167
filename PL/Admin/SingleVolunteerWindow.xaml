@@ -57,7 +57,7 @@
         <TextBox HorizontalAlignment="Left" Margin="268,348,0,0" TextWrapping="Wrap" 
                  Text="{Binding CurrentVolunteer.Longitude, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                  VerticalAlignment="Top" Width="120"/>
-       
+
         <!-- Position -->
         <Label Content="Position:" HorizontalAlignment="Left" Margin="52,390,0,0" VerticalAlignment="Top" Width="90" Height="27"/>
         <ComboBox HorizontalAlignment="Left" Margin="263,390,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding Source={StaticResource PositionCollectionKey}}"

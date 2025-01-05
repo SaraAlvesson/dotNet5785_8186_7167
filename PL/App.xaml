@@ -13,10 +13,8 @@
         <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey"/>
         <!-- Converter for object ID to true/false -->
         <local:ConvertObjIdToTF x:Key="ConvertObjIdToTFkey" />
-
-        <local:IntToStringConverter x:Key="IntToStringConverterKey" />
-
         
+        <local:IntToStringConverter x:Key="IntToStringConverterKey" />
         <!-- Default style for buttons -->
         <Style TargetType="Button">
             <!-- Set button background color -->

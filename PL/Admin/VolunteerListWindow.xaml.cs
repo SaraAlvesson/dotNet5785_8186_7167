@@ -99,6 +99,11 @@ namespace PL.Admin
                 typeof(IEnumerable<VolunteerInList>),
                 typeof(VolunteerListWindow),
                 new PropertyMetadata(null));
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 
 }
