@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using BO;
 using static BO.Enums;
 
@@ -14,6 +15,7 @@ namespace PL.Admin
         private CallTypeEnum _selectedCallType = CallTypeEnum.None;
 
         private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
+        public BO.VolunteerInList? SelectedVolunteer{ get; set; }
 
         public VolunteerListWindow()
         {
@@ -43,6 +45,8 @@ namespace PL.Admin
                 OnPropertyChanged(nameof(VolunteerList));
             }
         }
+
+
 
         private void LoadVolunteerList()
         {
@@ -99,6 +103,20 @@ namespace PL.Admin
                 typeof(IEnumerable<VolunteerInList>),
                 typeof(VolunteerListWindow),
                 new PropertyMetadata(null));
+
+
+
+        // Double-click on volunteer list to view details
+        private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectedVolunteer != null)
+                new SingleVolunteerWindow(SelectedVolunteer.Id).Show();
+        }
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            new SingleVolunteerWindow().Show();
+
+        }
     }
 
 }
