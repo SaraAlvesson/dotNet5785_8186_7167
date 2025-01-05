@@ -53,32 +53,65 @@ internal class AdminImplementation : IAdmin
     }
 
     // Method to get the configured risk time range
-    
+
 
 
     // Method to initialize the database by resetting it and adding initial data
+    // Method to initialize the database
     public void InitializeDatabase()
     {
-        ResetDatabase(); // First, reset the database
-        DalTest.Initialization.Do(); // Add the initial data
-        AdminManager.UpdateClock(AdminManager.Now); // Ensure the clock is updated after initialization
-        DalTest.Initialization.Do();
-        AdminManager.UpdateClock(AdminManager.Now);
-        AdminManager.MaxRange = AdminManager.MaxRange;
+        try
+        {
+            // Ensure DAL is initialized
+            if (_dal == null)
+            {
+                throw new InvalidOperationException("The DAL object is not initialized.");
+            }
 
+            // First, reset the database
+            ResetDatabase();
+
+            // Add the initial data
+            DalTest.Initialization.Do(); // Add initial data
+            AdminManager.UpdateClock(AdminManager.Now); // Ensure the clock is updated after initialization
+            AdminManager.MaxRange = AdminManager.MaxRange; // Reset MaxRange if needed
+        }
+        catch (Exception ex)
+        {
+            // Log detailed exception
+          
+            throw new InvalidOperationException("Error during initialization", ex);
+        }
     }
+
 
     // Method to reset the database (clear all data and reset configurations)
     public void ResetDatabase()
     {
-        _dal.ResetDB(); // Reset the database through the DAL
-        DalTest.Initialization.Do();
-        AdminManager.UpdateClock(AdminManager.Now);
-        AdminManager.MaxRange = AdminManager.MaxRange;
- 
+        // Ensure DAL is initialized
+        if (_dal == null)
+        {
+            throw new InvalidOperationException("The DAL object is not initialized.");
+        }
 
+        // Reset the database through the DAL
+        _dal.ResetDB();
 
+        // Reinitialize data and configurations
+        try
+        {
+            DalTest.Initialization.Do(); // Initialize the data
+            AdminManager.UpdateClock(AdminManager.Now); // Update the clock
+            AdminManager.MaxRange = AdminManager.MaxRange; // Reset MaxRange if needed
+        }
+        catch (Exception ex)
+        {
+            // Handle reset failure, log or show message
+            throw new InvalidOperationException("Error during reset", ex);
+        }
     }
+
+
 
     #region Stage 5
     public void AddClockObserver(Action clockObserver) =>

@@ -6,17 +6,19 @@ using System.Windows.Controls;
 using BO;
 using static BO.Enums;
 
-namespace PL.Admin;
-
-public partial class VolunteerListWindow : Window, INotifyPropertyChanged
+namespace PL.Admin
 {
-    static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    public partial class VolunteerListWindow : Window, INotifyPropertyChanged
+    {
+        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private CallTypeEnum _selectedCallType = CallTypeEnum.None;
 
-    private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
+        private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
 
         public VolunteerListWindow()
         {
             InitializeComponent();
+            this.DataContext = new VolunteerListViewModel();  // הגדרת DataContext
             LoadVolunteerList();  // טוען את רשימת המתנדבים עם הערכים הראשונים
         }
 
@@ -31,98 +33,72 @@ public partial class VolunteerListWindow : Window, INotifyPropertyChanged
             s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);  // מסירים את המשקיף
         }
 
-
-    // תכונת תלות לרשימת המתנדבים
-
-
-
-    public IEnumerable<BO.VolunteerInList> VolunteerList
-    {
-        get { return (IEnumerable<BO.VolunteerInList>)GetValue(VolunteerListProperty); }
-        set { SetValue(VolunteerListProperty, value); }
-    }
-
-    public static readonly DependencyProperty VolunteerListProperty =
-        DependencyProperty.Register("VolunteerList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerListWindow), new PropertyMetadata(null));
-
-
-   
-
-    // קריאה לשכבת ה-BL כדי להוריד את הרשימה
-    private void LoadVolunteerList()
-    {
-        // ביצוע קריאה לשכבת ה-BL להורדת הרשימה
-        UpdateVolunteerList(null);  // טוען את הרשימה הראשונית ללא סינון
-    }
-
-    // אירוע שינוי בחירת שדה מתוך ComboBox
-    public VolunteerInListField SelectedVolunteerField
-    {
-        get { return _selectedVolunteerField; }
-        set
+        // תכונת תלות לרשימת המתנדבים
+        public IEnumerable<VolunteerInList> VolunteerList
         {
-            if (_selectedVolunteerField != value)
+            get => (IEnumerable<VolunteerInList>)GetValue(VolunteerListProperty);
+            set
             {
-                _selectedVolunteerField = value;
-                OnFieldChanged();  // עדכון הרשימה בהתבסס על השדה החדש
+                SetValue(VolunteerListProperty, value ?? new List<VolunteerInList>());  // טיפול במקרה של null
+                OnPropertyChanged(nameof(VolunteerList));
             }
         }
-    }
 
-  
-
-    // מתודה לעדכון הרשימה לפי השדה הנבחר
-    public void OnFieldChanged()
-    {
-        // עדכון הרשימה בהתבסס על השדה שנבחר ב-ComboBox
-        UpdateVolunteerList(vol);
-    }
-
-    // מתודה פרטית לעדכון הרשימה עם השדה שנבחר
-    private void UpdateVolunteerList(VolunteerInListField? field)
-    {
-        VolunteerList = GetVolunteerListByFilter(field);
-    }
-
-    private IEnumerable<VolunteerInList> GetVolunteerListByFilter(VolunteerInListField? field)
-    {
-        if (field == VolunteerInListField.None)
+        private void LoadVolunteerList()
         {
-            return s_bl?.Volunteer.RequestVolunteerList();
+            UpdateVolunteerList(null);  // טוען את הרשימה הראשונית ללא סינון
         }
-        return s_bl?.Volunteer.RequestVolunteerList(null, field);
-    }
 
+        public VolunteerInListField SelectedVolunteerField
+        {
+            get => _selectedVolunteerField;
+            set
+            {
+                if (_selectedVolunteerField != value)
+                {
+                    _selectedVolunteerField = value;
+                    OnFieldChanged();  // עדכון הרשימה בהתבסס על השדה החדש
+                }
+            }
+        }
 
+        public void OnFieldChanged()
+        {
+            UpdateVolunteerList(_selectedVolunteerField);
+        }
 
-    // מתודה שתשקיף על שינויים ברשימת המתנדבים (תעדכן את הרשימה בהתאם לשינויים ב-BL)
-    private void ObserveVolunteerListChanges()
-    {
-        UpdateVolunteerList(vol);  // נעדכן את הרשימה על פי השדה הנבחר
-    }
+        private void UpdateVolunteerList(VolunteerInListField? field)
+        {
+            try
+            {
+                VolunteerList = field == VolunteerInListField.None
+                    ? s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>()  // טיפול במקרה של null
+                    : s_bl?.Volunteer.RequestVolunteerList(null, field) ?? new List<VolunteerInList>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating volunteer list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                VolunteerList = new List<VolunteerInList>();  // רשימה ריקה במקרה של כשל
+            }
+        }
 
-    // רשום לאירוע טעינת המסך (Loaded) כדי להפעיל את מתודת ההשקפה
-   
-    // מתודה לעדכון תצוגה של פרופרטי, הכרחית עבור INotifyPropertyChanged
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-    // הרשמה לאירוע טעינת המסך (Loaded)
-  
+        private void ObserveVolunteerListChanges()
+        {
+            UpdateVolunteerList(_selectedVolunteerField);
+        }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-    // הגדרת תכונת תלות עבור רשימת המתנדבים
-    
-    public BO.Enums.VolunteerInListField vol { get; set; } = BO.Enums.VolunteerInListField.None;
-
-
-
-
-    private void cbCallType(object sender, SelectionChangedEventArgs e)
-    {
-        ObserveVolunteerListChanges();  // עדכון הרשימה על פי הערך החדש ב- ComboBox
+        public static readonly DependencyProperty VolunteerListProperty =
+            DependencyProperty.Register(
+                "VolunteerList",
+                typeof(IEnumerable<VolunteerInList>),
+                typeof(VolunteerListWindow),
+                new PropertyMetadata(null));
     }
 
 }

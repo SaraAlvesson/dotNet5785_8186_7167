@@ -21,14 +21,16 @@
         </Grid.RowDefinitions>
 
         <!-- ComboBox להבחנה בין המתנדבים -->
-        <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerCollectionKey}}"
-          SelectedValue="{Binding Path=vol, Mode=TwoWay}" 
-          SelectionChanged="cbCallType"  Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <ComboBox Grid.Row="0" 
+                  SelectedValue="{Binding SelectedCallTypeEnumField, Mode=TwoWay}" 
+                  DisplayMemberPath="Name"
+                  ItemsSource="{Binding CallTypes}" 
+                  HorizontalAlignment="Stretch" Margin="10"/>
 
-            <!-- ListView להצגת המתנדבים -->
-        <ListView Grid.Row="1"
-                  Margin="5"
-                  ItemsSource="{Binding Path=VolunteerList}">
+        <!-- ListView להצגת המתנדבים -->
+        <ListView Grid.Row="1" 
+                  Margin="5,1,5,5" 
+                  ItemsSource="{Binding VolunteerList}">
             <ListView.View>
                 <GridView>
                     <!-- עמודת שם המתנדב -->
@@ -37,7 +39,7 @@
                     <!-- עמודת גיל המתנדב -->
                     <GridViewColumn Header="Age" DisplayMemberBinding="{Binding Age}" Width="Auto"/>
 
-                    <!-- עמודת מצב המתנדב (האם פעיל או לא) -->
+                    <!-- עמודת מצב המתנדב -->
                     <GridViewColumn Header="Is Active">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -46,7 +48,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <!-- עמודת תכונה אחרת אם יש -->
+                    <!-- עמודת תכונה נוספת אם יש -->
                     <GridViewColumn Header="Other Property">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -64,6 +66,7 @@
                 HorizontalAlignment="Center" 
                 Height="50" 
                 Width="100" 
-                Command="{Binding AddVolunteerCommand}" />
+                Command="{Binding AddVolunteerCommand}" 
+                Margin="10" />
     </Grid>
 </Window>
