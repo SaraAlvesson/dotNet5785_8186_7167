@@ -10,7 +10,7 @@ namespace PL.Admin
 {
     public partial class VolunteerListWindow : Window, INotifyPropertyChanged
     {
-        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private CallTypeEnum _selectedCallType = CallTypeEnum.None;
 
         private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
@@ -18,7 +18,7 @@ namespace PL.Admin
         public VolunteerListWindow()
         {
             InitializeComponent();
-            this.DataContext = new VolunteerListViewModel();  // הגדרת DataContext
+            this.DataContext = new VolunteerListWindow();  // הגדרת DataContext
             LoadVolunteerList();  // טוען את רשימת המתנדבים עם הערכים הראשונים
         }
 
@@ -67,7 +67,7 @@ namespace PL.Admin
             UpdateVolunteerList(_selectedVolunteerField);
         }
 
-        private void UpdateVolunteerList(VolunteerInListField? field)
+        public void UpdateVolunteerList(VolunteerInListField? field)
         {
             try
             {
