@@ -124,7 +124,9 @@ namespace PL
 
         private void btnVolunteerList(object sender, RoutedEventArgs e)
         {
-            new VolunteerListWindow().Show();
+            var volunteerListWindow = new VolunteerListWindow();
+            volunteerListWindow.Show();
+            this.Close(); // השאר רק אם הסגירה הכרחית
         }
 
         private void btnReset(object sender, RoutedEventArgs e)

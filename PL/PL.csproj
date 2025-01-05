@@ -20,4 +20,8 @@
     <ProjectReference Include="..\DalXml\DalXml.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Admin\" />
+  </ItemGroup>
+
 </Project>

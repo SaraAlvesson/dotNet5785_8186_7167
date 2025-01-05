@@ -20,7 +20,16 @@
         </Grid.RowDefinitions>
 
         <!-- Label for displaying the current system time -->
-        <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Left" Margin="89,74,0,0" VerticalAlignment="Top" Grid.Row="5"/>
+        <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Left" Margin="94,91,0,0" VerticalAlignment="Top" Grid.Row="4" Height="42" RenderTransformOrigin="0.5,0.5" Width="245" Grid.RowSpan="2">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
 
         <!-- Other UI elements -->
         <Button Content="קידום בדקה" HorizontalAlignment="Left" Margin="178,24,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddMin"/>
