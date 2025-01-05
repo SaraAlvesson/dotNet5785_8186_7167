@@ -1,20 +1,25 @@
-﻿using System.Collections;  // עבור IEnumerable
+﻿using System.Collections;
 
-namespace PL
+namespace PL;
+
+public class Enums  // וודא שהמחלקה Enums היא public אם אתה צריך לגשת אליה משם
 {
-    public class Enums  // וודא שהמחלקה Enums היא public אם אתה צריך לגשת אליה משם
+    public class CallTypeCollection : IEnumerable, IEnumerable<BO.Enums.CallTypeEnum>  // מימוש הגנרי ולא גנרי
     {
-        public class VolunteerCollection : IEnumerable<BO.Enums.VolunteerInListField>
+        // המרת הערכים של ה-Enum ל-IEnumerable גנרי
+        static readonly BO.Enums.CallTypeEnum[] s_enums =
+            (BO.Enums.CallTypeEnum[])Enum.GetValues(typeof(BO.Enums.CallTypeEnum));
+
+        // מימוש המתודה GetEnumerator של IEnumerable הגנרי
+        public IEnumerator<BO.Enums.CallTypeEnum> GetEnumerator()
         {
-            // המרת הערכים של ה-Enum ל-IEnumerable גנרי
-            private static readonly BO.Enums.VolunteerInListField[] s_enums =
-                (BO.Enums.VolunteerInListField[])Enum.GetValues(typeof(BO.Enums.VolunteerInListField));
+            return ((IEnumerable<BO.Enums.CallTypeEnum>)s_enums).GetEnumerator();
+        }
 
-            // מימוש המתודה GetEnumerator של IEnumerable גנרי
-            public IEnumerator<BO.Enums.VolunteerInListField> GetEnumerator() => ((IEnumerable<BO.Enums.VolunteerInListField>)s_enums).GetEnumerator();
-
-            // מימוש המתודה GetEnumerator של IEnumerable לא גנרי
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        // מימוש המתודה GetEnumerator של IEnumerable הכללי
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return s_enums.GetEnumerator();  // שימוש ב-GetEnumerator של המערך באופן ישיר
         }
     }
 }

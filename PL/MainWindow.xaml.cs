@@ -59,6 +59,10 @@ namespace PL
         // מתודת סגירת החלון
         private void MainWindow_Closed(object sender, EventArgs e)
         {
+            // הסרת הצופים
+            s_bl.Admin.RemoveClockObserver(clockObserver);
+            s_bl.Admin.RemoveConfigObserver(configObserver);
+
             // סגירת כל החלונות חוץ מהחלון הראשי
             CloseAllOtherWindows();
         }
