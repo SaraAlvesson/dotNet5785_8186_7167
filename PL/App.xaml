@@ -39,6 +39,8 @@
         <local:CallTypeCollection x:Key="CallTypeCollection"/>
         <local:PositionCollection x:Key="PositionCollection"/>
         <local:DistanceTypeCollection x:Key="DistanceTypeCollection"/>
+        <local:VolunteerCollection x:Key="VolunteerCollectionKey"/>
+
 
         <!-- Default style for buttons -->
         <Style TargetType="Button">

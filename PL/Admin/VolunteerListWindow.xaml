@@ -8,10 +8,10 @@
         Title="VolunteerListWindow" Height="640" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <Window.Resources>
-        <!-- הגדרת מקור נתונים עבור המתנדבים -->
+    <!--<Window.Resources>
+         הגדרת מקור נתונים עבור המתנדבים 
         <local:VolunteerCollection x:Key="VolunteerCollectionKey" />
-    </Window.Resources>
+    </Window.Resources>-->
 
     <Grid>
         <Grid.RowDefinitions>

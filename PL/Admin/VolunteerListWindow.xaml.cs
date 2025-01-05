@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using BO;
 using static BO.Enums;
 
@@ -32,11 +33,20 @@ public partial class VolunteerListWindow : Window, INotifyPropertyChanged
 
 
     // תכונת תלות לרשימת המתנדבים
-    public IEnumerable<VolunteerInList> VolunteerList
+
+
+
+    public IEnumerable<BO.VolunteerInList> VolunteerList
     {
-        get { return (IEnumerable<VolunteerInList>)GetValue(VolunteerListProperty); }
-        set { SetValue(VolunteerListProperty, value); OnPropertyChanged(nameof(VolunteerList)); }
+        get { return (IEnumerable<BO.VolunteerInList>)GetValue(VolunteerListProperty); }
+        set { SetValue(VolunteerListProperty, value); }
     }
+
+    public static readonly DependencyProperty VolunteerListProperty =
+        DependencyProperty.Register("VolunteerList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerListWindow), new PropertyMetadata(null));
+
+
+   
 
     // קריאה לשכבת ה-BL כדי להוריד את הרשימה
     private void LoadVolunteerList()
@@ -104,9 +114,7 @@ public partial class VolunteerListWindow : Window, INotifyPropertyChanged
 
 
     // הגדרת תכונת תלות עבור רשימת המתנדבים
-    public static readonly DependencyProperty VolunteerListProperty =
-        DependencyProperty.Register("VolunteerList", typeof(IEnumerable<VolunteerInList>), typeof(VolunteerListWindow), new PropertyMetadata(null));
-
+    
     public BO.Enums.VolunteerInListField vol { get; set; } = BO.Enums.VolunteerInListField.None;
 
 
