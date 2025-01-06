@@ -24,9 +24,8 @@ public static class Initialization
     {
         //s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); //stage 2
         s_dal = DalApi.Factory.Get; //stage 4
-
         Console.WriteLine("Resetting configuration values and data lists.");
-        s_dal.ResetDB();
+        s_dal.ResetDB();    
         Console.WriteLine("Initializing volunteers, calls, and assignments lists.");
         createVolunteers();
         createCalls();
@@ -108,9 +107,9 @@ public static class Initialization
         string[] callDescriptions = { "Emergency food delivery", "Fixing equipment", "Medical assistance required",
                                        "Providing shelter to families in need" };
         Console.WriteLine("Enter num of calls");
-        int userInput =int.Parse(Console.ReadLine());
+       
 
-        for (int i = 0; i < userInput; i++)
+        for (int i = 0; i < 50; i++)
         {
             CallType callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length);
             string description = callDescriptions[s_rand.Next(callDescriptions.Length)];
@@ -151,7 +150,7 @@ public static class Initialization
             // Randomly select a call from the list, excluding the last 15 calls
             //int randCAll = s_rand.Next(s_dal!.Call.ReadAll().Count - 15);
             //Call callToAssig = s_dal.Call.ReadAll()[randCAll]; // stage 1
-            int randCAll = s_rand.Next(s_dal!.call.ReadAll().Count() - 15);
+            int randCAll = s_rand.Next(s_dal!.call.ReadAll().Count());
             Call callToAssig = s_dal.call.ReadAll().ElementAt(randCAll);
 
             // Ensure the selected call has been opened before the current time

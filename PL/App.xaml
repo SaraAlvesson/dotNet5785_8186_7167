@@ -3,29 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PL"
              StartupUri="MainWindow.xaml">
-
     <Application.Resources>
-        <!-- Collection for call types -->
-        <local:CallTypeCollection x:Key="CallTypeCollectionKey"/>
-        <!-- Collection for role types -->
-        <local:PositionCollection x:Key="PositionCollectionKey"/>
-        <!-- Collection for distance types -->
-        <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey"/>
-        <!-- Converter for object ID to true/false -->
-        <local:ConvertObjIdToTF x:Key="ConvertObjIdToTFkey" />
-        
-        <local:IntToStringConverter x:Key="IntToStringConverterKey" />
-        <!-- Default style for buttons -->
-        <Style TargetType="Button">
-            <!-- Set button background color -->
-            <Setter Property="Background"  Value="#A3C77F" />
-            <!-- Set button foreground (text) color -->
-            <Setter Property="Foreground" Value="#0D1821" />
-        </Style>
-        <!-- Default style for labels -->
-        <Style TargetType="Label">
-            <!-- Set label foreground (text) color -->
-            <Setter Property="Foreground" Value="#0D1821" />
-        </Style>
+         <!--אם את משתמשת במפתחות אלו, הסירי את ההערות וודאי שהמחלקות קיימות--> 
+        <!--<local:VolunteerInListFieldCollection x:Key="VolunteerInListFieldCollectionKey" />--><!--
+        <local:ConvertRoleToColor x:Key="ConvertRoleToColorKey" />
+        <local:ConvertDistanceToColor x:Key="ConvertDistanceToColorKey" />
+        <local:ConvertUpdateToTrue x:Key="ConvertUpdateToTrueKey" />-->
     </Application.Resources>
 </Application>

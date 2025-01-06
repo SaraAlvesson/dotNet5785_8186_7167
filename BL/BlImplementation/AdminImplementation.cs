@@ -68,13 +68,10 @@ internal class AdminImplementation : IAdmin
                 throw new InvalidOperationException("The DAL object is not initialized.");
             }
 
-            // First, reset the database
-            ResetDatabase();
-
             // Add the initial data
-            DalTest.Initialization.Do(); // Add initial data
-            AdminManager.UpdateClock(AdminManager.Now); // Ensure the clock is updated after initialization
-            AdminManager.MaxRange = AdminManager.MaxRange; // Reset MaxRange if needed
+            DalTest.Initialization.Do();
+            //AdminManager.UpdateClock(AdminManager.Now); // Ensure the clock is updated after initialization
+            //AdminManager.MaxRange = AdminManager.MaxRange; // Reset MaxRange if needed
         }
         catch (Exception ex)
         {
@@ -95,14 +92,13 @@ internal class AdminImplementation : IAdmin
         }
 
         // Reset the database through the DAL
-        _dal.ResetDB();
+      
 
         // Reinitialize data and configurations
         try
         {
-            DalTest.Initialization.Do(); // Initialize the data
-            AdminManager.UpdateClock(AdminManager.Now); // Update the clock
-            AdminManager.MaxRange = AdminManager.MaxRange; // Reset MaxRange if needed
+            _dal.ResetDB();
+
         }
         catch (Exception ex)
         {
