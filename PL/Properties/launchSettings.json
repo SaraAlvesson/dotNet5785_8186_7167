@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "PL": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "sqlDebugging": true,
+      "hotReloadEnabled": true,
+      "jsWebView2Debugging": true
+    }
+  }
+}

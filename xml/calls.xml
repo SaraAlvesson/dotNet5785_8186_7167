@@ -1,2 +1,503 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Call>
+    <Id>1000</Id>
+    <Adress>72 Haifa St.</Adress>
+    <Latitude>88.41539227193849</Latitude>
+    <Longitude>136.55334205003066</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1001</Id>
+    <Adress>29 Haifa St.</Adress>
+    <Latitude>-81.59454274244014</Latitude>
+    <Longitude>42.67991473008354</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1002</Id>
+    <Adress>44 Jerusalem St.</Adress>
+    <Latitude>-3.6769588411712277</Latitude>
+    <Longitude>91.34158439094341</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1003</Id>
+    <Adress>39 Beer Sheva St.</Adress>
+    <Latitude>5.895899364174383</Latitude>
+    <Longitude>145.3196893950115</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T03:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1004</Id>
+    <Adress>6 Ashdod St.</Adress>
+    <Latitude>83.53436322918554</Latitude>
+    <Longitude>135.86395007368577</Longitude>
+    <OpenTime>2025-01-06T18:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T02:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1005</Id>
+    <Adress>2 Tel Aviv St.</Adress>
+    <Latitude>41.0360141584207</Latitude>
+    <Longitude>-66.72082651727642</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1006</Id>
+    <Adress>63 Tel Aviv St.</Adress>
+    <Latitude>71.8911433353397</Latitude>
+    <Longitude>-130.2826621671074</Longitude>
+    <OpenTime>2025-01-06T17:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1007</Id>
+    <Adress>65 Beer Sheva St.</Adress>
+    <Latitude>10.079793842074253</Latitude>
+    <Longitude>149.93844351538343</Longitude>
+    <OpenTime>2025-01-06T18:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1008</Id>
+    <Adress>93 Beer Sheva St.</Adress>
+    <Latitude>32.29347966014018</Latitude>
+    <Longitude>48.24888168618048</Longitude>
+    <OpenTime>2025-01-06T18:18:09</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1009</Id>
+    <Adress>79 Rishon Lezion St.</Adress>
+    <Latitude>-7.62049429638239</Latitude>
+    <Longitude>-77.96271216581084</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1010</Id>
+    <Adress>82 Ashdod St.</Adress>
+    <Latitude>73.30133891595474</Latitude>
+    <Longitude>-155.54440077160007</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1011</Id>
+    <Adress>17 Ashdod St.</Adress>
+    <Latitude>-33.83124743146103</Latitude>
+    <Longitude>-109.14442671543523</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1012</Id>
+    <Adress>13 Jerusalem St.</Adress>
+    <Latitude>61.52956907023895</Latitude>
+    <Longitude>-94.62473935993867</Longitude>
+    <OpenTime>2025-01-06T17:18:09</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1013</Id>
+    <Adress>69 Tel Aviv St.</Adress>
+    <Latitude>18.159292793088397</Latitude>
+    <Longitude>72.38079651756442</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1014</Id>
+    <Adress>96 Beer Sheva St.</Adress>
+    <Latitude>79.1181834413525</Latitude>
+    <Longitude>40.87265047547737</Longitude>
+    <OpenTime>2025-01-06T17:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1015</Id>
+    <Adress>44 Beer Sheva St.</Adress>
+    <Latitude>-57.95200252176409</Latitude>
+    <Longitude>94.92796385574002</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1016</Id>
+    <Adress>79 Jerusalem St.</Adress>
+    <Latitude>-53.49744105248362</Latitude>
+    <Longitude>156.75373933750234</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T23:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1017</Id>
+    <Adress>2 Tel Aviv St.</Adress>
+    <Latitude>21.619594283909663</Latitude>
+    <Longitude>-163.84747885801022</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1018</Id>
+    <Adress>63 Beer Sheva St.</Adress>
+    <Latitude>-65.87700756631583</Latitude>
+    <Longitude>-105.35939637558813</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1019</Id>
+    <Adress>12 Eilat St.</Adress>
+    <Latitude>27.95422533398782</Latitude>
+    <Longitude>-114.2742526553543</Longitude>
+    <OpenTime>2025-01-06T17:18:09</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1020</Id>
+    <Adress>4 Ashdod St.</Adress>
+    <Latitude>-65.70304977181318</Latitude>
+    <Longitude>-27.529715519401265</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1021</Id>
+    <Adress>26 Rishon Lezion St.</Adress>
+    <Latitude>-74.49644296857574</Latitude>
+    <Longitude>69.26845865955636</Longitude>
+    <OpenTime>2025-01-06T18:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T03:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1022</Id>
+    <Adress>63 Beer Sheva St.</Adress>
+    <Latitude>-74.0438997429997</Latitude>
+    <Longitude>-113.7968766938252</Longitude>
+    <OpenTime>2025-01-06T18:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-06T23:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1023</Id>
+    <Adress>32 Tel Aviv St.</Adress>
+    <Latitude>-37.7835429233495</Latitude>
+    <Longitude>146.16874287731088</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1024</Id>
+    <Adress>61 Ashdod St.</Adress>
+    <Latitude>60.31827324595028</Latitude>
+    <Longitude>111.33460078384883</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1025</Id>
+    <Adress>54 Eilat St.</Adress>
+    <Latitude>-41.56730106917596</Latitude>
+    <Longitude>-132.67544632689203</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1026</Id>
+    <Adress>15 Ashdod St.</Adress>
+    <Latitude>76.78754438296565</Latitude>
+    <Longitude>-179.24951645108533</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1027</Id>
+    <Adress>79 Ashdod St.</Adress>
+    <Latitude>-26.26209714728722</Latitude>
+    <Longitude>-161.29171152200985</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T03:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1028</Id>
+    <Adress>1 Haifa St.</Adress>
+    <Latitude>82.92010232459211</Latitude>
+    <Longitude>-71.49714607527116</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-06T23:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1029</Id>
+    <Adress>40 Haifa St.</Adress>
+    <Latitude>-78.818962631803</Latitude>
+    <Longitude>153.06531069890877</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1030</Id>
+    <Adress>81 Ashdod St.</Adress>
+    <Latitude>-1.3828798933680275</Latitude>
+    <Longitude>-11.05164331307543</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1031</Id>
+    <Adress>80 Beer Sheva St.</Adress>
+    <Latitude>-37.58257085339408</Latitude>
+    <Longitude>77.61313866673129</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1032</Id>
+    <Adress>70 Eilat St.</Adress>
+    <Latitude>31.035257975907058</Latitude>
+    <Longitude>-122.2797798278586</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1033</Id>
+    <Adress>79 Beer Sheva St.</Adress>
+    <Latitude>-78.42257510461577</Latitude>
+    <Longitude>52.54351575882097</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1034</Id>
+    <Adress>97 Ashdod St.</Adress>
+    <Latitude>87.07495426246979</Latitude>
+    <Longitude>86.87003009990241</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1035</Id>
+    <Adress>5 Beer Sheva St.</Adress>
+    <Latitude>45.01325203030356</Latitude>
+    <Longitude>-16.08630944893264</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T23:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1036</Id>
+    <Adress>48 Jerusalem St.</Adress>
+    <Latitude>-35.32678557043963</Latitude>
+    <Longitude>-33.3360539315035</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T23:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1037</Id>
+    <Adress>73 Rishon Lezion St.</Adress>
+    <Latitude>33.42516264908758</Latitude>
+    <Longitude>124.91431877229257</Longitude>
+    <OpenTime>2025-01-06T17:18:09</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1038</Id>
+    <Adress>46 Haifa St.</Adress>
+    <Latitude>-32.25963256993182</Latitude>
+    <Longitude>13.360251263570035</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T02:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1039</Id>
+    <Adress>53 Beer Sheva St.</Adress>
+    <Latitude>5.35046393472247</Latitude>
+    <Longitude>-160.1230217940507</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-07T00:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1040</Id>
+    <Adress>23 Ashdod St.</Adress>
+    <Latitude>21.39856371851178</Latitude>
+    <Longitude>-160.11520615076552</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1041</Id>
+    <Adress>48 Eilat St.</Adress>
+    <Latitude>-34.63270262676835</Latitude>
+    <Longitude>-161.25447465300024</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1042</Id>
+    <Adress>1 Jerusalem St.</Adress>
+    <Latitude>46.82745418408689</Latitude>
+    <Longitude>-80.91096377142567</Longitude>
+    <OpenTime>2025-01-06T17:18:09</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1043</Id>
+    <Adress>12 Rishon Lezion St.</Adress>
+    <Latitude>0.6251377971380521</Latitude>
+    <Longitude>133.19352816573524</Longitude>
+    <OpenTime>2025-01-06T18:18:09</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1044</Id>
+    <Adress>17 Haifa St.</Adress>
+    <Latitude>-78.52860809866985</Latitude>
+    <Longitude>81.04546576375066</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1045</Id>
+    <Adress>23 Haifa St.</Adress>
+    <Latitude>31.175325769779292</Latitude>
+    <Longitude>-52.55090011209025</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Fixing equipment</VerbDesc>
+    <MaxTime>2025-01-06T22:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1046</Id>
+    <Adress>44 Haifa St.</Adress>
+    <Latitude>0.9189762646759334</Latitude>
+    <Longitude>-136.78411256549458</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-07T01:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1047</Id>
+    <Adress>79 Tel Aviv St.</Adress>
+    <Latitude>68.27342189722029</Latitude>
+    <Longitude>-165.199528537113</Longitude>
+    <OpenTime>2025-01-06T16:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Medical assistance required</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1048</Id>
+    <Adress>39 Eilat St.</Adress>
+    <Latitude>-66.291181288009</Latitude>
+    <Longitude>76.71666231752414</Longitude>
+    <OpenTime>2025-01-06T14:18:09</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Providing shelter to families in need</VerbDesc>
+    <MaxTime>2025-01-06T21:18:09</MaxTime>
+  </Call>
+  <Call>
+    <Id>1049</Id>
+    <Adress>17 Jerusalem St.</Adress>
+    <Latitude>58.50857214524214</Latitude>
+    <Longitude>95.80007536629972</Longitude>
+    <OpenTime>2025-01-06T15:18:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Emergency food delivery</VerbDesc>
+    <MaxTime>2025-01-07T04:18:09</MaxTime>
+  </Call>
+</ArrayOfCall>

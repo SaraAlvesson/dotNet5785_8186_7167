@@ -124,9 +124,7 @@ namespace PL
 
         private void btnVolunteerList(object sender, RoutedEventArgs e)
         {
-            var volunteerListWindow = new VolunteerListWindow();
-            volunteerListWindow.Show();
-            this.Close(); // השאר רק אם הסגירה הכרחית
+            new VolunteerListWindow().Show();
         }
 
         private void btnReset(object sender, RoutedEventArgs e)
@@ -135,8 +133,8 @@ namespace PL
             var result = MessageBox.Show("האם אתה בטוח שברצונך לאפס את בסיס הנתונים?", "אישור איפוס", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                // שינוי אייקון העכבר לשעון חול
-                Mouse.OverrideCursor = Cursors.Wait;
+                //// שינוי אייקון העכבר לשעון חול
+                //Mouse.OverrideCursor = Cursors.Wait;
 
                 // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
                 CloseAllOtherWindows();
@@ -151,11 +149,11 @@ namespace PL
                 {
                     MessageBox.Show($"אירעה שגיאה בעת איפוס בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                finally
-                {
-                    // החזרת אייקון העכבר לברירת המחדל
-                    Mouse.OverrideCursor = null;
-                }
+                //finally
+                //{
+                //    // החזרת אייקון העכבר לברירת המחדל
+                //    Mouse.OverrideCursor = null;
+                //}
             }
         }
 
@@ -164,8 +162,7 @@ namespace PL
             var result = MessageBox.Show("Do you want to Initialize DataBase?", "אישור אתחול", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                // שינוי אייקון העכבר לשעון חול
-                Mouse.OverrideCursor = Cursors.Wait;
+            
 
                 // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
                 CloseAllOtherWindows();
@@ -180,11 +177,7 @@ namespace PL
                 {
                     MessageBox.Show($"אירעה שגיאה בעת אתחול בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                finally
-                {
-                    // החזרת אייקון העכבר לברירת המחדל
-                    Mouse.OverrideCursor = null;
-                }
+               
             }
         }
     }
