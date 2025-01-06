@@ -3,9 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        
-        
-        
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Title="VolunteerListWindow" Height="3130" Width="3590"
@@ -25,10 +22,10 @@
 
         <!-- ComboBox להבחנה בין המתנדבים -->
         <ComboBox Grid.Row="0" 
-                  SelectedValue="{Binding SelectedCallTypeEnumField, Mode=TwoWay}" 
-                  DisplayMemberPath="Name"
-                  ItemsSource="{Binding CallTypes}" 
-                  HorizontalAlignment="Stretch" Margin="10"/>
+          SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
+          ItemsSource="{Binding CallTypes}" 
+          HorizontalAlignment="Stretch" Margin="10"/>
+
 
         <!-- ListView להצגת המתנדבים -->
         <ListView Grid.Row="1" 
@@ -36,11 +33,10 @@
                   ItemsSource="{Binding VolunteerList}" SelectedItem="{Binding SelectedVolunteer}" MouseDoubleClick="lsvVolunteerList_MouseDoubleClick" >
             <ListView.View>
                 <GridView>
-                    <!-- עמודת שם המתנדב -->
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="100"/>
 
-                    <!-- עמודת גיל המתנדב -->
-                    <GridViewColumn Header="Age" DisplayMemberBinding="{Binding Age}" Width="100"/>
+                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="100"/>
+                    <!-- עמודת שם המתנדב -->
+                    <GridViewColumn Header="FullName" DisplayMemberBinding="{Binding FullName}" Width="100"/>
 
                     <!-- עמודת מצב המתנדב -->
                     <GridViewColumn Header="Is Active" Width="100">
@@ -51,25 +47,24 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <!-- עמודת תכונה נוספת אם יש -->
-                    <GridViewColumn Header="Other Property" Width="100">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding OtherProperty}"  />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                    <GridViewColumn Header="SumTreatedCalls" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="100"/>
+                    <GridViewColumn Header="SumCanceledCalls" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="100"/>
+                    <GridViewColumn Header="SumExpiredCalls" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="100"/>
+
+                    <GridViewColumn Header="CallIdInTreatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="100" />
                 </GridView>
             </ListView.View>
         </ListView>
 
         <!-- כפתור הוספה -->
         <Button Grid.Row="1" 
-                Content="Add" 
-                HorizontalAlignment="Left" 
-                Height="300" 
-                Width="700" 
-                Command="{Binding AddVolunteerCommand}" 
-                Margin="910,2573,0,10" Click="ButtonAdd_Click" />
+        Content="Add" 
+        HorizontalAlignment="Left" 
+        Height="300" 
+        Width="700" 
+        Command="{Binding AddVolunteerCommand}" 
+        Margin="10,10,0,10" 
+        Click="ButtonAdd_Click" />
+
     </Grid>
 </Window>

@@ -4,10 +4,6 @@
              xmlns:local="clr-namespace:PL"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         <!--אם את משתמשת במפתחות אלו, הסירי את ההערות וודאי שהמחלקות קיימות--> 
-        <!--<local:VolunteerInListFieldCollection x:Key="VolunteerInListFieldCollectionKey" />--><!--
-        <local:ConvertRoleToColor x:Key="ConvertRoleToColorKey" />
-        <local:ConvertDistanceToColor x:Key="ConvertDistanceToColorKey" />
-        <local:ConvertUpdateToTrue x:Key="ConvertUpdateToTrueKey" />-->
+        <local:CallTypesCollection x:Key="CallTypesSource" />
     </Application.Resources>
 </Application>

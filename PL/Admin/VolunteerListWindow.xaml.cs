@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +10,7 @@ using static BO.Enums;
 
 namespace PL.Admin
 {
+
     public partial class VolunteerListWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
@@ -46,6 +48,31 @@ namespace PL.Admin
             }
         }
 
+        public BO.Enums.CallTypeEnum SelectedCallType
+        {
+            get => _selectedCallType;
+            set
+            {
+                if (_selectedCallType != value)
+                {
+                    _selectedCallType = value;
+                    //OnPropertyChanged(); // עידכון הממשק
+                    FilterVolunteers(); // סינון הרשימה
+                }
+            }
+        }
+
+        public ObservableCollection<VolunteerInList> Volunteers { get; set; } = new();
+        public ObservableCollection<VolunteerInList> FilteredVolunteers { get; set; } = new();
+
+        private void FilterVolunteers()
+        {
+            FilteredVolunteers.Clear();
+            foreach (var volunteer in Volunteers.Where(v => v.CallType == SelectedCallType))
+            {
+                FilteredVolunteers.Add(volunteer);
+            }
+        }
 
 
         private void LoadVolunteerList()

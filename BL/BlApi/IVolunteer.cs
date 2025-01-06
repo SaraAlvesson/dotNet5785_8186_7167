@@ -18,7 +18,10 @@ public interface IVolunteer: IObservable
     /// <summary>
     /// Requests a list of volunteers, optionally filtering by active status and sorting by a specific field.
     /// </summary>
-    IEnumerable<VolunteerInList> RequestVolunteerList(bool? isActive, VolunteerInListField? sortField=null);
+    IEnumerable<VolunteerInList> RequestVolunteerList(
+       bool? isActive,
+       VolunteerInListField? sortField = null,
+       CallTypeEnum? callTypeFilter = null);// הוספת פרמטר לסינון לפי סוג קריאה
 
     /// <summary>
     /// Requests the details of a volunteer by their unique ID.

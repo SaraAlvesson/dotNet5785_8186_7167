@@ -60,7 +60,10 @@ internal class VolunteerImplementation : IVolunteer
 
 
 
-    public IEnumerable<VolunteerInList> RequestVolunteerList(bool? isActive, VolunteerInListField? sortField = null)
+    public IEnumerable<VolunteerInList> RequestVolunteerList(
+      bool? isActive,
+      VolunteerInListField? sortField = null,
+      CallTypeEnum? callTypeFilter = null) // הוספת פרמטר לסינון לפי סוג קריאה
     {
         try
         {
@@ -79,7 +82,6 @@ internal class VolunteerImplementation : IVolunteer
             // שליפת פרטי המתנדב לכל אחד מהמתנדבים
             foreach (var volunteer in volunteers)
             {
-                // קריאה למתודה שמחזירה את כל הפרטים של המתנדב
                 var volunteerDetails = RequestVolunteerDetails(volunteer.Id);
 
                 // הוספת פרטי המתנדב לרשימה
@@ -91,9 +93,15 @@ internal class VolunteerImplementation : IVolunteer
                     SumTreatedCalls = volunteerDetails.SumCalls,
                     SumCanceledCalls = volunteerDetails.SumCanceled,
                     SumExpiredCalls = volunteerDetails.SumExpired,
-                    CallIdInTreatment = volunteerDetails.VolunteerTakenCare?.CallId, // אם יש קריאה בטיפול
-                    CallType = volunteerDetails.VolunteerTakenCare?.CallType ?? default(CallTypeEnum) // ערך ברירת מחדל אם אין קריאה בטיפול
+                    CallIdInTreatment = volunteerDetails.VolunteerTakenCare?.CallId,
+                    CallType = volunteerDetails.VolunteerTakenCare?.CallType ?? default(CallTypeEnum)
                 });
+            }
+
+            // סינון לפי סוג הקריאה שבטיפול אם הועבר ערך
+            if (callTypeFilter.HasValue)
+            {
+                volunteerList = volunteerList.Where(v => v.CallType == callTypeFilter.Value).ToList();
             }
 
             // מיון הרשימה לפי השדה המבוקש
@@ -123,13 +131,13 @@ internal class VolunteerImplementation : IVolunteer
                         volunteerList = volunteerList.OrderBy(v => v.CallType).ToList();
                         break;
                     default:
-                        volunteerList = volunteerList.OrderBy(v => v.Id).ToList(); // מיון ברירת מחדל לפי ת.ז
+                        volunteerList = volunteerList.OrderBy(v => v.Id).ToList(); // מיון ברירת מחדל
                         break;
                 }
             }
             else
             {
-                volunteerList = volunteerList.OrderBy(v => v.Id).ToList(); // מיון ברירת מחדל לפי ת.ז
+                volunteerList = volunteerList.OrderBy(v => v.Id).ToList(); // מיון ברירת מחדל
             }
 
             // החזרת הרשימה הממוינת והמסוננת
@@ -141,9 +149,6 @@ internal class VolunteerImplementation : IVolunteer
             throw new BO.Exceptions.BlDoesNotExistException("Error retrieving volunteer list.", ex);
         }
     }
-
-
-
 
 
 
