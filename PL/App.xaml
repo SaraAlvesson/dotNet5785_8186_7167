@@ -5,6 +5,6 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!-- Resources כמו CallTypesCollection -->
-        <local:CallTypesCollection x:Key="CallTypesSource" />
+        <!--<local:CallTypesCollection x:Key="CallTypesSource" />-->
     </Application.Resources>
 </Application>
