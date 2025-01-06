@@ -5,33 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="600" Width="900"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
 
-    <Grid>
+    <Grid Margin="15" Background="#F4F4F4">
         <Grid.RowDefinitions>
-            <RowDefinition Height="80*"/>
-            <RowDefinition Height="500*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Label for displaying the current system time -->
-        <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Left" Margin="89,45,0,0" VerticalAlignment="Top" Grid.Row="5" Height="39" Width="246"/>
+        <Label Content="Current Time:" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" Foreground="#2C3E50" Grid.Row="0" />
+        <Label Content="{Binding CurrentTime}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#34495E" Grid.Row="0" Margin="0,30,0,0" />
 
-        <!-- Other UI elements -->
-        <Button Content="קידום בדקה" HorizontalAlignment="Left" Margin="178,24,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddMin"/>
-        <Button Content="קידום בשעה" HorizontalAlignment="Left" Margin="94,25,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddHour"/>
-        <Button Content="קידום ביום" HorizontalAlignment="Left" Margin="10,24,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddDay"/>
-        <Button Content="קידום בחודש" HorizontalAlignment="Left" Margin="145,50,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddMonth"/>
-        <Button Content="קידום בשנה" HorizontalAlignment="Left" Margin="44,50,0,0" Grid.Row="6" VerticalAlignment="Top" Click="btnAddYear"/>
-        <TextBox Name="textrr" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="536,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Row="3"/>
-        <Button Content="Initialize DB" HorizontalAlignment="Left" Margin="670,30,0,0" Grid.Row="4" VerticalAlignment="Top" Click="btnInit"/>
-        <Button Content="update" HorizontalAlignment="Left" Margin="682,70,0,0" Grid.Row="3" VerticalAlignment="Top" RenderTransformOrigin="2.529,1.333" Click="update_click"/>
-        <Button Content="Handle volunteers" HorizontalAlignment="Left" Margin="563,68,0,0" Grid.Row="4" VerticalAlignment="Top" Width="73" Click="btnVolunteerList"/>
-        <Button Content="Reset DB" HorizontalAlignment="Left" Margin="670,68,0,0" Grid.Row="4" VerticalAlignment="Top" RenderTransformOrigin="3.016,-0.03" Width="66" Click="btnReset"/>
+        <!-- Centered buttons for database operations -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" >
+            <Button Content="Initialize DB" Width="150" Height="50" Click="btnInit" Background="#BDC3C7" Foreground="#2C3E50" BorderBrush="#7F8C8D" FontWeight="SemiBold" />
+            <Button Content="Handle Volunteers" Width="150" Height="50" Click="btnVolunteerList" Background="#BDC3C7" Foreground="#2C3E50" BorderBrush="#7F8C8D" FontWeight="SemiBold" />
+            <Button Content="Reset DB" Width="150" Height="50" Click="btnReset" Background="#BDC3C7" Foreground="#2C3E50" BorderBrush="#7F8C8D" FontWeight="SemiBold" />
+        </StackPanel>
+
+        <!-- Buttons for time manipulation -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Margin="0,20,0,0" >
+            <Button Content="קידום בדקה" Width="110" Height="40" Click="btnAddMin" Background="#EAEDED" Foreground="#2C3E50" BorderBrush="#95A5A6" />
+            <Button Content="קידום בשעה" Width="110" Height="40" Click="btnAddHour" Background="#EAEDED" Foreground="#2C3E50" BorderBrush="#95A5A6" />
+            <Button Content="קידום ביום" Width="110" Height="40" Click="btnAddDay" Background="#EAEDED" Foreground="#2C3E50" BorderBrush="#95A5A6" />
+            <Button Content="קידום בחודש" Width="110" Height="40" Click="btnAddMonth" Background="#EAEDED" Foreground="#2C3E50" BorderBrush="#95A5A6" />
+            <Button Content="קידום בשנה" Width="110" Height="40" Click="btnAddYear" Background="#EAEDED" Foreground="#2C3E50" BorderBrush="#95A5A6" />
+        </StackPanel>
+
+        <!-- TextBox for RiskRange and update button -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="3" Margin="0,30,0,0">
+            <TextBox Name="textrr" Width="150" Height="35" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" Background="#ECF0F1" BorderBrush="#BDC3C7" Foreground="#2C3E50" Margin="0,0,10,0" />
+            <Button Content="Update" Width="100" Height="35" Click="update_click" Background="#3498DB" Foreground="White" BorderBrush="#2980B9" />
+        </StackPanel>
     </Grid>
 </Window>
