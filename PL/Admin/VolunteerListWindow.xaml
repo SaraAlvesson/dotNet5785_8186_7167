@@ -5,40 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="VolunteerListWindow" Height="3130" Width="3590"
+        Title="Volunteer List Window" 
+        Height="800" 
+        Width="1000"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <!--<Window.Resources>
-         הגדרת מקור נתונים עבור המתנדבים 
-        <local:VolunteerCollection x:Key="VolunteerCollectionKey" />
-    </Window.Resources>-->
-
-    <Grid>
+    <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40*" />
-            <RowDefinition Height="500*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- ComboBox להבחנה בין המתנדבים -->
-        <ComboBox Grid.Row="0" 
-          SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
-          ItemsSource="{Binding CallTypes}" 
-          HorizontalAlignment="Stretch" Margin="10"/>
-
+        <ComboBox Grid.Row="0"
+                  SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
+                  ItemsSource="{Binding CallTypes}" 
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Center" 
+                  Margin="0,10" />
 
         <!-- ListView להצגת המתנדבים -->
-        <ListView Grid.Row="1" 
-                  Margin="10,1,10,10" 
-                  ItemsSource="{Binding VolunteerList}" SelectedItem="{Binding SelectedVolunteer}" MouseDoubleClick="lsvVolunteerList_MouseDoubleClick" >
+        <ListView Grid.Row="1"
+                  Margin="0,10"
+                  ItemsSource="{Binding VolunteerList}" 
+                  SelectedItem="{Binding SelectedVolunteer}" 
+                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
             <ListView.View>
                 <GridView>
-
-                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="100"/>
-                    <!-- עמודת שם המתנדב -->
-                    <GridViewColumn Header="FullName" DisplayMemberBinding="{Binding FullName}" Width="100"/>
-
-                    <!-- עמודת מצב המתנדב -->
+                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="100" />
+                    <GridViewColumn Header="Full Name" DisplayMemberBinding="{Binding FullName}" Width="200" />
                     <GridViewColumn Header="Is Active" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -46,25 +42,28 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-
-                    <GridViewColumn Header="SumTreatedCalls" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="100"/>
-                    <GridViewColumn Header="SumCanceledCalls" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="100"/>
-                    <GridViewColumn Header="SumExpiredCalls" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="100"/>
-
-                    <GridViewColumn Header="CallIdInTreatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="100" />
+                    <GridViewColumn Header="Treated Calls" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="150" />
+                    <GridViewColumn Header="Canceled Calls" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="150" />
+                    <GridViewColumn Header="Expired Calls" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="150" />
+                    <GridViewColumn Header="Call in Treatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="150" />
                 </GridView>
             </ListView.View>
         </ListView>
 
         <!-- כפתור הוספה -->
-        <Button Grid.Row="1" 
-        Content="Add" 
-        HorizontalAlignment="Left" 
-        Height="300" 
-        Width="700" 
-        Command="{Binding AddVolunteerCommand}" 
-        Margin="10,10,0,10" 
-        Click="ButtonAdd_Click" />
-
+        <Button Grid.Row="2"
+                Content="Add"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Width="150"
+                Height="50"
+                Margin="0,10,0,10"
+                Command="{Binding AddVolunteerCommand}" 
+                Click="ButtonAdd_Click" 
+                Background="#4CAF50" 
+                Foreground="White" 
+                FontWeight="Bold" 
+                BorderThickness="0"
+                Cursor="Hand" />
     </Grid>
 </Window>
