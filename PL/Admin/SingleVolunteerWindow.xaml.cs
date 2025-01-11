@@ -63,7 +63,6 @@ namespace PL.Admin
 
             // קביעת הטקסט של הכפתור לפי ה-id
             ButtonText = id == 0 ? "Add" : "Update";
-
             InitializeComponent();
 
             // חיבור התכונה למנגנון Binding, כדי שה-XAML יקבל את הערך שלה
