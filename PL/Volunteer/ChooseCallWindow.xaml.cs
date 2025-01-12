@@ -1,82 +1,154 @@
-﻿using System.Collections.ObjectModel;
+﻿using BO;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace PL.Volunteer
 {
-    public partial class ChooseCallWindow : Window
+    public partial class ChooseCallWindow : Window, INotifyPropertyChanged
     {
-        public ObservableCollection<OpenCallInList> Calls { get; set; } = new ObservableCollection<OpenCallInList>();
+        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private BO.Volunteer CurrentVolunteer;
 
-        public ChooseCallWindow()
+        public ObservableCollection<OpenCallInList> Calls { get; set; } = new();
+        private string _selectedTypeFilter;
+        public string SelectedTypeFilter
+        {
+            get => _selectedTypeFilter;
+            set { _selectedTypeFilter = value; OnPropertyChanged(); LoadCalls(); }
+        }
+
+        private string _addressFilter;
+        public string AddressFilter
+        {
+            get => _addressFilter;
+            set { _addressFilter = value; OnPropertyChanged(); LoadCalls(); }
+        }
+
+        private string _selectedSortOption;
+        public string SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set { _selectedSortOption = value; OnPropertyChanged(); LoadCalls(); }
+        }
+
+        private string _newAddress;
+        public string NewAddress
+        {
+            get => _newAddress;
+            set { _newAddress = value; OnPropertyChanged(); }
+        }
+
+        private string _selectedCallDetails;
+        public string SelectedCallDetails
+        {
+            get => _selectedCallDetails;
+            set { _selectedCallDetails = value; OnPropertyChanged(); }
+        }
+
+        public ICommand ChooseCallCommand { get; }
+        public ICommand UpdateAddressCommand { get; }
+
+        public ChooseCallWindow(BO.Volunteer volunteer)
         {
             InitializeComponent();
             DataContext = this;
 
-            // טוען רשימת קריאות לדוגמה
-            LoadCalls();
+            CurrentVolunteer = volunteer;
+
+            ChooseCallCommand = new RelayCommand(ChooseCall);
+            UpdateAddressCommand = new RelayCommand(UpdateAddress);
+
+            LoadCalls(); // טוען את הקריאות
         }
 
         private void LoadCalls()
         {
-            // כאן יש לטעון את רשימת הקריאות ממקור נתונים אמיתי (לדוגמה, API או מאגר נתונים)
-            // לדוגמה, מוסיפים קריאות מדומות
-            Calls.Add(new OpenCallInList { Id = 1, Type = "חירום", Address = "רחוב דוגמה 1, תל אביב", Distance = 3.5 });
-            Calls.Add(new OpenCallInList { Id = 2, Type = "סיוע", Address = "רחוב דוגמה 2, חיפה", Distance = 7.2 });
-            Calls.Add(new OpenCallInList { Id = 3, Type = "ליווי", Address = "רחוב דוגמה 3, ירושלים", Distance = 12.4 });
+            try
+            {
+                var calls = s_bl.Call.GetVolunteerOpenCalls(
+                    CurrentVolunteer.Id,
+                    null,
+                   null
+                );
 
-            CallsDataGrid.ItemsSource = Calls;
+                Calls.Clear();
+                foreach (var call in calls)
+                    Calls.Add(call);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading calls: {ex.Message}");
+            }
         }
 
-        private void ChooseCall_Click(object sender, RoutedEventArgs e)
+        private void ChooseCall(object parameter)
         {
-            if (sender is Button button && button.Tag is int callId)
+            if (parameter is OpenCallInList selectedCall)
             {
-                var selectedCall = Calls.FirstOrDefault(c => c.Id == callId);
-                if (selectedCall != null)
+                try
                 {
-                    // פעולה לבחירת קריאה
-                    MessageBox.Show($"בחרת קריאה {selectedCall.Id}: {selectedCall.Type} בכתובת {selectedCall.Address}", "אישור");
-
-                    // הסרת הקריאה מהטבלה
-                    Calls.Remove(selectedCall);
+                    s_bl.Call.AssignCallToVolunteer(CurrentVolunteer.Id, selectedCall.Id);
+                    MessageBox.Show($"You have selected Call ID {selectedCall.Id} for handling.");
+                    LoadCalls();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error assigning call: {ex.Message}");
                 }
             }
         }
 
-        private void UpdateAddress_Click(object sender, RoutedEventArgs e)
+        private void UpdateAddress(object parameter)
         {
-            string newAddress = NewAddressTextBox.Text.Trim();
-            if (!string.IsNullOrEmpty(newAddress))
+            if (!string.IsNullOrEmpty(NewAddress))
             {
-                // פעולה לעדכון כתובת (לדוגמה, עדכון הכתובת במערכת)
-                MessageBox.Show($"הכתובת עודכנה ל: {newAddress}", "עדכון כתובת");
-                // אפשר לקרוא כאן לשיטה שמרעננת את רשימת הקריאות לפי הכתובת החדשה
+                try
+                {
+                    CurrentVolunteer.Location = NewAddress;
+                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
+                    LoadCalls();
+                    MessageBox.Show("Address updated successfully!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error updating address: {ex.Message}");
+                }
             }
             else
             {
-                MessageBox.Show("אנא הזן כתובת חוקית.", "שגיאה");
+                MessageBox.Show("Please enter a valid address.");
             }
         }
 
-        private void CallsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (CallsDataGrid.SelectedItem is OpenCallInList selectedCall)
-            {
-                // עדכון תיאור מילולי
-                CallDetailsTextBox.Text = $"סוג קריאה: {selectedCall.Type}\nכתובת: {selectedCall.Address}\nמרחק: {selectedCall.Distance} ק״מ";
-
-                // הצגת מיקומים במפה (להשלים לפי שימוש במפה מתאימה)
-                // UpdateMap(selectedCall);
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+       
     }
 
-    public class OpenCallInList
+    public class RelayCommand : ICommand
     {
-        public int Id { get; set; } // מזהה ייחודי
-        public string Type { get; set; } // סוג הקריאה
-        public string Address { get; set; } // כתובת
-        public double Distance { get; set; } // מרחק מכתובת המתנדב
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
+
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        {
+            _execute = execute;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
+
+        public void Execute(object parameter) => _execute(parameter);
+
+        public event EventHandler CanExecuteChanged;
+        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

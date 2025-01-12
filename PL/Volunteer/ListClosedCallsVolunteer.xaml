@@ -3,10 +3,38 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PL.Volunteer"
         mc:Ignorable="d"
-        Title="ListClosedCallsVolunteer" Height="450" Width="800">
-    <Grid>
-        
+        Title="Volunteer Closed Call History" Height="500" Width="900" 
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Filter and Sort -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+            <Label Content="Filter by Call Type:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox Name="CallTypeFilter" Width="200" Margin="0,0,20,0" SelectionChanged="CallTypeFilter_SelectionChanged"
+                      ItemsSource="{Binding CallTypes}" SelectedItem="{Binding SelectedCallType}"/>
+
+            <Label Content="Sort by:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox Name="SortByComboBox" Width="200" Margin="0,0,20,0" SelectionChanged="SortByComboBox_SelectionChanged"
+                      ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption}"/>
+        </StackPanel>
+
+        <!-- DataGrid for displaying closed call history -->
+        <DataGrid Name="ClosedCallsDataGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" 
+                  CanUserSortColumns="True" AlternatingRowBackground="#F9F9F9" ItemsSource="{Binding ClosedCalls}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Call ID" Binding="{Binding Id}" Width="100"/>
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="200"/>
+                <DataGridTextColumn Header="Call Type" Binding="{Binding CallType}" Width="150"/>
+                <DataGridTextColumn Header="Opening Time" Binding="{Binding OpeningTime}" Width="150"/>
+                <DataGridTextColumn Header="Treatment Start Time" Binding="{Binding TreatmentStartTime}" Width="150"/>
+                <DataGridTextColumn Header="Actual Completion Time" Binding="{Binding CompletionTime}" Width="150"/>
+                <DataGridTextColumn Header="Completion Type" Binding="{Binding CompletionType}" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

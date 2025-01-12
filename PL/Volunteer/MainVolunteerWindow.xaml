@@ -1,43 +1,108 @@
 ﻿<Window x:Class="PL.Volunteer.MainVolunteerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PL.Volunteer"
-        mc:Ignorable="d"
-        Title="Volunteer Screen" Height="600" Width="800" DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    
+        Title="Volunteer Details" Height="600" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+
     <Grid Margin="10">
-        <StackPanel>
-            <GroupBox Header="Volunteer Details" Margin="0,0,0,10">
-                <StackPanel>
-                    <TextBlock Text="ID:" FontWeight="Bold" />
-                    <TextBox Text="{Binding VolunteerId}" IsReadOnly="True" />
-                    <TextBlock Text="Name:" FontWeight="Bold" />
-                    <TextBox Text="{Binding Name}" />
-                    <TextBlock Text="Address:" FontWeight="Bold" />
-                    <TextBox Text="{Binding Address}" />
-                    <TextBlock Text="Address:" FontWeight="Bold" />
-                    <TextBox Text="{Binding Address}" />
-                    <TextBlock Text="Address:" FontWeight="Bold" />
-                    <TextBox Text="{Binding Address}" />
-                    <Button Content="Update Details" Command="{Binding UpdateCommand}" />
-                    
-                    
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Current Call">
-                <StackPanel>
-                    <TextBlock Text="Call ID:" FontWeight="Bold" />
-                    <TextBox Text="{Binding CurrentCallId}" IsReadOnly="True" />
-                    <TextBlock Text="Status:" FontWeight="Bold" />
-                    <TextBox Text="{Binding CallStatus}" IsReadOnly="True" />
-                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                        <Button Content="Complete Call" Command="{Binding CompleteCallCommand}" Margin="0,0,10,0" Click="Button_Click" />
-                        <Button Content="Cancel Call" Command="{Binding CancelCallCommand}" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="1,5,-1,-218" RenderTransformOrigin="0.5,0.5">
+            <ScrollViewer.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="0.454"/>
+                    <RotateTransform/>
+                    <TranslateTransform X="2.792"/>
+                </TransformGroup>
+            </ScrollViewer.RenderTransform>
+            <StackPanel Height="814" Width="798">
+                <!-- פרטי המתנדב -->
+                <GroupBox Header="Volunteer Details" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="ID:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.Id}" IsReadOnly="True" />
+
+                        <TextBlock Text="Full Name:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.FullName}" IsReadOnly="True" />
+
+                        <TextBlock Text="Email:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.Email}" IsReadOnly="True" />
+
+                        <TextBlock Text="Password:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.Password}" />
+
+                        <TextBlock Text="Address:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.Location}" />
+
+                        <TextBlock Text="Phone:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.PhoneNumber}" />
+
+                        <TextBlock Text="Max Distance for Call:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.MaxDistance}" />
+
+                        <TextBlock Text="Distance Type:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.DistanceType}" IsReadOnly="True" />
+
+                        <!-- כפתור לסימון כלא פעיל (אם אין קריאה בטיפול) -->
+                        <CheckBox IsChecked="{Binding Volunteer.IsInactive}" Content="Mark as Inactive" IsEnabled="{Binding CanMarkInactive}" />
+
+                        <TextBlock Text="Sum Calls:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.SumCalls}" IsReadOnly="True" />
+
+                        <TextBlock Text="Sum Canceled:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.SumCanceled}" IsReadOnly="True" />
+
+                        <TextBlock Text="Sum Expired:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentVolunteer.SumExpired}" IsReadOnly="True" />
+
+                        <!-- כפתור "עדכון" -->
+                        <Button Content="Update" Command="{Binding UpdateVolunteerCommand}" IsEnabled="{Binding IsUpdateEnabled}" Margin="0,10" />
                     </StackPanel>
-                </StackPanel>
-            </GroupBox>
-        </StackPanel>
+                </GroupBox>
+
+                <!-- אם יש קריאה בטיפול, הצגת פרטי הקריאה -->
+                <GroupBox Header="Current Call" Visibility="{Binding CurrentCallVisibility}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Call ID:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentCall.Id}" IsReadOnly="True" />
+
+                        <TextBlock Text="Call Status:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentCall.Status}" IsReadOnly="True" />
+
+                        <TextBlock Text="Call Type:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentCall.CallType}" IsReadOnly="True" />
+
+                        <TextBlock Text="Call Address:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentCall.CallAddress}" IsReadOnly="True" />
+
+                        <TextBlock Text="VerbDesc:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentCall.VerbDesc}" IsReadOnly="True" />
+
+                        <TextBlock Text="OpenTime:" FontWeight="Bold" />
+                        <DatePicker Text="{Binding CurrentCall.OpenTime}" />
+
+                        <TextBlock Text="MaxFinishTime:" FontWeight="Bold" />
+                        <DatePicker Text="{Binding CurrentCall.MaxFinishTime}" Width="856" />
+
+                        <TextBlock Text="StartAppointmentTime:" FontWeight="Bold" />
+                        <DatePicker Text="{Binding CurrentCall.StartAppointmentTime}" />
+
+                        <TextBlock Text="DistanceOfCall:" FontWeight="Bold" />
+                        <TextBox Text="{Binding CurrentCall.DistanceOfCall}" IsReadOnly="True" />
+
+                        <!-- כפתור לסיום טיפול -->
+                        <Button Content="Complete Call" Command="{Binding CompleteCallCommand}" IsEnabled="{Binding CanCompleteCall}" Margin="0,5" />
+
+                        <!-- כפתור לביטול טיפול -->
+                        <Button Content="Cancel Call" Command="{Binding CancelCallCommand}" IsEnabled="{Binding CanCancelCall}" Margin="0,5" />
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- כפתור "בחירת קריאה" -->
+                <Button Content="Choose Call for Treatment" Command="{Binding ChooseCallCommand}" Margin="0,10" IsEnabled="{Binding IsChooseCallEnabled}" />
+
+                <!-- כפתור היסטוריית קריאות -->
+                <Button Content="History" Command="{Binding ShowHistoryCommand}" Margin="0,10" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
