@@ -115,10 +115,10 @@ namespace PL.Volunteer
             {
                 try
                 {
-                    var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id,null,null);
-                    // Open a new window to display history or display in current window
-                  
-                   new  ListClosedCallsVolunteer().Show();
+                    var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
+
+                    // פתיחת חלון חדש עם מזהה המתנדב
+                    new ListClosedCallsVolunteer(CurrentVolunteer.Id).Show();
                 }
                 catch (Exception ex)
                 {
@@ -126,6 +126,7 @@ namespace PL.Volunteer
                 }
             }
         }
+
 
         // Validate if the update is correct (add necessary conditions here)
         private bool IsValidUpdate()

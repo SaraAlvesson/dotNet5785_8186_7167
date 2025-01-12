@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PL.Volunteer
@@ -130,25 +131,53 @@ namespace PL.Volunteer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-       
-    }
 
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
 
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        // מתודה שמטפלת בשינוי טקסט בשדה כתובת סינון
+        private void FilterAddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _execute = execute;
-            _canExecute = canExecute;
+            // הוסף לוגיקה לסינון הקריאות לפי הכתובת שהוזנה
         }
 
-        public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
+        // מתודה שמטפלת בשינוי הבחירה ברשימת הקריאות
+        private void CallsDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            // הוסף לוגיקה לטיפול בבחירת קריאה מהרשימה
+            if (CallsDataGrid.SelectedItem is OpenCallInList selectedCall)
+            {
+                SelectedCallDetails = selectedCall.VerbDesc; // הצגת הפירוט המילולי של הקריאה
+                                                                // עדכן את המפה עם מיקום הקריאה
+            }
+        }
 
-        public void Execute(object parameter) => _execute(parameter);
+        // מתודה שמטפלת בשינוי טקסט בפרטי הקריאה שנבחרה
+        private void CallDetailsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // אפשר לעדכן כאן את פרטי הקריאה במידת הצורך
+        }
 
-        public event EventHandler CanExecuteChanged;
-        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        // מתודה לעדכון הכתובת
+        private void UpdateAddress()
+        {
+            // עדכון כתובת המתנדב
+        }
+        public class RelayCommand : ICommand
+        {
+            private readonly Action<object> _execute;
+            private readonly Predicate<object> _canExecute;
+
+            public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+            {
+                _execute = execute;
+                _canExecute = canExecute;
+            }
+
+            public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
+
+            public void Execute(object parameter) => _execute(parameter);
+
+            public event EventHandler CanExecuteChanged;
+            public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 }
