@@ -162,7 +162,7 @@ namespace PL
             var result = MessageBox.Show("Do you want to Initialize DataBase?", "אישור אתחול", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-            
+
 
                 // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
                 CloseAllOtherWindows();
@@ -177,7 +177,7 @@ namespace PL
                 {
                     MessageBox.Show($"אירעה שגיאה בעת אתחול בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-               
+
             }
         }
 
