@@ -81,8 +81,8 @@ public static class Initialization
         281736495, 649328701, 129384750, 934820165, 267183904
         };
 
-        var volunteerCount = volunteerNames.Length;
-        for (int i = 0; i < volunteerCount; i++)
+       
+        for (int i = 0; i < 15; i++)
         {
             // בחירת תעודת זהות אקראית מתוך המערך
             int id = ids[s_rand.Next(ids.Length)];
@@ -180,7 +180,7 @@ public static class Initialization
     };
 
         // Randomly generate 50 calls
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 2; i++)
         {
             // Randomly select a call type
             CallType callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length);
@@ -268,7 +268,7 @@ public static class Initialization
         List<int> volunteersWithoutCalls = new List<int>(s_dal!.Volunteer.ReadAll().Select(v => v.Id));
 
         // Loop to create 50 assignments
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 2; i++)
         {
             Volunteer volunteerToAssig;
 

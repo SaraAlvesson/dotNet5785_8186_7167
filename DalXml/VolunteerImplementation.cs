@@ -71,7 +71,7 @@ internal class VolunteerImplementation : IVolunteer
             new XElement("FullName", v.FullName),
             new XElement("PhoneNumber", v.PhoneNumber),
             new XElement("Email", v.Email),
-            new XElement("TypeDistance", v.DistanceType),
+            new XElement("DistanceType", v.DistanceType),
             new XElement("Position", v.Position),
             new XElement("Active", v.Active),
             new XElement("Password", v.Password),
