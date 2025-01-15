@@ -39,24 +39,32 @@ internal class VolunteerImplementation : IVolunteer
     //    throw new BlDoesNotExistException($"Username {username} not found");
 
     //}
-    public string Login(string username, string password)
+    public string Login(int username, string password)
     {
-        // שלב 1: שליפת המתנדב עם שם משתמש (יכול להיות גם לפי מזהה ייחודי)
-        var volunteer = _dal.Volunteer.ReadAll(v => v.FullName == username).FirstOrDefault(); // שים לב כאן שהשתמשתי ב-Username במקום FullName
+        // שלב 1: שליפת המתנדב עם שם המשתמש (יכול להיות גם לפי מזהה ייחודי)
+        var volunteer = _dal.Volunteer.ReadAll(v => v.Id == username).FirstOrDefault();
 
         if (volunteer != null)
         {
             // שלב 2: השוואת הסיסמאות
-            if (volunteer.Password != password) // יש להשתמש במתודה השוואה שמבצעת הצפנה
+            if (volunteer.Password != password)
                 throw new BlPasswordNotValid("Incorrect password");
 
-            // שלב 3: החזרת תפקיד המשתמש
-            return ((Enums.VolunteerTypeEnum)volunteer.Position).ToString();
+            // שלב 3: המרת התפקיד מה-DO ל-BO
+            if (Enum.TryParse<BO.Enums.VolunteerTypeEnum>(volunteer.Position.ToString(), out var volunteerType))
+            {
+                return volunteerType.ToString();
+            }
+            else
+            {
+                throw new Exception("Failed to map volunteer position to BO.Enums.VolunteerTypeEnum.");
+            }
         }
 
         // שלב 4: אם המשתמש לא נמצא
         throw new BlDoesNotExistException($"Username {username} not found");
     }
+
 
 
 
@@ -277,11 +285,15 @@ internal class VolunteerImplementation : IVolunteer
             var existingVolunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerDetails.Id).FirstOrDefault()
                 ?? throw new DalDoesNotExistException($"Volunteer with ID {volunteerDetails.Id} not found.");
 
+            Console.WriteLine("Existing volunteer found.");
+
             // שלב 2: בדיקה אם המבקש לעדכן הוא המנהל או המתנדב עצמו
             if (requesterId != volunteerDetails.Id && !IsAdmin(requesterId))
             {
                 throw new UnauthorizedAccessException("Unauthorized to update volunteer details.");
             }
+
+            Console.WriteLine("Access authorization passed.");
 
             // שלב 3: בדיקת ערכים מבחינת פורמט
             if (!Helpers.VolunteersManager.checkVolunteerEmail(volunteerDetails))
@@ -291,13 +303,19 @@ internal class VolunteerImplementation : IVolunteer
             if (!Helpers.VolunteersManager.IsValidId(volunteerDetails.Id))
                 throw new BlIdNotValid("Invalid ID format.");
 
+            Console.WriteLine("Format checks passed.");
+
             // שלב 4: בדיקה לוגית של הערכים
             if (volunteerDetails.Latitude == null || volunteerDetails.Longitude == null)
                 throw new BlInvalidLocationException("Location must include valid latitude and longitude.");
 
+            Console.WriteLine("Location checks passed.");
+
             // שלב 5: בדיקה אם מותר לשנות תפקיד
             if ((Enums.VolunteerTypeEnum)existingVolunteer.Position != volunteerDetails.Position && !IsAdmin(volunteerDetails.Id))
                 throw new BlUnauthorizedAccessException("Only admins can update the position.");
+
+            Console.WriteLine("Position update authorized.");
 
             // שלב 6: העברת נתונים מ-BO ל-DO
             DO.Volunteer newVolunteer = new DO.Volunteer
@@ -305,6 +323,8 @@ internal class VolunteerImplementation : IVolunteer
                 Id = volunteerDetails.Id,
                 FullName = volunteerDetails.FullName,
                 PhoneNumber = volunteerDetails.PhoneNumber,
+                Password = volunteerDetails.Password,
+                Location = volunteerDetails.Location,
                 Email = volunteerDetails.Email,
                 Active = volunteerDetails.Active,
                 DistanceType = (DO.DistanceType)volunteerDetails.DistanceType,
@@ -314,19 +334,33 @@ internal class VolunteerImplementation : IVolunteer
                 MaxDistance = volunteerDetails.MaxDistance,
             };
 
+            Console.WriteLine("Volunteer data mapped to DO object.");
+
             // שלב 7: עדכון רשומת המתנדב בשכבת הנתונים
             _dal.Volunteer.Update(newVolunteer);
-            VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  //stage 5
-            VolunteersManager.Observers.NotifyListUpdated();  //stage 5
 
+            // שלב 8: קריאה חוזרת לרשומה על מנת לוודא שהיא אכן עודכנה
+            var updatedVolunteer = _dal.Volunteer.Read(v => v.Id == newVolunteer.Id);
+            if (updatedVolunteer == null)
+            {
+                throw new Exception("Volunteer update failed, no record found after update.");
+            }
+
+            Console.WriteLine("Volunteer updated successfully in database.");
+
+            VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
+            VolunteersManager.Observers.NotifyListUpdated();  // stage 5
+            Console.WriteLine("Observers notified.");
         }
         catch (DO.DalDoesNotExistException ex)
         {
+            Console.WriteLine("Error: Volunteer not found.");
             throw new BlDoesNotExistException("Error updating volunteer details.", ex);
         }
         catch (Exception ex)
         {
             // טיפול כללי בחריגות
+            Console.WriteLine("An error occurred during update.");
             throw new CannotUpdateVolunteerException("An error occurred while updating the volunteer details.", ex);
         }
     }
@@ -335,10 +369,11 @@ internal class VolunteerImplementation : IVolunteer
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);
-        if (volunteer.Position == DO.Position.Manager )
+        if (volunteer != null && volunteer.Position == DO.Position.admin)
             return true;
         return false;
     }
+
 
 
 
@@ -377,9 +412,11 @@ internal class VolunteerImplementation : IVolunteer
         
         DO.Volunteer newVolunteer = new()
 
-        {
+        {   Id = volunteer.Id,
             FullName = volunteer.FullName,
             PhoneNumber = volunteer.PhoneNumber,
+            Password = volunteer.Password,      
+            Location = volunteer.Location,
             Email = volunteer.Email,
             Active = volunteer.Active,
             DistanceType = (DO.DistanceType)volunteer.DistanceType,

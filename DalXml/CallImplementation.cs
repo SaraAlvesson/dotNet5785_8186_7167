@@ -53,21 +53,17 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">An optional filter function to match calls. If null, returns all calls.</param>
     /// <returns>An IEnumerable of calls that match the filter, or all calls if no filter is provided.</returns>
-    public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null) // Stage 2
+    public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
+
         if (filter == null)
         {
-            XMLTools.SaveListToXMLSerializer(Calls, Config.s_calls_xml);
-            return Calls.Select(obj => obj); // If no filter, returns all assignments
+            return Calls; // No need to save the list back to XML if no filter is applied
         }
-        else
-        {
-            XMLTools.SaveListToXMLSerializer(Calls, Config.s_calls_xml);
-            return Calls.Where(filter); // Otherwise, returns assignments that match the filter
-        }
-    }
 
+        return Calls.Where(filter); // If there's a filter, apply it
+    }
     /// <summary>
     /// Updates an existing call by first deleting the old one (if it exists) and then creating the new one.
     /// </summary>

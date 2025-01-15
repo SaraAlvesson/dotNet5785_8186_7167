@@ -1,33 +1,35 @@
-﻿
-using DalApi;
+﻿using DalApi;
+namespace Dal;
 
-namespace Dal
+/// <summary>
+///Class implementing the IConfig interface
+/// </summary>
+internal class ConfigImplementation : IConfig
 {
-    internal class ConfigImplementaion:IConfig
+    /// <summary>
+    ///Property to get or set the Clock value
+    /// </summary>
+    public DateTime Clock
     {
-        // Property to get or set the current system clock
-        public DateTime Clock
-        {
-            get => Config.Clock; // Get the current value of the Clock from Config
-            set => Config.Clock = value; // Set the new value for Clock in Config
-        }
-
-        // Property to get or set the risk range for the system
-        public TimeSpan RiskRange
-        {
-            get => Config.RiskRange; // Get the current value of the RiskRange from Config
-            set => Config.RiskRange = value; // Set the new value for RiskRange in Config
-        }
-
-        /// <summary>
-        /// Resets the configuration to its default settings, reverting values 
-        /// like Clock and RiskRange to their initial state as defined in the Config class.
-        /// </summary>
-        public void Reset()
-        {
-            Config.Reset(); // Call the Reset method of Config to revert to default settings
-        }
+        get => Config.Clock; // Retrieves the clock from the Config class
+        set => Config.Clock = value; // Sets the clock value in the Config class
     }
 
+    /// <summary>
+    /// Property to get or set the RiskRange value
+    /// </summary>
+    public TimeSpan RiskRange
+    {
+        get => Config.RiskRange; // Retrieves the risk range from the Config class
+        set => Config.RiskRange = value; // Sets the risk range value in the Config class
+    }
+    public int NextCallId => Config.NextCallId; // Implements the property
+    public int NextAssignmentId => Config.NextAssignmentId; // Implements the property
+    /// <summary>
+    ///Method to reset the configuration settings
+    /// </summary>
+    public void Reset()
+    {
+        Config.Reset(); // Calls the Reset method of the Config class
+    }
 }
-

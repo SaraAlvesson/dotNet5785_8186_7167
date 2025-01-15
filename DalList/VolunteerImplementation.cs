@@ -15,29 +15,38 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     public void Create(Volunteer item)
     {
-        if (Read(item.Id) == null) // Check if the volunteer with the given ID doesn't already exist
-            DataSource.Volunteers.Add(item); // Add the new volunteer to the list
-        else // Volunteer with the same ID already exists
-            throw new DalAlreadyExistException($"Volunteer with ID={item.Id} already exists"); // Throw exception
+        if (Read(item.Id) == null) // אם המתנדב לא קיים כבר
+        {
+            DataSource.Volunteers.Add(item); // הוסף את המתנדב החדש
+            Console.WriteLine($"Volunteer with ID {item.Id} created.");
+        }
+        else // אם המתנדב כבר קיים
+        {
+            throw new DalAlreadyExistException($"Volunteer with ID={item.Id} already exists"); // זרוק חריגה אם המתנדב כבר קיים
+        }
     }
+
 
     /// <summary>
     /// Deletes a volunteer record by its ID.
     /// If the volunteer with the given ID is found, it is removed from the list.
     /// Throws a DalDoesNotExistException if the volunteer with the given ID does not exist.
     /// </summary>
+
     public void Delete(int id)
     {
-        Volunteer? ToDelete = Read(id); // Get the volunteer with the given ID to delete
-        if (ToDelete != null) // Check if the volunteer exists
+        Volunteer? ToDelete = Read(id); // קבלת המתנדב למחיקה
+        if (ToDelete != null) // אם המתנדב קיים
         {
-            DataSource.Volunteers.Remove(ToDelete); // Remove the volunteer from the list
+            DataSource.Volunteers.Remove(ToDelete); // הסרת המתנדב מהרשימה
+            Console.WriteLine($"Volunteer with ID {id} deleted.");
         }
-        else // If volunteer with the given ID does not exist
+        else // אם המתנדב לא קיים
         {
-            throw new DalDoesNotExistException($"Object with Id {id} not found"); // Throw exception
+            throw new DalDoesNotExistException($"Object with Id {id} not found"); // זרוק חריגה אם המתנדב לא נמצא
         }
     }
+
 
     /// <summary>
     /// Deletes all volunteer records from the list.
@@ -78,7 +87,24 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     public void Update(Volunteer item)
     {
-        Delete(item.Id); // Delete the existing volunteer if it exists
-        Create(item); // Add the updated volunteer to the list
+        try
+        {
+            // שלב 1: מחיקת המתנדב הקיים
+            Delete(item.Id); // אם המתנדב קיים, הוא יימחק
+
+            // שלב 2: הוספת המתנדב החדש
+            Create(item); // המתנדב החדש ייווסף
+        }
+        catch (DalDoesNotExistException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            throw; // זרוק את החריגה במידה ו-Delete נכשל
+        }
+        catch (DalAlreadyExistException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            throw; // זרוק את החריגה במידה ו-Create נכשל
+        }
     }
+
 }

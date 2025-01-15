@@ -2,9 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PL"
-             StartupUri="MainWindow.xaml">
+             StartupUri="LoginWindow.xaml">
     <Application.Resources>
-        <!-- Resources כמו CallTypesCollection -->
-        <!--<local:CallTypesCollection x:Key="CallTypesCollectionKey" />-->
+        <ResourceDictionary>
+            <local:CallTypeCollection x:Key="CallTypeCollectionKey" />
+            <local:PositionCollection x:Key="PositionCollectionKey" />
+            <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

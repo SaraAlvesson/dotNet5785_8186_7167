@@ -97,6 +97,7 @@ public class Enums
         SumAppointmentTime,
         Status,
         SumAssignment,
+        None
     }
     public enum OpenCallEnum
     {
@@ -123,7 +124,7 @@ public class Enums
 }
 
 
-    #region VolunteerTypeEnum
+#region VolunteerTypeEnum
     /// <summary>
     /// Enumeration for volunteer types (e.g., admin, regular).
     /// </summary>
@@ -132,7 +133,7 @@ public class Enums
         admin,   // מנהל
         volunteer  // רגיל
     }
-    #endregion
+    #endregion    
 
     #region RiskLevelEnum
     /// <summary>

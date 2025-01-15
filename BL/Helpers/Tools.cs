@@ -88,7 +88,7 @@ namespace Helpers
         /// <remarks>
         /// Written with the help of ChatGPT from OpenAI (https://openai.com).
         /// </remarks>
-        internal static double[] GetGeolocationCoordinates(string address)
+        internal static async Task<double[]> GetGeolocationCoordinatesAsync(string address)
         {
             // בדוק אם הכתובת ריקה
             if (string.IsNullOrWhiteSpace(address))
@@ -96,50 +96,50 @@ namespace Helpers
                 throw new ArgumentException("Address cannot be empty or null.", nameof(address));
             }
 
-            string apiKey = "67609238e7135923908907oxh46a576";  // המפתח שלך
-            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(requestUrl);
-            webRequest.Method = "GET";
+            string apiKey = "678694850f91d165965268skuda91dd";  // המפתח שלך החדש
+            string requestUrl = $"https://api.geocoding.com/v1/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";  // עדכון ה-URL על פי ה-API שלך
 
-            try
+            using (HttpClient client = new HttpClient())
             {
-                // שליחת הבקשה וקבלת התשובה
-                using (HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse())
+                try
                 {
-                    if (webResponse.StatusCode != HttpStatusCode.OK)
+                    // שליחת הבקשה וקבלת התשובה
+                    HttpResponseMessage response = await client.GetAsync(requestUrl);
+
+                    if (!response.IsSuccessStatusCode)
                     {
-                        throw new Exception($"Request failed with status: {webResponse.StatusCode}");
+                        throw new Exception($"Request failed with status: {response.StatusCode}");
                     }
 
-                    using (StreamReader responseReader = new StreamReader(webResponse.GetResponseStream()))
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
+
+                    if (locationData == null || locationData.Length == 0)
                     {
-                        string jsonResponse = responseReader.ReadToEnd();
-                        var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                        var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
+                        throw new Exception("No geolocation data found for the given address.");
+                    }
 
-                        if (locationData == null || locationData.Length == 0)
-                        {
-                            throw new Exception("No geolocation data found for the given address.");
-                        }
-
-                        // החזרת קווי הרוחב והאורך
-                        return new double[] {
-                    double.TryParse(locationData[0].Lat, out var lat) ? lat : throw new Exception("Invalid latitude."),
-                    double.TryParse(locationData[0].Lon, out var lon) ? lon : throw new Exception("Invalid longitude.")
-                };
+                    // החזרת קווי הרוחב והאורך
+                    if (double.TryParse(locationData[0].Lat, out var lat) && double.TryParse(locationData[0].Lon, out var lon))
+                    {
+                        return new double[] { lat, lon };
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid latitude or longitude.");
                     }
                 }
-            }
-            catch (WebException ex)
-            {
-                throw new Exception("Error sending web request: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred: " + ex.Message);
+                catch (HttpRequestException ex)
+                {
+                    throw new Exception("Error sending web request: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("An error occurred: " + ex.Message);
+                }
             }
         }
-
 
         /// <summary>
         /// Represents a location result returned by the geocoding service.
@@ -208,6 +208,7 @@ namespace Helpers
         /// <param name="distanceInKm">Distance in kilometers.</param>
         /// <returns>Distance type: WalkingDistance, DrivingDistance, or AirDistance.</returns>
         /// <author>ChatGPT, OpenAI</author>
+
         public static DO.DistanceType GetDistanceType(double distanceInKm)
         {
             // Thresholds for categorizing distances
@@ -215,23 +216,28 @@ namespace Helpers
             const double drivingDistanceThreshold = 50.0; // <= 50 km for DrivingDistance
             const double airDistanceThreshold = 1000.0;   // <= 1000 km for AirDistance
 
+            // Check if the distance is within walking range
             if (distanceInKm <= walkingDistanceThreshold)
             {
                 return DO.DistanceType.WalkingDistance; // Walking distance for <= 3 km
             }
+            // Check if the distance is within driving range
             else if (distanceInKm <= drivingDistanceThreshold)
             {
                 return DO.DistanceType.DrivingDistance; // Driving distance for <= 50 km
             }
+            // Check if the distance is within aerial range
             else if (distanceInKm <= airDistanceThreshold)
             {
                 return DO.DistanceType.AerialDistance; // Air distance for <= 1000 km
             }
             else
             {
-                return DO.DistanceType.AerialDistance; // Default to AirDistance for greater than 1000 km
+                // Default to AerialDistance for greater than 1000 km
+                return DO.DistanceType.AerialDistance;
             }
         }
+
 
     }
 }

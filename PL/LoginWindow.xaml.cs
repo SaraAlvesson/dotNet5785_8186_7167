@@ -8,7 +8,7 @@ namespace PL
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        public string Username { get; set; }
+        public int Username { get; set; }
         public string Password { get; set; }
 
         public LoginWindow()
@@ -25,13 +25,14 @@ namespace PL
                 string role = s_bl.Volunteer.Login(Username, Password);
 
                 // מעבר למסך הבא בהתאם לסוג המשתמש
-                if (role == "Admin")
+                if (role == "admin")
                 {
-                    new MainAdminWindow().Show();
+                    new MainWindow().Show();
                 }
-                else if (role == "Volunteer")
+                else if (role == "volunteer")
                 {
-                    new Volunteer.MainVolunteerWindow().Show();
+                    // שליחה של תעודת הזהות למסך המתנדב
+                    new Volunteer.MainVolunteerWindow(Username).Show();
                 }
 
                 // סגירת חלון ההתחברות
@@ -44,6 +45,7 @@ namespace PL
             }
         }
 
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -51,7 +53,7 @@ namespace PL
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            Password = ((PasswordBox)sender).Password;
+            Password = ((PasswordBox)sender).Password; // עדכון הסיסמה מתוך PasswordBox
         }
     }
 }

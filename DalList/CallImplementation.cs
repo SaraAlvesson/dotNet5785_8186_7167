@@ -14,7 +14,7 @@ internal class CallImplementation : ICall
     /// <param name="item">The call item to be created.</param>
     public void Create(Call item)
     {
-        Call newItem = item with { Id = Config.FuncNextCallId }; // Creates new item with the next available ID
+        Call newItem = item with { Id = Config.NextCallId }; // Creates new item with the next available ID
         DataSource.Calls.Add(newItem); // Adds the new item to the list
     }
 

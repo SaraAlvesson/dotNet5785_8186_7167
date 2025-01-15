@@ -1,7 +1,9 @@
 ﻿<Window x:Class="PL.Admin.CallsListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Manage Calls" Height="600" Width="900" DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        Title="Manage Calls" Height="600" Width="900" 
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" 
+        Loaded="Window_Loaded" Closed="Window_Closed">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -13,41 +15,25 @@
         <!-- סינון ומיון -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <TextBlock Text="Filter by:" VerticalAlignment="Center" Margin="0,0,5,0" />
-            <ComboBox Width="150" SelectedItem="{Binding SelectedFilterField}" Margin="0,0,10,0">
-                <ComboBoxItem Content="Call Id" Tag="Id" />
+            <ComboBox Width="150" SelectedItem="{Binding SelectedCallField}" Margin="0,0,10,0">
+                <ComboBoxItem Content="Call Id" Tag="CallId" />
+                <ComboBoxItem Content="Call Type" Tag="CallType" />
                 <ComboBoxItem Content="Status" Tag="Status" />
-                <ComboBoxItem Content="Last Volunteer" Tag="LastVolunteer" />
             </ComboBox>
-            <TextBox Width="200" Text="{Binding FilterValue}" Margin="0,0,10,0" />
-            <Button Content="Apply Filter" Background="#2196F3" Foreground="White" Padding="5,2" />
         </StackPanel>
 
         <!-- רשימת הקריאות -->
-        <ListView Grid.Row="1" Margin="0,10,0,10" ItemsSource="{Binding FilteredCallList}" 
+        <ListView Grid.Row="1" Margin="0,10,0,10" ItemsSource="{Binding FilteredCalls}" 
                   SelectedItem="{Binding SelectedCall}" MouseDoubleClick="lsvCallList_MouseDoubleClick">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding Id}" Width="70" />
-                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding Type}" Width="100" />
+                    <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding CallId}" Width="70" />
+                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="100" />
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100" />
                     <GridViewColumn Header="Time Remaining" DisplayMemberBinding="{Binding TimeRemaining}" Width="150" />
                     <GridViewColumn Header="Treatment Time" DisplayMemberBinding="{Binding TreatmentTime}" Width="150" />
-                    <GridViewColumn Header="Last Volunteer" DisplayMemberBinding="{Binding LastVolunteer}" Width="150" />
+                    <GridViewColumn Header="Last Volunteer" DisplayMemberBinding="{Binding LastVolunteerName}" Width="150" />
                     <GridViewColumn Header="Total Assignments" DisplayMemberBinding="{Binding TotalAssignments}" Width="150" />
-                    <GridViewColumn Header="Actions" Width="120">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <!-- כפתור מחיקה -->
-                                    <Button Content="Delete" Width="60" Margin="0,0,5,0"
-                                            Visibility="{Binding IsDeleteButtonVisible}" Command="{Binding DeleteCommand}" />
-                                    <!-- כפתור ביטול הקצאה -->
-                                    <Button Content="Unassign" Width="70"
-                                            Visibility="{Binding IsUnassignButtonVisible}" Command="{Binding UnassignCommand}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

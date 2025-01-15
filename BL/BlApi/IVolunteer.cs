@@ -13,7 +13,7 @@ public interface IVolunteer: IObservable
     /// Logs in a user by validating username and password.
     /// Returns the role of the user if credentials are valid.
     /// </summary>
-    string Login(string username, string password);
+    string Login(int username, string password);
 
     /// <summary>
     /// Requests a list of volunteers, optionally filtering by active status and sorting by a specific field.

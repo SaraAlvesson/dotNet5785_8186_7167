@@ -24,10 +24,10 @@ namespace Helpers
                 return BO.Enums.CalltStatusEnum.OPEN; // מצב ברירת מחדל
             }
 
-            // טיפול במקרה שבו doCall הוא null(אם יש צורך)
+            // טיפול במקרה שבו doCall הוא null
             if (doCall == null)
             {
-                throw new ArgumentNullException(nameof(doCall), "doCall cannot be null");
+                return BO.Enums.CalltStatusEnum.OPEN; // מצב ברירת מחדל, בלי לזרוק חריגה
             }
 
             // לוגיקה קיימת
@@ -59,7 +59,7 @@ namespace Helpers
             }
             else
             {
-                return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל
+                return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל
             }
         }
 

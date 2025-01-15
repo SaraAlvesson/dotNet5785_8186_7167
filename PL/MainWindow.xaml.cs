@@ -10,7 +10,7 @@ namespace PL
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainAdminWindow : Window
+    public partial class MainWindow : Window
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
@@ -18,7 +18,7 @@ namespace PL
         private Action clockObserver;
         private Action configObserver;
 
-        public MainAdminWindow()
+        public MainWindow()
         {
             InitializeComponent();
 
@@ -74,7 +74,7 @@ namespace PL
             set { SetValue(CurrentTimeProperty, value); }
         }
         public static readonly DependencyProperty CurrentTimeProperty =
-            DependencyProperty.Register("CurrentTime", typeof(DateTime), typeof(MainAdminWindow));
+            DependencyProperty.Register("CurrentTime", typeof(DateTime), typeof(MainWindow));
 
         private TimeSpan RiskRange
         {
@@ -86,7 +86,7 @@ namespace PL
           DependencyProperty.Register(
               nameof(RiskRange),
               typeof(TimeSpan),
-              typeof(MainAdminWindow),
+              typeof(MainWindow),
             new PropertyMetadata(s_bl.Admin.GetRiskTimeRange())); // או מתודה אחרת שמחזירה את הערך
 
         // פעולות הקידום
@@ -164,8 +164,7 @@ namespace PL
             {
 
 
-                // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
-                CloseAllOtherWindows();
+                
 
                 try
                 {
@@ -183,7 +182,7 @@ namespace PL
 
         private void btnHandleCalls(object sender, RoutedEventArgs e)
         {
-            new CallsListWindow().Show();
+            new Admin.CallsListWindow().Show();
         }
     }
 }

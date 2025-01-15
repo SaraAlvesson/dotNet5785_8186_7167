@@ -53,28 +53,29 @@ internal class CallImplementation : ICall
 
     public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
     {
-        var listCall = _dal.call.ReadAll()?.ToList();
-        var listAssignment = _dal.assignment.ReadAll()?.ToList();
+        var listCall = _dal.call.ReadAll();
+        var listAssignment = _dal.assignment.ReadAll();
 
         // יצירת השאילתה הראשונית
         var callInList = from item in listCall
-                         let assignment = listAssignment.Where(s => s.CallId == item.Id).OrderByDescending(s => s.AppointmentTime).FirstOrDefault()
+                         let assignments = listAssignment.Where(s => s.CallId == item.Id).OrderByDescending(s => s.AppointmentTime).ToList()
+                         let assignment = assignments.FirstOrDefault() // תיקון פה, לוקחים את הראשון
                          let volunteer = assignment != null ? _dal.Volunteer.Read(assignment.VolunteerId) : null
-                         let TempTimeToEnd = item.MaxTime - (AdminManager.Now)
+                         let TempTimeToEnd = item.MaxTime - AdminManager.Now
                          select new BO.CallInList
                          {
-                             Id = assignment != null ? assignment.Id : null,
+                             Id = assignment?.Id,
                              CallId = item.Id,
                              CallType = (BO.Enums.CallTypeEnum)item.CallType,
                              OpenTime = item.OpenTime,
                              SumTimeUntilFinish = TempTimeToEnd > TimeSpan.Zero ? TempTimeToEnd : null,
-                             LastVolunteerName = volunteer != null ? volunteer.FullName : null,
-                             SumAppointmentTime = assignment != null ? (assignment.FinishAppointmentType != null ? assignment.FinishAppointmentTime - item.OpenTime : null) : null,
+                             LastVolunteerName = volunteer?.FullName,
+                             SumAppointmentTime = assignment?.FinishAppointmentType != null ? assignment.FinishAppointmentTime - item.OpenTime : null,
                              Status = CallManager.CheckStatus(assignment, item, null),
-                             SumAssignment = listAssignment.Where(s => s.CallId == item.Id).Count()
+                             SumAssignment = assignments.Count() // ספירה מתוך הרשימה המלאה של Assignment
                          };
 
-        // אם יש ערך סינון, מבצעים סינון לפי הערך שניתן
+        // סינון לפי filter ו-toFilter אם יש
         if (filter.HasValue && toFilter != null)
         {
             callInList = callInList.Where(call =>
@@ -95,7 +96,7 @@ internal class CallImplementation : ICall
             });
         }
 
-        // מיון - אם יש ערך למיון, מבצעים מיון לפי הערך של toSort
+        // מיון אם יש
         if (toSort.HasValue)
         {
             callInList = toSort switch
@@ -114,14 +115,13 @@ internal class CallImplementation : ICall
         }
         else
         {
-            // אם לא נבחר ערך מיון, מבצעים מיון ברירת מחדל לפי CallId
+            // מיון ברירת מחדל לפי CallId
             callInList = callInList.OrderBy(call => call.CallId);
         }
 
-        // החזרת הרשימה הסופית
-        return callInList;
-
+        return callInList.ToList();
     }
+
 
 
     public BO.Call GetCallDetails(int callId)
@@ -394,9 +394,9 @@ internal class CallImplementation : ICall
     }
 
     public IEnumerable<BO.OpenCallInList> GetVolunteerOpenCalls(
-    int volunteerId,
-    BO.Enums.CallTypeEnum? filter = null,
-    BO.Enums.OpenCallEnum? toSort = null)
+      int volunteerId,
+      BO.Enums.CallTypeEnum? filter = null,
+      BO.Enums.OpenCallEnum? toSort = null)
     {
         // שליפת רשימות הקריאות והשיוכים
         var listCall = _dal.call.ReadAll();
@@ -405,9 +405,11 @@ internal class CallImplementation : ICall
 
         // שליפת מיקום המתנדב
         string volunteerAddress = volunteer.Location;
-        double[] volunteerLocation = Tools.GetGeolocationCoordinates(volunteerAddress);  // קבלת הקואורדינטות של המתנדב
 
-        // סינון ראשוני לקריאות פתוחות או בסיכון בלבד
+        // קריאה לפעולה האסינכרונית בצורה סינכרונית
+        double[] volunteerLocation = Tools.GetGeolocationCoordinatesAsync(volunteerAddress).Result;
+
+        // שאר הקוד נשאר ללא שינוי
         var openCalls = from call in listCall
                         let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
                         let status = CallManager.CheckStatus(assignment, call, null)
@@ -422,13 +424,11 @@ internal class CallImplementation : ICall
                             DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], call.Latitude, call.Longitude)
                         };
 
-        // סינון לפי סוג הקריאה (אם הועבר פרמטר לסינון)
         if (filter.HasValue)
         {
             openCalls = openCalls.Where(call => call.CallType == filter.Value);
         }
 
-        // מיון הרשימה לפי הפרמטר שנמסר
         openCalls = toSort switch
         {
             BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
@@ -437,14 +437,11 @@ internal class CallImplementation : ICall
             BO.Enums.OpenCallEnum.OpenTime => openCalls.OrderBy(call => call.OpenTime),
             BO.Enums.OpenCallEnum.MaxFinishTime => openCalls.OrderBy(call => call.MaxFinishTime),
             BO.Enums.OpenCallEnum.DistanceOfCall => openCalls.OrderBy(call => call.DistanceOfCall),
-            _ => openCalls.OrderBy(call => call.Id) // ברירת מחדל למיון לפי מספר קריאה
+            _ => openCalls.OrderBy(call => call.Id)
         };
 
-        return openCalls.ToList();  // החזרת הרשימה המ
+        return openCalls.ToList();
     }
-
-
-
 
     public void UpdateCallAsCompleted(int volunteerId, int assignmentId)
     {
@@ -524,7 +521,7 @@ internal class CallImplementation : ICall
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);
-        if (volunteer.Position == DO.Position.Manager)
+        if (volunteer.Position == DO.Position.admin)
             return true;
         return false;
     }

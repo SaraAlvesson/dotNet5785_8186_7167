@@ -208,7 +208,7 @@ internal class Program
                         // current time
                         Console.WriteLine("Login:"); // Notify the user
                         Console.WriteLine("Enter username and password :"); // Notify the user
-                        string username = Console.ReadLine();
+                        int username = int.Parse(Console.ReadLine());
                         string password = Console.ReadLine();
                         s_bl.Volunteer.Login(username, password); // Create the volunteer in the database
                         break;

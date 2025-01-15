@@ -1,213 +1,115 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer>
   <Volunteer>
-    <Id>338832373</Id>
+    <Id>184729303</Id>
     <FullName>Yosef Cohen</FullName>
-    <PhoneNumber>0578729041</PhoneNumber>
+    <PhoneNumber>0521661800</PhoneNumber>
     <Email>volunteer1@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Manager</Position>
-    <Active>true</Active>
-    <Password>wsC)NdTGr^y3</Password>
-    <Location>Rothschild Boulevard, Tel Aviv, Israel</Location>
-    <Latitude>32.0853</Latitude>
-    <Longitude>34.7818</Longitude>
-    <MaxDistance>18</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>213164388</Id>
-    <FullName>Shmuel Levi</FullName>
-    <PhoneNumber>0516240646</PhoneNumber>
-    <Email>volunteer2@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>kXV@Fz^qTj&amp;G</Password>
-    <Location>Jaffa Gate, Jerusalem, Israel</Location>
-    <Latitude>31.7683</Latitude>
-    <Longitude>35.2137</Longitude>
-    <MaxDistance>8</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>267246141</Id>
-    <FullName>Yaakov Goldstein</FullName>
-    <PhoneNumber>0524511260</PhoneNumber>
-    <Email>volunteer3@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>7kFGl5K23tIV</Password>
-    <Location>Baha'i Gardens, Haifa, Israel</Location>
-    <Latitude>32.814</Latitude>
-    <Longitude>34.9896</Longitude>
+    <TypeDistance>DrivingDistance</TypeDistance>
+    <Position>admin</Position>
+    <Active>false</Active>
+    <Password>u(xCHC5we9MB</Password>
+    <Location>Western Wall, Jerusalem, Israel</Location>
+    <Latitude>31.776694</Latitude>
+    <Longitude>35.234524</Longitude>
     <MaxDistance>14</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>333366032</Id>
-    <FullName>Moshe Friedman</FullName>
-    <PhoneNumber>0536608558</PhoneNumber>
-    <Email>volunteer4@gmail.com</Email>
+    <Id>348127946</Id>
+    <FullName>Shmuel Levi</FullName>
+    <PhoneNumber>0559674295</PhoneNumber>
+    <Email>volunteer2@gmail.com</Email>
     <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
+    <Position>admin</Position>
     <Active>true</Active>
-    <Password>!*R^aQY9Vgzk</Password>
-    <Location>Dead Sea, Israel</Location>
-    <Latitude>31.559</Latitude>
-    <Longitude>35.4732</Longitude>
-    <MaxDistance>17</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>229576763</Id>
-    <FullName>Avraham Stein</FullName>
-    <PhoneNumber>0574404606</PhoneNumber>
-    <Email>volunteer5@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>5*BDoieFTMT8</Password>
-    <Location>Masada National Park, Israel</Location>
-    <Latitude>31.3156</Latitude>
-    <Longitude>35.3533</Longitude>
-    <MaxDistance>18</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>255853724</Id>
-    <FullName>Daniel Green</FullName>
-    <PhoneNumber>0556197446</PhoneNumber>
-    <Email>volunteer6@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>x8tXYONlchbM</Password>
-    <Location>Eilat Coral Beach, Eilat, Israel</Location>
-    <Latitude>29.5015</Latitude>
-    <Longitude>34.9166</Longitude>
-    <MaxDistance>10</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>210256055</Id>
-    <FullName>David Weiss</FullName>
-    <PhoneNumber>0578811244</PhoneNumber>
-    <Email>volunteer7@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>I*ql%nhS@lZw</Password>
-    <Location>Yad Vashem, Jerusalem, Israel</Location>
-    <Latitude>31.7744</Latitude>
-    <Longitude>35.1758</Longitude>
+    <Password>j0S#*&amp;tvCXEe</Password>
+    <Location>Jaffa Gate, Jerusalem, Israel</Location>
+    <Latitude>31.783499</Latitude>
+    <Longitude>35.233924</Longitude>
     <MaxDistance>16</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>272483240</Id>
+    <Id>291827364</Id>
+    <FullName>Yaakov Goldstein</FullName>
+    <PhoneNumber>0587246843</PhoneNumber>
+    <Email>volunteer3@gmail.com</Email>
+    <TypeDistance>DrivingDistance</TypeDistance>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>63DP@mYPZj0&amp;</Password>
+    <Location>Yad Vashem, Jerusalem, Israel</Location>
+    <Latitude>31.774387</Latitude>
+    <Longitude>35.1758</Longitude>
+    <MaxDistance>10</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>618273945</Id>
+    <FullName>Moshe Friedman</FullName>
+    <PhoneNumber>0540349136</PhoneNumber>
+    <Email>volunteer4@gmail.com</Email>
+    <TypeDistance>AerialDistance</TypeDistance>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>mED(5C&amp;8&amp;Rfp</Password>
+    <Location>Mount of Olives, Jerusalem, Israel</Location>
+    <Latitude>31.776772</Latitude>
+    <Longitude>35.261929</Longitude>
+    <MaxDistance>16</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>267183904</Id>
+    <FullName>Avraham Stein</FullName>
+    <PhoneNumber>0592507070</PhoneNumber>
+    <Email>volunteer5@gmail.com</Email>
+    <TypeDistance>DrivingDistance</TypeDistance>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>94bVmBvbl5(%</Password>
+    <Location>Israel Museum, Jerusalem, Israel</Location>
+    <Latitude>31.776723</Latitude>
+    <Longitude>35.213707</Longitude>
+    <MaxDistance>6</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>328958186</Id>
+    <FullName>Daniel Green</FullName>
+    <PhoneNumber>0556364085</PhoneNumber>
+    <Email>volunteer6@gmail.com</Email>
+    <TypeDistance>AerialDistance</TypeDistance>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>Y63XF4O2fljz</Password>
+    <Location>Mahane Yehuda Market, Jerusalem, Israel</Location>
+    <Latitude>31.774524</Latitude>
+    <Longitude>35.220499</Longitude>
+    <MaxDistance>19</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>572830194</Id>
+    <FullName>David Weiss</FullName>
+    <PhoneNumber>0530977108</PhoneNumber>
+    <Email>volunteer7@gmail.com</Email>
+    <TypeDistance>AerialDistance</TypeDistance>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>y07%ZpRAP0lG</Password>
+    <Location>Old City, Jerusalem, Israel</Location>
+    <Latitude>31.768319</Latitude>
+    <Longitude>35.213745</Longitude>
+    <MaxDistance>19</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>573820195</Id>
     <FullName>Yonatan Rubin</FullName>
-    <PhoneNumber>0525777237</PhoneNumber>
+    <PhoneNumber>0518636535</PhoneNumber>
     <Email>volunteer8@gmail.com</Email>
     <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>CI#%pSfFr!cV</Password>
-    <Location>Carmel Market, Tel Aviv, Israel</Location>
-    <Latitude>32.0681</Latitude>
-    <Longitude>34.7705</Longitude>
-    <MaxDistance>11</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>223455354</Id>
-    <FullName>Hanan Levy</FullName>
-    <PhoneNumber>0520882899</PhoneNumber>
-    <Email>volunteer9@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>2HKcuANSjfCy</Password>
-    <Location>Sea of Galilee, Tiberias, Israel</Location>
-    <Latitude>32.7959</Latitude>
-    <Longitude>35.5312</Longitude>
-    <MaxDistance>6</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>215988258</Id>
-    <FullName>Eli Karp</FullName>
-    <PhoneNumber>0582320017</PhoneNumber>
-    <Email>volunteer10@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>1X5KF9eb5tlq</Password>
-    <Location>Ramon Crater, Mitzpe Ramon, Israel</Location>
-    <Latitude>30.6092</Latitude>
-    <Longitude>34.8015</Longitude>
-    <MaxDistance>15</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>383677747</Id>
-    <FullName>Uzi Sharoni</FullName>
-    <PhoneNumber>0564920279</PhoneNumber>
-    <Email>volunteer11@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>B&amp;ZcSW^%5xrr</Password>
-    <Location>Western Wall, Jerusalem, Israel</Location>
-    <Latitude>31.7767</Latitude>
-    <Longitude>35.2345</Longitude>
-    <MaxDistance>6</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>398915975</Id>
-    <FullName>Shimon Ben-David</FullName>
-    <PhoneNumber>0585923623</PhoneNumber>
-    <Email>volunteer12@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>U9exw00z7ZcK</Password>
-    <Location>Caesarea National Park, Israel</Location>
-    <Latitude>32.4999</Latitude>
-    <Longitude>34.8957</Longitude>
-    <MaxDistance>11</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>210674453</Id>
-    <FullName>Matan Shalev</FullName>
-    <PhoneNumber>0556494283</PhoneNumber>
-    <Email>volunteer13@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>Y3AdquPL2@db</Password>
-    <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
-    <Latitude>32.097</Latitude>
-    <Longitude>34.7743</Longitude>
-    <MaxDistance>15</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>357047032</Id>
-    <FullName>Asher Tzukrel</FullName>
-    <PhoneNumber>0547585322</PhoneNumber>
-    <Email>volunteer14@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>j%gS&amp;At7b2Mg</Password>
-    <Location>Timna Park, Eilat, Israel</Location>
-    <Latitude>29.7878</Latitude>
-    <Longitude>34.9491</Longitude>
-    <MaxDistance>17</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>279193226</Id>
-    <FullName>Oren Regev</FullName>
-    <PhoneNumber>0571422284</PhoneNumber>
-    <Email>volunteer15@gmail.com</Email>
-    <TypeDistance>AerialDistance</TypeDistance>
-    <Position>Volunteer</Position>
-    <Active>true</Active>
-    <Password>yV)tFAZ3kgpz</Password>
-    <Location>Banias Nature Reserve, Golan Heights, Israel</Location>
-    <Latitude>33.2473</Latitude>
-    <Longitude>35.6931</Longitude>
-    <MaxDistance>7</MaxDistance>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>h1eCc6&amp;(0NKl</Password>
+    <Location>Church of the Holy Sepulchre, Jerusalem, Israel</Location>
+    <Latitude>31.778159</Latitude>
+    <Longitude>35.230828</Longitude>
+    <MaxDistance>19</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>

@@ -62,6 +62,39 @@ namespace PL.Admin
             }
         }
 
+        // Delete Volunteer by ID
+        private void DeleteVolunteer(int volunteerId)
+        {
+            try
+            {
+                var bl = BlApi.Factory.Get().Volunteer;
+                bl.DeleteVolunteer(volunteerId); // Delete the volunteer
+                UpdateVolunteerList(null);  // Refresh the list
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while deleting the volunteer: {ex.Message}",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Delete button click event
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is int volunteerId)
+            {
+                var result = MessageBox.Show("Are you sure you want to delete this volunteer?",
+                    "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    DeleteVolunteer(volunteerId); // Call the delete method
+                }
+            }
+        }
+
+
+
         public ObservableCollection<VolunteerInList> Volunteers { get; set; } = new();
         public ObservableCollection<VolunteerInList> FilteredVolunteers { get; set; } = new();
 
@@ -138,6 +171,7 @@ namespace PL.Admin
         {
             if (SelectedVolunteer != null)
                 new SingleVolunteerWindow(SelectedVolunteer.Id).Show();
+
         }
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {

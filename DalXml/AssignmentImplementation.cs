@@ -67,6 +67,7 @@ internal class AssignmentImplementation : IAssignment
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
         List<Assignment> assignments = LoadAssignments();
+
         return filter == null ? assignments : assignments.Where(filter);
     }
 

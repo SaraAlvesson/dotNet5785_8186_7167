@@ -8,14 +8,11 @@ using static BO.Enums;
 
 namespace PL.Admin
 {
-    /// <summary>
-    /// Interaction logic for SingleVolunteerWindow.xaml
-    /// </summary>
     public partial class SingleVolunteerWindow : Window, INotifyPropertyChanged
-
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
+
         // תכונה (Property) שמייצגת את הטקסט שעל הכפתור
         public string ButtonText { get; set; }
 
@@ -27,8 +24,8 @@ namespace PL.Admin
                 if (_selectedVolunteerField != value)
                 {
                     _selectedVolunteerField = value;
-                    OnPropertyChanged(nameof(SelectedFilter));  // Notify the UI of the property change
-                    UpdateVolunteerList();  // Update the list when the filter changes
+                    OnPropertyChanged(nameof(SelectedFilter));
+                    UpdateVolunteerList();
                 }
             }
         }
@@ -39,7 +36,6 @@ namespace PL.Admin
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
 
         // VolunteerInList property (DependencyProperty)
         public IEnumerable<BO.VolunteerInList> VolunteerInList
@@ -55,39 +51,30 @@ namespace PL.Admin
                typeof(SingleVolunteerWindow),
                new PropertyMetadata(null));
 
-
-
         // קונסטרוקטור של החלון
         public SingleVolunteerWindow(int id = 0)
         {
-
-            // קביעת הטקסט של הכפתור לפי ה-id
             ButtonText = id == 0 ? "Add" : "Update";
             InitializeComponent();
 
             // חיבור התכונה למנגנון Binding, כדי שה-XAML יקבל את הערך שלה
             this.DataContext = this;
+
             try
             {
                 if (id == 0)
                 {
-                    // אם מדובר בהוספה, יוצר אובייקט חדש עם ערכים ברירת מחדל
-                    CurrentVolunteer = new BO.Volunteer(); // BO - namespace שלך
+                    CurrentVolunteer = new BO.Volunteer();
                 }
                 else
                 {
-                    // אם מדובר בעדכון, קורא ל- BL כדי להביא את הישות לפי ה-Id
-                    CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id); // YourBL הוא מחלקת ה- BL שלך
+                    CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id);
                 }
             }
             catch (Exception ex)
             {
-                // טיפול בחריגות (למשל, במקרה שה-Id לא נמצא או יש שגיאה בטעינה)
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-
-
         }
 
         private void UpdateVolunteerList()
@@ -104,7 +91,6 @@ namespace PL.Admin
             }
         }
 
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             BlApi.Factory.Get().Volunteer.AddObserver(volunteerListObserver);
@@ -115,15 +101,14 @@ namespace PL.Admin
             BlApi.Factory.Get().Volunteer.RemoveObserver(volunteerListObserver);
         }
 
-        // Observer method to refresh volunteer list
         private void volunteerListObserver()
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                UpdateVolunteerList();  // Refresh the volunteer list when notified of changes
+                UpdateVolunteerList();
             });
         }
-        // Filtering logic based on the selected filter
+
         private IEnumerable<BO.VolunteerInList> queryVolunteerList()
         {
             IEnumerable<BO.VolunteerInList> volunteers;
@@ -139,7 +124,7 @@ namespace PL.Admin
                 case VolunteerInListField.Active:
                     volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(true, VolunteerInListField.Active).Where(v => v.Active);
                     break;
-                case VolunteerInListField.None:  // No filter (default)
+                case VolunteerInListField.None:
                     volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(null, null);
                     break;
                 default:
@@ -150,8 +135,6 @@ namespace PL.Admin
             return volunteers;
         }
 
-        // פעולה שנקראת כאשר הכפתור נלחץ
-
         public BO.Volunteer? CurrentVolunteer
         {
             get { return (BO.Volunteer?)GetValue(CurrentVolunteerProperty); }
@@ -161,45 +144,42 @@ namespace PL.Admin
         public static readonly DependencyProperty CurrentVolunteerProperty =
             DependencyProperty.Register("CurrentVolunteer", typeof(BO.Volunteer), typeof(SingleVolunteerWindow), new PropertyMetadata(null));
 
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Handle selection change and update the SelectedFilter property
             if (sender is ComboBox comboBox && comboBox.SelectedItem is VolunteerInListField selectedFilter)
             {
-                SelectedFilter = selectedFilter; // Update the SelectedFilter property
+                SelectedFilter = selectedFilter;
             }
         }
 
-        private void btnAddUpdate(object sender, RoutedEventArgs e)
+        private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (ButtonText == "Add")
+            try
             {
-                try
+                if (CurrentVolunteer == null)
+                {
+                    MessageBox.Show("No volunteer data available", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (ButtonText == "Add")
                 {
                     s_bl.Volunteer.AddVolunteer(CurrentVolunteer!);
-                    MessageBox.Show("Volunteer added succesfully");
-                    this.Window_Closed(sender, e);
+                    MessageBox.Show("Volunteer added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                catch (Exception ex)
-                { MessageBox.Show("$Error accured while adding new Volunteer"); }
+                else
+                {
+                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer!.Id, CurrentVolunteer!);
+                    MessageBox.Show("Volunteer updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
+                UpdateVolunteerList();
+                this.Close();
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
-                    MessageBox.Show("Volunteer updated succesfully");
-                    this.Window_Closed(sender, e);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error accured while updating Volunteer");
-                }
-
-
+                MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-
         }
     }
 }

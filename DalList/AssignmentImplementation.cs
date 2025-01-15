@@ -15,7 +15,7 @@ internal class AssignmentImplementation : IAssignment
     /// <param name="item">The assignment item to be created.</param>
     public void Create(Assignment item)
     {
-        Assignment newItem = item with { Id = Config.FuncNextAssignmentId }; // Creates new item with the next available ID
+        Assignment newItem = item with { Id = Config.NextAssignmentId}; // Creates new item with the next available ID
         DataSource.Assignments.Add(newItem); // Adds the new item to the list
     }
 

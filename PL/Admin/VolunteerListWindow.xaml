@@ -18,15 +18,22 @@
         </Grid.RowDefinitions>
 
         <!-- ComboBox להבחנה בין המתנדבים -->
-        <!-- ComboBox with binding to Enum values for filtering -->
-        <!--<ComboBox VerticalAlignment="Center" 
-                      Margin="190,0,140,0" 
-                      Grid.ColumnSpan="2" 
-                      ItemsSource="{Binding Source={StaticResource CallTypesCollectionKey}}"
-                      HorizontalAlignment="Stretch" 
-                      SelectedValue="{Binding Path=VolunteerInListField, Mode=TwoWay}"
-                      SelectionChanged="OnFilterSelectionChanged" />-->
-
+        <ComboBox Grid.Row="0"
+                  SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
+                  ItemsSource="{Binding CallTypes}" 
+                  
+                  VerticalAlignment="Center" 
+                  Margin="0,10" >
+            <ComboBoxItem Content="PreparingFood" Tag="PreparingFood" />
+            <ComboBoxItem Content="TransportingFood" Tag="TransportingFood" />
+            <ComboBoxItem Content="FixingEquipment" Tag="FixingEquipment" />
+            <ComboBoxItem Content="ProvidingShelter" Tag="ProvidingShelter" />
+            <ComboBoxItem Content="TransportAssistance" Tag="TransportAssistance" />
+            <ComboBoxItem Content="MedicalAssistance" Tag="MedicalAssistance" />
+            <ComboBoxItem Content="EmotionalSupport" Tag="EmotionalSupport" />
+            <ComboBoxItem Content="PackingSupplies" Tag="PackingSupplies" />
+            HorizontalAlignment="Stretch"
+        </ComboBox>
 
         <!-- ListView להצגת המתנדבים -->
         <ListView Grid.Row="1"
@@ -49,6 +56,16 @@
                     <GridViewColumn Header="Canceled Calls" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="150" />
                     <GridViewColumn Header="Expired Calls" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="150" />
                     <GridViewColumn Header="Call in Treatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="150" />
+                    <!-- Add the "Delete" button column -->
+                    <GridViewColumn Header="Actions"  >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <!-- Delete Button for each row -->
+                                <Button Content="Delete" Click="DeleteButton_Click" Tag="{Binding Id}" Foreground="#009990"  />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                 </GridView>
             </ListView.View>
         </ListView>
@@ -57,11 +74,9 @@
         <Button Grid.Row="2"
                 Content="Add"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top"
                 Width="150"
-                Height="50"
                 Margin="0,10,0,10"
-                Command="{Binding AddVolunteerCommand}" 
+                Command="{Binding btnAddUpdate_Click}" 
                 Click="ButtonAdd_Click" 
                 Background="#4CAF50" 
                 Foreground="White" 

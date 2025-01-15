@@ -21,8 +21,8 @@ public enum CallType
 /// </summary>
 public enum Position
 {
-    Volunteer, // A person offering their time and services without payment.
-    Manager // A person responsible for overseeing tasks and volunteers.
+    volunteer, // A person offering their time and services without payment.
+    admin // A person responsible for overseeing tasks and volunteers.
 }
 
 /// <summary>

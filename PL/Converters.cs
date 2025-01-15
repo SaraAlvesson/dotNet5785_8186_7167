@@ -1,71 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Converter for IsReadOnly
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Media;
+using System.Windows;
 
-namespace PL
+public class ConvertUpdateToReadOnly : IValueConverter
 {
-    class ConvertDistanceToColor : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        string? buttonText = value as string;
+        return buttonText == "Update"; //can modify only if it is for update
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+//if there is no current call, the currentCall details will not be displayed
+public class CallInProgressToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        // if CurrentCallInProgress is null, return Collapsed (hide), and if not null Visible
+        return value != null ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+//If the role is "Volunteer", they can't modify their role
+public class RoleToEditableConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is BO.Enums.VolunteerTypeEnum role)
         {
-            BO.Enums.DistanceTypeEnum Dis = (BO.Enums.DistanceTypeEnum)value;
-            switch (Dis)
+            if (role == BO.Enums.VolunteerTypeEnum.volunteer)
             {
-                case BO.Enums.DistanceTypeEnum.AerialDistance:
-                    return Brushes.Yellow;
-                case BO.Enums.DistanceTypeEnum.WalkingDistance:
-                    return Brushes.Orange;
-                case BO.Enums.DistanceTypeEnum.DrivingDistance:
-                    return Brushes.Green;
-                default:
-                    return Brushes.White;
+                return false; //If the role is 'Volunteer', the area is not editable.
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        //If the value is null or of another type, make the area editable (true).
+        return true;
     }
-    class ConvertRoleToColor : IValueConverter
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            BO.Enums.VolunteerTypeEnum Job = (BO.Enums.VolunteerTypeEnum)value;
-            switch (Job)
-            {
-                case BO.Enums.VolunteerTypeEnum.admin:
-                    return Brushes.Blue;
-                case BO.Enums.VolunteerTypeEnum.volunteer:
-                    return Brushes.Orange;
-                default:
-                    return Brushes.White;
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
-    public class ConvertUpdateToTrue : IValueConverter
+}
+
+//If the role is "Volunteer", they can't modify the Id
+public class VolunteerRoleToEnabledConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        // Check if the value is a "Volunteer" role
+        if (value is BO.Enums.VolunteerTypeEnum role && role == BO.Enums.VolunteerTypeEnum.volunteer)
         {
-            // אם ה-Id לא אפס (לא מצב הוספה), אז לא ניתן לשנות
-            return value != null && (int)value != 0;
+            // If the role is "Volunteer", disable the field (return false)
+            return false;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value;
-        }
+        // Otherwise, enable the field (return true)
+        return true;
     }
 
-
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
 }

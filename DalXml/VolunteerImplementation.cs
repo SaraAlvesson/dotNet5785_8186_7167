@@ -16,28 +16,32 @@ internal class VolunteerImplementation : IVolunteer
     /// <returns>A Volunteer object created from the XElement.</returns>
     static Volunteer GetVolunteer(XElement v)
     {
+        // המרת השדות עם טיפול ב- null ובדיקת תקינות הפורמט
         Volunteer volunteer = new Volunteer
         (
             Id: int.TryParse((string?)v.Element("Id"), out var id) ? id : throw new FormatException("Invalid ID format."),
             FullName: (string?)v.Element("FullName") ?? throw new FormatException("FullName is missing."),
             PhoneNumber: (string?)v.Element("PhoneNumber") ?? throw new FormatException("PhoneNumber is missing."),
             Email: (string?)v.Element("Email") ?? throw new FormatException("Email is missing."),
-            DistanceType: Enum.TryParse((string?)v.Element("TypeDistance"), out DistanceType distanceType)
-                ? distanceType
-                : throw new FormatException("Invalid TypeDistance format."),
+  DistanceType: Enum.TryParse((string?)v.Element("DistanceType"), out DistanceType distanceType)
+    ? distanceType
+    : throw new FormatException($"Invalid DistanceType format. Expected one of: {string.Join(", ", Enum.GetNames(typeof(DistanceType)))}. Found: {(string?)v.Element("DistanceType")}"),
+
             Position: Enum.TryParse((string?)v.Element("Position"), out Position position)
                 ? position
                 : throw new FormatException("Invalid Job format."),
             Active: bool.TryParse((string?)v.Element("Active"), out bool active) ? active : throw new FormatException("Invalid Active format."),
             Password: (string?)v.Element("Password"),
             Location: (string?)v.Element("Location"),
-            Latitude: double.TryParse((string?)v.Element("Latitude"), out double latitude) ? latitude : null,
-            Longitude: double.TryParse((string?)v.Element("Longitude"), out double longitude) ? longitude : null,
-            MaxDistance: double.TryParse((string?)v.Element("MaxReading"), out double maxReading) ? maxReading : null
+            Latitude: double.TryParse((string?)v.Element("Latitude"), out double latitude) ? latitude : (double?)null,
+            Longitude: double.TryParse((string?)v.Element("Longitude"), out double longitude) ? longitude : (double?)null,
+          MaxDistance: double.TryParse((string?)v.Element("MaxDistance"), out double maxDistance) ? maxDistance : (double?)null
+
         );
 
         return volunteer;
     }
+
 
     /// <summary>
     /// Creates a new Volunteer entity.

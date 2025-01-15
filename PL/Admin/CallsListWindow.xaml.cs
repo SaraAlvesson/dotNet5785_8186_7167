@@ -1,77 +1,53 @@
 ﻿using BO;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using static BO.Enums;
 
 namespace PL.Admin
 {
-    /// <summary>
-    /// Interaction logic for CallsListWindow.xaml
-    /// </summary>
     public partial class CallsListWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private CallTypeEnum _selectedCallType = CallTypeEnum.None;
+        private CallFieldEnum _selectedCallField = CallFieldEnum.None;
+       
         public BO.CallInList? SelectedCall { get; set; }
-        private CallFieldEnum _selectedCallField = CallFieldEnum.CallId;
 
+       
         public CallsListWindow()
         {
             InitializeComponent();
-            Filteredcall = new ObservableCollection<CallInList>();
+           
+            LoadCallList();
         }
 
-        // Property for Call List
-        public IEnumerable<CallInList> CallList
-        {
-            get => (IEnumerable<CallInList>)GetValue(CallListProperty);
-            set
-            {
-                SetValue(CallListProperty, value ?? new List<CallInList>());
-                OnPropertyChanged(nameof(CallList));
-                FilterVolunteers(); // Filter the list whenever the CallList is updated
-            }
-        }
-
-        // Event for PropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        // Helper for PropertyChanged event
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        // DependencyProperty for CallList
-        public static readonly DependencyProperty CallListProperty =
-           DependencyProperty.Register(
-               "CallList",
-               typeof(IEnumerable<CallInList>),
-               typeof(CallsListWindow),
-               new PropertyMetadata(null));
-
-        // Load window and subscribe to observer
+        // רשימת קריאות
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             s_bl?.Call.AddObserver(ObserveCallListChanges);
             ObserveCallListChanges();
         }
-
-        // Unsubscribe observer on close
         private void Window_Closed(object sender, EventArgs e)
         {
             s_bl?.Call.RemoveObserver(ObserveCallListChanges);
         }
+        public IEnumerable<CallInList> callList
+        {
+            get => (IEnumerable<CallInList>)GetValue(CallListProperty);
+            set
+            {
+                SetValue(CallListProperty, value ?? new List<CallInList>());  // טיפול במקרה של null
+                OnPropertyChanged(nameof(callList));
+            }
+        }
+        // רשימת קריאות מסוננות
+        public ObservableCollection<CallInList> FilteredCalls { get; set; } = new();
+        public ObservableCollection<CallInList> CallList { get; set; } = new();
 
-        // Observable collections for filtering
-        public ObservableCollection<CallInList> Filteredcall { get; set; }
-
-        // Selected call field for filtering
         public CallFieldEnum SelectedCallField
         {
             get => _selectedCallField;
@@ -80,51 +56,98 @@ namespace PL.Admin
                 if (_selectedCallField != value)
                 {
                     _selectedCallField = value;
-                    FilterVolunteers(); // Filter the list when the field is updated
+                    OnFieldChanged();
                 }
             }
         }
-
-        // Filter the call list based on the selected field
-        private void FilterVolunteers()
-        {
-            Filteredcall.Clear();
-            if (CallList != null)
-            {
-                foreach (var call in CallList.Where(call =>
-                    SelectedCallField == CallFieldEnum.CallType && call.CallType == CallTypeEnum.None || // Example condition
-                    SelectedCallField == CallFieldEnum.CallId && call.CallId == 1)) // Replace 1 with the desired ID
-                {
-                    Filteredcall.Add(call);
-                }
-            }
-        }
-
-        // Update Call List based on selected field
-        public void UpdateCallList(CallFieldEnum? field)
-        {
-            try
-            {
-                // Filter and sort the call list using the ICall methods
-                CallList = s_bl?.Call.GetCallList(
-                    filter: field,
-                    toFilter: null,  // Additional filter logic if needed
-                    toSort: field) ?? new List<CallInList>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error updating call list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                CallList = new List<CallInList>();  // In case of error, display empty list
-            }
-        }
-
-        // Observe changes in call list
-        private void ObserveCallListChanges()
+        public void OnFieldChanged()
         {
             UpdateCallList(_selectedCallField);
         }
 
-        // Handle double-click on call in the list
+
+        public static readonly DependencyProperty CallListProperty =
+           DependencyProperty.Register(
+               "CallList",
+               typeof(IEnumerable<CallInList>),
+               typeof(CallsListWindow),
+               new PropertyMetadata(null));
+
+
+        public BO.Enums.CallTypeEnum SelectedCallType
+        {
+            get => _selectedCallType;
+            set
+            {
+                if (_selectedCallType != value)
+                {
+                    _selectedCallType = value;
+                    //OnPropertyChanged(); // עידכון הממשק
+                    FilterCalls(); // סינון הרשימה
+                }
+            }
+        }
+
+        private void FilterCalls()
+        {
+            FilteredCalls.Clear();
+            foreach (var call in CallList)
+            {
+                if (SelectedCallField == CallFieldEnum.CallType && call.CallType == CallTypeEnum.None)
+                {
+                    FilteredCalls.Add(call);
+                }
+                else if (SelectedCallField == CallFieldEnum.CallId)
+                {
+                    FilteredCalls.Add(call);
+                }
+            }
+        }
+
+        private void LoadCallList()
+        {
+            UpdateCallList(null);  // טוען את הרשימה הראשונית ללא סינון
+        }
+        public void UpdateCallList(CallFieldEnum? field)
+        {
+            try
+            {
+                var calls = field == CallFieldEnum.CallId
+           ? s_bl?.Call.GetCallList(null) ?? new List<CallInList>()
+           : s_bl?.Call.GetCallList(null, field) ?? new List<CallInList>();
+
+                callList = calls;  // עדכון callList
+                FilteredCalls.Clear();
+                foreach (var call in calls)
+                {
+                    FilteredCalls.Add(call);  // עדכון FilteredCalls
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating call list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                callList = new List<CallInList>();  // רשימה ריקה במקרה של כשל
+            }
+        }
+
+        private void ObserveVolunteerListChanges()
+        {
+            UpdateCallList(_selectedCallField);
+        }
+
+        private void ObserveCallListChanges()
+        {
+            LoadCallList();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private void lsvCallList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (SelectedCall != null)
@@ -133,25 +156,9 @@ namespace PL.Admin
             }
         }
 
-        // Add a new call when button is clicked
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
             new SingleCallWindow().Show();
-        }
-
-        // Delete a call if allowed (open status and no assignments)
-        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedCall != null && SelectedCall.Status == CalltStatusEnum.OPEN && SelectedCall.LastVolunteerName == null)
-            {
-                // Delete call
-                s_bl?.Call.DeleteCall(SelectedCall.CallId);
-                UpdateCallList(_selectedCallField);  // Refresh the list
-            }
-            else
-            {
-                MessageBox.Show("Cannot delete this call.");
-            }
         }
     }
 }

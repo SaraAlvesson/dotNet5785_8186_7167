@@ -64,10 +64,18 @@ public interface ICall:IObservable
     /// <param name="callType">סוג הקריאה (למשל: חירום או כללי)</param>
     /// <param name="sortField">שדה למיון הקריאות</param>
     /// <returns>רשימה של קריאות פתוחות שניתן לבחור לעבודה על ידי המתנדב</returns>
-    IEnumerable<BO.OpenCallInList> GetVolunteerOpenCalls(
-    int volunteerId,
-    BO.Enums.CallTypeEnum? filter = null,
-    BO.Enums.OpenCallEnum? toSort = null);
+    /// <summary>
+    /// מחזיר רשימה של קריאות פתוחות שניתן לבחור לעבודה על ידי מתנדב, עם אפשרות לסינון ומיון.
+    /// </summary>
+    /// <param name="volunteerId">מזהה המתנדב</param>
+    /// <param name="callType">סוג הקריאה (למשל: חירום או כללי)</param>
+    /// <param name="sortField">שדה למיון הקריאות</param>
+    /// <returns>רשימה של קריאות פתוחות שניתן לבחור לעבודה על ידי המתנדב</returns>
+      IEnumerable<BO.OpenCallInList> GetVolunteerOpenCalls(
+        int volunteerId,
+        BO.Enums.CallTypeEnum? filter = null,
+        BO.Enums.OpenCallEnum? toSort = null);
+
     /// <summary>
     /// מעדכן את מצב הקריאה לסיום טיפול עבור משימה נתונה.
     /// </summary>

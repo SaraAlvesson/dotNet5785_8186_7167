@@ -94,10 +94,26 @@ static class XMLTools
     }
     public static TimeSpan GetConfigTimeSpanVal(string xmlFileName, string elemName)
     {
-        XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
-        TimeSpan dt = root.ToSpanTimeNullable(elemName) ?? throw new FormatException($"can't convert:  {xmlFileName}, {elemName}");
-        return dt;
+        XElement root = LoadListFromXMLElement(xmlFileName);
+        string? timeSpanStr = root.Element(elemName)?.Value;
+
+        if (TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+            return timeSpan;
+
+        throw new FormatException($"Invalid TimeSpan value for {elemName} in {xmlFileName}");
     }
+
+    public static void SetConfigTimeSpanVal(string xmlFileName, string elemName, TimeSpan elemVal)
+    {
+        XElement root = LoadListFromXMLElement(xmlFileName);
+        root.Element(elemName)?.SetValue(elemVal.ToString());
+        SaveListToXMLElement(root, xmlFileName);
+    }
+
+
+
+
+
     public static int GetConfigIntVal(string xmlFileName, string elemName)
     {
         XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);

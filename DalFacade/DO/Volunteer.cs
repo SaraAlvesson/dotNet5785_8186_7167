@@ -36,5 +36,5 @@ public record Volunteer
  /// </summary>
 
     public Volunteer()
-        : this(0, string.Empty, string.Empty, string.Empty, false, DistanceType.AerialDistance, Position.Manager) { }//ctor
+        : this(0, string.Empty, string.Empty, string.Empty, false, DistanceType.AerialDistance, Position.admin) { }//ctor
 }

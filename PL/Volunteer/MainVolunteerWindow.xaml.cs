@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using BO;
+using PL.Admin;
 using static BO.Enums;
 
 namespace PL.Volunteer
@@ -11,14 +12,32 @@ namespace PL.Volunteer
     /// <summary>
     /// Interaction logic for MainVolunteerWindow.xaml
     /// </summary>
-    public partial class MainVolunteerWindow : Window
+    public partial class MainVolunteerWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        public MainVolunteerWindow()
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
         {
-            InitializeComponent();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        // VolunteerInList property (DependencyProperty)
+        public IEnumerable<BO.Volunteer> Volunteer
+        {
+            get { return (IEnumerable<BO.Volunteer>)GetValue(VolunteerFieldListProperty); }
+            set { SetValue(VolunteerFieldListProperty, value); }
+        }
+
+        public static readonly DependencyProperty VolunteerFieldListProperty =
+           DependencyProperty.Register(
+               "Volunteer",
+               typeof(IEnumerable<BO.Volunteer>),
+               typeof(MainVolunteerWindow),
+               new PropertyMetadata(null));
+
+        // CurrentVolunteer property (DependencyProperty)
         public BO.Volunteer? CurrentVolunteer
         {
             get { return (BO.Volunteer?)GetValue(CurrentVolunteerProperty); }
@@ -28,14 +47,45 @@ namespace PL.Volunteer
         public static readonly DependencyProperty CurrentVolunteerProperty =
             DependencyProperty.Register("CurrentVolunteer", typeof(BO.Volunteer), typeof(MainVolunteerWindow), new PropertyMetadata(null));
 
+        // CurrentCall property (DependencyProperty)
+        public BO.CallInProgress? CurrentCall
+        {
+            get { return (BO.CallInProgress?)GetValue(CurrentCallProperty); }
+            set { SetValue(CurrentCallProperty, value); }
+        }
+
+        public static readonly DependencyProperty CurrentCallProperty =
+            DependencyProperty.Register("CurrentCall", typeof(BO.CallInProgress), typeof(MainVolunteerWindow), new PropertyMetadata(null));
+
+        public MainVolunteerWindow(int id)
+        {
+            InitializeComponent();
+            this.DataContext = this;
+
+            try
+            {
+                // Fetch and assign the current volunteer details (replace with appropriate ID)
+                CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error fetching volunteer details: {ex.Message}");
+            }
+        }
+
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            // Verify if the update can be performed (validation)
-            if (CurrentVolunteer != null && IsValidUpdate())
+            if (CurrentVolunteer == null)
+            {
+                MessageBox.Show("No volunteer selected.");
+                return;
+            }
+
+            if (IsValidUpdate())
             {
                 try
                 {
-                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id,CurrentVolunteer);
+                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("Volunteer updated successfully.");
                 }
                 catch (Exception ex)
@@ -91,12 +141,12 @@ namespace PL.Volunteer
 
         private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer != null && CurrentVolunteer.Active)
+            if (CurrentVolunteer != null && CurrentVolunteer.Active )
             {
                 try
                 {
-                    var chosenCall = s_bl.Call.GetCallDetails(CurrentVolunteer.Id);
-                    MessageBox.Show($"Chosen call: {chosenCall.Id}");
+                   new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
+                 
                 }
                 catch (Exception ex)
                 {
@@ -116,8 +166,7 @@ namespace PL.Volunteer
                 try
                 {
                     var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
-
-                    // פתיחת חלון חדש עם מזהה המתנדב
+                    // Open new window for displaying history
                     new ListClosedCallsVolunteer(CurrentVolunteer.Id).Show();
                 }
                 catch (Exception ex)
@@ -125,13 +174,14 @@ namespace PL.Volunteer
                     MessageBox.Show($"Error retrieving history: {ex.Message}");
                 }
             }
+            else
+            {
+                MessageBox.Show("No volunteer selected.");
+            }
         }
 
-
-        // Validate if the update is correct (add necessary conditions here)
         private bool IsValidUpdate()
         {
-            // Example: Validate email format, address, and other necessary fields
             return !string.IsNullOrEmpty(CurrentVolunteer?.Email) && !string.IsNullOrEmpty(CurrentVolunteer?.Location);
         }
     }

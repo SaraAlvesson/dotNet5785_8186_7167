@@ -168,82 +168,79 @@ namespace Helpers
 
 
 
-        internal static bool IsValidId(long id)
+        internal static bool IsValidId(int id)
         {
-            /// <summary>
-            /// Validates an Israeli 9-digit ID using the Luhn algorithm.
-            /// </summary>
-            /// <param name="id">The ID number to validate.</param>
-            /// <returns>True if the ID is valid, false otherwise.</returns>
-            /// <remarks>
-            /// This code was written with the assistance of ChatGPT, a language model developed by OpenAI.
-            /// </remarks>
-
-            // Check if ID is exactly 9 digits.
+            // בדיקה אם תעודת הזהות היא בת 9 ספרות
             if (id < 100000000 || id > 999999999)
             {
-                
                 return false;
-                throw new BO.Exceptions.BlIdNotValid("ID not valid ");
             }
 
-            // Luhn algorithm to calculate checksum for first 8 digits.
-            int sum = 0;
-            for (int i = 0; i < 8; i++)
-            {
-                int digit = (int)(id % 10);
-                id /= 10;
-
-                if (i % 2 == 0)
-                {
-                    sum += digit;  // Odd index: add digit.
-                }
-                else
-                {
-                    int doubled = digit * 2;
-                    sum += doubled > 9 ? doubled - 9 : doubled;  // Even index: subtract 9 if doubled > 9.
-                }
-            }
-
-            // Calculate and compare checksum.
-            int checkDigit = (10 - (sum % 10)) % 10;
-            return checkDigit == (int)(id % 10);  // Valid if checksum matches.
+            // אם ה-ID תקין, מחזירים true
+            return true;
         }
 
-        internal static DO.Volunteer convertFormBOVolunteerToDo(BO.Volunteer BoVolunteer)
-        {
 
+        //// אלגוריתם לונה לבדוק את תקינות תעודת הזהות
+        //int sum = 0;
+        //long idCopy = id; // העתק של תעודת הזהות, כדי שנוכל לעבוד עם כל ספרה בנפרד
+
+        //for (int i = 0; i < 8; i++)
+        //{
+        //    int digit = (int)(idCopy % 10);
+        //    idCopy /= 10;
+
+        //    // אם אנחנו במקום זוגי (ממקום 2 ומעלה), הכפל את הספרה ב-2
+        //    if (i % 2 == 0)
+        //    {
+        //        sum += digit; // הוספת ספרה זוגית כפי שהיא
+        //    }
+        //    else
+        //    {
+        //        int doubled = digit * 2;
+        //        sum += doubled > 9 ? doubled - 9 : doubled; // אם התוצאה מעל 9, חיסור 9
+        //    }
+        //}
+
+        //// חישוב ספרת הביקורת
+        //int checkDigit = (10 - (sum % 10)) % 10;
+
+        //// השוואה בין ספרת הביקורת לבין הספרה האחרונה בתעודה
+        //return checkDigit == (int)(id % 10); // אם התוצאה תואמת, תעודת הזהות תקינה
+        internal static async Task<DO.Volunteer> convertFormBOVolunteerToDoAsync(BO.Volunteer BoVolunteer)
+        {
             if (BoVolunteer.Location != null)
             {
-
-
-                double[] cordintes = Tools.GetGeolocationCoordinates(BoVolunteer.Location);
-                BoVolunteer.Latitude = cordintes[0];
-                BoVolunteer.Longitude = cordintes[1];
-
+                // שימוש באסינכרוניות
+                double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(BoVolunteer.Location);
+                BoVolunteer.Latitude = coordinates[0];
+                BoVolunteer.Longitude = coordinates[1];
             }
             else
             {
                 BoVolunteer.Latitude = null;
                 BoVolunteer.Longitude = null;
             }
-            DO.Volunteer doVl = new(
-                 Id: BoVolunteer.Id,
-                 FullName: BoVolunteer.FullName,
-                 PhoneNumber: BoVolunteer.PhoneNumber,
-                 Email: BoVolunteer.Email,
-                 Active: BoVolunteer.Active,
-                 Position: (DO.Position)BoVolunteer.Position,
-                 DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
-                 Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
-                 Location: BoVolunteer.Location,
-                 Latitude: BoVolunteer.Latitude,
-                 Longitude: BoVolunteer.Longitude,
-                 MaxDistance: BoVolunteer.MaxDistance
 
-                        );
+            // יצירת אובייקט DO.Volunteer
+            DO.Volunteer doVl = new(
+                Id: BoVolunteer.Id,
+                FullName: BoVolunteer.FullName,
+                PhoneNumber: BoVolunteer.PhoneNumber,
+                Email: BoVolunteer.Email,
+                Active: BoVolunteer.Active,
+                Position: (DO.Position)BoVolunteer.Position,
+                DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
+                Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
+                Location: BoVolunteer.Location,
+                Latitude: BoVolunteer.Latitude,
+                Longitude: BoVolunteer.Longitude,
+                MaxDistance: BoVolunteer.MaxDistance
+            );
+
             return doVl;
         }
+
         // A constant shift value for encryption and decryption (simple Caesar Cipher)
         private static readonly int shift = 3;
         /// <summary>

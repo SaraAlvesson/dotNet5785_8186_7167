@@ -14,6 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Volunteer1\**" />
+    <EmbeddedResource Remove="Volunteer1\**" />
+    <None Remove="Volunteer1\**" />
+    <Page Remove="Volunteer1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj" />
   </ItemGroup>
 

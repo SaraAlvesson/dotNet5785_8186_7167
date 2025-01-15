@@ -26,7 +26,7 @@ namespace Dal
         public IAssignment assignment { get; } = new AssignmentImplementation();
 
         // Provides access to configuration settings and operations.
-        public IConfig config { get; } = new ConfigImplementaion(); 
+        public IConfig config { get; } = new ConfigImplementation(); 
 
         /// <summary>
         /// Resets all the data stores and configuration to their initial state. 

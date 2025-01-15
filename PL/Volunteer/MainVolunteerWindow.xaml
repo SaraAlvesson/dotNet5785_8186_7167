@@ -1,108 +1,184 @@
 ﻿<Window x:Class="PL.Volunteer.MainVolunteerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Volunteer Details" Height="600" Width="800"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL"
+        mc:Ignorable="d"
+        Title="Volunteer Details" Height="700" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+    <Grid Margin="10,10,10,-6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
 
-    <Grid Margin="10">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="1,5,-1,-218" RenderTransformOrigin="0.5,0.5">
-            <ScrollViewer.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform AngleX="0.454"/>
-                    <RotateTransform/>
-                    <TranslateTransform X="2.792"/>
-                </TransformGroup>
-            </ScrollViewer.RenderTransform>
-            <StackPanel Height="814" Width="798">
-                <!-- פרטי המתנדב -->
-                <GroupBox Header="Volunteer Details" Margin="0,0,0,10">
-                    <StackPanel>
-                        <TextBlock Text="ID:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.Id}" IsReadOnly="True" />
 
-                        <TextBlock Text="Full Name:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.FullName}" IsReadOnly="True" />
 
-                        <TextBlock Text="Email:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.Email}" IsReadOnly="True" />
+            <!-- Added an extra row for buttons -->
+        </Grid.RowDefinitions>
 
-                        <TextBlock Text="Password:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.Password}" />
+        <!-- ID (Read-Only) -->
+        <Label Grid.Row="0" Grid.Column="0" Margin="5" Content="ID:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding CurrentVolunteer.Id, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
+         IsEnabled="{Binding CurrentVolunteer.Position}"/>
+        <!-- Converter={StaticResource VolunteerRoleToEnabledConverterKey}} -->
 
-                        <TextBlock Text="Address:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.Location}" />
+        <!-- Full Name -->
+        <Label Grid.Row="1" Grid.Column="0" Margin="5" Content="Full Name:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="5"
+                 Text="{Binding CurrentVolunteer.FullName, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
-                        <TextBlock Text="Phone:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.PhoneNumber}" />
+        <!-- Email -->
+        <Label Grid.Row="2" Grid.Column="0" Margin="5" Content="Email:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="5"
+                 Text="{Binding CurrentVolunteer.Email, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
-                        <TextBlock Text="Max Distance for Call:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.MaxDistance}" />
+        <!-- Phone Number -->
+        <Label Grid.Row="3" Grid.Column="0" Margin="5" Content="Phone Number:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5"
+                 Text="{Binding CurrentVolunteer.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
-                        <TextBlock Text="Distance Type:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.DistanceType}" IsReadOnly="True" />
+        <!-- Address -->
+        <Label Grid.Row="4" Grid.Column="0" Margin="5" Content="Address:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="5"
+                 Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
-                        <!-- כפתור לסימון כלא פעיל (אם אין קריאה בטיפול) -->
-                        <CheckBox IsChecked="{Binding Volunteer.IsInactive}" Content="Mark as Inactive" IsEnabled="{Binding CanMarkInactive}" />
+        <!-- Role -->
+        <Label Grid.Row="5" Grid.Column="0" Margin="5" Content="Position:" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="5" Grid.Column="1" Margin="5"
+          
+          SelectedItem="{Binding CurrentVolunteer.Position, Mode=TwoWay}"
+          IsEnabled="{Binding CurrentVolunteer.Position}" ItemsSource="{Binding Source={StaticResource PositionCollectionKey}}"/>
+        <!--  Converter={StaticResource RoleToEditableConverterKey}}" />-->
 
-                        <TextBlock Text="Sum Calls:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.SumCalls}" IsReadOnly="True" />
+        <!-- IsActive -->
+        <Label Grid.Row="6" Grid.Column="0" Margin="5" Content="Active:" VerticalAlignment="Center" />
+        <CheckBox Grid.Row="6" Grid.Column="1" Margin="5"
+           IsChecked="{Binding CurrentVolunteer.Active, Mode=TwoWay}" />
 
-                        <TextBlock Text="Sum Canceled:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.SumCanceled}" IsReadOnly="True" />
+        <!-- Max Distance -->
+        <Label Grid.Row="7" Grid.Column="0" Margin="5" Content="Max Distance:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="7" Grid.Column="1" Margin="5"
+          Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" />
 
-                        <TextBlock Text="Sum Expired:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentVolunteer.SumExpired}" IsReadOnly="True" />
+        <!-- Distance Type -->
+        <Label Grid.Row="8" Grid.Column="0" Margin="5" Content="Distance Type:" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="8" Grid.Column="1" Margin="5"
+           SelectedItem="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay}" ItemsSource="{Binding  Source={StaticResource DistanceTypeCollectionKey}}"  />
+       
 
-                        <!-- כפתור "עדכון" -->
-                        <Button Content="Update" Command="{Binding UpdateVolunteerCommand}" IsEnabled="{Binding IsUpdateEnabled}" Margin="0,10" />
-                    </StackPanel>
-                </GroupBox>
+        <!-- Handled Calls -->
+        <Label Grid.Row="9" Grid.Column="0" Margin="5" Content="Handled Calls:" VerticalAlignment="Bottom" />
+        <TextBox Grid.Row="9" Grid.Column="1" Margin="5"
+          Text="{Binding CurrentVolunteer.SumCalls}" 
+          IsReadOnly="True" />
 
-                <!-- אם יש קריאה בטיפול, הצגת פרטי הקריאה -->
-                <GroupBox Header="Current Call" Visibility="{Binding CurrentCallVisibility}" Margin="0,0,0,10">
-                    <StackPanel>
-                        <TextBlock Text="Call ID:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentCall.Id}" IsReadOnly="True" />
+        <!-- Canceled Calls -->
+        <Label Grid.Row="10" Grid.Column="0" Margin="5" Content="Canceled Calls:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="10" Grid.Column="1" Margin="5"
+          Text="{Binding CurrentVolunteer.SumCanceled}" 
+          IsReadOnly="True" />
 
-                        <TextBlock Text="Call Status:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentCall.Status}" IsReadOnly="True" />
+        <!-- Expired Calls -->
+        <Label Grid.Row="11" Grid.Column="0" Margin="5" Content="Expired Calls:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="11" Grid.Column="1" Margin="5"
+          Text="{Binding CurrentVolunteer.SumExpired}" 
+          IsReadOnly="True" />
 
-                        <TextBlock Text="Call Type:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentCall.CallType}" IsReadOnly="True" />
 
-                        <TextBlock Text="Call Address:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentCall.CallAddress}" IsReadOnly="True" />
-
-                        <TextBlock Text="VerbDesc:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentCall.VerbDesc}" IsReadOnly="True" />
-
-                        <TextBlock Text="OpenTime:" FontWeight="Bold" />
-                        <DatePicker Text="{Binding CurrentCall.OpenTime}" />
-
-                        <TextBlock Text="MaxFinishTime:" FontWeight="Bold" />
-                        <DatePicker Text="{Binding CurrentCall.MaxFinishTime}" Width="856" />
-
-                        <TextBlock Text="StartAppointmentTime:" FontWeight="Bold" />
-                        <DatePicker Text="{Binding CurrentCall.StartAppointmentTime}" />
-
-                        <TextBlock Text="DistanceOfCall:" FontWeight="Bold" />
-                        <TextBox Text="{Binding CurrentCall.DistanceOfCall}" IsReadOnly="True" />
-
-                        <!-- כפתור לסיום טיפול -->
-                        <Button Content="Complete Call" Command="{Binding CompleteCallCommand}" IsEnabled="{Binding CanCompleteCall}" Margin="0,5" />
-
-                        <!-- כפתור לביטול טיפול -->
-                        <Button Content="Cancel Call" Command="{Binding CancelCallCommand}" IsEnabled="{Binding CanCancelCall}" Margin="0,5" />
-                    </StackPanel>
-                </GroupBox>
-
-                <!-- כפתור "בחירת קריאה" -->
-                <Button Content="Choose Call for Treatment" Command="{Binding ChooseCallCommand}" Margin="0,10" IsEnabled="{Binding IsChooseCallEnabled}" />
-
-                <!-- כפתור היסטוריית קריאות -->
-                <Button Content="History" Command="{Binding ShowHistoryCommand}" Margin="0,10" />
+        <!-- Current Call Details -->
+        <Label Grid.Row="12" Grid.Column="0" Margin="5" Content="Current Call:" VerticalAlignment="Top" />
+        <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}" /> -->
+        <StackPanel Grid.Row="12" Grid.Column="1" Margin="5" >
+        <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}"-->
+            <!-- Call ID -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Call ID: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.Id}" />
             </StackPanel>
-        </ScrollViewer>
+
+            <!-- Call Type -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Call Type: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.CallType}" />
+            </StackPanel>
+
+            <!-- Description -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Description: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.VerbDesc}" />
+            </StackPanel>
+
+            <!-- Full Address -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Full Address: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.CallAddress}" />
+            </StackPanel>
+
+            <!-- Latitude -->
+           
+
+            <!-- Longitude -->
+           
+
+            <!-- Opening Time -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Opening Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.OpenTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
+
+            <!-- Max Completion Time -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Max Completion Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.MaxFinishTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
+
+            <!-- Status -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Status: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentCall.Status}" />
+            </StackPanel>
+        </StackPanel>
+
+
+
+        <!-- Buttons for Finish and Cancel Treatment -->
+        <StackPanel Grid.Row="12" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40">
+            <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
+            Content="Finish Treatment" Click="ButtonComplete_Click"
+            IsEnabled="{Binding CurrentCall}" />
+            <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}" --> 
+                <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
+            Content="Cancel Treatment" Click="ButtonCancel_Click"
+            IsEnabled="{Binding CurrentCall}" />
+                <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}" -->
+        </StackPanel>
+
+        <!-- Buttons for Choose Call and Historic Calls -->
+        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,40">
+            <Button Margin="5" Width="120" Height="40" Content="History" Click="ButtonHistory_Click" />
+            <Button Margin="5" Width="120" Height="40" Content="Update" Click="ButtonUpdate_Click" />
+            <Button Margin="5" Width="120" Height="40" Content="Choose Call" Click="ButtonChosenCall_Click"  />
+        </StackPanel>
+
+
+
+
     </Grid>
 </Window>

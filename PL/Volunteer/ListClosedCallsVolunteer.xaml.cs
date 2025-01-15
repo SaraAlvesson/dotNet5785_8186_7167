@@ -11,7 +11,7 @@ namespace PL.Volunteer
     public partial class ListClosedCallsVolunteer : Window
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get(); // גישה ל-BL
-      
+
         public List<BO.ClosedCallInList> ClosedCalls { get; set; } // רשימת הקריאות הסגורות
 
         public string SelectedCallType { get; set; }
@@ -23,10 +23,10 @@ namespace PL.Volunteer
             InitializeComponent();
 
             _volunteerId = volunteerId;
- 
+
             // טעינת רשימת הקריאות ממקור נתונים
             ClosedCalls = LoadClosedCalls();
-           
+
         }
 
         private List<BO.ClosedCallInList> LoadClosedCalls()

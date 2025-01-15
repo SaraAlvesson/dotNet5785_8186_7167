@@ -73,7 +73,7 @@ namespace PL.Volunteer
                 var calls = s_bl.Call.GetVolunteerOpenCalls(
                     CurrentVolunteer.Id,
                     null,
-                   null
+                    null
                 );
 
                 Calls.Clear();
@@ -131,8 +131,6 @@ namespace PL.Volunteer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-
         // מתודה שמטפלת בשינוי טקסט בשדה כתובת סינון
         private void FilterAddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -142,13 +140,18 @@ namespace PL.Volunteer
         // מתודה שמטפלת בשינוי הבחירה ברשימת הקריאות
         private void CallsDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
-            // הוסף לוגיקה לטיפול בבחירת קריאה מהרשימה
-            if (CallsDataGrid.SelectedItem is OpenCallInList selectedCall)
+            // קבלת ה-DataGrid מה- sender
+            var dataGrid = sender as DataGrid;
+
+            if (dataGrid != null && dataGrid.SelectedItem is OpenCallInList selectedCall)
             {
-                SelectedCallDetails = selectedCall.VerbDesc; // הצגת הפירוט המילולי של הקריאה
-                                                                // עדכן את המפה עם מיקום הקריאה
+                // הצגת הפירוט המילולי של הקריאה
+                SelectedCallDetails = selectedCall.VerbDesc;
+
+                // עדכן את המפה עם מיקום הקריאה, אם יש לך את הנתונים הדרושים
             }
         }
+
 
         // מתודה שמטפלת בשינוי טקסט בפרטי הקריאה שנבחרה
         private void CallDetailsTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -161,6 +164,7 @@ namespace PL.Volunteer
         {
             // עדכון כתובת המתנדב
         }
+
         public class RelayCommand : ICommand
         {
             private readonly Action<object> _execute;
