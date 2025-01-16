@@ -27,17 +27,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-
-
-
-            <!-- Added an extra row for buttons -->
         </Grid.RowDefinitions>
 
         <!-- ID (Read-Only) -->
         <Label Grid.Row="0" Grid.Column="0" Margin="5" Content="ID:" VerticalAlignment="Center" />
         <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding CurrentVolunteer.Id, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
-         IsEnabled="{Binding CurrentVolunteer.Position}"/>
-        <!-- Converter={StaticResource VolunteerRoleToEnabledConverterKey}} -->
+                 IsEnabled="{Binding CurrentVolunteer.Position}" />
 
         <!-- Full Name -->
         <Label Grid.Row="1" Grid.Column="0" Margin="5" Content="Full Name:" VerticalAlignment="Center" />
@@ -59,116 +54,114 @@
         <TextBox Grid.Row="4" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
-        <!-- Role -->
-        <Label Grid.Row="5" Grid.Column="0" Margin="5" Content="Position:" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="5" Grid.Column="1" Margin="5"
-          
-          SelectedItem="{Binding CurrentVolunteer.Position, Mode=TwoWay}"
-          IsEnabled="{Binding CurrentVolunteer.Position}" ItemsSource="{Binding Source={StaticResource PositionCollectionKey}}"/>
-        <!--  Converter={StaticResource RoleToEditableConverterKey}}" />-->
-
         <!-- IsActive -->
         <Label Grid.Row="6" Grid.Column="0" Margin="5" Content="Active:" VerticalAlignment="Center" />
         <CheckBox Grid.Row="6" Grid.Column="1" Margin="5"
-           IsChecked="{Binding CurrentVolunteer.Active, Mode=TwoWay}" />
+                  IsChecked="{Binding CurrentVolunteer.Active, Mode=TwoWay}" />
 
         <!-- Max Distance -->
         <Label Grid.Row="7" Grid.Column="0" Margin="5" Content="Max Distance:" VerticalAlignment="Center" />
         <TextBox Grid.Row="7" Grid.Column="1" Margin="5"
-          Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" />
+                 Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" />
 
         <!-- Distance Type -->
         <Label Grid.Row="8" Grid.Column="0" Margin="5" Content="Distance Type:" VerticalAlignment="Center" />
         <ComboBox Grid.Row="8" Grid.Column="1" Margin="5"
-           SelectedItem="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay}" ItemsSource="{Binding  Source={StaticResource DistanceTypeCollectionKey}}"  />
-       
+                  SelectedItem="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource DistanceTypeCollectionKey}}" />
 
         <!-- Handled Calls -->
         <Label Grid.Row="9" Grid.Column="0" Margin="5" Content="Handled Calls:" VerticalAlignment="Bottom" />
         <TextBox Grid.Row="9" Grid.Column="1" Margin="5"
-          Text="{Binding CurrentVolunteer.SumCalls}" 
-          IsReadOnly="True" />
+                 Text="{Binding CurrentVolunteer.SumCalls}" 
+                 IsReadOnly="True" />
 
         <!-- Canceled Calls -->
         <Label Grid.Row="10" Grid.Column="0" Margin="5" Content="Canceled Calls:" VerticalAlignment="Center" />
         <TextBox Grid.Row="10" Grid.Column="1" Margin="5"
-          Text="{Binding CurrentVolunteer.SumCanceled}" 
-          IsReadOnly="True" />
+                 Text="{Binding CurrentVolunteer.SumCanceled}" 
+                 IsReadOnly="True" />
 
         <!-- Expired Calls -->
         <Label Grid.Row="11" Grid.Column="0" Margin="5" Content="Expired Calls:" VerticalAlignment="Center" />
         <TextBox Grid.Row="11" Grid.Column="1" Margin="5"
-          Text="{Binding CurrentVolunteer.SumExpired}" 
-          IsReadOnly="True" />
-
+                 Text="{Binding CurrentVolunteer.SumExpired}" 
+                 IsReadOnly="True" />
 
         <!-- Current Call Details -->
         <Label Grid.Row="12" Grid.Column="0" Margin="5" Content="Current Call:" VerticalAlignment="Top" />
-        <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}" /> -->
-        <StackPanel Grid.Row="12" Grid.Column="1" Margin="5" >
-        <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}"-->
+        <StackPanel Grid.Row="12" Grid.Column="1" Margin="5">
+            <!-- Allocation ID (ID of the Assignment) -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Allocation ID: " FontWeight="Bold" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.Id}" />
+            </StackPanel>
+
             <!-- Call ID -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Call ID: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.Id}" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.CallId}" />
             </StackPanel>
 
             <!-- Call Type -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Call Type: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.CallType}" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.CallType}" />
             </StackPanel>
 
             <!-- Description -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Description: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.VerbDesc}" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.VerbDesc}" />
             </StackPanel>
 
             <!-- Full Address -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Full Address: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.CallAddress}" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.CallAddress}" />
             </StackPanel>
-
-            <!-- Latitude -->
-           
-
-            <!-- Longitude -->
-           
 
             <!-- Opening Time -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Opening Time: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.OpenTime, StringFormat={}{0:HH:mm:ss}}" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.OpenTime, StringFormat={}{0:HH:mm:ss}}" />
             </StackPanel>
 
-            <!-- Max Completion Time -->
+            <!-- Max Finish Time -->
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Max Completion Time: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.MaxFinishTime, StringFormat={}{0:HH:mm:ss}}" />
+                <TextBlock Text="Max Finish Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.MaxFinishTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
+
+            <!-- Start Appointment Time -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Start Appointment Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.StartAppointmentTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
+
+            <!-- Distance of Call -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Distance of Call: " FontWeight="Bold" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.DistanceOfCall}" />
             </StackPanel>
 
             <!-- Status -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Status: " FontWeight="Bold" />
-                <TextBlock Text="{Binding CurrentCall.Status}" />
+                <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.Status}" />
             </StackPanel>
+            
         </StackPanel>
-
-
 
         <!-- Buttons for Finish and Cancel Treatment -->
         <StackPanel Grid.Row="12" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40">
             <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
-            Content="Finish Treatment" Click="ButtonComplete_Click"
-            IsEnabled="{Binding CurrentCall}" />
-            <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}" --> 
-                <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
-            Content="Cancel Treatment" Click="ButtonCancel_Click"
-            IsEnabled="{Binding CurrentCall}" />
-                <!-- Visibility="{Binding CurrentCall, Converter={StaticResource CallInProgressToVisibilityConverterKey}}" -->
+                    Content="Finish Treatment" Click="ButtonComplete_Click"
+                    IsEnabled="{Binding CurrentCall}" />
+            <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
+                    Content="Cancel Treatment" Click="ButtonCancel_Click"
+                    IsEnabled="{Binding CurrentCall}" />
         </StackPanel>
+        
 
         <!-- Buttons for Choose Call and Historic Calls -->
         <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,40">
@@ -176,9 +169,5 @@
             <Button Margin="5" Width="120" Height="40" Content="Update" Click="ButtonUpdate_Click" />
             <Button Margin="5" Width="120" Height="40" Content="Choose Call" Click="ButtonChosenCall_Click"  />
         </StackPanel>
-
-
-
-
     </Grid>
 </Window>

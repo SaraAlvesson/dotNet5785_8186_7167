@@ -271,91 +271,75 @@ public static class Initialization
     // </summary>
     private static void createAssignment()
     {
-        // רשימה למעקב אחר כמה קריאות כל מתנדב טיפל בהן
+        // אתחול רשימות למעקב
         Dictionary<int, int> volunteerCallCount = new Dictionary<int, int>();
-
-        // רשימה של מתנדבים שלא טיפלו בכלל בקריאות
         List<int> volunteersWithoutCalls = new List<int>(s_dal!.Volunteer.ReadAll().Select(v => v.Id));
+        int totalVolunteers = s_dal!.Volunteer.ReadAll().Count();
 
-        // Loop to create 50 assignments
+        // לולאה ליצירת 50 הקצאות
         for (int i = 0; i < 50; i++)
         {
             Volunteer volunteerToAssig;
 
-            // אם יש מתנדבים שלא טיפלו בכלל, בחר אחד מהם, אחרת בחר אקראית
+            // בחירת מתנדב
             if (volunteersWithoutCalls.Count > 0)
             {
                 int randIndex = s_rand.Next(volunteersWithoutCalls.Count);
                 int volunteerId = volunteersWithoutCalls[randIndex];
                 volunteerToAssig = s_dal!.Volunteer.ReadAll().First(v => v.Id == volunteerId);
-                volunteersWithoutCalls.RemoveAt(randIndex); // להסיר אותו מהאפשרות
+                volunteersWithoutCalls.RemoveAt(randIndex);
             }
             else
             {
-                int randVolunteer = s_rand.Next(s_dal!.Volunteer.ReadAll().Count());
+                int randVolunteer = s_rand.Next(totalVolunteers);
                 volunteerToAssig = s_dal!.Volunteer.ReadAll().ElementAt(randVolunteer);
             }
 
-            // אם המתנדב לא טיפל בכלל, הוסף אותו למילון
+            // עדכון המעקב
             if (!volunteerCallCount.ContainsKey(volunteerToAssig.Id))
             {
                 volunteerCallCount[volunteerToAssig.Id] = 0;
             }
 
-            // הגרלת קריאה מתוך הקריאות הקיימות
-            int randCall = s_rand.Next(s_dal!.call.ReadAll().Count());
-            Call callToAssig = s_dal.call.ReadAll().ElementAt(randCall);
-
-            // לא לאפשר הגרלה של קריאה חדשה שלא נפתחה, ושוודא שהזמן הנבחר מתאים
-            while (callToAssig.OpenTime > s_dal!.config.Clock)
+            // הגרלת קריאה
+            Call callToAssig = null;
+            int attempts = 0;
+            while (attempts < 10)
             {
-                randCall = s_rand.Next(s_dal!.call.ReadAll().Count());
+                int randCall = s_rand.Next(s_dal!.call.ReadAll().Count());
                 callToAssig = s_dal.call.ReadAll().ElementAt(randCall);
+                if (callToAssig.OpenTime <= s_dal!.config.Clock) break;
+                attempts++;
+            }
+            if (callToAssig == null || callToAssig.OpenTime > s_dal!.config.Clock)
+            {
+                Console.WriteLine("No suitable call found after 10 attempts.");
+                continue;
             }
 
-            // משתנים לסיום קריאה
+            // יצירת סיום
             FinishAppointmentType? finish = null;
             DateTime? finishTime = null;
 
-            // בדוק אם הקריאה כבר הגיעה למקסימום זמן, אם כן - סיום עם ביטול
-            if (callToAssig.MaxTime != null && callToAssig.MaxTime <= s_dal?.config.Clock)
+            if (callToAssig.MaxTime != null && callToAssig.MaxTime <= s_dal.config.Clock)
             {
                 finish = FinishAppointmentType.CancellationHasExpired;
             }
             else
             {
-                // יצירת סוג סיום אקראי עבור הקריאה
-                int randFinish = s_rand.Next(0, 5); // (0-4) - משמעה רק סוגים שמוגדרים
+                int randFinish = s_rand.Next(0, 5);
                 switch (randFinish)
                 {
-                    case 0:
-                        finish = FinishAppointmentType.WasTreated;
-                        finishTime = s_dal!.config.Clock; // סיום מידי
-                        break;
-                    case 1:
-                        finish = FinishAppointmentType.SelfCancellation;
-                        finishTime = s_dal!.config.Clock; // סיום בזמן הנוכחי
-                        break;
-                    case 2:
-                        finish = FinishAppointmentType.CancelingAnAdministrator;
-                        finishTime = s_dal!.config.Clock; // סיום בזמן הנוכחי
-                        break;
-                    case 3:
-                        // אם הקריאה נשארה בטיפול, אין שינוי בסוג הסיום
-                        finish = null;
-                        break;
-                    case 4:
-                        // סיום בזמן מאוחר יותר מהזמן המקסימלי
-                        finish = FinishAppointmentType.WasTreated;
-                        finishTime = callToAssig.MaxTime.Value.AddMinutes(10); // זמן מאוחר מהמקובל
-                        break;
+                    case 0: finish = FinishAppointmentType.WasTreated; finishTime = s_dal.config.Clock; break;
+                    case 1: finish = FinishAppointmentType.SelfCancellation; finishTime = s_dal.config.Clock; break;
+                    case 2: finish = FinishAppointmentType.CancelingAnAdministrator; finishTime = s_dal.config.Clock; break;
+                    case 4: finish = FinishAppointmentType.WasTreated; finishTime = callToAssig.MaxTime?.AddMinutes(10); break;
                 }
             }
 
-            // השתמש במזהה הרץ
-            int newAssignmentId = s_dal.config.NextAssignmentId;
 
-            // יצירת ההקצאה החדשה
+            // יצירת הקצאה
+            int newAssignmentId = s_dal.config.NextAssignmentId;
             s_dal!.assignment.Create(new Assignment
             {
                 Id = newAssignmentId,
@@ -366,11 +350,8 @@ public static class Initialization
                 FinishAppointmentType = finish,
             });
 
-            // עדכון מניין הקריאות של המתנדב
             volunteerCallCount[volunteerToAssig.Id]++;
-
-            // לוודא שהמתנדב לא יקבל יותר מדי קריאות אם הוא טיפל ביותר מדי
-            if (volunteerCallCount[volunteerToAssig.Id] > 5)  // לא יותר מ-5 קריאות
+            if (volunteerCallCount[volunteerToAssig.Id] > 5)
             {
                 volunteerCallCount.Remove(volunteerToAssig.Id);
             }

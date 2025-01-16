@@ -16,54 +16,7 @@ namespace Helpers
 
 
 
-        internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
-        {
-            // טיפול במקרה שבו doAssignment הוא null
-            if (doAssignment == null)
-            {
-                return BO.Enums.CalltStatusEnum.OPEN; // מצב ברירת מחדל
-            }
-
-            // טיפול במקרה שבו doCall הוא null
-            if (doCall == null)
-            {
-                return BO.Enums.CalltStatusEnum.OPEN; // מצב ברירת מחדל, בלי לזרוק חריגה
-            }
-
-            // לוגיקה קיימת
-            if (doAssignment.VolunteerId == null ||
-                doAssignment.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator ||
-                doAssignment.FinishAppointmentType == FinishAppointmentType.SelfCancellation)
-            {
-                if (doCall.MaxTime.HasValue && doCall.MaxTime.Value - DateTime.Now <= riskTimeSpan)
-                {
-                    return BO.Enums.CalltStatusEnum.CallAlmostOver; // פתוחה בסיכון
-                }
-                return BO.Enums.CalltStatusEnum.OPEN; // פתוחה
-            }
-            else if (doAssignment.FinishAppointmentType == FinishAppointmentType.WasTreated)
-            {
-                return BO.Enums.CalltStatusEnum.CLOSED; // סגורה
-            }
-            else if (doAssignment.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired)
-            {
-                return BO.Enums.CalltStatusEnum.EXPIRED; // פג תוקף
-            }
-            else if (doAssignment.VolunteerId != null)
-            {
-                if (doCall.MaxTime.HasValue && doCall.MaxTime.Value - DateTime.Now <= riskTimeSpan)
-                {
-                    return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // בטיפול בסיכון
-                }
-                return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // בטיפול
-            }
-            else
-            {
-                return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל
-            }
-        }
-
-
+      
         public static void checkCallLogic(BO.Call call)
         {
             // בדיקת יחס זמנים

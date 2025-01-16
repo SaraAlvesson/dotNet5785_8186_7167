@@ -66,7 +66,7 @@ public class Enums
         public enum StatusCallInProgressEnum
     {
         CallIsBeingTreated,    // בטיפול
-        CallAlmostOver  //סיכון
+        CallTreatmentAlmostOver,// בטיפול בסיכון
     }
     #endregion
 

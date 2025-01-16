@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using BO;
-using static BO.Enums;
 
 namespace PL.Admin
 {
-
     public partial class VolunteerListWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        private CallTypeEnum _selectedCallType = CallTypeEnum.None;
 
-        private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
         public BO.VolunteerInList? SelectedVolunteer { get; set; }
 
         public VolunteerListWindow()
         {
             InitializeComponent();
-            //this.DataContext = new VolunteerListWindow();  // הגדרת DataContext
-            LoadVolunteerList();  // טוען את רשימת המתנדבים עם הערכים הראשונים
+            this.DataContext = this;  // DataContext יהיה חלון זה עצמו
+
+            LoadVolunteerList(); // טוען את הרשימה הראשונית
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -38,38 +36,41 @@ namespace PL.Admin
         }
 
         // תכונת תלות לרשימת המתנדבים
-        public IEnumerable<VolunteerInList> VolunteerList
-        {
-            get => (IEnumerable<VolunteerInList>)GetValue(VolunteerListProperty);
-            set
-            {
-                SetValue(VolunteerListProperty, value ?? new List<VolunteerInList>());  // טיפול במקרה של null
-                OnPropertyChanged(nameof(VolunteerList));
-            }
-        }
+        public ObservableCollection<VolunteerInList> Volunteers { get; set; } = new();
 
-        public BO.Enums.CallTypeEnum SelectedCallType
+        // טעינת הרשימה
+        private void LoadVolunteerList()
         {
-            get => _selectedCallType;
-            set
+            try
             {
-                if (_selectedCallType != value)
+                Volunteers.Clear();  // ניקוי הרשימה לפני הוספה חדשה
+
+                var volunteerList = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
+
+                foreach (var volunteer in volunteerList)
                 {
-                    _selectedCallType = value;
-                    //OnPropertyChanged(); // עידכון הממשק
-                    FilterVolunteers(); // סינון הרשימה
+                    Volunteers.Add(volunteer);
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading volunteer list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        // Delete Volunteer by ID
+        private void ObserveVolunteerListChanges()
+        {
+            LoadVolunteerList();  // טוען את הרשימה מחדש
+        }
+
+        // מחיקת מתנדב
         private void DeleteVolunteer(int volunteerId)
         {
             try
             {
                 var bl = BlApi.Factory.Get().Volunteer;
-                bl.DeleteVolunteer(volunteerId); // Delete the volunteer
-                UpdateVolunteerList(null);  // Refresh the list
+                bl.DeleteVolunteer(volunteerId); // מחיקת המתנדב
+                LoadVolunteerList();  // עדכון הרשימה
             }
             catch (Exception ex)
             {
@@ -78,7 +79,7 @@ namespace PL.Admin
             }
         }
 
-        // Delete button click event
+        // לחצן מחיקה
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is int volunteerId)
@@ -88,67 +89,15 @@ namespace PL.Admin
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    DeleteVolunteer(volunteerId); // Call the delete method
+                    DeleteVolunteer(volunteerId); // קריאה למחיקה
                 }
             }
         }
 
-
-
-        public ObservableCollection<VolunteerInList> Volunteers { get; set; } = new();
-        public ObservableCollection<VolunteerInList> FilteredVolunteers { get; set; } = new();
-
-        private void FilterVolunteers()
+        // לחצן הוספה
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            FilteredVolunteers.Clear();
-            foreach (var volunteer in Volunteers.Where(v => v.CallType == SelectedCallType))
-            {
-                FilteredVolunteers.Add(volunteer);
-            }
-        }
-
-
-        private void LoadVolunteerList()
-        {
-            UpdateVolunteerList(null);  // טוען את הרשימה הראשונית ללא סינון
-        }
-
-        public VolunteerInListField SelectedVolunteerField
-        {
-            get => _selectedVolunteerField;
-            set
-            {
-                if (_selectedVolunteerField != value)
-                {
-                    _selectedVolunteerField = value;
-                    OnFieldChanged();  // עדכון הרשימה בהתבסס על השדה החדש
-                }
-            }
-        }
-
-        public void OnFieldChanged()
-        {
-            UpdateVolunteerList(_selectedVolunteerField);
-        }
-
-        public void UpdateVolunteerList(VolunteerInListField? field)
-        {
-            try
-            {
-                VolunteerList = field == VolunteerInListField.None
-                    ? s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>()  // טיפול במקרה של null
-                    : s_bl?.Volunteer.RequestVolunteerList(null, field) ?? new List<VolunteerInList>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error updating volunteer list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                VolunteerList = new List<VolunteerInList>();  // רשימה ריקה במקרה של כשל
-            }
-        }
-
-        private void ObserveVolunteerListChanges()
-        {
-            UpdateVolunteerList(_selectedVolunteerField);
+            new SingleVolunteerWindow().Show();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -157,27 +106,11 @@ namespace PL.Admin
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public static readonly DependencyProperty VolunteerListProperty =
-            DependencyProperty.Register(
-                "VolunteerList",
-                typeof(IEnumerable<VolunteerInList>),
-                typeof(VolunteerListWindow),
-                new PropertyMetadata(null));
-
-
-
         // Double-click on volunteer list to view details
         private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (SelectedVolunteer != null)
                 new SingleVolunteerWindow(SelectedVolunteer.Id).Show();
-
-        }
-        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            new SingleVolunteerWindow().Show();
-
         }
     }
-
 }

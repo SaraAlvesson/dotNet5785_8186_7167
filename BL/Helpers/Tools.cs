@@ -52,6 +52,7 @@
 //    }
 //}
 using BO;
+using DO;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
@@ -61,6 +62,36 @@ namespace Helpers
     internal static class Tools
     {
 
+
+        internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
+        {
+            // טיפול במקרה שבו doAssignment הוא null
+            if (doAssignment == null || doCall == null)
+            {
+                return BO.Enums.CalltStatusEnum.UNKNOWN; // לא ניתן להחזיר מצב אם הנתונים חסרים
+            }
+
+            // אם הקריאה בטיפול של מתנדב מסוים
+            if (doAssignment.VolunteerId != null)
+            {
+                // אם הקריאה מתקרבת לסיום (15 שעות לפני סיום)
+                if (doCall.MaxTime.HasValue)
+                {
+                    // חישוב הזמן שנשאר עד ל-MaxTime
+                    TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+                    // בדיקה אם הזמן שנשאר הוא 15 שעות או פחות
+                    if (timeRemaining <= riskTimeSpan)
+                    {
+                        return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // קריאה בטיפול שמתקרבת לסיום - בטיפול בסיכון
+                    }
+                }
+
+                return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // בטיפול - יש מתנדב שטיפל בה
+            }
+
+            return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל אם לא בטיפול
+        }
 
         // The generic method works for any object, returning a string of its properties
         public static string ToStringProperty<T>(this T t)
@@ -97,7 +128,7 @@ namespace Helpers
             }
 
             string apiKey = "678694850f91d165965268skuda91dd";  // המפתח שלך החדש
-            string requestUrl = $"https://api.geocoding.com/v1/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";  // עדכון ה-URL על פי ה-API שלך
+            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";  // עדכון ה-URL ל-API הנכון
 
             using (HttpClient client = new HttpClient())
             {
@@ -140,6 +171,7 @@ namespace Helpers
                 }
             }
         }
+
 
         /// <summary>
         /// Represents a location result returned by the geocoding service.

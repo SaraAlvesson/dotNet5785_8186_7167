@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace PL.Volunteer
 {
@@ -14,40 +15,64 @@ namespace PL.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private BO.Volunteer CurrentVolunteer;
 
-        public ObservableCollection<OpenCallInList> Calls { get; set; } = new();
+        public ObservableCollection<OpenCallInList> Calls { get; set; } = new ObservableCollection<OpenCallInList>();
+
         private string _selectedTypeFilter;
         public string SelectedTypeFilter
         {
             get => _selectedTypeFilter;
-            set { _selectedTypeFilter = value; OnPropertyChanged(); LoadCalls(); }
+            set
+            {
+                _selectedTypeFilter = value;
+                OnPropertyChanged();
+                LoadCallsAsync();
+            }
         }
 
         private string _addressFilter;
         public string AddressFilter
         {
             get => _addressFilter;
-            set { _addressFilter = value; OnPropertyChanged(); LoadCalls(); }
+            set
+            {
+                _addressFilter = value;
+                OnPropertyChanged();
+                LoadCallsAsync();
+            }
         }
 
         private string _selectedSortOption;
         public string SelectedSortOption
         {
             get => _selectedSortOption;
-            set { _selectedSortOption = value; OnPropertyChanged(); LoadCalls(); }
+            set
+            {
+                _selectedSortOption = value;
+                OnPropertyChanged();
+                LoadCallsAsync();
+            }
         }
 
         private string _newAddress;
         public string NewAddress
         {
             get => _newAddress;
-            set { _newAddress = value; OnPropertyChanged(); }
+            set
+            {
+                _newAddress = value;
+                OnPropertyChanged();
+            }
         }
 
         private string _selectedCallDetails;
         public string SelectedCallDetails
         {
             get => _selectedCallDetails;
-            set { _selectedCallDetails = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedCallDetails = value;
+                OnPropertyChanged();
+            }
         }
 
         public ICommand ChooseCallCommand { get; }
@@ -63,22 +88,41 @@ namespace PL.Volunteer
             ChooseCallCommand = new RelayCommand(ChooseCall);
             UpdateAddressCommand = new RelayCommand(UpdateAddress);
 
-            LoadCalls(); // טוען את הקריאות
+            _ = InitializeAsync();
         }
 
-        private void LoadCalls()
+        private async Task InitializeAsync()
+        {
+            await LoadCallsAsync();
+        }
+
+        private async Task LoadCallsAsync()
         {
             try
             {
-                var calls = s_bl.Call.GetVolunteerOpenCalls(
+                BO.Enums.CallTypeEnum? callTypeEnum = null;
+                if (!string.IsNullOrEmpty(SelectedTypeFilter) && Enum.TryParse<BO.Enums.CallTypeEnum>(SelectedTypeFilter, out var tempCallType))
+                {
+                    callTypeEnum = tempCallType;
+                }
+
+                BO.Enums.OpenCallEnum? openCallEnum = null;
+                if (!string.IsNullOrEmpty(AddressFilter) && Enum.TryParse<BO.Enums.OpenCallEnum>(AddressFilter, out var tempOpenCall))
+                {
+                    openCallEnum = tempOpenCall;
+                }
+
+                var calls = await s_bl.Call.GetVolunteerOpenCallsAsync(
                     CurrentVolunteer.Id,
-                    null,
-                    null
+                    callTypeEnum,
+                    openCallEnum
                 );
 
                 Calls.Clear();
                 foreach (var call in calls)
+                {
                     Calls.Add(call);
+                }
             }
             catch (Exception ex)
             {
@@ -94,7 +138,7 @@ namespace PL.Volunteer
                 {
                     s_bl.Call.AssignCallToVolunteer(CurrentVolunteer.Id, selectedCall.Id);
                     MessageBox.Show($"You have selected Call ID {selectedCall.Id} for handling.");
-                    LoadCalls();
+                    LoadCallsAsync();
                 }
                 catch (Exception ex)
                 {
@@ -111,7 +155,7 @@ namespace PL.Volunteer
                 {
                     CurrentVolunteer.Location = NewAddress;
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
-                    LoadCalls();
+                    LoadCallsAsync();
                     MessageBox.Show("Address updated successfully!");
                 }
                 catch (Exception ex)
@@ -131,38 +175,23 @@ namespace PL.Volunteer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // מתודה שמטפלת בשינוי טקסט בשדה כתובת סינון
         private void FilterAddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // הוסף לוגיקה לסינון הקריאות לפי הכתובת שהוזנה
+            LoadCallsAsync();
         }
 
-        // מתודה שמטפלת בשינוי הבחירה ברשימת הקריאות
         private void CallsDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
-            // קבלת ה-DataGrid מה- sender
             var dataGrid = sender as DataGrid;
 
             if (dataGrid != null && dataGrid.SelectedItem is OpenCallInList selectedCall)
             {
-                // הצגת הפירוט המילולי של הקריאה
                 SelectedCallDetails = selectedCall.VerbDesc;
-
-                // עדכן את המפה עם מיקום הקריאה, אם יש לך את הנתונים הדרושים
             }
         }
 
-
-        // מתודה שמטפלת בשינוי טקסט בפרטי הקריאה שנבחרה
         private void CallDetailsTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // אפשר לעדכן כאן את פרטי הקריאה במידת הצורך
-        }
-
-        // מתודה לעדכון הכתובת
-        private void UpdateAddress()
-        {
-            // עדכון כתובת המתנדב
         }
 
         public class RelayCommand : ICommand

@@ -60,7 +60,7 @@ namespace PL.Volunteer
         public MainVolunteerWindow(int id)
         {
             InitializeComponent();
-            this.DataContext = this;
+           
 
             try
             {
@@ -141,12 +141,11 @@ namespace PL.Volunteer
 
         private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer != null && CurrentVolunteer.Active )
+            if (CurrentVolunteer != null && CurrentVolunteer.Active)
             {
                 try
                 {
-                   new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
-                 
+                    new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
                 }
                 catch (Exception ex)
                 {

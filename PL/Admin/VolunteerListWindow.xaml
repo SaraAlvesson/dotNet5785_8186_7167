@@ -1,4 +1,4 @@
-﻿<Window x:Class="PL.Admin.VolunteerListWindow"
+﻿<Window x:Class="PL.Admin.VolunteerListWindow"  
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,7 +9,7 @@
         Height="800" 
         Width="1000"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-
+    <!-- קישור בין XAML לקוד מאחורי החלון -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,28 +17,17 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ComboBox להבחנה בין המתנדבים -->
         <ComboBox Grid.Row="0"
                   SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
                   ItemsSource="{Binding CallTypes}" 
-                  
                   VerticalAlignment="Center" 
-                  Margin="0,10" >
-            <ComboBoxItem Content="PreparingFood" Tag="PreparingFood" />
-            <ComboBoxItem Content="TransportingFood" Tag="TransportingFood" />
-            <ComboBoxItem Content="FixingEquipment" Tag="FixingEquipment" />
-            <ComboBoxItem Content="ProvidingShelter" Tag="ProvidingShelter" />
-            <ComboBoxItem Content="TransportAssistance" Tag="TransportAssistance" />
-            <ComboBoxItem Content="MedicalAssistance" Tag="MedicalAssistance" />
-            <ComboBoxItem Content="EmotionalSupport" Tag="EmotionalSupport" />
-            <ComboBoxItem Content="PackingSupplies" Tag="PackingSupplies" />
-            HorizontalAlignment="Stretch"
+                  Margin="0,10">
         </ComboBox>
 
         <!-- ListView להצגת המתנדבים -->
         <ListView Grid.Row="1"
                   Margin="0,10"
-                  ItemsSource="{Binding VolunteerList}" 
+                  ItemsSource="{Binding Volunteers}" 
                   SelectedItem="{Binding SelectedVolunteer}" 
                   MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
             <ListView.View>
@@ -48,7 +37,7 @@
                     <GridViewColumn Header="Is Active" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsActive}" IsEnabled="False" />
+                                <CheckBox IsChecked="{Binding Active}" IsEnabled="False" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -56,16 +45,13 @@
                     <GridViewColumn Header="Canceled Calls" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="150" />
                     <GridViewColumn Header="Expired Calls" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="150" />
                     <GridViewColumn Header="Call in Treatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="150" />
-                    <!-- Add the "Delete" button column -->
-                    <GridViewColumn Header="Actions"  >
+                    <GridViewColumn Header="Actions">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <!-- Delete Button for each row -->
-                                <Button Content="Delete" Click="DeleteButton_Click" Tag="{Binding Id}" Foreground="#009990"  />
+                                <Button Content="Delete" Click="DeleteButton_Click" Tag="{Binding Id}" Foreground="#009990" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-
                 </GridView>
             </ListView.View>
         </ListView>

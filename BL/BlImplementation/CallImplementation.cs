@@ -71,7 +71,7 @@ internal class CallImplementation : ICall
                              SumTimeUntilFinish = TempTimeToEnd > TimeSpan.Zero ? TempTimeToEnd : null,
                              LastVolunteerName = volunteer?.FullName,
                              SumAppointmentTime = assignment?.FinishAppointmentType != null ? assignment.FinishAppointmentTime - item.OpenTime : null,
-                             Status = CallManager.CheckStatus(assignment, item, null),
+                             Status = Tools.CheckStatus(assignment, item, null),
                              SumAssignment = assignments.Count() // ספירה מתוך הרשימה המלאה של Assignment
                          };
 
@@ -156,7 +156,7 @@ internal class CallImplementation : ICall
             Latitude = call.Latitude,
             Longitude = call.Longitude,
             // קריאה למתודת CheckStatus עם שלושה פרמטרים
-            CallStatus = CallManager.CheckStatus(assignment, call, riskTimeSpan),
+            CallStatus = Tools.CheckStatus(assignment, call, riskTimeSpan),
             // יצירת רשימת הקצאות אם קיימת הקצאה
             CallAssignInLists = assignment == null
                 ? null
@@ -393,26 +393,54 @@ internal class CallImplementation : ICall
         return closedCalls;
     }
 
-    public IEnumerable<BO.OpenCallInList> GetVolunteerOpenCalls(
-      int volunteerId,
-      BO.Enums.CallTypeEnum? filter = null,
-      BO.Enums.OpenCallEnum? toSort = null)
+    public async Task<IEnumerable<BO.OpenCallInList>> GetVolunteerOpenCallsAsync(
+    int volunteerId,
+    BO.Enums.CallTypeEnum? filter = null,
+    BO.Enums.OpenCallEnum? toSort = null)
     {
         // שליפת רשימות הקריאות והשיוכים
-        var listCall = _dal.call.ReadAll();
-        var listAssignment = _dal.assignment.ReadAll();
-        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);
+        var listCall = _dal.call.ReadAll();  // ודא שהקריאות נטענות כראוי
+        var listAssignment = _dal.assignment.ReadAll();  // ודא ששיוכים נטענים כראוי
+
+        if (!listCall.Any())
+        {
+            throw new Exception("No calls found in the database.");
+        }
+
+        if (!listAssignment.Any())
+        {
+            throw new Exception("No assignments found in the database.");
+        }
+
+        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);  // ודא שהמתנדב נמצא כראוי
+
+        // בדוק אם המתנדב קיים לפני שממשיך
+        if (volunteer == null)
+        {
+            throw new ArgumentException("Volunteer not found.");
+        }
 
         // שליפת מיקום המתנדב
         string volunteerAddress = volunteer.Location;
 
-        // קריאה לפעולה האסינכרונית בצורה סינכרונית
-        double[] volunteerLocation = Tools.GetGeolocationCoordinatesAsync(volunteerAddress).Result;
+        // אם לא נמצאה כתובת המתנדב, יש להחזיר מיידית
+        if (string.IsNullOrWhiteSpace(volunteerAddress))
+        {
+            throw new ArgumentException("Volunteer location is not provided.");
+        }
 
-        // שאר הקוד נשאר ללא שינוי
+        // קריאה אסינכרונית לפעולה
+        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+
+        if (volunteerLocation == null || volunteerLocation.Length != 2)
+        {
+            throw new Exception("Invalid location data received for the volunteer.");
+        }
+
+        // סינון הקריאות הפתוחות על פי מצב הקריאה
         var openCalls = from call in listCall
                         let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
-                        let status = CallManager.CheckStatus(assignment, call, null)
+                        let status = Tools.CheckStatus(assignment, call, null)
                         where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
                         select new BO.OpenCallInList
                         {
@@ -424,11 +452,13 @@ internal class CallImplementation : ICall
                             DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], call.Latitude, call.Longitude)
                         };
 
+        // סינון על פי סוג הקריאה אם יש
         if (filter.HasValue)
         {
             openCalls = openCalls.Where(call => call.CallType == filter.Value);
         }
 
+        // מיון הקריאות לפי מה שנדרש
         openCalls = toSort switch
         {
             BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
@@ -440,9 +470,8 @@ internal class CallImplementation : ICall
             _ => openCalls.OrderBy(call => call.Id)
         };
 
-        return openCalls.ToList();
+        return openCalls.ToList();  // החזרת הרשימה הממוינת
     }
-
     public void UpdateCallAsCompleted(int volunteerId, int assignmentId)
     {
         try

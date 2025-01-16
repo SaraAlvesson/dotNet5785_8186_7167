@@ -2,412 +2,402 @@
 <ArrayOfCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Call>
     <Id>1</Id>
-    <Adress>Davidka Square, Jerusalem, Israel</Adress>
-    <Latitude>31.763445</Latitude>
-    <Longitude>35.211122</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
-    <MaxTime>2025-01-15T14:25:19</MaxTime>
+    <Adress>Rehavia, Jerusalem, Israel</Adress>
+    <Latitude>31.770648</Latitude>
+    <Longitude>35.207551</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
   </Call>
   <Call>
     <Id>2</Id>
-    <Adress>Ben Yehuda Street, Jerusalem, Israel</Adress>
-    <Latitude>31.768004</Latitude>
-    <Longitude>35.21371</Longitude>
-    <OpenTime>2025-01-15T14:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T18:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>3</Id>
-    <Adress>City Center, Jerusalem, Israel</Adress>
-    <Latitude>31.768245</Latitude>
-    <Longitude>35.213458</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>4</Id>
-    <Adress>Talpiot Industrial Zone, Jerusalem, Israel</Adress>
-    <Latitude>31.748036</Latitude>
-    <Longitude>35.214887</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T20:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>5</Id>
-    <Adress>Zion Square, Jerusalem, Israel</Adress>
-    <Latitude>31.766071</Latitude>
-    <Longitude>35.222359</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>6</Id>
-    <Adress>Rehavia, Jerusalem, Israel</Adress>
-    <Latitude>31.770648</Latitude>
-    <Longitude>35.207551</Longitude>
-    <OpenTime>2025-01-15T14:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>7</Id>
-    <Adress>Ein Karem, Jerusalem, Israel</Adress>
-    <Latitude>31.762759</Latitude>
-    <Longitude>35.167712</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
-    <MaxTime>2025-01-15T14:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>8</Id>
-    <Adress>City Center, Jerusalem, Israel</Adress>
-    <Latitude>31.768245</Latitude>
-    <Longitude>35.213458</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>9</Id>
-    <Adress>Kiryat Moshe, Jerusalem, Israel</Adress>
-    <Latitude>31.770064</Latitude>
-    <Longitude>35.203555</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>10</Id>
-    <Adress>Old City, Jerusalem, Israel</Adress>
-    <Latitude>31.768319</Latitude>
-    <Longitude>35.213745</Longitude>
-    <OpenTime>2025-01-15T14:25:19</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>11</Id>
-    <Adress>Rehavia, Jerusalem, Israel</Adress>
-    <Latitude>31.770648</Latitude>
-    <Longitude>35.207551</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime>2025-01-14T23:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>12</Id>
-    <Adress>Jaffa Road, Jerusalem, Israel</Adress>
-    <Latitude>31.772611</Latitude>
-    <Longitude>35.2275</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>13</Id>
-    <Adress>Hebron Road, Jerusalem, Israel</Adress>
-    <Latitude>31.7409</Latitude>
-    <Longitude>35.2209</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>14</Id>
-    <Adress>Ben Yehuda Street, Jerusalem, Israel</Adress>
-    <Latitude>31.768004</Latitude>
-    <Longitude>35.21371</Longitude>
-    <OpenTime>2025-01-15T15:25:19</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
-    <MaxTime>2025-01-15T19:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>15</Id>
     <Adress>Yad Vashem, Jerusalem, Israel</Adress>
     <Latitude>31.774387</Latitude>
     <Longitude>35.1758</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
-    <MaxTime>2025-01-15T20:25:19</MaxTime>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime xsi:nil="true" />
   </Call>
   <Call>
-    <Id>16</Id>
-    <Adress>Mount of Olives, Jerusalem, Israel</Adress>
-    <Latitude>31.776772</Latitude>
-    <Longitude>35.261929</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
+    <Id>3</Id>
+    <Adress>Ben Yehuda Street, Jerusalem, Israel</Adress>
+    <Latitude>31.768004</Latitude>
+    <Longitude>35.21371</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
   </Call>
   <Call>
-    <Id>17</Id>
-    <Adress>The Knesset, Jerusalem, Israel</Adress>
-    <Latitude>31.768898</Latitude>
-    <Longitude>35.225121</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>18</Id>
-    <Adress>Zion Square, Jerusalem, Israel</Adress>
-    <Latitude>31.766071</Latitude>
-    <Longitude>35.222359</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
-    <MaxTime>2025-01-15T19:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>19</Id>
-    <Adress>Sacher Park, Jerusalem, Israel</Adress>
-    <Latitude>31.760126</Latitude>
-    <Longitude>35.217681</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>20</Id>
-    <Adress>Zion Gate, Jerusalem, Israel</Adress>
-    <Latitude>31.773584</Latitude>
-    <Longitude>35.23309</Longitude>
-    <OpenTime>2025-01-15T14:25:19</OpenTime>
+    <Id>4</Id>
+    <Adress>Old City, Jerusalem, Israel</Adress>
+    <Latitude>31.768319</Latitude>
+    <Longitude>35.213745</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
     <CallType>PreparingFood</CallType>
     <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
     <MaxTime xsi:nil="true" />
   </Call>
   <Call>
-    <Id>21</Id>
+    <Id>5</Id>
+    <Adress>Church of the Holy Sepulchre, Jerusalem, Israel</Adress>
+    <Latitude>31.778159</Latitude>
+    <Longitude>35.230828</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>6</Id>
     <Adress>Mamilla Mall, Jerusalem, Israel</Adress>
     <Latitude>31.776788</Latitude>
     <Longitude>35.23357</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>7</Id>
+    <Adress>Sultan Suleiman Street, Jerusalem, Israel</Adress>
+    <Latitude>31.781348</Latitude>
+    <Longitude>35.224762</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>8</Id>
+    <Adress>Davidka Square, Jerusalem, Israel</Adress>
+    <Latitude>31.763445</Latitude>
+    <Longitude>35.211122</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime xsi:nil="true" />
+  </Call>
+  <Call>
+    <Id>9</Id>
+    <Adress>King David Street, Jerusalem, Israel</Adress>
+    <Latitude>31.766828</Latitude>
+    <Longitude>35.216717</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>10</Id>
+    <Adress>Western Wall, Jerusalem, Israel</Adress>
+    <Latitude>31.776694</Latitude>
+    <Longitude>35.234524</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>11</Id>
+    <Adress>Tzefaniah Street, Jerusalem, Israel</Adress>
+    <Latitude>31.75987</Latitude>
+    <Longitude>35.205675</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-15T17:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>12</Id>
+    <Adress>Mount Scopus, Jerusalem, Israel</Adress>
+    <Latitude>31.784407</Latitude>
+    <Longitude>35.23545</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>13</Id>
+    <Adress>French Hill, Jerusalem, Israel</Adress>
+    <Latitude>31.788697</Latitude>
+    <Longitude>35.232106</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T17:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>14</Id>
+    <Adress>Nachlaot, Jerusalem, Israel</Adress>
+    <Latitude>31.77153</Latitude>
+    <Longitude>35.21756</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>15</Id>
+    <Adress>Sultan Suleiman Street, Jerusalem, Israel</Adress>
+    <Latitude>31.781348</Latitude>
+    <Longitude>35.224762</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T20:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>16</Id>
+    <Adress>Zion Square, Jerusalem, Israel</Adress>
+    <Latitude>31.766071</Latitude>
+    <Longitude>35.222359</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime xsi:nil="true" />
+  </Call>
+  <Call>
+    <Id>17</Id>
+    <Adress>Givat Ram, Jerusalem, Israel</Adress>
+    <Latitude>31.783134</Latitude>
+    <Longitude>35.204942</Longitude>
+    <OpenTime>2025-01-15T15:28:37</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>18</Id>
+    <Adress>Rehavia, Jerusalem, Israel</Adress>
+    <Latitude>31.770214</Latitude>
+    <Longitude>35.210789</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>19</Id>
+    <Adress>Alrov Mamilla Mall, Jerusalem, Israel</Adress>
+    <Latitude>31.776948</Latitude>
+    <Longitude>35.233613</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>20</Id>
+    <Adress>Givat Shaul, Jerusalem, Israel</Adress>
+    <Latitude>31.747872</Latitude>
+    <Longitude>35.206056</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T15:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>21</Id>
+    <Adress>Binyanei Hauma, Jerusalem, Israel</Adress>
+    <Latitude>31.764568</Latitude>
+    <Longitude>35.198928</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
   </Call>
   <Call>
     <Id>22</Id>
-    <Adress>Talpiot Industrial Zone, Jerusalem, Israel</Adress>
-    <Latitude>31.748036</Latitude>
-    <Longitude>35.214887</Longitude>
-    <OpenTime>2025-01-15T15:25:19</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <Adress>Zion Square, Jerusalem, Israel</Adress>
+    <Latitude>31.766071</Latitude>
+    <Longitude>35.222359</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
     <MaxTime xsi:nil="true" />
   </Call>
   <Call>
     <Id>23</Id>
-    <Adress>Ein Karem, Jerusalem, Israel</Adress>
-    <Latitude>31.762759</Latitude>
-    <Longitude>35.167712</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
+    <Adress>Zion Gate, Jerusalem, Israel</Adress>
+    <Latitude>31.773584</Latitude>
+    <Longitude>35.23309</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-15T17:28:37</MaxTime>
   </Call>
   <Call>
     <Id>24</Id>
     <Adress>Rehavia, Jerusalem, Israel</Adress>
     <Latitude>31.770648</Latitude>
     <Longitude>35.207551</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-01-15T20:28:37</MaxTime>
   </Call>
   <Call>
     <Id>25</Id>
-    <Adress>French Hill, Jerusalem, Israel</Adress>
-    <Latitude>31.788697</Latitude>
-    <Longitude>35.232106</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
+    <Adress>Mount Scopus, Jerusalem, Israel</Adress>
+    <Latitude>31.784407</Latitude>
+    <Longitude>35.23545</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
   </Call>
   <Call>
     <Id>26</Id>
-    <Adress>Givat Ram, Jerusalem, Israel</Adress>
-    <Latitude>31.783134</Latitude>
-    <Longitude>35.204942</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime>2025-01-15T14:25:19</MaxTime>
+    <Adress>Nachlaot, Jerusalem, Israel</Adress>
+    <Latitude>31.77153</Latitude>
+    <Longitude>35.21756</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T20:28:37</MaxTime>
   </Call>
   <Call>
     <Id>27</Id>
-    <Adress>Western Wall, Jerusalem, Israel</Adress>
-    <Latitude>31.776694</Latitude>
-    <Longitude>35.234524</Longitude>
-    <OpenTime>2025-01-15T15:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime>2025-01-15T17:25:19</MaxTime>
+    <Adress>Ein Kerem, Jerusalem, Israel</Adress>
+    <Latitude>31.762911</Latitude>
+    <Longitude>35.161344</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
   </Call>
   <Call>
     <Id>28</Id>
-    <Adress>Davidka Square, Jerusalem, Israel</Adress>
-    <Latitude>31.763445</Latitude>
-    <Longitude>35.211122</Longitude>
-    <OpenTime>2025-01-15T14:25:19</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
+    <Adress>The Knesset, Jerusalem, Israel</Adress>
+    <Latitude>31.768898</Latitude>
+    <Longitude>35.225121</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
   </Call>
   <Call>
     <Id>29</Id>
-    <Adress>Church of the Holy Sepulchre, Jerusalem, Israel</Adress>
-    <Latitude>31.778159</Latitude>
-    <Longitude>35.230828</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>30</Id>
-    <Adress>Yad Vashem, Jerusalem, Israel</Adress>
-    <Latitude>31.774387</Latitude>
-    <Longitude>35.1758</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime>2025-01-15T19:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>31</Id>
-    <Adress>King David Street, Jerusalem, Israel</Adress>
-    <Latitude>31.766828</Latitude>
-    <Longitude>35.216717</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <Adress>Rehavia, Jerusalem, Israel</Adress>
+    <Latitude>31.770648</Latitude>
+    <Longitude>35.207551</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
     <MaxTime xsi:nil="true" />
   </Call>
   <Call>
+    <Id>30</Id>
+    <Adress>Gilo, Jerusalem, Israel</Adress>
+    <Latitude>31.748887</Latitude>
+    <Longitude>35.170544</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>31</Id>
+    <Adress>Emek Refaim, Jerusalem, Israel</Adress>
+    <Latitude>31.764424</Latitude>
+    <Longitude>35.206598</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T15:28:37</MaxTime>
+  </Call>
+  <Call>
     <Id>32</Id>
-    <Adress>Sultan Suleiman Street, Jerusalem, Israel</Adress>
-    <Latitude>31.781348</Latitude>
-    <Longitude>35.224762</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
+    <Adress>Rehavia, Jerusalem, Israel</Adress>
+    <Latitude>31.770648</Latitude>
+    <Longitude>35.207551</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
   </Call>
   <Call>
     <Id>33</Id>
-    <Adress>Safra Square, Jerusalem, Israel</Adress>
-    <Latitude>31.768594</Latitude>
-    <Longitude>35.211436</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
-    <MaxTime>2025-01-15T18:25:19</MaxTime>
+    <Adress>Jaffa Road, Jerusalem, Israel</Adress>
+    <Latitude>31.772611</Latitude>
+    <Longitude>35.2275</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-15T17:28:37</MaxTime>
   </Call>
   <Call>
     <Id>34</Id>
-    <Adress>Alrov Mamilla Mall, Jerusalem, Israel</Adress>
-    <Latitude>31.776948</Latitude>
-    <Longitude>35.233613</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
+    <Adress>Teddy Stadium, Jerusalem, Israel</Adress>
+    <Latitude>31.760424</Latitude>
+    <Longitude>35.188991</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
     <CallType>PackingSupplies</CallType>
     <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T17:25:19</MaxTime>
+    <MaxTime xsi:nil="true" />
   </Call>
   <Call>
     <Id>35</Id>
-    <Adress>Church of the Holy Sepulchre, Jerusalem, Israel</Adress>
-    <Latitude>31.778159</Latitude>
-    <Longitude>35.230828</Longitude>
-    <OpenTime>2025-01-15T15:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime>2025-01-15T17:25:19</MaxTime>
+    <Adress>Western Wall, Jerusalem, Israel</Adress>
+    <Latitude>31.776694</Latitude>
+    <Longitude>35.234524</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-01-15T18:28:37</MaxTime>
   </Call>
   <Call>
     <Id>36</Id>
-    <Adress>City Center, Jerusalem, Israel</Adress>
-    <Latitude>31.768245</Latitude>
-    <Longitude>35.213458</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
-    <MaxTime>2025-01-15T19:25:19</MaxTime>
+    <Adress>Kiryat Moshe, Jerusalem, Israel</Adress>
+    <Latitude>31.770064</Latitude>
+    <Longitude>35.203555</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-15T04:28:37</MaxTime>
   </Call>
   <Call>
     <Id>37</Id>
-    <Adress>Talpiot Industrial Zone, Jerusalem, Israel</Adress>
-    <Latitude>31.748036</Latitude>
-    <Longitude>35.214887</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T14:25:19</MaxTime>
+    <Adress>Givat Ram, Jerusalem, Israel</Adress>
+    <Latitude>31.783134</Latitude>
+    <Longitude>35.204942</Longitude>
+    <OpenTime>2025-01-15T14:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T16:28:37</MaxTime>
   </Call>
   <Call>
     <Id>38</Id>
-    <Adress>Sultan Suleiman Street, Jerusalem, Israel</Adress>
-    <Latitude>31.781348</Latitude>
-    <Longitude>35.224762</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
+    <Adress>Givat Shaul, Jerusalem, Israel</Adress>
+    <Latitude>31.747872</Latitude>
+    <Longitude>35.206056</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-15T21:28:37</MaxTime>
   </Call>
   <Call>
     <Id>39</Id>
     <Adress>Kiryat Moshe, Jerusalem, Israel</Adress>
     <Latitude>31.770064</Latitude>
     <Longitude>35.203555</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
     <CallType>FixingEquipment</CallType>
     <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>40</Id>
-    <Adress>King David Street, Jerusalem, Israel</Adress>
-    <Latitude>31.766828</Latitude>
-    <Longitude>35.216717</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
-    <MaxTime>2025-01-15T05:25:19</MaxTime>
+    <MaxTime>2025-01-15T15:28:37</MaxTime>
   </Call>
   <Call>
     <Id>41</Id>
-    <Adress>Gilo, Jerusalem, Israel</Adress>
-    <Latitude>31.748887</Latitude>
-    <Longitude>35.170544</Longitude>
-    <OpenTime>2025-01-15T14:25:19</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <Adress>Jabotinsky Street, Jerusalem, Israel</Adress>
+    <Latitude>31.759996</Latitude>
+    <Longitude>35.201378</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
     <MaxTime xsi:nil="true" />
   </Call>
   <Call>
@@ -415,89 +405,99 @@
     <Adress>Alrov Mamilla Mall, Jerusalem, Israel</Adress>
     <Latitude>31.776948</Latitude>
     <Longitude>35.233613</Longitude>
-    <OpenTime>2025-01-15T15:25:19</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
-    <MaxTime>2025-01-15T19:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>43</Id>
-    <Adress>Beit Hakerem, Jerusalem, Israel</Adress>
-    <Latitude>31.758071</Latitude>
-    <Longitude>35.185407</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime>2025-01-15T14:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>44</Id>
-    <Adress>Ben Yehuda Street, Jerusalem, Israel</Adress>
-    <Latitude>31.768004</Latitude>
-    <Longitude>35.21371</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
-    <MaxTime>2025-01-15T20:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>45</Id>
-    <Adress>Mount of Olives, Jerusalem, Israel</Adress>
-    <Latitude>31.776772</Latitude>
-    <Longitude>35.261929</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
     <CallType>FixingEquipment</CallType>
     <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
-    <MaxTime>2025-01-15T15:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>46</Id>
-    <Adress>King David Street, Jerusalem, Israel</Adress>
-    <Latitude>31.766828</Latitude>
-    <Longitude>35.216717</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
-    <MaxTime>2025-01-15T17:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>47</Id>
-    <Adress>Sultan Suleiman Street, Jerusalem, Israel</Adress>
-    <Latitude>31.781348</Latitude>
-    <Longitude>35.224762</Longitude>
-    <OpenTime>2025-01-15T16:25:19</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
-    <MaxTime>2025-01-15T20:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>48</Id>
-    <Adress>French Hill, Jerusalem, Israel</Adress>
-    <Latitude>31.788697</Latitude>
-    <Longitude>35.232106</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
-  </Call>
-  <Call>
-    <Id>49</Id>
-    <Adress>Yemin Moshe, Jerusalem, Israel</Adress>
-    <Latitude>31.761394</Latitude>
-    <Longitude>35.234779</Longitude>
-    <OpenTime>2025-01-15T12:25:19</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
     <MaxTime xsi:nil="true" />
   </Call>
   <Call>
+    <Id>43</Id>
+    <Adress>Ein Kerem, Jerusalem, Israel</Adress>
+    <Latitude>31.762911</Latitude>
+    <Longitude>35.161344</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T20:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>45</Id>
+    <Adress>Binyanei Hauma, Jerusalem, Israel</Adress>
+    <Latitude>31.764568</Latitude>
+    <Longitude>35.198928</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>46</Id>
+    <Adress>Alrov Mamilla Mall, Jerusalem, Israel</Adress>
+    <Latitude>31.776948</Latitude>
+    <Longitude>35.233613</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T21:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>47</Id>
+    <Adress>Gilo, Jerusalem, Israel</Adress>
+    <Latitude>31.748887</Latitude>
+    <Longitude>35.170544</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-01-14T21:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>48</Id>
+    <Adress>Hanevi'im Street, Jerusalem, Israel</Adress>
+    <Latitude>31.783268</Latitude>
+    <Longitude>35.215372</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-01-15T20:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>49</Id>
+    <Adress>Mount Scopus, Jerusalem, Israel</Adress>
+    <Latitude>31.784407</Latitude>
+    <Longitude>35.23545</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-15T15:28:37</MaxTime>
+  </Call>
+  <Call>
     <Id>50</Id>
-    <Adress>Beit Hakerem, Jerusalem, Israel</Adress>
-    <Latitude>31.758071</Latitude>
-    <Longitude>35.185407</Longitude>
-    <OpenTime>2025-01-15T13:25:19</OpenTime>
-    <CallType>MedicalAssistance</CallType>
+    <Adress>Givat Shaul, Jerusalem, Israel</Adress>
+    <Latitude>31.747872</Latitude>
+    <Longitude>35.206056</Longitude>
+    <OpenTime>2025-01-15T17:28:37</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-15T19:28:37</MaxTime>
+  </Call>
+  <Call>
+    <Id>44</Id>
+    <Adress>Talpiot Industrial Zone, Jerusalem, Israel</Adress>
+    <Latitude>31.748036</Latitude>
+    <Longitude>35.214887</Longitude>
+    <OpenTime>2025-01-15T16:28:37</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-23T00:00:00</MaxTime>
+  </Call>
+  <Call>
+    <Id>40</Id>
+    <Adress>Shimon Peres Park, Jerusalem, Israel</Adress>
+    <Latitude>31.75864</Latitude>
+    <Longitude>35.220455</Longitude>
+    <OpenTime>2025-01-15T13:28:37</OpenTime>
+    <CallType>TransportingFood</CallType>
     <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
-    <MaxTime>2025-01-15T16:25:19</MaxTime>
+    <MaxTime>2025-01-15T15:28:37</MaxTime>
   </Call>
 </ArrayOfCall>
