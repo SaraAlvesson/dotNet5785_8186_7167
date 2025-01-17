@@ -443,7 +443,8 @@ internal class Program
             Console.Write("Enter your choice: ");
 
             // Parse user input and validate it
-            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > 12)
+           
+               if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > 12)
             {
                 Console.WriteLine("Invalid choice, try again."); // Notify user of invalid input
                 continue;
@@ -515,21 +516,25 @@ internal class Program
                         s_bl.Call.AddCall(CallidToAdd);
                         Console.WriteLine("Call Added:");
                         break;
+                    case 7:
 
+
+
+
+
+                        break;
+                        //////////////////////////////////////////////////////////
                     case 8:
                         Console.WriteLine("Volunteer ID: ");
-                        if (!int.TryParse(Console.ReadLine(), out int volId))
-                        {
-                            Console.WriteLine("Invalid volunteer ID. Please enter a valid number.");
-                            break;
-                        }
+                        int idCall1 = int.Parse(Console.ReadLine());
 
-                        Console.WriteLine("Enter Call Type to filter (PreparingFood, TransportingFood, FixingEquipment, ProvidingShelter, TransportAssistance, MedicalAssistance, PackingSupplies, none, or 'null'):");
+                        Console.WriteLine("Enter Call Type to filter (PreparingFood,  EmotionalSupport,TransportingFood, FixingEquipment, ProvidingShelter, TransportAssistance, MedicalAssistance, PackingSupplies, none, or 'null'):");
                         string? cTypeInput = Console.ReadLine();
 
                         Console.WriteLine("Enter Open Call Field to sort (ID, CallType, VerbDesc, Address, OpenTime, MaxFinishTime, DistanceOfCall):");
                         string? OpenCallsortInput = Console.ReadLine();
 
+                        // המרת הקלט ל-enum
                         Enums.CallTypeEnum? cTypeEnum = cTypeInput?.ToLower() == "null"
                             ? null
                             : Enum.TryParse(typeof(Enums.CallTypeEnum), cTypeInput, true, out var callResult)
@@ -541,14 +546,20 @@ internal class Program
                             : Enum.TryParse(typeof(Enums.OpenCallEnum), OpenCallsortInput, true, out var sortFResult)
                                 ? (Enums.OpenCallEnum?)sortFResult
                                 : null;
-
-                        IEnumerable<BO.OpenCallInList> openCalls = await s_bl.Call.GetVolunteerOpenCallsAsync(volId, cTypeEnum, sfEnum);
-
-                        Console.WriteLine("Volunteer opened Calls:");
-                        foreach (var item in openCalls)
+                        var calls = await s_bl.Call.GetVolunteerOpenCallsAsync(idCall1, cTypeEnum, sfEnum);
+                        Console.WriteLine("Open calls: ");
+                        if (!calls.Any())
                         {
-                            Console.WriteLine(item);
+                            Console.WriteLine("No open calls.");
                         }
+                        else
+                        {
+                            foreach (var call1 in calls)
+                            {
+                                Console.WriteLine(call1);
+                            }
+                        }
+
                         break;
                     case 9:
                         Console.WriteLine("Enter volunteer Id and assignment Id of the call you want to update as completed");

@@ -92,6 +92,53 @@ namespace Helpers
 
             return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל אם לא בטיפול
         }
+        internal static BO.Enums.CalltStatusEnum CheckStatusCalls(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
+        {
+            // טיפול במקרה שבו doAssignment או doCall הם null
+            if (doAssignment == null || doCall == null)
+            {
+                return BO.Enums.CalltStatusEnum.UNKNOWN; // לא ניתן להחזיר מצב אם הנתונים חסרים
+            }
+
+            // אם הקריאה לא נמצאת בטיפול כרגע
+            if (doAssignment.VolunteerId == null)
+            {
+                // אם הקריאה מתקרבת לזמן סיום הדרוש לה
+                if (doCall.MaxTime.HasValue)
+                {
+                    TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+                    if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
+                    {
+                        return BO.Enums.CalltStatusEnum.EXPIRED; // פג תוקף
+                    }
+                    else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
+                    {
+                        return BO.Enums.CalltStatusEnum.CallAlmostOver; // פתוחה בסיכון
+                    }
+                }
+
+                return BO.Enums.CalltStatusEnum.OPEN; // קריאה פתוחה
+            }
+
+            // אם הקריאה בטיפול כרגע על ידי מתנדב
+            if (doCall.MaxTime.HasValue)
+            {
+                TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+                if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
+                {
+                    return BO.Enums.CalltStatusEnum.EXPIRED; // פג תוקף גם אם היא בטיפול
+                }
+                else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
+                {
+                    return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // בטיפול בסיכון
+                }
+            }
+
+            return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // קריאה בטיפול
+        }
+
 
         // The generic method works for any object, returning a string of its properties
         public static string ToStringProperty<T>(this T t)
@@ -121,28 +168,33 @@ namespace Helpers
         /// </remarks>
         internal static async Task<double[]> GetGeolocationCoordinatesAsync(string address)
         {
-            // בדוק אם הכתובת ריקה
+            // בדיקת תקינות של הכתובת
             if (string.IsNullOrWhiteSpace(address))
             {
                 throw new ArgumentException("Address cannot be empty or null.", nameof(address));
             }
 
-            string apiKey = "678694850f91d165965268skuda91dd";  // המפתח שלך החדש
-            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";  // עדכון ה-URL ל-API הנכון
+            string apiKey = "678694850f91d165965268skuda91dd"; // המפתח שלך
+            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}"; // URL של Forward Geocoding
 
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    // שליחת הבקשה וקבלת התשובה
+                    // שליחת הבקשה לשרת
                     HttpResponseMessage response = await client.GetAsync(requestUrl);
 
+                    // בדיקה אם התשובה תקינה
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new Exception($"Request failed with status: {response.StatusCode}");
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
                     }
 
+                    // קריאת התשובה
                     string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    // ניתוח התשובה
                     var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
 

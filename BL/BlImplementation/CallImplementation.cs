@@ -394,13 +394,13 @@ internal class CallImplementation : ICall
     }
 
     public async Task<IEnumerable<BO.OpenCallInList>> GetVolunteerOpenCallsAsync(
-    int volunteerId,
-    BO.Enums.CallTypeEnum? filter = null,
-    BO.Enums.OpenCallEnum? toSort = null)
+      int volunteerId,
+      BO.Enums.CallTypeEnum? filter = null,
+      BO.Enums.OpenCallEnum? toSort = null)
     {
         // שליפת רשימות הקריאות והשיוכים
-        var listCall = _dal.call.ReadAll();  // ודא שהקריאות נטענות כראוי
-        var listAssignment = _dal.assignment.ReadAll();  // ודא ששיוכים נטענים כראוי
+        var listCall = _dal.call.ReadAll();
+        var listAssignment = _dal.assignment.ReadAll();
 
         if (!listCall.Any())
         {
@@ -412,9 +412,8 @@ internal class CallImplementation : ICall
             throw new Exception("No assignments found in the database.");
         }
 
-        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);  // ודא שהמתנדב נמצא כראוי
+        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);
 
-        // בדוק אם המתנדב קיים לפני שממשיך
         if (volunteer == null)
         {
             throw new ArgumentException("Volunteer not found.");
@@ -423,24 +422,31 @@ internal class CallImplementation : ICall
         // שליפת מיקום המתנדב
         string volunteerAddress = volunteer.Location;
 
-        // אם לא נמצאה כתובת המתנדב, יש להחזיר מיידית
         if (string.IsNullOrWhiteSpace(volunteerAddress))
         {
             throw new ArgumentException("Volunteer location is not provided.");
         }
 
         // קריאה אסינכרונית לפעולה
-        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+        double[] volunteerLocation;
+        try
+        {
+            volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to fetch volunteer location: {ex.Message}");
+        }
 
         if (volunteerLocation == null || volunteerLocation.Length != 2)
         {
             throw new Exception("Invalid location data received for the volunteer.");
         }
 
-        // סינון הקריאות הפתוחות על פי מצב הקריאה
+        // סינון הקריאות הפתוחות
         var openCalls = from call in listCall
                         let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
-                        let status = Tools.CheckStatus(assignment, call, null)
+                        let status = Tools.CheckStatusCalls(assignment, call, null)
                         where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
                         select new BO.OpenCallInList
                         {
@@ -452,13 +458,25 @@ internal class CallImplementation : ICall
                             DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], call.Latitude, call.Longitude)
                         };
 
-        // סינון על פי סוג הקריאה אם יש
-        if (filter.HasValue)
+        // הדפסת הקריאות לפני הסינון
+        Console.WriteLine("Open Calls (before filter):");
+        foreach (var call in openCalls)
         {
-            openCalls = openCalls.Where(call => call.CallType == filter.Value);
+            Console.WriteLine($"ID: {call.Id}, Address: {call.Address}, Call Type: {call.CallType}, Distance: {call.DistanceOfCall}");
         }
 
-        // מיון הקריאות לפי מה שנדרש
+        // סינון לפי סוג הקריאה
+        if (filter.HasValue)
+        {
+            openCalls = openCalls.Where(call => call.CallType == filter.Value).ToList();
+            Console.WriteLine($"Filtered Calls (type: {filter.Value}): ");
+            foreach (var call in openCalls)
+            {
+                Console.WriteLine($"ID: {call.Id}, Address: {call.Address}, Call Type: {call.CallType}, Distance: {call.DistanceOfCall}");
+            }
+        }
+
+        // מיון הקריאות
         openCalls = toSort switch
         {
             BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
@@ -470,8 +488,17 @@ internal class CallImplementation : ICall
             _ => openCalls.OrderBy(call => call.Id)
         };
 
-        return openCalls.ToList();  // החזרת הרשימה הממוינת
+        // הדפסת הקריאות אחרי סינון ומיון
+        Console.WriteLine("Open Calls (after filter and sorting):");
+        foreach (var call in openCalls)
+        {
+            Console.WriteLine($"ID: {call.Id}, Address: {call.Address}, Call Type: {call.CallType}, Distance: {call.DistanceOfCall}");
+        }
+
+        // החזרת הרשימה הממוינת
+        return openCalls.ToList();
     }
+
     public void UpdateCallAsCompleted(int volunteerId, int assignmentId)
     {
         try
