@@ -16,24 +16,25 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <Label Content="Filter by Call Type:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <ComboBox Name="CallTypeFilter" Width="200" Margin="0,0,20,0" SelectionChanged="CallTypeFilter_SelectionChanged"
-                      ItemsSource="{Binding CallTypes}" SelectedItem="{Binding SelectedCallType}"/>
+                      ItemsSource="{Binding CallTypes}" SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"/>
 
             <Label Content="Sort by:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <ComboBox Name="SortByComboBox" Width="200" Margin="0,0,20,0" SelectionChanged="SortByComboBox_SelectionChanged"
-                      ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption}"/>
+                      ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}"/>
         </StackPanel>
 
         <!-- DataGrid for displaying closed call history -->
         <DataGrid Name="ClosedCallsDataGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" 
-                  CanUserSortColumns="True" AlternatingRowBackground="#F9F9F9" ItemsSource="{Binding ClosedCalls}">
+                  CanUserSortColumns="True" AlternatingRowBackground="#F9F9F9" 
+                  ItemsSource="{Binding ClosedCalls}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Call ID" Binding="{Binding Id}" Width="100"/>
                 <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="200"/>
                 <DataGridTextColumn Header="Call Type" Binding="{Binding CallType}" Width="150"/>
-                <DataGridTextColumn Header="Opening Time" Binding="{Binding OpeningTime}" Width="150"/>
+                <DataGridTextColumn Header="Opening Time" Binding="{Binding OpenTime}" Width="150"/>
                 <DataGridTextColumn Header="Treatment Start Time" Binding="{Binding TreatmentStartTime}" Width="150"/>
-                <DataGridTextColumn Header="Actual Completion Time" Binding="{Binding CompletionTime}" Width="150"/>
-                <DataGridTextColumn Header="Completion Type" Binding="{Binding CompletionType}" Width="150"/>
+                <DataGridTextColumn Header="Actual Completion Time" Binding="{Binding RealFinishTime}" Width="150"/>
+                <DataGridTextColumn Header="Completion Type" Binding="{Binding FinishAppointmentType}" Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

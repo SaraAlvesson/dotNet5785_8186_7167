@@ -343,11 +343,12 @@ internal class CallImplementation : ICall
         var listAssignment = _dal.assignment.ReadAll(a => a.VolunteerId == volunteerId);
         var listCall = _dal.call.ReadAll();
 
-
         var closedCalls = from item in listCall
                           let assignment = listAssignment
-                              .FirstOrDefault(s => s.CallId == item.Id && s.VolunteerId == volunteerId && s.FinishAppointmentType == FinishAppointmentType.SelfCancellation
-                              || s.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator || s.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired)// The appointment was canceled by the user.
+                              .FirstOrDefault(s => s.CallId == item.Id && s.VolunteerId == volunteerId &&
+                                                  (s.FinishAppointmentType == FinishAppointmentType.SelfCancellation ||
+                                                   s.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator ||
+                                                   s.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired))
                           where assignment != null
                           select new BO.ClosedCallInList
                           {
@@ -360,12 +361,13 @@ internal class CallImplementation : ICall
                               FinishAppointmentType = (BO.Enums.FinishAppointmentTypeEnum?)assignment.FinishAppointmentType,
                           };
 
-        // סינון ומיון כפי שהיה קודם
+        // סינון אם נדרש לפי סוג הקריאה
         if (filter.HasValue)
         {
             closedCalls = closedCalls.Where(call => call.CallType == filter.Value);
         }
 
+        // סינון ומיון לפי השדה שנבחר
         if (toSort.HasValue)
         {
             closedCalls = toSort switch
@@ -373,10 +375,10 @@ internal class CallImplementation : ICall
                 BO.Enums.ClosedCallFieldEnum.ID => closedCalls.OrderBy(call => call.Id),
                 BO.Enums.ClosedCallFieldEnum.Address => closedCalls.OrderBy(call => call.Address),
                 BO.Enums.ClosedCallFieldEnum.CallType => closedCalls.OrderBy(call => call.CallType),
-                BO.Enums.ClosedCallFieldEnum.OpenTime => closedCalls.OrderBy(call => call.TreatmentStartTime),
-                BO.Enums.ClosedCallFieldEnum.TreatmentStartTime => closedCalls.OrderBy(call => call.RealFinishTime),
-                BO.Enums.ClosedCallFieldEnum.RealFinishTime => closedCalls.OrderBy(call => call.FinishAppointmentType),
-                BO.Enums.ClosedCallFieldEnum.FinishAppointmentType => closedCalls.OrderBy(call => call.OpenTime.Date),
+                BO.Enums.ClosedCallFieldEnum.OpenTime => closedCalls.OrderBy(call => call.OpenTime),
+                BO.Enums.ClosedCallFieldEnum.TreatmentStartTime => closedCalls.OrderBy(call => call.TreatmentStartTime),
+                BO.Enums.ClosedCallFieldEnum.RealFinishTime => closedCalls.OrderBy(call => call.RealFinishTime),
+                BO.Enums.ClosedCallFieldEnum.FinishAppointmentType => closedCalls.OrderBy(call => call.FinishAppointmentType),
                 _ => closedCalls
             };
         }
@@ -387,6 +389,7 @@ internal class CallImplementation : ICall
 
         return closedCalls;
     }
+
 
 
     public async Task<IEnumerable<BO.OpenCallInList>> GetVolunteerOpenCallsAsync(

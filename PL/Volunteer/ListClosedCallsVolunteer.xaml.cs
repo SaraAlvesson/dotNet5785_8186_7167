@@ -1,58 +1,97 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace PL.Volunteer
 {
-    /// <summary>
-    /// Interaction logic for ListClosedCallsVolunteer.xaml
-    /// </summary>
-    public partial class ListClosedCallsVolunteer : Window
+    public partial class ListClosedCallsVolunteer : Window, INotifyPropertyChanged
     {
-        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get(); // גישה ל-BL
+        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        public List<BO.ClosedCallInList> ClosedCalls { get; set; } // רשימת הקריאות הסגורות
+        private List<BO.ClosedCallInList> _closedCalls;
+        public List<BO.ClosedCallInList> ClosedCalls
+        {
+            get => _closedCalls;
+            set
+            {
+                _closedCalls = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public string SelectedCallType { get; set; }
-        public string SelectedSortOption { get; set; }
-        private readonly int _volunteerId; // מזהה המתנדב
+        public List<string> CallTypes { get; } = Enum.GetNames(typeof(BO.Enums.CallTypeEnum)).ToList();
+        public List<string> SortOptions { get; } = Enum.GetNames(typeof(BO.Enums.ClosedCallFieldEnum)).ToList();
+
+        private string _selectedCallType;
+        public string SelectedCallType
+        {
+            get => _selectedCallType;
+            set
+            {
+                _selectedCallType = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        private string _selectedSortOption;
+        public string SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                _selectedSortOption = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        private readonly int _volunteerId;
 
         public ListClosedCallsVolunteer(int volunteerId)
         {
             InitializeComponent();
 
             _volunteerId = volunteerId;
-
-            // טעינת רשימת הקריאות ממקור נתונים
             ClosedCalls = LoadClosedCalls();
-
         }
 
         private List<BO.ClosedCallInList> LoadClosedCalls()
         {
-            // שימוש ב-BL לטעינת קריאות סגורות
             return s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList() ?? new List<BO.ClosedCallInList>();
         }
 
-        private void CallTypeFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ApplyFilters()
         {
-            // סינון הקריאות לפי סוג הקריאה
-            BO.Enums.CallTypeEnum? filter = Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedFilter)
-                ? parsedFilter
+            BO.Enums.CallTypeEnum? callTypeFilter = Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType)
+                ? parsedCallType
                 : (BO.Enums.CallTypeEnum?)null;
 
-            ClosedCallsDataGrid.ItemsSource = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, filter, null)?.ToList();
-        }
-
-        private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // מיון הקריאות לפי השדה שנבחר
             BO.Enums.ClosedCallFieldEnum? sortField = Enum.TryParse(SelectedSortOption, out BO.Enums.ClosedCallFieldEnum parsedSortField)
                 ? parsedSortField
                 : (BO.Enums.ClosedCallFieldEnum?)null;
 
-            ClosedCallsDataGrid.ItemsSource = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, sortField)?.ToList();
+            ClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, callTypeFilter, sortField)?.ToList();
+        }
+
+        private void CallTypeFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

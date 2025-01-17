@@ -330,13 +330,24 @@ public static class Initialization
                 int randFinish = s_rand.Next(0, 5);
                 switch (randFinish)
                 {
-                    case 0: finish = FinishAppointmentType.WasTreated; finishTime = s_dal.config.Clock; break;
-                    case 1: finish = FinishAppointmentType.SelfCancellation; finishTime = s_dal.config.Clock; break;
-                    case 2: finish = FinishAppointmentType.CancelingAnAdministrator; finishTime = s_dal.config.Clock; break;
-                    case 4: finish = FinishAppointmentType.WasTreated; finishTime = callToAssig.MaxTime?.AddMinutes(10); break;
+                    case 0:
+                        finish = FinishAppointmentType.WasTreated;
+                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        break;
+                    case 1:
+                        finish = FinishAppointmentType.SelfCancellation;
+                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        break;
+                    case 2:
+                        finish = FinishAppointmentType.CancelingAnAdministrator;
+                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        break;
+                    case 4:
+                        finish = FinishAppointmentType.CancellationHasExpired;
+                        finishTime = callToAssig.MaxTime?.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        break;
                 }
             }
-
 
             // יצירת הקצאה
             int newAssignmentId = s_dal.config.NextAssignmentId;
@@ -345,7 +356,7 @@ public static class Initialization
                 Id = newAssignmentId,
                 CallId = callToAssig.Id,
                 VolunteerId = volunteerToAssig.Id,
-                AppointmentTime = s_dal!.config.Clock,
+                AppointmentTime = s_dal!.config.Clock.AddMinutes(s_rand.Next(5, 31)), // הוספת אקראי לזמן תחילת הייעוץ
                 FinishAppointmentTime = finishTime,
                 FinishAppointmentType = finish,
             });
@@ -357,6 +368,5 @@ public static class Initialization
             }
         }
     }
-
 
 }
