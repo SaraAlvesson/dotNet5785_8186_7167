@@ -15,20 +15,6 @@
     <MaxDistance>5</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>771265274</Id>
-    <FullName>Daniel Green</FullName>
-    <PhoneNumber>0576265407</PhoneNumber>
-    <Email>volunteer6@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>$R3EZtrrZXXR</Password>
-    <Location>Mahane Yehuda Market, Jerusalem, Israel</Location>
-    <Latitude>31.774524</Latitude>
-    <Longitude>35.220499</Longitude>
-    <MaxDistance>6</MaxDistance>
-  </Volunteer>
-  <Volunteer>
     <Id>271121567</Id>
     <FullName>David Weiss</FullName>
     <PhoneNumber>0528453759</PhoneNumber>
@@ -195,5 +181,33 @@
     <Latitude>31.774387</Latitude>
     <Longitude>35.1758</Longitude>
     <MaxDistance>10</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>328177167</Id>
+    <FullName>nama blau</FullName>
+    <PhoneNumber>0584448569</PhoneNumber>
+    <Email>namablau@gmail.com</Email>
+    <DistanceType>AerialDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>123456</Password>
+    <Location>Jaffa Gate, Jerusalem, Israel</Location>
+    <Latitude />
+    <Longitude />
+    <MaxDistance />
+  </Volunteer>
+  <Volunteer>
+    <Id>771265274</Id>
+    <FullName>Daniel Greeny</FullName>
+    <PhoneNumber>0576265407</PhoneNumber>
+    <Email>volunteer6@gmail.com</Email>
+    <DistanceType>AerialDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>$R3EZtrrZXXR</Password>
+    <Location>Mahane Yehuda Market, Jerusalem, Israel</Location>
+    <Latitude>31.774524</Latitude>
+    <Longitude>35.220499</Longitude>
+    <MaxDistance>6</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>

@@ -36,7 +36,7 @@ namespace PL
                 }
 
                 // סגירת חלון ההתחברות
-                this.Close();
+               // this.Close();
             }
             catch (Exception ex)
             {
