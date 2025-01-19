@@ -422,7 +422,7 @@ internal class Program
     }
 
     // תפריט ניהול קריאות
-    private static async Task RunCallMenu()
+    private static void RunCallMenu()
     {
         while (true)
         {
@@ -443,6 +443,7 @@ internal class Program
             Console.Write("Enter your choice: ");
 
             // Parse user input and validate it
+
             if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > 12)
             {
                 Console.WriteLine("Invalid choice, try again."); // Notify user of invalid input
@@ -515,41 +516,89 @@ internal class Program
                         s_bl.Call.AddCall(CallidToAdd);
                         Console.WriteLine("Call Added:");
                         break;
+                    case 7:
+                        Console.WriteLine("Volunteer ID: ");
+                        int volunteerId = int.Parse(Console.ReadLine());  // Renamed to avoid conflict
+
+                        Console.WriteLine("Enter Call Type to filter (PreparingFood, EmotionalSupport, TransportingFood, FixingEquipment, ProvidingShelter, TransportAssistance, MedicalAssistance, PackingSupplies, none, or 'null'):");
+                        string? callTypeInput = Console.ReadLine();  // Renamed to avoid conflict
+
+                        Console.WriteLine("Enter close Call Field to sort (ID, CallType, VerbDesc, Address, OpenTime, MaxFinishTime, DistanceOfCall):");
+                        string? sortFieldInput = Console.ReadLine();  // Renamed to avoid conflict
+
+                        // Converting the call type input to enum
+                        Enums.CallTypeEnum? callTypeEnum = callTypeInput?.ToLower() == "null"
+                            ? null
+                            : Enum.TryParse(typeof(Enums.CallTypeEnum), callTypeInput, true, out var callTypeResult)
+                                ? (Enums.CallTypeEnum?)callTypeResult
+                                : null;
+
+                        // Converting the sort field input to enum
+                        Enums.ClosedCallFieldEnum? sortFieldEnum = sortFieldInput?.ToLower() == "null"
+                            ? null
+                            : Enum.TryParse(typeof(Enums.ClosedCallFieldEnum), sortFieldInput, true, out var sortFieldResult)
+                                ? (Enums.ClosedCallFieldEnum?)sortFieldResult
+                                : null;
+
+                        var closedCalls = s_bl.Call.GetVolunteerClosedCalls(volunteerId, callTypeEnum, sortFieldEnum);  // Renamed to match method signature
+
+                        Console.WriteLine("Closed calls: ");
+                        if (!closedCalls.Any())
+                        {
+                            Console.WriteLine("No closed calls.");
+                        }
+                        else
+                        {
+                            foreach (var closedCall in closedCalls)  // Renamed to avoid conflict with 'call'
+                            {
+                                Console.WriteLine(closedCall);
+                            }
+                        }
+
+                        break;
 
                     case 8:
                         Console.WriteLine("Volunteer ID: ");
-                        if (!int.TryParse(Console.ReadLine(), out int volId))
-                        {
-                            Console.WriteLine("Invalid volunteer ID. Please enter a valid number.");
-                            break;
-                        }
+                        int volunteerIdOpen = int.Parse(Console.ReadLine());  // Renamed to avoid conflict
 
-                        Console.WriteLine("Enter Call Type to filter (PreparingFood, TransportingFood, FixingEquipment, ProvidingShelter, TransportAssistance, MedicalAssistance, PackingSupplies, none, or 'null'):");
-                        string? cTypeInput = Console.ReadLine();
+                        Console.WriteLine("Enter Call Type to filter (PreparingFood, EmotionalSupport, TransportingFood, FixingEquipment, ProvidingShelter, TransportAssistance, MedicalAssistance, PackingSupplies, none, or 'null'):");
+                        string? callTypeInputOpen = Console.ReadLine();  // Renamed to avoid conflict
 
                         Console.WriteLine("Enter Open Call Field to sort (ID, CallType, VerbDesc, Address, OpenTime, MaxFinishTime, DistanceOfCall):");
-                        string? OpenCallsortInput = Console.ReadLine();
+                        string? sortFieldInputOpen = Console.ReadLine();  // Renamed to avoid conflict
 
-                        Enums.CallTypeEnum? cTypeEnum = cTypeInput?.ToLower() == "null"
+                        // Converting the call type input to enum
+                        Enums.CallTypeEnum? callTypeEnumOpen = callTypeInputOpen?.ToLower() == "null"
                             ? null
-                            : Enum.TryParse(typeof(Enums.CallTypeEnum), cTypeInput, true, out var callResult)
-                                ? (Enums.CallTypeEnum?)callResult
+                            : Enum.TryParse(typeof(Enums.CallTypeEnum), callTypeInputOpen, true, out var callTypeResultOpen)
+                                ? (Enums.CallTypeEnum?)callTypeResultOpen
                                 : null;
 
-                        Enums.OpenCallEnum? sfEnum = OpenCallsortInput?.ToLower() == "null"
+                        // Converting the sort field input to enum
+                        Enums.OpenCallEnum? sortFieldEnumOpen = sortFieldInputOpen?.ToLower() == "null"
                             ? null
-                            : Enum.TryParse(typeof(Enums.OpenCallEnum), OpenCallsortInput, true, out var sortFResult)
-                                ? (Enums.OpenCallEnum?)sortFResult
+                            : Enum.TryParse(typeof(Enums.OpenCallEnum), sortFieldInputOpen, true, out var sortFieldResultOpen)
+                                ? (Enums.OpenCallEnum?)sortFieldResultOpen
                                 : null;
 
-                        IEnumerable<BO.OpenCallInList> openCalls = await s_bl.Call.GetVolunteerOpenCallsAsync(volId, cTypeEnum, sfEnum);
+                        var openCalls = s_bl.Call.GetOpenCallInLists(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // Renamed to match method signature
 
-                        Console.WriteLine("Volunteer opened Calls:");
-                        foreach (var item in openCalls)
+                        Console.WriteLine("Open calls: ");
+                        if (!openCalls.Any())
                         {
-                            Console.WriteLine(item);
+                            Console.WriteLine("No open calls.");
                         }
+                        else
+                        {
+                            foreach (var openCall in openCalls)  // Renamed to avoid conflict with 'call'
+                            {
+                                Console.WriteLine(openCall);
+                            }
+                        }
+
                         break;
+
+
                     case 9:
                         Console.WriteLine("Enter volunteer Id and assignment Id of the call you want to update as completed");
 
@@ -663,4 +712,3 @@ internal class Program
 
 
 
-// הפעלת התוכנית

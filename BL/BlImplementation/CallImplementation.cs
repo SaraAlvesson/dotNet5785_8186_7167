@@ -59,7 +59,7 @@ internal class CallImplementation : ICall
         // יצירת השאילתה הראשונית
         var callInList = from item in listCall
                          let assignments = listAssignment.Where(s => s.CallId == item.Id).OrderByDescending(s => s.AppointmentTime).ToList()
-                         let assignment = assignments.FirstOrDefault() // תיקון פה, לוקחים את הראשון
+                         let assignment = assignments.FirstOrDefault() // לוקחים את הראשון
                          let volunteer = assignment != null ? _dal.Volunteer.Read(assignment.VolunteerId) : null
                          let TempTimeToEnd = item.MaxTime - AdminManager.Now
                          select new BO.CallInList
@@ -70,10 +70,13 @@ internal class CallImplementation : ICall
                              OpenTime = item.OpenTime,
                              SumTimeUntilFinish = TempTimeToEnd > TimeSpan.Zero ? TempTimeToEnd : null,
                              LastVolunteerName = volunteer?.FullName,
-                             SumAppointmentTime = assignment?.FinishAppointmentType != null ? assignment.FinishAppointmentTime - item.OpenTime : null,
-                             Status = Tools.CheckStatus(assignment, item, null),
+                             SumAppointmentTime = assignment != null && assignment.FinishAppointmentTime.HasValue
+                                 ? assignment.FinishAppointmentTime.Value - item.OpenTime
+                                 : null,
+                             Status = Tools.CheckStatusCalls(assignment, item, null),
                              SumAssignment = assignments.Count() // ספירה מתוך הרשימה המלאה של Assignment
                          };
+
 
         // סינון לפי filter ו-toFilter אם יש
         if (filter.HasValue && toFilter != null)
@@ -180,7 +183,7 @@ internal class CallImplementation : ICall
         if (!volunteerId.HasValue)
             return null;
         var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);
-        return volunteer?.FullName; // מחזיר את שם המתנדב או null אם לא נמצא
+        return volunteer?.FullName; // מחזיר את שם המתנדב או null אם לא נמצא
     }
 
 
@@ -286,16 +289,16 @@ internal class CallImplementation : ICall
 
     public void AddCall(BO.Call call)
     {
-         
+
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
             CallManager.checkCallFormat(call);
             CallManager.checkCallLogic(call);
 
-        // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
-        var existingCall = _dal.call.Read(v => v.Id != call.Id)
-            ?? throw new DalDoesNotExistException($"Call with ID {call.Id} already exists.");
+            // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
+            var existingCall = _dal.call.Read(v => v.Id != call.Id)
+                ?? throw new DalDoesNotExistException($"Call with ID {call.Id} already exists.");
 
             // שלב 3: בדיקת כתובת ועדכון קואורדינטות
             //Task.Run(async () =>
@@ -340,14 +343,15 @@ internal class CallImplementation : ICall
 
     public IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
     {
-        // קריאות וקריאות מוקצות מתוך שכבת ה-DAL
+        var listAssignment = _dal.assignment.ReadAll(a => a.VolunteerId == volunteerId);
         var listCall = _dal.call.ReadAll();
-        var listAssignment = _dal.assignment.ReadAll();
 
-        // סינון קריאות סגורות שטופלו על ידי מתנדב מסוים
         var closedCalls = from item in listCall
                           let assignment = listAssignment
-                              .FirstOrDefault(s => s.CallId == item.Id && s.VolunteerId == volunteerId && s.FinishAppointmentType != null)
+                              .FirstOrDefault(s => s.CallId == item.Id && s.VolunteerId == volunteerId &&
+                                                  (s.FinishAppointmentType == FinishAppointmentType.SelfCancellation ||
+                                                   s.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator ||
+                                                   s.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired))
                           where assignment != null
                           select new BO.ClosedCallInList
                           {
@@ -357,50 +361,48 @@ internal class CallImplementation : ICall
                               OpenTime = item.OpenTime,
                               TreatmentStartTime = assignment.AppointmentTime,
                               RealFinishTime = assignment.FinishAppointmentTime,
-                              FinishAppointmentType = (BO.Enums.FinishAppointmentTypeEnum?)assignment.FinishAppointmentType
+                              FinishAppointmentType = (BO.Enums.FinishAppointmentTypeEnum?)assignment.FinishAppointmentType,
                           };
 
-        // סינון לפי סוג קריאה (אם filter != null)
+        // סינון אם נדרש לפי סוג הקריאה
         if (filter.HasValue)
         {
             closedCalls = closedCalls.Where(call => call.CallType == filter.Value);
         }
 
-        // אם filter == null, לא מסננים לפי סוג קריאה, מחזירים את כל הקריאות הסגורות של המתנדב
-
-        // מיון הרשימה (אם toSort != null)
+        // סינון ומיון לפי השדה שנבחר
         if (toSort.HasValue)
         {
             closedCalls = toSort switch
             {
                 BO.Enums.ClosedCallFieldEnum.ID => closedCalls.OrderBy(call => call.Id),
-                BO.Enums.ClosedCallFieldEnum.Address => closedCalls.OrderBy(call => call.Address),  // מיון לפי כתובת
+                BO.Enums.ClosedCallFieldEnum.Address => closedCalls.OrderBy(call => call.Address),
                 BO.Enums.ClosedCallFieldEnum.CallType => closedCalls.OrderBy(call => call.CallType),
-                BO.Enums.ClosedCallFieldEnum.OpenTime => closedCalls.OrderBy(call => call.TreatmentStartTime),
-                BO.Enums.ClosedCallFieldEnum.TreatmentStartTime => closedCalls.OrderBy(call => call.RealFinishTime),
-                BO.Enums.ClosedCallFieldEnum.RealFinishTime => closedCalls.OrderBy(call => call.FinishAppointmentType),
-                BO.Enums.ClosedCallFieldEnum.FinishAppointmentType => closedCalls.OrderBy(call => call.OpenTime.Date), // מיון לפי תאריך פתיחה
-
+                BO.Enums.ClosedCallFieldEnum.OpenTime => closedCalls.OrderBy(call => call.OpenTime),
+                BO.Enums.ClosedCallFieldEnum.TreatmentStartTime => closedCalls.OrderBy(call => call.TreatmentStartTime),
+                BO.Enums.ClosedCallFieldEnum.RealFinishTime => closedCalls.OrderBy(call => call.RealFinishTime),
+                BO.Enums.ClosedCallFieldEnum.FinishAppointmentType => closedCalls.OrderBy(call => call.FinishAppointmentType),
                 _ => closedCalls
             };
         }
         else
         {
-            // ברירת מחדל למיון לפי ID
             closedCalls = closedCalls.OrderBy(call => call.Id);
         }
 
         return closedCalls;
     }
 
-    public async Task<IEnumerable<BO.OpenCallInList>> GetVolunteerOpenCallsAsync(
-    int volunteerId,
-    BO.Enums.CallTypeEnum? filter = null,
-    BO.Enums.OpenCallEnum? toSort = null)
+
+
+    public IEnumerable<BO.OpenCallInList> GetOpenCallInLists(
+     int volunteerId,
+     BO.Enums.CallTypeEnum? filter = null,
+     BO.Enums.OpenCallEnum? toSort = null)
     {
         // שליפת רשימות הקריאות והשיוכים
-        var listCall = _dal.call.ReadAll();  // ודא שהקריאות נטענות כראוי
-        var listAssignment = _dal.assignment.ReadAll();  // ודא ששיוכים נטענים כראוי
+        var listCall = _dal.call.ReadAll();
+        var listAssignment = _dal.assignment.ReadAll();
 
         if (!listCall.Any())
         {
@@ -412,9 +414,8 @@ internal class CallImplementation : ICall
             throw new Exception("No assignments found in the database.");
         }
 
-        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);  // ודא שהמתנדב נמצא כראוי
+        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);
 
-        // בדוק אם המתנדב קיים לפני שממשיך
         if (volunteer == null)
         {
             throw new ArgumentException("Volunteer not found.");
@@ -423,24 +424,31 @@ internal class CallImplementation : ICall
         // שליפת מיקום המתנדב
         string volunteerAddress = volunteer.Location;
 
-        // אם לא נמצאה כתובת המתנדב, יש להחזיר מיידית
         if (string.IsNullOrWhiteSpace(volunteerAddress))
         {
             throw new ArgumentException("Volunteer location is not provided.");
         }
 
         // קריאה אסינכרונית לפעולה
-        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+        double[] volunteerLocation;
+        try
+        {
+            volunteerLocation = Tools.GetGeolocationCoordinates(volunteerAddress);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to fetch volunteer location: {ex.Message}");
+        }
 
         if (volunteerLocation == null || volunteerLocation.Length != 2)
         {
             throw new Exception("Invalid location data received for the volunteer.");
         }
 
-        // סינון הקריאות הפתוחות על פי מצב הקריאה
+        // סינון הקריאות הפתוחות לפי סטטוס
         var openCalls = from call in listCall
                         let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
-                        let status = Tools.CheckStatus(assignment, call, null)
+                        let status = Tools.CheckStatusCalls(assignment, call, null)
                         where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
                         select new BO.OpenCallInList
                         {
@@ -452,13 +460,13 @@ internal class CallImplementation : ICall
                             DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], call.Latitude, call.Longitude)
                         };
 
-        // סינון על פי סוג הקריאה אם יש
+        // סינון לפי סוג הקריאה אם הוזן
         if (filter.HasValue)
         {
             openCalls = openCalls.Where(call => call.CallType == filter.Value);
         }
 
-        // מיון הקריאות לפי מה שנדרש
+        // מיון הקריאות לפי השדה שהוזן
         openCalls = toSort switch
         {
             BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
@@ -470,8 +478,11 @@ internal class CallImplementation : ICall
             _ => openCalls.OrderBy(call => call.Id)
         };
 
-        return openCalls.ToList();  // החזרת הרשימה הממוינת
+        // החזרת הרשימה הממוינת
+        return openCalls.ToList();
     }
+
+
     public void UpdateCallAsCompleted(int volunteerId, int assignmentId)
     {
         try
@@ -601,5 +612,5 @@ internal class CallImplementation : ICall
 
     }
 
-    
+
 }

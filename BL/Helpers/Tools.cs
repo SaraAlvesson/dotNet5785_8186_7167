@@ -92,6 +92,53 @@ namespace Helpers
 
             return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל אם לא בטיפול
         }
+        internal static BO.Enums.CalltStatusEnum CheckStatusCalls(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
+        {
+            // טיפול במקרה שבו doAssignment או doCall הם null
+            if (doAssignment == null || doCall == null)
+            {
+                return BO.Enums.CalltStatusEnum.OPEN; // לא ניתן להחזיר מצב אם הנתונים חסרים
+            }
+
+            // אם הקריאה לא נמצאת בטיפול כרגע
+            if (doAssignment.VolunteerId == null)
+            {
+                // אם הקריאה מתקרבת לזמן סיום הדרוש לה
+                if (doCall.MaxTime.HasValue)
+                {
+                    TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+                    if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
+                    {
+                        return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף
+                    }
+                    else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
+                    {
+                        return BO.Enums.CalltStatusEnum.OPEN; // פתוחה בסיכון
+                    }
+                }
+
+                return BO.Enums.CalltStatusEnum.OPEN; // קריאה פתוחה
+            }
+
+            // אם הקריאה בטיפול כרגע על ידי מתנדב
+            if (doCall.MaxTime.HasValue)
+            {
+                TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+                if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
+                {
+                    return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף גם אם היא בטיפול
+                }
+                else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
+                {
+                    return BO.Enums.CalltStatusEnum.OPEN; // בטיפול בסיכון
+                }
+            }
+
+            return BO.Enums.CalltStatusEnum.OPEN; // קריאה בטיפול
+        }
+
 
         // The generic method works for any object, returning a string of its properties
         public static string ToStringProperty<T>(this T t)
@@ -119,30 +166,35 @@ namespace Helpers
         /// <remarks>
         /// Written with the help of ChatGPT from OpenAI (https://openai.com).
         /// </remarks>
-        internal static async Task<double[]> GetGeolocationCoordinatesAsync(string address)
+        internal static double[] GetGeolocationCoordinates(string address)
         {
-            // בדוק אם הכתובת ריקה
+            // בדיקת תקינות של הכתובת
             if (string.IsNullOrWhiteSpace(address))
             {
                 throw new ArgumentException("Address cannot be empty or null.", nameof(address));
             }
 
-            string apiKey = "678694850f91d165965268skuda91dd";  // המפתח שלך החדש
-            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}";  // עדכון ה-URL ל-API הנכון
+            string apiKey = "678694850f91d165965268skuda91dd"; // המפתח שלך
+            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}"; // URL של Forward Geocoding
 
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    // שליחת הבקשה וקבלת התשובה
-                    HttpResponseMessage response = await client.GetAsync(requestUrl);
+                    // שליחת הבקשה לשרת
+                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
 
+                    // בדיקה אם התשובה תקינה
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new Exception($"Request failed with status: {response.StatusCode}");
+                        string errorContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
                     }
 
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    // קריאת התשובה
+                    string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                    // ניתוח התשובה
                     var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
 
@@ -171,6 +223,7 @@ namespace Helpers
                 }
             }
         }
+
 
 
         /// <summary>

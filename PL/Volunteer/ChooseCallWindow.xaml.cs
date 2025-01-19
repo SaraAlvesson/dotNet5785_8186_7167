@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Threading.Tasks;
 
 namespace PL.Volunteer
 {
@@ -25,7 +24,7 @@ namespace PL.Volunteer
             {
                 _selectedTypeFilter = value;
                 OnPropertyChanged();
-                LoadCallsAsync();
+                LoadCalls();
             }
         }
 
@@ -37,7 +36,7 @@ namespace PL.Volunteer
             {
                 _addressFilter = value;
                 OnPropertyChanged();
-                LoadCallsAsync();
+                LoadCalls();
             }
         }
 
@@ -49,7 +48,7 @@ namespace PL.Volunteer
             {
                 _selectedSortOption = value;
                 OnPropertyChanged();
-                LoadCallsAsync();
+                LoadCalls();
             }
         }
 
@@ -88,15 +87,15 @@ namespace PL.Volunteer
             ChooseCallCommand = new RelayCommand(ChooseCall);
             UpdateAddressCommand = new RelayCommand(UpdateAddress);
 
-            _ = InitializeAsync();
+            Initialize();
         }
 
-        private async Task InitializeAsync()
+        private void Initialize()
         {
-            await LoadCallsAsync();
+            LoadCalls();
         }
 
-        private async Task LoadCallsAsync()
+        private void LoadCalls()
         {
             try
             {
@@ -112,11 +111,11 @@ namespace PL.Volunteer
                     openCallEnum = tempOpenCall;
                 }
 
-                var calls = await s_bl.Call.GetVolunteerOpenCallsAsync(
-                    CurrentVolunteer.Id,
-                    callTypeEnum,
-                    openCallEnum
-                );
+                var calls = s_bl.Call.GetOpenCallInLists(
+                      CurrentVolunteer.Id,
+                      callTypeEnum,
+                      openCallEnum
+                  );
 
                 Calls.Clear();
                 foreach (var call in calls)
@@ -138,7 +137,7 @@ namespace PL.Volunteer
                 {
                     s_bl.Call.AssignCallToVolunteer(CurrentVolunteer.Id, selectedCall.Id);
                     MessageBox.Show($"You have selected Call ID {selectedCall.Id} for handling.");
-                    LoadCallsAsync();
+                    LoadCalls();
                 }
                 catch (Exception ex)
                 {
@@ -155,7 +154,7 @@ namespace PL.Volunteer
                 {
                     CurrentVolunteer.Location = NewAddress;
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
-                    LoadCallsAsync();
+                    LoadCalls();
                     MessageBox.Show("Address updated successfully!");
                 }
                 catch (Exception ex)
@@ -177,7 +176,7 @@ namespace PL.Volunteer
 
         private void FilterAddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            LoadCallsAsync();
+            LoadCalls();
         }
 
         private void CallsDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
@@ -189,9 +188,12 @@ namespace PL.Volunteer
                 SelectedCallDetails = selectedCall.VerbDesc;
             }
         }
-
         private void CallDetailsTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // פעולה שיבוצע כאשר הטקסט בשדה משתנה
+            // לדוגמה, לעדכן תצוגה או לפעול לפי טקסט
+            var text = ((TextBox)sender).Text;
+            // ביצוע פעולות על הטקסט
         }
 
         public class RelayCommand : ICommand
