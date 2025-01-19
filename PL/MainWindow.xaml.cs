@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using BlApi;
 using DalApi;
@@ -184,5 +185,11 @@ namespace PL
         {
             new Admin.CallsListWindow().Show();
         }
+        private void textrr_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // הוספת קוד פעולה במקרה של שינוי בטקסט
+        }
+
+
     }
 }

@@ -1,10 +1,13 @@
 ﻿using BO;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace PL.Volunteer
@@ -14,7 +17,9 @@ namespace PL.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private BO.Volunteer CurrentVolunteer;
 
-        public ObservableCollection<OpenCallInList> Calls { get; set; } = new ObservableCollection<OpenCallInList>();
+        // רשימות לסוגי קריאות ואופציות מיון
+        public List<string> CallTypes { get; } = Enum.GetNames(typeof(BO.Enums.CallTypeEnum)).ToList();
+        public List<string> SortOptions { get; } = Enum.GetNames(typeof(BO.Enums.OpenCallEnum)).ToList();
 
         private string _selectedTypeFilter;
         public string SelectedTypeFilter
@@ -24,7 +29,7 @@ namespace PL.Volunteer
             {
                 _selectedTypeFilter = value;
                 OnPropertyChanged();
-                LoadCalls();
+                LoadCalls(); // ריענון הקריאות לאחר שינוי הפילטר
             }
         }
 
@@ -36,30 +41,7 @@ namespace PL.Volunteer
             {
                 _addressFilter = value;
                 OnPropertyChanged();
-                LoadCalls();
-            }
-        }
-
-        private string _selectedSortOption;
-        public string SelectedSortOption
-        {
-            get => _selectedSortOption;
-            set
-            {
-                _selectedSortOption = value;
-                OnPropertyChanged();
-                LoadCalls();
-            }
-        }
-
-        private string _newAddress;
-        public string NewAddress
-        {
-            get => _newAddress;
-            set
-            {
-                _newAddress = value;
-                OnPropertyChanged();
+                LoadCalls(); // ריענון הקריאות לאחר שינוי הפילטר
             }
         }
 
@@ -74,24 +56,26 @@ namespace PL.Volunteer
             }
         }
 
-        public ICommand ChooseCallCommand { get; }
-        public ICommand UpdateAddressCommand { get; }
-
         public ChooseCallWindow(BO.Volunteer volunteer)
         {
+            if (volunteer == null)
+            {
+                MessageBox.Show("Volunteer is null. Please ensure valid data is passed.");
+                return;
+            }
+
             InitializeComponent();
-            DataContext = this;
+            DataContext = this; // קישור ה-DataContext
 
             CurrentVolunteer = volunteer;
 
-            ChooseCallCommand = new RelayCommand(ChooseCall);
-            UpdateAddressCommand = new RelayCommand(UpdateAddress);
+            // קישור טקסט-בוקס ל-Location במודל
+            textrr.SetBinding(TextBox.TextProperty, new Binding("CurrentVolunteer.Location")
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            });
 
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             LoadCalls();
         }
 
@@ -112,10 +96,10 @@ namespace PL.Volunteer
                 }
 
                 var calls = s_bl.Call.GetOpenCallInLists(
-                      CurrentVolunteer.Id,
-                      callTypeEnum,
-                      openCallEnum
-                  );
+                    CurrentVolunteer.Id,
+                    callTypeEnum,
+                    openCallEnum
+                );
 
                 Calls.Clear();
                 foreach (var call in calls)
@@ -129,9 +113,9 @@ namespace PL.Volunteer
             }
         }
 
-        private void ChooseCall(object parameter)
+        private void ChooseCall(OpenCallInList selectedCall)
         {
-            if (parameter is OpenCallInList selectedCall)
+            if (selectedCall != null)
             {
                 try
                 {
@@ -146,28 +130,6 @@ namespace PL.Volunteer
             }
         }
 
-        private void UpdateAddress(object parameter)
-        {
-            if (!string.IsNullOrEmpty(NewAddress))
-            {
-                try
-                {
-                    CurrentVolunteer.Location = NewAddress;
-                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
-                    LoadCalls();
-                    MessageBox.Show("Address updated successfully!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error updating address: {ex.Message}");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please enter a valid address.");
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -179,40 +141,98 @@ namespace PL.Volunteer
             LoadCalls();
         }
 
+        private void CallTypeFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private string _selectedCallType;
+        public string SelectedCallType
+        {
+            get => _selectedCallType;
+            set
+            {
+                _selectedCallType = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        private string _selectedSortOption;
+        public string SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                _selectedSortOption = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        private void ApplyFilters()
+        {
+            BO.Enums.CallTypeEnum? callTypeFilter = Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType)
+                ? parsedCallType
+                : (BO.Enums.CallTypeEnum?)null;
+
+            BO.Enums.OpenCallEnum? openCallFilter = Enum.TryParse(SelectedSortOption, out BO.Enums.OpenCallEnum parsedOpenCall)
+                ? parsedOpenCall
+                : (BO.Enums.OpenCallEnum?)null;
+
+            var filteredCalls = s_bl.Call.GetOpenCallInLists(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
+            Calls.Clear();
+            foreach (var call in filteredCalls)
+            {
+                Calls.Add(call);
+            }
+        }
+
+        public ObservableCollection<OpenCallInList> Calls { get; } = new ObservableCollection<OpenCallInList>();
+
         private void CallsDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
-            var dataGrid = sender as DataGrid;
-
-            if (dataGrid != null && dataGrid.SelectedItem is OpenCallInList selectedCall)
+            var selectedCall = (OpenCallInList)CallsDataGrid.SelectedItem;
+            if (selectedCall != null)
             {
-                SelectedCallDetails = selectedCall.VerbDesc;
+                SelectedCallDetails = selectedCall.VerbDesc; // עדכון התיאור המילולי
+            }
+            else
+            {
+                SelectedCallDetails = "No call selected"; // הודעת ברירת מחדל כאשר אין קריאה נבחרת
             }
         }
-        private void CallDetailsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void update_click(object sender, RoutedEventArgs e)
         {
-            // פעולה שיבוצע כאשר הטקסט בשדה משתנה
-            // לדוגמה, לעדכן תצוגה או לפעול לפי טקסט
-            var text = ((TextBox)sender).Text;
-            // ביצוע פעולות על הטקסט
+            try
+            {
+                // עדכון הכתובת לפי הערך מה-TextBox
+                CurrentVolunteer.Location = textrr.Text;
+
+                // עדכון במערכת
+                s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
+
+                // עדכון ה-PropertyChanged כדי להפעיל את ה-Binding
+                OnPropertyChanged(nameof(CurrentVolunteer.Location));
+
+                // ריענון הקריאות לאחר עדכון הכתובת
+                LoadCalls();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating address: {ex.Message}");
+            }
         }
 
-        public class RelayCommand : ICommand
+        private void textrr_TextChanged(object sender, TextChangedEventArgs e)
         {
-            private readonly Action<object> _execute;
-            private readonly Predicate<object> _canExecute;
-
-            public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
-            {
-                _execute = execute;
-                _canExecute = canExecute;
-            }
-
-            public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
-
-            public void Execute(object parameter) => _execute(parameter);
-
-            public event EventHandler CanExecuteChanged;
-            public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            // ניתן להוסיף פעולה כלשהי במקרה של שינוי, אם יש צורך
         }
     }
 }
