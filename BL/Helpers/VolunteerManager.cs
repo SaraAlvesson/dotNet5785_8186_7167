@@ -207,12 +207,12 @@ namespace Helpers
 
         //// השוואה בין ספרת הביקורת לבין הספרה האחרונה בתעודה
         //return checkDigit == (int)(id % 10); // אם התוצאה תואמת, תעודת הזהות תקינה
-        internal static async Task<DO.Volunteer> convertFormBOVolunteerToDoAsync(BO.Volunteer BoVolunteer)
+        internal static DO.Volunteer convertFormBOVolunteerToDoAsync(BO.Volunteer BoVolunteer)
         {
             if (BoVolunteer.Location != null)
             {
                 // שימוש באסינכרוניות
-                double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(BoVolunteer.Location);
+                double[] coordinates = Tools.GetGeolocationCoordinates(BoVolunteer.Location);
                 BoVolunteer.Latitude = coordinates[0];
                 BoVolunteer.Longitude = coordinates[1];
             }

@@ -422,7 +422,7 @@ internal class Program
     }
 
     // תפריט ניהול קריאות
-    private static async Task RunCallMenu()
+    private static void RunCallMenu()
     {
         while (true)
         {
@@ -581,7 +581,7 @@ internal class Program
                                 ? (Enums.OpenCallEnum?)sortFieldResultOpen
                                 : null;
 
-                        var openCalls = await s_bl.Call.GetVolunteerOpenCallsAsync(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // Renamed to match method signature
+                        var openCalls = s_bl.Call.GetOpenCallInLists(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // Renamed to match method signature
 
                         Console.WriteLine("Open calls: ");
                         if (!openCalls.Any())

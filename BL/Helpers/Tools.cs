@@ -97,7 +97,7 @@ namespace Helpers
             // טיפול במקרה שבו doAssignment או doCall הם null
             if (doAssignment == null || doCall == null)
             {
-                return BO.Enums.CalltStatusEnum.UNKNOWN; // לא ניתן להחזיר מצב אם הנתונים חסרים
+                return BO.Enums.CalltStatusEnum.OPEN; // לא ניתן להחזיר מצב אם הנתונים חסרים
             }
 
             // אם הקריאה לא נמצאת בטיפול כרגע
@@ -110,11 +110,11 @@ namespace Helpers
 
                     if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
                     {
-                        return BO.Enums.CalltStatusEnum.EXPIRED; // פג תוקף
+                        return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף
                     }
                     else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
                     {
-                        return BO.Enums.CalltStatusEnum.CallAlmostOver; // פתוחה בסיכון
+                        return BO.Enums.CalltStatusEnum.OPEN; // פתוחה בסיכון
                     }
                 }
 
@@ -128,15 +128,15 @@ namespace Helpers
 
                 if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
                 {
-                    return BO.Enums.CalltStatusEnum.EXPIRED; // פג תוקף גם אם היא בטיפול
+                    return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף גם אם היא בטיפול
                 }
                 else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
                 {
-                    return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // בטיפול בסיכון
+                    return BO.Enums.CalltStatusEnum.OPEN; // בטיפול בסיכון
                 }
             }
 
-            return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // קריאה בטיפול
+            return BO.Enums.CalltStatusEnum.OPEN; // קריאה בטיפול
         }
 
 
@@ -166,7 +166,7 @@ namespace Helpers
         /// <remarks>
         /// Written with the help of ChatGPT from OpenAI (https://openai.com).
         /// </remarks>
-        internal static async Task<double[]> GetGeolocationCoordinatesAsync(string address)
+        internal static double[] GetGeolocationCoordinates(string address)
         {
             // בדיקת תקינות של הכתובת
             if (string.IsNullOrWhiteSpace(address))
@@ -182,17 +182,17 @@ namespace Helpers
                 try
                 {
                     // שליחת הבקשה לשרת
-                    HttpResponseMessage response = await client.GetAsync(requestUrl);
+                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
 
                     // בדיקה אם התשובה תקינה
                     if (!response.IsSuccessStatusCode)
                     {
-                        string errorContent = await response.Content.ReadAsStringAsync();
+                        string errorContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                         throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
                     }
 
                     // קריאת התשובה
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                     // ניתוח התשובה
                     var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -223,6 +223,7 @@ namespace Helpers
                 }
             }
         }
+
 
 
         /// <summary>

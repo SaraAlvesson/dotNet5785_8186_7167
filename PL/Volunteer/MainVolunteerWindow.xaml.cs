@@ -141,7 +141,7 @@ namespace PL.Volunteer
 
         private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer != null && CurrentVolunteer.Active)
+            if (CurrentVolunteer.VolunteerTakenCare!=null && CurrentVolunteer.Active)
             {
                 try
                 {

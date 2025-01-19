@@ -1,213 +1,213 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer>
   <Volunteer>
-    <Id>590989331</Id>
+    <Id>319356983</Id>
     <FullName>Yosef Cohen</FullName>
-    <PhoneNumber>0569454426</PhoneNumber>
+    <PhoneNumber>0569845024</PhoneNumber>
     <Email>volunteer1@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>admin</Position>
     <Active>true</Active>
-    <Password>mR37cVFum3gh</Password>
-    <Location>Western Wall, Jerusalem, Israel</Location>
-    <Latitude>31.776694</Latitude>
-    <Longitude>35.234524</Longitude>
-    <MaxDistance>11</MaxDistance>
+    <Password>kG*C6v&amp;Ay1tM</Password>
+    <Location>Rothschild Boulevard, Tel Aviv, Israel</Location>
+    <Latitude>32.0655</Latitude>
+    <Longitude>34.767028</Longitude>
+    <MaxDistance>12</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>651349963</Id>
+    <Id>489201501</Id>
     <FullName>Shmuel Levi</FullName>
-    <PhoneNumber>0590918398</PhoneNumber>
+    <PhoneNumber>0538420135</PhoneNumber>
     <Email>volunteer2@gmail.com</Email>
-    <DistanceType>AerialDistance</DistanceType>
+    <DistanceType>DrivingDistance</DistanceType>
     <Position>admin</Position>
-    <Active>true</Active>
-    <Password>55WoAo^80F04</Password>
-    <Location>Jaffa Gate, Jerusalem, Israel</Location>
-    <Latitude>31.783499</Latitude>
-    <Longitude>35.233924</Longitude>
-    <MaxDistance>19</MaxDistance>
+    <Active>false</Active>
+    <Password>KNc#BlP1*EQy</Password>
+    <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
+    <Latitude>32.099791</Latitude>
+    <Longitude>34.769077</Longitude>
+    <MaxDistance>5</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>518743263</Id>
+    <Id>878648518</Id>
     <FullName>Yaakov Goldstein</FullName>
-    <PhoneNumber>0596217598</PhoneNumber>
+    <PhoneNumber>0524794309</PhoneNumber>
     <Email>volunteer3@gmail.com</Email>
     <DistanceType>AerialDistance</DistanceType>
     <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>PVS3ypLis^^g</Password>
-    <Location>Yad Vashem, Jerusalem, Israel</Location>
-    <Latitude>31.774387</Latitude>
-    <Longitude>35.1758</Longitude>
-    <MaxDistance>18</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>265694972</Id>
-    <FullName>Moshe Friedman</FullName>
-    <PhoneNumber>0527247423</PhoneNumber>
-    <Email>volunteer4@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>K@5ohdrt9iLA</Password>
-    <Location>Mount of Olives, Jerusalem, Israel</Location>
-    <Latitude>31.776772</Latitude>
-    <Longitude>35.261929</Longitude>
-    <MaxDistance>14</MaxDistance>
+    <Password>YlHI^fD@6gD9</Password>
+    <Location>Jaffa, Tel Aviv, Israel</Location>
+    <Latitude>32.055823</Latitude>
+    <Longitude>34.759151</Longitude>
+    <MaxDistance>19</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>935673317</Id>
+    <Id>113558881</Id>
     <FullName>Avraham Stein</FullName>
-    <PhoneNumber>0538815447</PhoneNumber>
+    <PhoneNumber>0558237950</PhoneNumber>
     <Email>volunteer5@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>@MLSPxEatg*7</Password>
-    <Location>Israel Museum, Jerusalem, Israel</Location>
-    <Latitude>31.776723</Latitude>
-    <Longitude>35.213707</Longitude>
+    <Password>ECZiQ1kovW62</Password>
+    <Location>Habima Theatre, Tel Aviv, Israel</Location>
+    <Latitude>32.073743</Latitude>
+    <Longitude>34.770498</Longitude>
     <MaxDistance>9</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>151085026</Id>
+    <Id>477857546</Id>
     <FullName>Daniel Green</FullName>
-    <PhoneNumber>0516108027</PhoneNumber>
+    <PhoneNumber>0597938858</PhoneNumber>
     <Email>volunteer6@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>m^vGF*WOUWFZ</Password>
-    <Location>Mahane Yehuda Market, Jerusalem, Israel</Location>
-    <Latitude>31.774524</Latitude>
-    <Longitude>35.220499</Longitude>
-    <MaxDistance>7</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>528305621</Id>
-    <FullName>David Weiss</FullName>
-    <PhoneNumber>0539697605</PhoneNumber>
-    <Email>volunteer7@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>35#llQQHFCGO</Password>
-    <Location>Old City, Jerusalem, Israel</Location>
-    <Latitude>31.768319</Latitude>
-    <Longitude>35.213745</Longitude>
+    <Password>Da$LS)dKS@Ow</Password>
+    <Location>Carmel Market, Tel Aviv, Israel</Location>
+    <Latitude>32.065013</Latitude>
+    <Longitude>34.76837</Longitude>
     <MaxDistance>9</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>148105822</Id>
+    <Id>348043412</Id>
+    <FullName>David Weiss</FullName>
+    <PhoneNumber>0542612608</PhoneNumber>
+    <Email>volunteer7@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>otaN$27U^^t9</Password>
+    <Location>Dizengoff Square, Tel Aviv, Israel</Location>
+    <Latitude>32.078323</Latitude>
+    <Longitude>34.77034</Longitude>
+    <MaxDistance>6</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>504704609</Id>
     <FullName>Yonatan Rubin</FullName>
-    <PhoneNumber>0556832605</PhoneNumber>
+    <PhoneNumber>0597447730</PhoneNumber>
     <Email>volunteer8@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>F%UBBwXvNsQu</Password>
-    <Location>Church of the Holy Sepulchre, Jerusalem, Israel</Location>
-    <Latitude>31.778159</Latitude>
-    <Longitude>35.230828</Longitude>
-    <MaxDistance>8</MaxDistance>
+    <Password>%c3Yxii#4Jac</Password>
+    <Location>Yarkon Park, Tel Aviv, Israel</Location>
+    <Latitude>32.087573</Latitude>
+    <Longitude>34.781904</Longitude>
+    <MaxDistance>12</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>401098547</Id>
+    <Id>729046282</Id>
     <FullName>Hanan Levy</FullName>
-    <PhoneNumber>0575390127</PhoneNumber>
+    <PhoneNumber>0512005292</PhoneNumber>
     <Email>volunteer9@gmail.com</Email>
     <DistanceType>AerialDistance</DistanceType>
     <Position>volunteer</Position>
-    <Active>false</Active>
-    <Password>fYRP1l!7r$t8</Password>
-    <Location>The Knesset, Jerusalem, Israel</Location>
-    <Latitude>31.768898</Latitude>
-    <Longitude>35.225121</Longitude>
-    <MaxDistance>19</MaxDistance>
+    <Active>true</Active>
+    <Password>r@GbueD4aAfx</Password>
+    <Location>Tel Aviv Museum of Art, Tel Aviv, Israel</Location>
+    <Latitude>32.073418</Latitude>
+    <Longitude>34.781046</Longitude>
+    <MaxDistance>18</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>636893210</Id>
+    <Id>264934230</Id>
     <FullName>Eli Karp</FullName>
-    <PhoneNumber>0551855660</PhoneNumber>
+    <PhoneNumber>0541104422</PhoneNumber>
     <Email>volunteer10@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>false</Active>
-    <Password>WalSCEtho$Jp</Password>
-    <Location>Mount Herzl, Jerusalem, Israel</Location>
-    <Latitude>31.749554</Latitude>
-    <Longitude>35.211941</Longitude>
-    <MaxDistance>9</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>958141311</Id>
-    <FullName>Uzi Sharoni</FullName>
-    <PhoneNumber>0529234257</PhoneNumber>
-    <Email>volunteer11@gmail.com</Email>
     <DistanceType>AerialDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>011*9kgvvRNI</Password>
-    <Location>Zion Gate, Jerusalem, Israel</Location>
-    <Latitude>31.773584</Latitude>
-    <Longitude>35.23309</Longitude>
-    <MaxDistance>17</MaxDistance>
+    <Password>ey3E6q7p5k9j</Password>
+    <Location>Florentin, Tel Aviv, Israel</Location>
+    <Latitude>32.054186</Latitude>
+    <Longitude>34.759738</Longitude>
+    <MaxDistance>18</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>971656416</Id>
-    <FullName>Shimon Ben-David</FullName>
-    <PhoneNumber>0524551382</PhoneNumber>
-    <Email>volunteer12@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
+    <Id>530141902</Id>
+    <FullName>Uzi Sharoni</FullName>
+    <PhoneNumber>0591172019</PhoneNumber>
+    <Email>volunteer11@gmail.com</Email>
+    <DistanceType>AerialDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>true</Active>
-    <Password>x11D#f!Eim&amp;M</Password>
-    <Location>Sacher Park, Jerusalem, Israel</Location>
-    <Latitude>31.760126</Latitude>
-    <Longitude>35.217681</Longitude>
-    <MaxDistance>14</MaxDistance>
+    <Password>ol09b*zyb1#7</Password>
+    <Location>Jaffa Port, Tel Aviv, Israel</Location>
+    <Latitude>32.053704</Latitude>
+    <Longitude>34.756671</Longitude>
+    <MaxDistance>16</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>537271691</Id>
+    <Id>490999921</Id>
+    <FullName>Shimon Ben-David</FullName>
+    <PhoneNumber>0560309960</PhoneNumber>
+    <Email>volunteer12@gmail.com</Email>
+    <DistanceType>AerialDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>#g)p6Bs6vbd&amp;</Password>
+    <Location>Rabin Square, Tel Aviv, Israel</Location>
+    <Latitude>32.07857</Latitude>
+    <Longitude>34.768721</Longitude>
+    <MaxDistance>16</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>644915554</Id>
     <FullName>Matan Shalev</FullName>
-    <PhoneNumber>0553296580</PhoneNumber>
+    <PhoneNumber>0562743392</PhoneNumber>
     <Email>volunteer13@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>xNy3a0IC6F^v</Password>
-    <Location>Ein Karem, Jerusalem, Israel</Location>
-    <Latitude>31.762759</Latitude>
-    <Longitude>35.167712</Longitude>
-    <MaxDistance>13</MaxDistance>
+    <Password>&amp;C4VGunKk^0Y</Password>
+    <Location>Levinsky Market, Tel Aviv, Israel</Location>
+    <Latitude>32.061425</Latitude>
+    <Longitude>34.766412</Longitude>
+    <MaxDistance>15</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>473060421</Id>
+    <Id>919741876</Id>
     <FullName>Asher Tzukrel</FullName>
-    <PhoneNumber>0556581258</PhoneNumber>
+    <PhoneNumber>0580014349</PhoneNumber>
     <Email>volunteer14@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
-    <Active>false</Active>
-    <Password>YnYNM&amp;UWU3M(</Password>
-    <Location>Hebron Road, Jerusalem, Israel</Location>
-    <Latitude>31.735084</Latitude>
-    <Longitude>35.222445</Longitude>
+    <Active>true</Active>
+    <Password>^3hXSuzE#Yo4</Password>
+    <Location>Gordon Beach, Tel Aviv, Israel</Location>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
     <MaxDistance>6</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>986490641</Id>
+    <Id>748346881</Id>
     <FullName>Oren Regev</FullName>
-    <PhoneNumber>0527729452</PhoneNumber>
+    <PhoneNumber>0560729278</PhoneNumber>
     <Email>volunteer15@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>true</Active>
-    <Password>OXI8lM6jD9DT</Password>
-    <Location>Montefiore Windmill, Jerusalem, Israel</Location>
-    <Latitude>31.766133</Latitude>
-    <Longitude>35.235729</Longitude>
-    <MaxDistance>13</MaxDistance>
+    <Password>PGO)ZoEzmdrh</Password>
+    <Location>Azrieli Center, Tel Aviv, Israel</Location>
+    <Latitude>32.0737</Latitude>
+    <Longitude>34.791202</Longitude>
+    <MaxDistance>15</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>603852905</Id>
+    <FullName>Moshe Friedman</FullName>
+    <PhoneNumber>0591315874</PhoneNumber>
+    <Email>volunteer4@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>MOmvAOzF%6SW</Password>
+    <Location>Neve Tzedek, Tel Aviv, Israel</Location>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <MaxDistance>11</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>
