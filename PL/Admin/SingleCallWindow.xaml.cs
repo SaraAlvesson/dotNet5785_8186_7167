@@ -63,7 +63,7 @@ namespace PL.Admin
                 }
                 else
                 {
-                    CurrentCall = s_bl.Call.GetCallDetails(id);
+                    CurrentCall = s_bl.Call.readCallData(id);
                     SetEditableFields(CurrentCall.CallStatus);
                 }
             }

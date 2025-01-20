@@ -101,7 +101,7 @@ namespace PL.Volunteer
 
         private void ButtonComplete_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer?.VolunteerTakenCare != null)
+            if (CurrentVolunteer.VolunteerTakenCare != null)
             {
                 try
                 {
@@ -125,7 +125,7 @@ namespace PL.Volunteer
             {
                 try
                 {
-                    s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.VolunteerTakenCare.CallId, CurrentVolunteer.VolunteerTakenCare.Id);
+                    s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
                     MessageBox.Show("Call canceled successfully.");
                 }
                 catch (Exception ex)

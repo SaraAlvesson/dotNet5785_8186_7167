@@ -13,10 +13,56 @@ namespace Helpers
         internal static ObserverManager Observers = new(); //stage 5 
 
 
+        internal static BO.Enums.CalltStatusEnum callStatus(int ID)
+        {
+            DO.Call? c = s_dal.call.Read(ID);
 
+            if (c== null)
+                throw new DO.DalDoesNotExistException($"call with ID: {ID} doesn't exist!");
 
+            DO.Assignment? a = s_dal.assignment.Read(item => item.CallId == ID);
+            if (a == null)
+                if (s_dal.config.Clock - c.OpenTime > s_dal.config.RiskRange)
+                    return BO.Enums.CalltStatusEnum.CallAlmostOver;
+                else
+                    return BO.Enums.CalltStatusEnum.OPEN;
 
-      
+            if (a.FinishAppointmentType is null)
+                if (s_dal.config.Clock - a.AppointmentTime > s_dal.config.RiskRange)
+                    return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver;
+                else
+                    return BO.Enums.CalltStatusEnum.CallIsBeingTreated;
+
+            if (a.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired)
+                return BO.Enums.CalltStatusEnum.EXPIRED;
+
+            if (a.FinishAppointmentType == DO.FinishAppointmentType.WasTreated)
+                return BO.Enums.CalltStatusEnum.CLOSED;
+
+            if (a.FinishAppointmentType == DO.FinishAppointmentType.SelfCancellation|| a.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator
+           )
+                return BO.Enums.CalltStatusEnum.Canceled;
+
+            else
+                return BO.Enums.CalltStatusEnum.EXPIRED;
+
+        }
+
+        internal static BO.Enums.FinishAppointmentTypeEnum ConvertEndType(DO.FinishAppointmentType? finishAppointment)
+        {
+            if (finishAppointment == DO.FinishAppointmentType.WasTreated)
+                return BO.Enums.FinishAppointmentTypeEnum.WasTreated;
+            if (finishAppointment == DO.FinishAppointmentType.SelfCancellation)
+                return BO.Enums.FinishAppointmentTypeEnum.SelfCancellation;
+            if (finishAppointment == DO.FinishAppointmentType.CancelingAnAdministrator)
+                return BO.Enums.FinishAppointmentTypeEnum.CancelingAnAdministrator;
+            if (finishAppointment == DO.FinishAppointmentType.CancellationHasExpired)
+                return BO.Enums.FinishAppointmentTypeEnum.CancellationHasExpired;
+
+            // טיפול במקרה ברירת מחדל
+            throw new ArgumentException("Invalid finish appointment type", nameof(finishAppointment));
+        }
+
         public static void checkCallLogic(BO.Call call)
         {
             // בדיקת יחס זמנים

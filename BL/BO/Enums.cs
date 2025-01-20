@@ -30,7 +30,8 @@ public class Enums
         CallIsBeingTreated,    // בטיפול
         CallAlmostOver, // פתוחה בסיכון
         CallTreatmentAlmostOver,// בטיפול בסיכון
-         UNKNOWN  // מצב ברירת מחדל
+        UNKNOWN,
+        Canceled// מצב ברירת מחדל
 
     }
     #endregion
