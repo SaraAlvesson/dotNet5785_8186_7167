@@ -95,5 +95,6 @@ public interface ICall:IObservable
     void AssignCallToVolunteer(int volunteerId, int callId);
     //bool IsFieldEqual(object entity, Enums.CallFieldEnum field, object value);
     //object GetFieldValue(object entity, Enums.CallFieldEnum field);
+    //void UpdateAddress(int id,string Address);
 
 }

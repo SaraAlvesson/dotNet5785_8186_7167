@@ -18,11 +18,11 @@
   </Assignment>
   <Assignment>
     <Id>56</Id>
-    <CallId>50</CallId>
-    <VolunteerId>713297736</VolunteerId>
-    <AppointmentTime>2025-01-20T02:03:47</AppointmentTime>
-    <FinishAppointmentTime xsi:nil="true" />
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>6</CallId>
+    <VolunteerId>748346881</VolunteerId>
+    <AppointmentTime>2025-01-19T16:24:08</AppointmentTime>
+    <FinishAppointmentTime>2025-01-19T16:22:08</FinishAppointmentTime>
+    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>58</Id>
@@ -74,11 +74,11 @@
   </Assignment>
   <Assignment>
     <Id>70</Id>
-    <CallId>10</CallId>
-    <VolunteerId>564682350</VolunteerId>
-    <AppointmentTime>2025-01-20T01:42:47</AppointmentTime>
-    <FinishAppointmentTime xsi:nil="true" />
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>34</CallId>
+    <VolunteerId>919741876</VolunteerId>
+    <AppointmentTime>2025-01-19T16:06:08</AppointmentTime>
+    <FinishAppointmentTime>2025-01-19T16:20:08</FinishAppointmentTime>
+    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>72</Id>
@@ -202,9 +202,9 @@
   </Assignment>
   <Assignment>
     <Id>102</Id>
-    <CallId>16</CallId>
-    <VolunteerId>564682350</VolunteerId>
-    <AppointmentTime>2025-01-20T02:01:47</AppointmentTime>
+    <CallId>42</CallId>
+    <VolunteerId>919741876</VolunteerId>
+    <AppointmentTime>2025-01-19T16:03:08</AppointmentTime>
     <FinishAppointmentTime xsi:nil="true" />
     <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
@@ -338,9 +338,41 @@
   </Assignment>
   <Assignment>
     <Id>136</Id>
-    <CallId>12</CallId>
-    <VolunteerId>425247451</VolunteerId>
-    <AppointmentTime>2025-01-20T01:52:47</AppointmentTime>
+    <CallId>31</CallId>
+    <VolunteerId>264934230</VolunteerId>
+    <AppointmentTime>2025-01-19T16:23:08</AppointmentTime>
+    <FinishAppointmentTime>2025-01-19T16:08:08</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>138</Id>
+    <CallId>10</CallId>
+    <VolunteerId>477857546</VolunteerId>
+    <AppointmentTime>2025-01-19T16:11:08</AppointmentTime>
+    <FinishAppointmentTime>2025-01-19T17:01:08</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>140</Id>
+    <CallId>14</CallId>
+    <VolunteerId>264934230</VolunteerId>
+    <AppointmentTime>2025-01-19T16:07:08</AppointmentTime>
+    <FinishAppointmentTime>2025-01-19T16:08:08</FinishAppointmentTime>
+    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>142</Id>
+    <CallId>42</CallId>
+    <VolunteerId>919741876</VolunteerId>
+    <AppointmentTime>2025-01-19T16:06:08</AppointmentTime>
+    <FinishAppointmentTime>2025-01-19T18:19:08</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>144</Id>
+    <CallId>6</CallId>
+    <VolunteerId>348043412</VolunteerId>
+    <AppointmentTime>2025-01-19T16:26:08</AppointmentTime>
     <FinishAppointmentTime xsi:nil="true" />
     <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
@@ -353,10 +385,18 @@
     <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
-    <Id>140</Id>
-    <CallId>31</CallId>
-    <VolunteerId>713297736</VolunteerId>
-    <AppointmentTime>2025-01-20T01:53:47</AppointmentTime>
+    <Id>148</Id>
+    <CallId>25</CallId>
+    <VolunteerId>264934230</VolunteerId>
+    <AppointmentTime>2025-01-19T16:18:08</AppointmentTime>
+    <FinishAppointmentTime xsi:nil="true" />
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>150</Id>
+    <CallId>29</CallId>
+    <VolunteerId>919741876</VolunteerId>
+    <AppointmentTime>2025-01-19T16:22:08</AppointmentTime>
     <FinishAppointmentTime xsi:nil="true" />
     <FinishAppointmentType xsi:nil="true" />
   </Assignment>

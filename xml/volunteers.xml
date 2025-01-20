@@ -1,21 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer>
   <Volunteer>
-    <Id>754941770</Id>
-    <FullName>Yosef Cohen</FullName>
-    <PhoneNumber>0561127203</PhoneNumber>
-    <Email>volunteer1@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>admin</Position>
-    <Active>false</Active>
-    <Password>B&amp;)2baM4X!8(</Password>
-    <Location>Rothschild Boulevard, Tel Aviv, Israel</Location>
-    <Latitude>32.0655</Latitude>
-    <Longitude>34.767028</Longitude>
-    <MaxDistance>13</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>714809047</Id>
+    <Id>489201501</Id>
     <FullName>Shmuel Levi</FullName>
     <PhoneNumber>0526658771</PhoneNumber>
     <Email>volunteer2@gmail.com</Email>
@@ -169,21 +155,21 @@
     <MaxDistance>5</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>953461026</Id>
+    <Id>644915554</Id>
     <FullName>Matan Shalev</FullName>
-    <PhoneNumber>0514301308</PhoneNumber>
+    <PhoneNumber>0562743392</PhoneNumber>
     <Email>volunteer13@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>RrGEfYk1Y2ez</Password>
+    <Password>&amp;C4VGunKk^0Y</Password>
     <Location>Levinsky Market, Tel Aviv, Israel</Location>
     <Latitude>32.061425</Latitude>
     <Longitude>34.766412</Longitude>
-    <MaxDistance>5</MaxDistance>
+    <MaxDistance>15</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>713297736</Id>
+    <Id>919741876</Id>
     <FullName>Asher Tzukrel</FullName>
     <PhoneNumber>0530304698</PhoneNumber>
     <Email>volunteer14@gmail.com</Email>
@@ -195,5 +181,33 @@
     <Latitude>32.071299</Latitude>
     <Longitude>34.767122</Longitude>
     <MaxDistance>16</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>319356983</Id>
+    <FullName>Yosef Cohen</FullName>
+    <PhoneNumber>0569845024</PhoneNumber>
+    <Email>volunteer1@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>admin</Position>
+    <Active>true</Active>
+    <Password>kG*C6v&amp;Ay1tM</Password>
+    <Location>Gordon Beach, Tel Aviv, Israel</Location>
+    <Latitude>32.0655</Latitude>
+    <Longitude>34.767028</Longitude>
+    <MaxDistance>12</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>919741876</Id>
+    <FullName>Asher Tzukrel</FullName>
+    <PhoneNumber>0580014349</PhoneNumber>
+    <Email>volunteer14@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>^3hXSuzE#Yo4</Password>
+    <Location>Gordon Beach, Tel Aviv, Israel</Location>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <MaxDistance>6</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>

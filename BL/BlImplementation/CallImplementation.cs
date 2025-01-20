@@ -455,6 +455,7 @@ internal class CallImplementation : ICall
                             Id = call.Id,
                             CallType = (BO.Enums.CallTypeEnum)call.CallType,
                             Address = call.Adress,
+                            VerbDesc = call.VerbDesc,
                             OpenTime = call.OpenTime,
                             MaxFinishTime = call.MaxTime,
                             DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], call.Latitude, call.Longitude)
@@ -611,6 +612,11 @@ internal class CallImplementation : ICall
         }
 
     }
+    //public void UpdateAddress( int id,string Address)
+    //{
+
+    //   _dal.Volunteer.UpdateAddress(Address);   
 
 
+    //}
 }

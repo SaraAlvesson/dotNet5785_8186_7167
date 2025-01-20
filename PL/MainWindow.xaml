@@ -39,7 +39,7 @@
 
         <!-- TextBox for RiskRange and update button -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="3" Margin="0,30,0,0">
-            <TextBox Name="textrr" Width="150" Height="35" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" Background="#ECF0F1" BorderBrush="#BDC3C7" Foreground="#2C3E50" Margin="0,0,10,0" />
+            <TextBox Name="textrr" Width="150" Height="35" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" Background="#ECF0F1" BorderBrush="#BDC3C7" Foreground="#2C3E50" Margin="0,0,10,0" TextChanged="textrr_TextChanged" />
             <Button Content="Update" Width="100" Height="35" Click="update_click" Background="#3498DB" Foreground="White" BorderBrush="#2980B9" />
         </StackPanel>
     </Grid>
