@@ -13,7 +13,7 @@ namespace PL.Admin
     public partial class VolunteerListWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-
+        public List<string> SelectedCallType { get; } = Enum.GetNames(typeof(BO.Enums.VolunteerInListField)).ToList();
         public BO.VolunteerInList? SelectedVolunteer { get; set; }
 
         public VolunteerListWindow()
@@ -33,6 +33,59 @@ namespace PL.Admin
         private void Window_Closed(object sender, EventArgs e)
         {
             s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);  // מסירים את המשקיף
+        }
+
+        private string _selectedCallType;
+        public string SelectedFilter
+        {
+            get => _selectedCallType;
+            set
+            {
+                _selectedCallType = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        private string _selectedSortOption;
+        public string SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                _selectedSortOption = value;
+                OnPropertyChanged();
+                ApplyFilters();
+            }
+        }
+
+        private void ApplyFilters()
+        {
+            BO.Enums.VolunteerInListField? volFilter = Enum.TryParse(SelectedFilter, out BO.Enums.VolunteerInListField parsedCallType)
+                ? parsedCallType
+                : (BO.Enums.VolunteerInListField?)null;
+
+            BO.Enums.CallTypeEnum? sortField = Enum.TryParse(SelectedSortOption, out BO.Enums.CallTypeEnum parsedSortField)
+                ? parsedSortField
+                : (BO.Enums.CallTypeEnum?)null;
+
+            // סינון הרשימה לפי הקריטריונים שנבחרו
+            var filteredVolunteers = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
+
+            if (volFilter.HasValue)
+            {
+                // אם volFilter הוא שם (לא Enum, אלא String או חלק ממנו)
+               filteredVolunteers = filteredVolunteers.Where(v => v.FullName.Contains((char)volFilter.Value)).ToList();
+
+            }
+
+            if (sortField.HasValue)
+            {
+                filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType).ToList();
+            }
+
+            // עדכון הרשימה
+            Volunteers = new ObservableCollection<VolunteerInList>(filteredVolunteers);
         }
 
         // תכונת תלות לרשימת המתנדבים
@@ -101,7 +154,7 @@ namespace PL.Admin
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
