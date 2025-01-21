@@ -233,9 +233,10 @@ namespace PL.Volunteer
             }
         }
 
-        private void textrr_TextChanged(object sender, TextChangedEventArgs e)
+      
+        private void textrr_TextChanged_1(object sender, TextChangedEventArgs e)
         {
-            // ניתן להוסיף פעולה כלשהי במקרה של שינוי, אם יש צורך
+
         }
     }
 }

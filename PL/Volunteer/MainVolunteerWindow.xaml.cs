@@ -82,7 +82,24 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error fetching volunteer details: {ex.Message}");
             }
         }
-
+        private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentVolunteer.VolunteerTakenCare == null && CurrentVolunteer.Active)
+            {
+                try
+                {
+                    new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error choosing call: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("You cannot choose a call at this time.");
+            }
+        }
         private void RefreshVolunteerData(int volunteerId)
         {
             try
@@ -152,7 +169,26 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
+        private void ButtonHistory_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentVolunteer != null)
+            {
+                try
+                {
+                    var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
+                    // Open new window for displaying history
+                    new ListClosedCallsVolunteer(CurrentVolunteer.Id).Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error retrieving history: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No volunteer selected.");
+            }
+        }
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(

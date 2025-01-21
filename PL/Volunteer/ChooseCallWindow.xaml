@@ -23,7 +23,7 @@
 
             <!-- TextBox for updating volunteer location -->
             <TextBox x:Name="textrr" 
-                     Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="94" Margin="10" Height="29" />
+                     Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="94" Margin="10" Height="29" TextChanged="textrr_TextChanged_1" />
 
             <Button Content="Update address" Width="100" Height="35" Click="update_click" Background="#3498DB" Foreground="White" BorderBrush="#2980B9" />
         </StackPanel>
