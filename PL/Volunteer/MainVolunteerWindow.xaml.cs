@@ -2,28 +2,42 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using BO;
-using PL.Admin;
-using static BO.Enums;
 
 namespace PL.Volunteer
 {
-    /// <summary>
-    /// Interaction logic for MainVolunteerWindow.xaml
-    /// </summary>
     public partial class MainVolunteerWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+        // אירועים לצופים
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler? CallCompleted;
+        public event EventHandler? CallCancelled;
+        public event EventHandler? VolunteerUpdated;  // אירוע נוסף לצופים
 
+        // חיבור לפונקציות שמבצעות עדכון במודל
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // VolunteerInList property (DependencyProperty)
+        protected void OnCallCompleted()
+        {
+            CallCompleted?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void OnCallCancelled()
+        {
+            CallCancelled?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void OnVolunteerUpdated()
+        {
+            VolunteerUpdated?.Invoke(this, EventArgs.Empty);  // הפעלת צופים
+        }
+
+        // מאפייני המודל
         public IEnumerable<BO.Volunteer> Volunteer
         {
             get { return (IEnumerable<BO.Volunteer>)GetValue(VolunteerFieldListProperty); }
@@ -37,7 +51,6 @@ namespace PL.Volunteer
                typeof(MainVolunteerWindow),
                new PropertyMetadata(null));
 
-        // CurrentVolunteer property (DependencyProperty)
         public BO.Volunteer? CurrentVolunteer
         {
             get { return (BO.Volunteer?)GetValue(CurrentVolunteerProperty); }
@@ -47,7 +60,6 @@ namespace PL.Volunteer
         public static readonly DependencyProperty CurrentVolunteerProperty =
             DependencyProperty.Register("CurrentVolunteer", typeof(BO.Volunteer), typeof(MainVolunteerWindow), new PropertyMetadata(null));
 
-        // CurrentCall property (DependencyProperty)
         public BO.CallInProgress? CurrentCall
         {
             get { return (BO.CallInProgress?)GetValue(CurrentCallProperty); }
@@ -60,12 +72,10 @@ namespace PL.Volunteer
         public MainVolunteerWindow(int id)
         {
             InitializeComponent();
-           
 
             try
             {
-                // Fetch and assign the current volunteer details (replace with appropriate ID)
-                CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id);
+                RefreshVolunteerData(id);
             }
             catch (Exception ex)
             {
@@ -73,6 +83,20 @@ namespace PL.Volunteer
             }
         }
 
+        private void RefreshVolunteerData(int volunteerId)
+        {
+            try
+            {
+                CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(volunteerId);
+                OnPropertyChanged(nameof(CurrentVolunteer));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error refreshing volunteer data: {ex.Message}");
+            }
+        }
+
+        // עדכון מתנדב
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentVolunteer == null)
@@ -87,6 +111,8 @@ namespace PL.Volunteer
                 {
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("Volunteer updated successfully.");
+                    RefreshVolunteerData(CurrentVolunteer.Id);
+                    OnVolunteerUpdated();  // צופה למצב העדכון
                 }
                 catch (Exception ex)
                 {
@@ -99,45 +125,46 @@ namespace PL.Volunteer
             }
         }
 
+        // טיפול בסיום טיפול
         private void ButtonComplete_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer.VolunteerTakenCare != null)
+            var result = MessageBox.Show(
+                "Are you sure you want to end your treatment for this call?",
+                "Confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
             {
-                try
-                {
-                    s_bl.Call.UpdateCallAsCompleted(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
-                    MessageBox.Show("Call completed successfully.");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error completing call: {ex.Message}");
-                }
+                return;
             }
-            else
+
+            try
             {
-                MessageBox.Show("No active call to complete.");
+                s_bl.Call.UpdateCallAsCompleted(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
+                MessageBox.Show("Call ended successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                OnCallCompleted();
+                RefreshVolunteerData(CurrentVolunteer.Id);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer?.VolunteerTakenCare != null)
+            var result = MessageBox.Show(
+                "Are you sure you want to cancel your treatment for this call?",
+                "Confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
             {
-                try
-                {
-                    s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
-                    MessageBox.Show("Call canceled successfully.");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error canceling call: {ex.Message}");
-                }
+                return;
             }
-            else
-            {
-                MessageBox.Show("No active call to cancel.");
-            }
-        }
 
         private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
         {
@@ -158,27 +185,16 @@ namespace PL.Volunteer
             }
         }
 
-        private void ButtonHistory_Click(object sender, RoutedEventArgs e)
-        {
-            if (CurrentVolunteer != null)
-            {
-                try
-                {
-                    var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
-                    // Open new window for displaying history
-                    new ListClosedCallsVolunteer(CurrentVolunteer.Id).Show();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error retrieving history: {ex.Message}");
-                }
+                OnCallCancelled();
+                RefreshVolunteerData(CurrentVolunteer.Id);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No volunteer selected.");
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+        // תוקף העדכון
         private bool IsValidUpdate()
         {
             return !string.IsNullOrEmpty(CurrentVolunteer?.Email) && !string.IsNullOrEmpty(CurrentVolunteer?.Location);

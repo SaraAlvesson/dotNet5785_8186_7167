@@ -36,7 +36,21 @@ namespace PL.Volunteer
                 ApplyFilters();
             }
         }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl?.Volunteer.AddObserver(ObserveCallsListChanges);  // נרשמים למשקיף
+            ObserveCallsListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
+        }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Volunteer.RemoveObserver(ObserveCallsListChanges);  // מסירים את המשקיף
+        }
+
+        private void ObserveCallsListChanges()
+        {
+            LoadClosedCalls();  // טוען את הרשימה מחדש
+        }
         private string _selectedSortOption;
         public string SelectedSortOption
         {

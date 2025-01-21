@@ -31,7 +31,7 @@ public class Enums
         CallAlmostOver, // פתוחה בסיכון
         CallTreatmentAlmostOver,// בטיפול בסיכון
         UNKNOWN,
-        Canceled// מצב ברירת מחדל
+        Canceled
 
     }
     #endregion

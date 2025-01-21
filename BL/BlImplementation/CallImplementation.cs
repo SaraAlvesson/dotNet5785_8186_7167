@@ -73,7 +73,7 @@ internal class CallImplementation : ICall
                              SumAppointmentTime = assignment != null && assignment.FinishAppointmentTime.HasValue
                                  ? assignment.FinishAppointmentTime.Value - item.OpenTime
                                  : null,
-                             Status = CallManager.callStatus( item.Id),
+                             Status = Tools.callStatus( item.Id),
                              SumAssignment = assignments.Count() // ספירה מתוך הרשימה המלאה של Assignment
                          };
 
@@ -166,7 +166,7 @@ internal class CallImplementation : ICall
             Longitude = doCall.Longitude,
             VerbDesc = doCall.VerbDesc,
             MaxFinishTime = doCall.MaxTime,
-            CallStatus = CallManager.callStatus(ID),
+            CallStatus = Tools.callStatus(ID),
             CallAssignInLists = myAssignments
         };
     }
@@ -313,8 +313,10 @@ internal class CallImplementation : ICall
             {
                 Console.WriteLine($"Attempting to delete call with ID {callId}");
                 _dal.call.Delete(callId);
-                CallManager.Observers.NotifyListUpdated();  //stage 5  
+                CallManager.Observers.NotifyItemUpdated(callId);  //stage 5
+                CallManager.Observers.NotifyListUpdated();  //stage 5
             }
+
             catch (DO.DalDeletionImpossible ex)
             {
                 // שלב 5: אם יש בעיה במחיקה בשכבת הנתונים, זריקת חריגה מתאימה לכיוון שכבת התצוגה
@@ -377,7 +379,8 @@ internal class CallImplementation : ICall
 
             // שלב 5: עדכון הרשומה בשכבת הנתונים
             _dal.call.Create(newCall);
-            CallManager.Observers.NotifyListUpdated(); //stage 5  
+            CallManager.Observers.NotifyItemUpdated(newCall.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
@@ -397,7 +400,8 @@ internal class CallImplementation : ICall
                               .FirstOrDefault(s => s.CallId == item.Id && s.VolunteerId == volunteerId &&
                                                   (s.FinishAppointmentType == FinishAppointmentType.SelfCancellation ||
                                                    s.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator ||
-                                                   s.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired))
+                                                   s.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired ||
+                                                   s.FinishAppointmentType == FinishAppointmentType.WasTreated))
                           where assignment != null
                           select new BO.ClosedCallInList
                           {
@@ -494,7 +498,7 @@ internal class CallImplementation : ICall
         // סינון הקריאות הפתוחות לפי סטטוס
         var openCalls = from call in listCall
                         let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
-                        let status = Tools.CheckStatusCalls(assignment, call, null)
+                        let status = Tools.callStatus( call.Id)
                         where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
                         select new BO.OpenCallInList
                         {
@@ -530,82 +534,170 @@ internal class CallImplementation : ICall
     }
 
 
-    public void UpdateCallAsCompleted(int volunteerId, int assignmentId)
+    //public void UpdateCallAsCompleted(int volunteerId, int assignmentId)
+    //{
+    //    try
+    //    {
+    //        // שליפת ההקצאה משכבת הנתונים
+    //        var assignment = _dal.assignment.Read(a => a.VolunteerId == volunteerId && a.Id == assignmentId);
+
+    //        if (assignment == null)
+    //            throw new BO.Exceptions.BlDoesNotExistException("Assignment not found.");
+
+    //        // בדיקת האם הקריאה קשורה למתנדב והאם היא פתוחה
+    //        BO.Call call = readCallData(assignment.CallId);
+    //        //call.CallStatus = BO.Enums.CalltStatusEnum.OPEN;//////////////////////////////////
+    //        //if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN && call.CallStatus != BO.Enums.CalltStatusEnum.CallIsBeingTreated && call.CallStatus != BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver && call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
+    //        //    throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
+    //        if(call.CallStatus == BO.Enums.CalltStatusEnum.Canceled || call.CallStatus == BO.Enums.CalltStatusEnum.EXPIRED || call.CallStatus == BO.Enums.CalltStatusEnum.CLOSED)
+    //            throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
+    //        //if (assignment.FinishAppointmentTime != null)
+    //        //    throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
+
+    //        // עדכון פרטי ההקצאה
+    //        assignment = assignment with
+    //        {
+    //            FinishAppointmentTime = DateTime.Now,
+    //            FinishAppointmentType = FinishAppointmentType.WasTreated
+    //        };
+
+    //        // ניסיון עדכון בשכבת הנתונים
+    //        _dal.assignment.Update(assignment);
+    //    }
+    //    catch (DO.DalDoesNotExistException ex)
+    //    {
+    //        throw new BO.Exceptions.BlDoesNotExistException("Error updating volunteer assignment.", ex);///////////////////////////
+    //    }
+
+    //}
+    public void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
+        // Retrieve the assignment by ID
+        var assignment = _dal.assignment.Read(AssignmentId);
+
+        if (assignment == null)
+            throw new BO.Exceptions.BlDoesNotExistException($"Assignment with id={AssignmentId} does Not exist\"");
+
+        BO.Call call = readCallData(assignment.CallId);
+        // Check if the assignment does not exist
+
+        // Check if the volunteer is not the one assigned to this assignment
+        if (assignment.VolunteerId != volunteerId)
+            throw new BO.Exceptions.CannotUpdateCallException($"Volunteer with id={volunteerId} can't change this assignment to end");
+
+        // Check if the assignment has already ended
+        if (assignment.FinishAppointmentTime != null)
+            throw new BO.Exceptions.CannotUpdateCallException("This assignment already ended");
+
+        // Create a new assignment object with updated end time and end type
+        DO.Assignment newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.WasTreated };
+
         try
         {
-            // שליפת ההקצאה משכבת הנתונים
-            var assignment = _dal.assignment.Read(a => a.VolunteerId == volunteerId && a.Id == assignmentId);
+            // Attempt to update the assignment in the database
+            _dal.assignment.Update(newAssign);
 
-            if (assignment == null)
-                throw new BO.Exceptions.BlDoesNotExistException("Assignment not found.");
-
-            // בדיקת האם הקריאה קשורה למתנדב והאם היא פתוחה
-            BO.Call call = readCallData(assignment.CallId);
-            call.CallStatus = BO.Enums.CalltStatusEnum.OPEN;//////////////////////////////////
-            if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN)
-                throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
-
-            //if (assignment.FinishAppointmentTime != null)
-            //    throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
-
-            // עדכון פרטי ההקצאה
-            assignment = assignment with
-            {
-                FinishAppointmentTime = DateTime.Now,
-                FinishAppointmentType = FinishAppointmentType.WasTreated
-            };
-
-            // ניסיון עדכון בשכבת הנתונים
-            _dal.assignment.Update(assignment);
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            throw new BO.Exceptions.BlDoesNotExistException("Error updating volunteer assignment.", ex);///////////////////////////
+            // If the assignment does not exist, throw a BO exception
+            throw new BO.Exceptions.BlDoesNotExistException($"Assignment with ID={AssignmentId} does not exist", ex);
         }
 
+        CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call  and obserervers etc.
+        CallManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
+        VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current call  and obserervers etc.
+        VolunteersManager.Observers.NotifyListUpdated();
     }
 
-    public void UpdateToCancelCallTreatment(int Id, int assignmentId)
+    //public void UpdateToCancelCallTreatment(int Id, int assignmentId)
+    //{
+    //    try
+    //    {
+    //        // שליפת ההקצאה משכבת הנתונים
+    //        var assignment = _dal.assignment.Read(a => a.VolunteerId == Id && a.Id == assignmentId);
+
+    //        if (assignment == null)
+    //            throw new BO.Exceptions.BlDoesNotExistException("Assignment not found.");
+
+    //        // בדיקת האם הקריאה קשורה למתנדב והאם היא פתוחה
+    //        BO.Call call = readCallData(assignment.CallId);
+
+    //        if (!IsAdmin(Id)&& assignment.VolunteerId!=Id)
+    //            throw new BO.Exceptions.BlInvalidOperationException("The call can be canceled only by the admin or the volunteer that the assignment was opened by.");
+
+    //        if (call.CallStatus == BO.Enums.CalltStatusEnum.Canceled|| call.CallStatus == BO.Enums.CalltStatusEnum.EXPIRED)
+    //           throw new BO.Exceptions.BlInvalidOperationException("Call cannot be canceled because its already expired or canceled.");
+
+
+
+    //        // עדכון פרטי ההקצאה
+    //        assignment = assignment with
+    //        {
+    //            FinishAppointmentTime = DateTime.Now,
+    //            FinishAppointmentType = assignment.VolunteerId == Id
+    //                ? FinishAppointmentType.SelfCancellation
+    //                : FinishAppointmentType.CancelingAnAdministrator
+    //        };
+
+    //        // ניסיון עדכון בשכבת הנתונים
+    //        _dal.assignment.Update(assignment);
+    //    }
+    //    catch (DO.DalDoesNotExistException ex)
+    //    {
+    //        throw new BO.Exceptions.BlDoesNotExistException("Error updating volunteer assignment.", ex);
+    //    }
+    //}
+    public void UpdateToCancelCallTreatment(int RequesterId, int AssignmentId)
     {
+
+        // Retrieve the assignment object based on its ID.
+        var assignment = _dal.assignment.Read(AssignmentId);
+        // Check if the assignment does not exist.
+        if (assignment == null)
+            throw new BO.Exceptions.BlDoesNotExistException($"Assignment with id={AssignmentId} does Not exist\"");
+
+        BO.Call call = readCallData(assignment.CallId);
+        // Retrieve the volunteer (asker) object based on the RequesterId.
+        var asker = _dal.Volunteer.Read(RequesterId);
+
+        // Check if the volunteer does not exist.
+        if (asker == null)
+            throw new BO.Exceptions.BlDoesNotExistException($"Volunteer with id={RequesterId} does Not exist\"");
+
+        // Check if the volunteer is not authorized to cancel the assignment (either not their own or not a manager).
+        if (assignment.VolunteerId != RequesterId && asker.Position != DO.Position.admin)
+            throw new BO.Exceptions.CannotUpdateVolunteerException($"Volunteer with id={RequesterId} can't change this assignment to cancel");
+
+        //// Check if the assignment has already ended.
+        //if (assignment.TheEndType != null || assignment.ActualEndTime != null)
+        //    throw new BO.BlUserCantUpdateItemExeption("This assignment already ended");
+
+        if ( call.CallStatus != BO.Enums.CalltStatusEnum.CallIsBeingTreated && call.CallStatus != BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver)
+            throw new BO.Exceptions.CannotUpdateCallException($"You can only unassign if the call is currently in progress.");
+
+        // Create a new assignment object with updated end time and end type based on role.
+        DO.Assignment newAssign;
+        if (asker.Position == DO.Position.admin && assignment.VolunteerId != RequesterId)
+            newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.CancelingAnAdministrator };
+        else
+            newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.SelfCancellation };
         try
         {
-            // שליפת ההקצאה משכבת הנתונים
-            var assignment = _dal.assignment.Read(a => a.VolunteerId == Id && a.Id == assignmentId);
+            // Update the assignment in the data layer.
+            _dal.assignment.Update(newAssign);
 
-            if (assignment == null)
-                throw new BO.Exceptions.BlDoesNotExistException("Assignment not found.");
-
-            // בדיקת האם הקריאה קשורה למתנדב והאם היא פתוחה
-            BO.Call call = readCallData(assignment.CallId);
-
-            if (!IsAdmin(Id) && assignment.VolunteerId != Id)
-                throw new BO.Exceptions.BlInvalidOperationException("The call can be canceled only by the admin or the volunteer that the assignment was opened by.");
-
-            //if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN|| call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
-            //    throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
-
-            //if (assignment.FinishAppointmentTime != null)
-            //    throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
-
-            // עדכון פרטי ההקצאה
-            assignment = assignment with
-            {
-                FinishAppointmentTime = DateTime.Now,
-                FinishAppointmentType = assignment.VolunteerId == Id
-                    ? FinishAppointmentType.SelfCancellation
-                    : FinishAppointmentType.CancelingAnAdministrator
-            };
-
-            // ניסיון עדכון בשכבת הנתונים
-            _dal.assignment.Update(assignment);
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            throw new BO.Exceptions.BlDoesNotExistException("Error updating volunteer assignment.", ex);
+            // If updating fails, throw an exception indicating the assignment does not exist.
+            throw new BO.Exceptions.BlDoesNotExistException($"Assignment with ID={AssignmentId} does not exist", ex);
         }
+        CallManager.Observers.NotifyItemUpdated(call.Id);  //update current call  and obserervers etc.
+        CallManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
+        VolunteersManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current call  and obserervers etc.
+        VolunteersManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
     }
-
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);

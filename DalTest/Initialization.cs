@@ -26,10 +26,10 @@ public static class Initialization
         //s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); //stage 2
         s_dal = DalApi.Factory.Get; //stage 4
         Console.WriteLine("Resetting configuration values and data lists.");
-        s_dal.ResetDB();    
+        s_dal.ResetDB();
         Console.WriteLine("Initializing volunteers, calls, and assignments lists.");
         createVolunteers();
-        createCalls();
+        CreateCalls();
         createAssignment();
     }
 
@@ -137,12 +137,12 @@ new Tuple<string, double, double>("Azrieli Center, Tel Aviv, Israel", 32.073700,
     /// - Each call is assigned a random description, type, and location.
     /// - Open and maximum response times are set based on random offsets.
     /// </summary>
-    private static void createCalls()
+    private static void CreateCalls()
     {
         // List of addresses for volunteers in Jerusalem with precise latitudes and longitudes
-        var callAddresses = new List<Tuple<string, double, double>>()
+        var callAddresses = new List<Tuple<string, double, double>>
     {
-       new Tuple<string, double, double>("Ben Yehuda Street, Tel Aviv, Israel", 32.065500, 34.767028),
+           new Tuple<string, double, double>("Ben Yehuda Street, Tel Aviv, Israel", 32.065500, 34.767028),
 new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
 new Tuple<string, double, double>("Jaffa Road, Tel Aviv, Israel", 32.055823, 34.759151),
 new Tuple<string, double, double>("Neve Tzedek, Tel Aviv, Israel", 32.065764, 34.770022),
@@ -190,9 +190,10 @@ new Tuple<string, double, double>("Shenkin Street, Tel Aviv, Israel", 32.065034,
 new Tuple<string, double, double>("Palmach Street, Tel Aviv, Israel", 32.070043, 34.767118),
 new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.053076, 34.759602),
 
+
+        // Add more addresses as needed...
     };
 
-        // Validate addresses list
         if (callAddresses.Count == 0)
         {
             throw new InvalidOperationException("The call addresses list is empty. Cannot create calls.");
@@ -226,16 +227,22 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
                 // Select a random call address
                 var selectedAddress = callAddresses[s_rand.Next(callAddresses.Count)];
 
-                // Generate opening time and max time
-                DateTime openTime = s_dal.config.Clock.AddHours(-s_rand.Next(1, 6));
-                DateTime? maxTime = (s_rand.NextDouble() > 0.3)
-                    ? (DateTime?)openTime.AddHours(s_rand.Next(2, 5))
-                    : null;
+                // Generate opening time
+                DateTime now = s_dal.config.Clock;
+                DateTime openTime = now.AddHours(-s_rand.Next(1, 48)); // Open time within the last 48 hours
 
-                // Ensure expired calls are handled
-                if (maxTime == null && s_rand.NextDouble() < 0.1)
+                // Generate max time
+                DateTime? maxTime = null;
+                if (s_rand.NextDouble() < 0.7) // 70% chance to have a maxTime
                 {
-                    maxTime = openTime.AddHours(-s_rand.Next(6, 24));
+                    int hoursOffset = s_rand.Next(1, 24); // Offset by 1 to 24 hours
+                    maxTime = openTime.AddHours(hoursOffset);
+
+                    // Ensure maxTime is valid
+                    if (maxTime <= openTime)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(maxTime), "MaxTime must be greater than OpenTime.");
+                    }
                 }
 
                 // Create a new call
@@ -271,57 +278,77 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
     // </summary>
     private static void createAssignment()
     {
-        // אתחול רשימות למעקב
+        // אתחול מבני נתונים למעקב
         Dictionary<int, int> volunteerCallCount = new Dictionary<int, int>();
-        List<int> volunteersWithoutCalls = new List<int>(s_dal!.Volunteer.ReadAll().Select(v => v.Id));
-        int totalVolunteers = s_dal!.Volunteer.ReadAll().Count();
+        HashSet<int> assignedCalls = new HashSet<int>(); // קריאות שכבר מוקצות
+        List<int> volunteersWithoutCalls = s_dal.Volunteer.ReadAll()
+            .Where(v => v.Active) // רק מתנדבים פעילים
+            .Select(v => v.Id)
+            .ToList();
+        List<Volunteer> allVolunteersList = s_dal.Volunteer.ReadAll()
+            .Where(v => v.Active) // רק מתנדבים פעילים
+            .ToList();
+        List<Call> allCallsList = s_dal.call.ReadAll().ToList();
+        int totalVolunteers = allVolunteersList.Count;
 
-        // לולאה ליצירת 50 הקצאות
-        for (int i = 0; i < 50; i++)
+        // יצירת קריאות מגוונות
+        List<Assignment> allAssignments = new List<Assignment>();
+
+        int successfulAssignments = 0;
+
+        while (successfulAssignments < 50)
         {
-            Volunteer volunteerToAssig;
-
-            // בחירת מתנדב
-            if (volunteersWithoutCalls.Count > 0)
+            if (totalVolunteers == 0)
             {
-                int randIndex = s_rand.Next(volunteersWithoutCalls.Count);
-                int volunteerId = volunteersWithoutCalls[randIndex];
-                volunteerToAssig = s_dal!.Volunteer.ReadAll().First(v => v.Id == volunteerId);
-                volunteersWithoutCalls.RemoveAt(randIndex);
-            }
-            else
-            {
-                int randVolunteer = s_rand.Next(totalVolunteers);
-                volunteerToAssig = s_dal!.Volunteer.ReadAll().ElementAt(randVolunteer);
+                Console.WriteLine("No active volunteers available.");
+                break;
             }
 
-            // עדכון המעקב
-            if (!volunteerCallCount.ContainsKey(volunteerToAssig.Id))
+            Volunteer volunteerToAssign;
+
+            // הגרלת מתנדב
+            int randVolunteer = s_rand.Next(totalVolunteers);
+            volunteerToAssign = allVolunteersList[randVolunteer];
+
+            // עדכון המעקב למתנדב
+            if (!volunteerCallCount.ContainsKey(volunteerToAssign.Id))
+                volunteerCallCount[volunteerToAssign.Id] = 0;
+
+            // הגרלת קריאה מתוך כל הקריאות
+            Call callToAssign = null;
+
+            foreach (var call in allCallsList)
             {
-                volunteerCallCount[volunteerToAssig.Id] = 0;
+                if (!assignedCalls.Contains(call.Id) &&
+                    call.OpenTime <= s_dal.config.Clock &&
+                    (call.MaxTime == null || call.MaxTime > s_dal.config.Clock) &&
+                    !s_dal.assignment.ReadAll().Any(a => a.CallId == call.Id && a.FinishAppointmentType != FinishAppointmentType.SelfCancellation))
+                {
+                    callToAssign = call;
+                    break;
+                }
             }
 
-            // הגרלת קריאה
-            Call callToAssig = null;
-            int attempts = 0;
-            while (attempts < 10)
+            if (callToAssign == null)
             {
-                int randCall = s_rand.Next(s_dal!.call.ReadAll().Count());
-                callToAssig = s_dal.call.ReadAll().ElementAt(randCall);
-                if (callToAssig.OpenTime <= s_dal!.config.Clock) break;
-                attempts++;
-            }
-            if (callToAssig == null || callToAssig.OpenTime > s_dal!.config.Clock)
-            {
-                Console.WriteLine("No suitable call found after 10 attempts.");
-                continue;
+                // אם אין קריאה זמינה שמספקת את כל התנאים, נבחר קריאה אקראית שלא הוקצתה
+                callToAssign = allCallsList.FirstOrDefault(call => !assignedCalls.Contains(call.Id));
             }
 
-            // יצירת סיום
+            if (callToAssign == null)
+            {
+                Console.WriteLine("No calls available to assign.");
+                break;
+            }
+
+            // עדכון שהקריאה הוקצתה
+            assignedCalls.Add(callToAssign.Id);
+
+            // הגדרת סוג סיום
             FinishAppointmentType? finish = null;
             DateTime? finishTime = null;
 
-            if (callToAssig.MaxTime != null && callToAssig.MaxTime <= s_dal.config.Clock)
+            if (callToAssign.MaxTime.HasValue && callToAssign.MaxTime <= s_dal.config.Clock)
             {
                 finish = FinishAppointmentType.CancellationHasExpired;
             }
@@ -332,41 +359,61 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
                 {
                     case 0:
                         finish = FinishAppointmentType.WasTreated;
-                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31));
                         break;
                     case 1:
                         finish = FinishAppointmentType.SelfCancellation;
-                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31));
                         break;
                     case 2:
                         finish = FinishAppointmentType.CancelingAnAdministrator;
-                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31));
                         break;
-                    case 4:
+                    case 3:
                         finish = FinishAppointmentType.CancellationHasExpired;
-                        finishTime = callToAssig.MaxTime?.AddMinutes(s_rand.Next(5, 31)); // הוספת אקראי בין 5 ל-30 דקות
+                        finishTime = callToAssign.MaxTime?.AddMinutes(s_rand.Next(5, 31));
+                        break;
+                    default:
+                        finish = null; // טיפול שעדיין בעיצומו
                         break;
                 }
             }
 
+            // חישוב זמן הכניסה לטיפול
+            DateTime? appointmentTime = null;
+            if (callToAssign.MaxTime.HasValue)
+            {
+                double maxMinutes = (callToAssign.MaxTime.Value - callToAssign.OpenTime).TotalMinutes;
+                appointmentTime = callToAssign.OpenTime.AddMinutes(s_rand.Next(1, (int)(maxMinutes / 2)));
+            }
+            else
+            {
+                Console.WriteLine($"Call ID {callToAssign.Id} has no MaxTime defined, skipping assignment.");
+                continue;
+            }
+
             // יצירת הקצאה
             int newAssignmentId = s_dal.config.NextAssignmentId;
-            s_dal!.assignment.Create(new Assignment
+            s_dal.assignment.Create(new Assignment
             {
                 Id = newAssignmentId,
-                CallId = callToAssig.Id,
-                VolunteerId = volunteerToAssig.Id,
-                AppointmentTime = s_dal!.config.Clock.AddMinutes(s_rand.Next(5, 31)), // הוספת אקראי לזמן תחילת הייעוץ
+                CallId = callToAssign.Id,
+                VolunteerId = volunteerToAssign.Id,
+                AppointmentTime = appointmentTime.Value,
                 FinishAppointmentTime = finishTime,
                 FinishAppointmentType = finish,
             });
 
-            volunteerCallCount[volunteerToAssig.Id]++;
-            if (volunteerCallCount[volunteerToAssig.Id] > 5)
+            // עדכון המתנדב במעקב
+            volunteerCallCount[volunteerToAssign.Id]++;
+            if (volunteerCallCount[volunteerToAssign.Id] > 5)
             {
-                volunteerCallCount.Remove(volunteerToAssig.Id);
+                volunteerCallCount.Remove(volunteerToAssign.Id);
             }
-        }
-    }
 
+            successfulAssignments++;
+        }
+
+        Console.WriteLine($"Total successful assignments: {successfulAssignments}");
+    }
 }
