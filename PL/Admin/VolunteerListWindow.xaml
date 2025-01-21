@@ -17,9 +17,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ComboBox Grid.Row="0"
-                  SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
-                  ItemsSource="{Binding CallTypes}" 
+        <ComboBox Grid.Row="0" 
+                  SelectedItem="{Binding SelectedFilter, Mode=TwoWay}" 
+                  ItemsSource="{Binding SelectedCallType}" 
                   VerticalAlignment="Center" 
                   Margin="0,10">
         </ComboBox>

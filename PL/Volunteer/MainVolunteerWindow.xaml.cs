@@ -191,6 +191,7 @@ namespace PL.Volunteer
         }
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
+
             var result = MessageBox.Show(
                 "Are you sure you want to cancel your treatment for this call?",
                 "Confirmation",
@@ -207,19 +208,76 @@ namespace PL.Volunteer
                 s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
                 MessageBox.Show("Call canceled successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                OnCallCancelled();
-                RefreshVolunteerData(CurrentVolunteer.Id);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
 
-        // תוקף העדכון
+
+        //                OnCallCancelled();
+        //                RefreshVolunteerData(CurrentVolunteer.Id);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            }
+        //        }
+
+        //        // תוקף העדכון
+
+        //    }
+        //}
+    
+
+
+        private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentVolunteer.VolunteerTakenCare == null && CurrentVolunteer.Active)
+            {
+                try
+                {
+                    new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error choosing call: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("You cannot choose a call at this time.");
+            }
+        }
+
+        private void ButtonHistory_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentVolunteer != null)
+            {
+                try
+                {
+                    var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
+                    // Open new window for displaying history
+                    new ListClosedCallsVolunteer(CurrentVolunteer.Id).Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error retrieving history: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No volunteer selected.");
+            }
+        }
+
         private bool IsValidUpdate()
         {
             return !string.IsNullOrEmpty(CurrentVolunteer?.Email) && !string.IsNullOrEmpty(CurrentVolunteer?.Location);
         }
+
     }
 }
+
