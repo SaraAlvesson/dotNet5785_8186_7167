@@ -46,9 +46,9 @@ internal class VolunteerImplementation : IVolunteer
 
         if (volunteer != null)
         {
-            //// שלב 2: השוואת הסיסמאות
-            //if (volunteer.Password != password)
-            //    throw new BlPasswordNotValid("Incorrect password");
+            // שלב 2: השוואת הסיסמאות
+            if (volunteer.Password != password)
+                throw new BlPasswordNotValid("Incorrect password");
 
             // שלב 3: המרת התפקיד מה-DO ל-BO
             if (Enum.TryParse<BO.Enums.VolunteerTypeEnum>(volunteer.Position.ToString(), out var volunteerType))
@@ -173,11 +173,11 @@ internal class VolunteerImplementation : IVolunteer
             var ongoingAssignments = assignments.Where(a =>
             {
                 DO.Call call = _dal.call.Read(a.CallId);
-                var status = Tools.CheckStatus(a, call, _dal.config.RiskRange);
+                var status = Tools.callStatus(call.Id);
                 return status == BO.Enums.CalltStatusEnum.CallIsBeingTreated ||
                        status == BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver;
             });
-        
+
 
             // יצירת אובייקט לוגי "מתנדב" והחזרת הקריאות שבתהליך בלבד
             return new BO.Volunteer()
@@ -194,6 +194,8 @@ internal class VolunteerImplementation : IVolunteer
                 Active = volunteer.Active,
                 MaxDistance = volunteer.MaxDistance,
                 DistanceType = (BO.Enums.DistanceTypeEnum)volunteer.DistanceType,
+                SumCanceled = assignments.Where(a => a.FinishAppointmentType == FinishAppointmentType.SelfCancellation || a.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator).Count(),
+                SumExpired = assignments.Where(a => a.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired).Count(),
                 SumCalls = ongoingAssignments.Count(), // ספירת הקריאות שבתהליך
                 VolunteerTakenCare = ongoingAssignments.Select(activeAssignment =>
                 {
@@ -218,6 +220,7 @@ internal class VolunteerImplementation : IVolunteer
                 }).FirstOrDefault() // אם יש קריאה אחת לפחות בטיפול
             };
         }
+
         catch (DO.DalDoesNotExistException ex)
         {
             throw new BO.Exceptions.BlDoesNotExistException("Error retrieving volunteer details.", ex);
@@ -400,7 +403,8 @@ internal class VolunteerImplementation : IVolunteer
 
             // שלב 2: ניסיון למחוק את המתנדב אם הוא לא מטפל בהקצאה פעילה
             _dal.Volunteer.Delete(volunteerId); // מנסה למחוק את המתנדב 
-            VolunteersManager.Observers.NotifyListUpdated();  //stage 5  
+            CallManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
+            CallManager.Observers.NotifyListUpdated(); //stage
         }
         catch (DO.DalDoesNotExistException ex)
         {

@@ -156,10 +156,10 @@
         <StackPanel Grid.Row="12" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40">
             <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
                     Content="Finish Treatment" Click="ButtonComplete_Click"
-                    IsEnabled="{Binding CurrentCall}" />
+                    IsEnabled="{Binding CurrentVolunteer.VolunteerTakenCare}" />
             <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
                     Content="Cancel Treatment" Click="ButtonCancel_Click"
-                    IsEnabled="{Binding CurrentCall}" />
+                    IsEnabled="{Binding CurrentVolunteer.VolunteerTakenCare}" />
         </StackPanel>
         
 

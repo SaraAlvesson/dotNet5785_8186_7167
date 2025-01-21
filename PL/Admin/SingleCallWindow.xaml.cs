@@ -76,6 +76,22 @@ namespace PL.Admin
              
             
         }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            BlApi.Factory.Get().Call.AddObserver(CallListObserver);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            BlApi.Factory.Get().Call.RemoveObserver(CallListObserver);
+        }
+        private void CallListObserver()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                UpdateCallList();
+            });
+        }
 
         public BO.Call CurrentCall
         {

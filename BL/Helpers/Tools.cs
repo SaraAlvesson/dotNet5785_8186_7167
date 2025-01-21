@@ -1,56 +1,4 @@
-﻿//using System.Net;
-//using System.Reflection;
-//using System.Text.Json;
-
-//namespace Helpers
-//{
-//    internal static class Tools
-//    {
-//        // מתודת עזר להמיר אובייקט למיתר
-//        public static string ToStringProperty<T>(this T t)
-//        {
-//            return t?.ToString() ?? string.Empty;
-//        }
-
-//        // בדיקה אם כתובת אימייל תקינה
-//        public static bool IsValidEmail(string email)
-//        {
-//            if (string.IsNullOrWhiteSpace(email))
-//                return false;
-
-//            try
-//            {
-//                var addr = new System.Net.Mail.MailAddress(email);
-//                return addr.Address == email;
-//            }
-//            catch
-//            {
-//                return false;
-//            }
-//        }
-
-//        // בדיקה אם מספר תעודת זהות תקין
-//        public static bool IsValidId(int id)
-//        {
-//            string idStr = id.ToString("D9"); // ת.ז. צריכה להיות באורך 9 ספרות
-//            int sum = 0;
-
-//            for (int i = 0; i < idStr.Length; i++)
-//            {
-//                int digit = (idStr[i] - '0') * ((i % 2) + 1);
-//                sum += (digit > 9) ? digit - 9 : digit;
-//            }
-
-//            return sum % 10 == 0;
-//        }
-
-//        // בדיקה אם כתובת תקינה (לפחות 5 תווים)
-//        public static bool IsValidAddress(string address)
-//        {
-//            return !string.IsNullOrWhiteSpace(address) && address.Length > 5;
-//        }
-//    }
-//}
+﻿
 using BO;
 using DalApi;
 using DO;
@@ -62,83 +10,116 @@ namespace Helpers
 {
     internal static class Tools
     {
-
-
-        internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
+        private static IDal s_dal = DalApi.Factory.Get; //stage 4
+        internal static BO.Enums.CalltStatusEnum callStatus(int ID)
         {
-            // טיפול במקרה שבו doAssignment הוא null
-            if (doAssignment == null || doCall == null)
-            {
-                return BO.Enums.CalltStatusEnum.UNKNOWN; // לא ניתן להחזיר מצב אם הנתונים חסרים
-            }
+            DO.Call? c = s_dal.call.Read(ID);
 
-            // אם הקריאה בטיפול של מתנדב מסוים
-            if (doAssignment.VolunteerId != null)
-            {
-                // אם הקריאה מתקרבת לסיום (15 שעות לפני סיום)
-                if (doCall.MaxTime.HasValue)
-                {
-                    // חישוב הזמן שנשאר עד ל-MaxTime
-                    TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+            if (c == null)
+                throw new DO.DalDoesNotExistException($"call with ID: {ID} doesn't exist!");
 
-                    // בדיקה אם הזמן שנשאר הוא 15 שעות או פחות
-                    if (timeRemaining <= riskTimeSpan)
-                    {
-                        return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // קריאה בטיפול שמתקרבת לסיום - בטיפול בסיכון
-                    }
-                }
+            DO.Assignment? a = s_dal.assignment.Read(item => item.CallId == ID);
+            if (a == null)
+                if (s_dal.config.Clock - c.OpenTime > s_dal.config.RiskRange)
+                    return BO.Enums.CalltStatusEnum.CallAlmostOver;
+                else
+                    return BO.Enums.CalltStatusEnum.OPEN;
 
-                return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // בטיפול - יש מתנדב שטיפל בה
-            }
+            if (a.FinishAppointmentType is null)
+                if (s_dal.config.Clock - a.AppointmentTime > s_dal.config.RiskRange)
+                    return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver;
+                else
+                    return BO.Enums.CalltStatusEnum.CallIsBeingTreated;
 
-            return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל אם לא בטיפול
+            if (a.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired)
+                return BO.Enums.CalltStatusEnum.EXPIRED;
+
+            if (a.FinishAppointmentType == DO.FinishAppointmentType.WasTreated)
+                return BO.Enums.CalltStatusEnum.CLOSED;
+
+            if (a.FinishAppointmentType == DO.FinishAppointmentType.SelfCancellation || a.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator)
+                return BO.Enums.CalltStatusEnum.Canceled;
+
+            else
+                return BO.Enums.CalltStatusEnum.UNKNOWN;
+
         }
-        internal static BO.Enums.CalltStatusEnum CheckStatusCalls(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
-        {
-            // טיפול במקרה שבו doAssignment או doCall הם null
-            if (doAssignment == null || doCall == null)
-            {
-                return BO.Enums.CalltStatusEnum.OPEN; // לא ניתן להחזיר מצב אם הנתונים חסרים
-            }
 
-            // אם הקריאה לא נמצאת בטיפול כרגע
-            if (doAssignment.VolunteerId == null)
-            {
-                // אם הקריאה מתקרבת לזמן סיום הדרוש לה
-                if (doCall.MaxTime.HasValue)
-                {
-                    TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+        //internal static BO.Enums.CalltStatusEnum CheckStatus(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
+        //{
+        //    // טיפול במקרה שבו doAssignment הוא null
+        //    if (doAssignment == null || doCall == null)
+        //    {
+        //        return BO.Enums.CalltStatusEnum.UNKNOWN; // לא ניתן להחזיר מצב אם הנתונים חסרים
+        //    }
 
-                    if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
-                    {
-                        return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף
-                    }
-                    else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
-                    {
-                        return BO.Enums.CalltStatusEnum.OPEN; // פתוחה בסיכון
-                    }
-                }
+        //    // אם הקריאה בטיפול של מתנדב מסוים
+        //    if (doAssignment.VolunteerId != null)
+        //    {
+        //        // אם הקריאה מתקרבת לסיום (15 שעות לפני סיום)
+        //        if (doCall.MaxTime.HasValue)
+        //        {
+        //            // חישוב הזמן שנשאר עד ל-MaxTime
+        //            TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
 
-                return BO.Enums.CalltStatusEnum.OPEN; // קריאה פתוחה
-            }
+        //            // בדיקה אם הזמן שנשאר הוא 15 שעות או פחות
+        //            if (timeRemaining <= riskTimeSpan)
+        //            {
+        //                return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver; // קריאה בטיפול שמתקרבת לסיום - בטיפול בסיכון
+        //            }
+        //        }
 
-            // אם הקריאה בטיפול כרגע על ידי מתנדב
-            if (doCall.MaxTime.HasValue)
-            {
-                TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+        //        return BO.Enums.CalltStatusEnum.CallIsBeingTreated; // בטיפול - יש מתנדב שטיפל בה
+        //    }
 
-                if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
-                {
-                    return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף גם אם היא בטיפול
-                }
-                else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
-                {
-                    return BO.Enums.CalltStatusEnum.OPEN; // בטיפול בסיכון
-                }
-            }
+        //    return BO.Enums.CalltStatusEnum.UNKNOWN; // מצב ברירת מחדל אם לא בטיפול
+        //}
+        //internal static BO.Enums.CalltStatusEnum CheckStatusCalls(DO.Assignment doAssignment, DO.Call doCall, TimeSpan? riskTimeSpan)
+        //{
+        //    // טיפול במקרה שבו doAssignment או doCall הם null
+        //    if (doAssignment == null || doCall == null)
+        //    {
+        //        return BO.Enums.CalltStatusEnum.OPEN; // לא ניתן להחזיר מצב אם הנתונים חסרים
+        //    }
 
-            return BO.Enums.CalltStatusEnum.OPEN; // קריאה בטיפול
-        }
+        //    // אם הקריאה לא נמצאת בטיפול כרגע
+        //    if (doAssignment.VolunteerId == null)
+        //    {
+        //        // אם הקריאה מתקרבת לזמן סיום הדרוש לה
+        //        if (doCall.MaxTime.HasValue)
+        //        {
+        //            TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+        //            if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
+        //            {
+        //                return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף
+        //            }
+        //            else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
+        //            {
+        //                return BO.Enums.CalltStatusEnum.OPEN; // פתוחה בסיכון
+        //            }
+        //        }
+
+        //        return BO.Enums.CalltStatusEnum.OPEN; // קריאה פתוחה
+        //    }
+
+        //    // אם הקריאה בטיפול כרגע על ידי מתנדב
+        //    if (doCall.MaxTime.HasValue)
+        //    {
+        //        TimeSpan timeRemaining = doCall.MaxTime.Value - DateTime.Now;
+
+        //        if (timeRemaining <= TimeSpan.Zero) // הזמן עבר
+        //        {
+        //            return BO.Enums.CalltStatusEnum.OPEN; // פג תוקף גם אם היא בטיפול
+        //        }
+        //        else if (timeRemaining <= riskTimeSpan) // זמן קרוב מאוד לסיום
+        //        {
+        //            return BO.Enums.CalltStatusEnum.OPEN; // בטיפול בסיכון
+        //        }
+        //    }
+
+        //    return BO.Enums.CalltStatusEnum.OPEN; // קריאה בטיפול
+        //}
 
 
         // The generic method works for any object, returning a string of its properties
