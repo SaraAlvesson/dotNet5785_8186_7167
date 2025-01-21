@@ -73,7 +73,7 @@ internal class CallImplementation : ICall
                              SumAppointmentTime = assignment != null && assignment.FinishAppointmentTime.HasValue
                                  ? assignment.FinishAppointmentTime.Value - item.OpenTime
                                  : null,
-                             Status = Tools.CheckStatusCalls(assignment, item, null),
+                             Status = CallManager.callStatus( item.Id),
                              SumAssignment = assignments.Count() // ספירה מתוך הרשימה המלאה של Assignment
                          };
 
@@ -126,58 +126,104 @@ internal class CallImplementation : ICall
     }
 
 
-
-    public BO.Call GetCallDetails(int callId)
+    public BO.Call readCallData(int ID)
     {
-        // קבלת פרטי הקריאה
-        var call = _dal.call.Read(callId);
 
-        // אם הקריאה לא קיימת, זורקים חריגה
-        if (call == null)
-        {
-            throw new BO.Exceptions.BlDoesNotExistException($"Call with ID={callId} does not exist");
-        }
-
-        // קבלת כל ההקצאות של הקריאה
-        var assignments = _dal.assignment.ReadAll(a => a.CallId == callId);
-
-        // בחירת ההקצאה הרלוונטית ביותר (נניח האחרונה לפי זמן)
-        var assignment = assignments.OrderByDescending(a => a.AppointmentTime).FirstOrDefault();
-
-        // משתנה לטווח זמן סיכון (למשל מקונפיגורציה)
-        TimeSpan riskTimeSpan = TimeSpan.FromMinutes(30); // דוגמה - ניתן לשנות לפי הצורך///////////////////////////////////////////////
-
-        // יצירת האובייקט BO.Call
-        return new BO.Call()
-        {
-            Id = call.Id,
-            CallType = (BO.Enums.CallTypeEnum)call.CallType,
-            VerbDesc = call.VerbDesc,
-            Address = call.Adress,
-            OpenTime = call.OpenTime,
-            MaxFinishTime = call.MaxTime,
-            Latitude = call.Latitude,
-            Longitude = call.Longitude,
-            // קריאה למתודת CheckStatus עם שלושה פרמטרים
-            CallStatus = Tools.CheckStatus(assignment, call, riskTimeSpan),
-            // יצירת רשימת הקצאות אם קיימת הקצאה
-            CallAssignInLists = assignment == null
-                ? null
-                : new List<BO.CallAssignInList>
+        var doCall = _dal.call.Read(ID) ??
+            throw new BO.Exceptions.BlDoesNotExistException($"Call with ID={ID} does Not exist");
+        IEnumerable<DO.Assignment> assignments = _dal.assignment.ReadAll();
+        IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll();
+        List<BO.CallAssignInList> myAssignments = assignments.Where(a => a.CallId == ID).
+            Select(a =>
+            {
+                return new CallAssignInList
                 {
-                new BO.CallAssignInList
-                {
-                    VolunteerId = assignment.VolunteerId,
-                    VolunteerName = GetVolunteerName(assignment.VolunteerId), // שימוש במתודה לקבלת שם מתנדב
-                    OpenTime = assignment.AppointmentTime,
-                    RealFinishTime = assignment.FinishAppointmentTime,
-                    FinishAppointmentType = (BO.Enums.FinishAppointmentTypeEnum)assignment.FinishAppointmentType
-                }
-                }
+                    RealFinishTime = a.FinishAppointmentTime,
+                    FinishAppointmentType = CallManager.ConvertEndType(a.FinishAppointmentType),
+                    OpenTime = a.AppointmentTime,
+                    VolunteerId = a.VolunteerId,
+                    VolunteerName = volunteers.Where(v => v.Id == a.VolunteerId).First().FullName,
+                };
+            }).ToList();
+        return new BO.Call
+        {
+            Id = ID,
+            CallType = doCall.CallType switch
+            {
+                DO.CallType.PreparingFood => BO.Enums.CallTypeEnum.PreparingFood,
+                DO.CallType.TransportingFood => BO.Enums.CallTypeEnum.TransportingFood,
+                DO.CallType.FixingEquipment => BO.Enums.CallTypeEnum.FixingEquipment,
+                DO.CallType.ProvidingShelter => BO.Enums.CallTypeEnum.ProvidingShelter,
+                DO.CallType.TransportAssistance => BO.Enums.CallTypeEnum.TransportAssistance,
+                DO.CallType.MedicalAssistance => BO.Enums.CallTypeEnum.MedicalAssistance,
+                DO.CallType.EmotionalSupport => BO.Enums.CallTypeEnum.EmotionalSupport,
+                DO.CallType.PackingSupplies => BO.Enums.CallTypeEnum.PackingSupplies,
+                _ => throw new FormatException("Unknown Call Type!")
+            },
+            Address = doCall.Adress,
+            OpenTime = doCall.OpenTime,
+            Latitude = doCall.Latitude,
+            Longitude = doCall.Longitude,
+            VerbDesc = doCall.VerbDesc,
+            MaxFinishTime = doCall.MaxTime,
+            CallStatus = CallManager.callStatus(ID),
+            CallAssignInLists = myAssignments
         };
     }
 
-    // פונקציה למציאת שם מתנדב
+
+
+    //public BO.Call GetCallDetails(int callId)
+    //{
+    //    // קבלת פרטי הקריאה
+    //    var call = _dal.call.Read(callId);
+
+    //    // אם הקריאה לא קיימת, זורקים חריגה
+    //    if (call == null)
+    //    {
+    //        throw new BO.Exceptions.BlDoesNotExistException($"Call with ID={callId} does not exist");
+    //    }
+
+    //    // קבלת כל ההקצאות של הקריאה
+    //    var assignments = _dal.assignment.ReadAll(a => a.CallId == callId);
+
+    //    // בחירת ההקצאה הרלוונטית ביותר (נניח האחרונה לפי זמן)
+    //    var assignment = assignments.OrderByDescending(a => a.AppointmentTime).FirstOrDefault();
+
+    //    // משתנה לטווח זמן סיכון (למשל מקונפיגורציה)
+    //    TimeSpan riskTimeSpan = TimeSpan.FromMinutes(30); // דוגמה - ניתן לשנות לפי הצורך///////////////////////////////////////////////
+
+    //    // יצירת האובייקט BO.Call
+    //    return new BO.Call()
+    //    {
+    //        Id = call.Id,
+    //        CallType = (BO.Enums.CallTypeEnum)call.CallType,
+    //        VerbDesc = call.VerbDesc,
+    //        Address = call.Adress,
+    //        OpenTime = call.OpenTime,
+    //        MaxFinishTime = call.MaxTime,
+    //        Latitude = call.Latitude,
+    //        Longitude = call.Longitude,
+    //        // קריאה למתודת CheckStatus עם שלושה פרמטרים
+    //        CallStatus = Tools.CheckStatus(assignment, call, riskTimeSpan),
+    //        // יצירת רשימת הקצאות אם קיימת הקצאה
+    //        CallAssignInLists = assignment == null
+    //            ? null
+    //            : new List<BO.CallAssignInList>
+    //            {
+    //            new BO.CallAssignInList
+    //            {
+    //                VolunteerId = assignment.VolunteerId,
+    //                VolunteerName = GetVolunteerName(assignment.VolunteerId), // שימוש במתודה לקבלת שם מתנדב
+    //                OpenTime = assignment.AppointmentTime,
+    //                RealFinishTime = assignment.FinishAppointmentTime,
+    //                FinishAppointmentType = (BO.Enums.FinishAppointmentTypeEnum)assignment.FinishAppointmentType
+    //            }
+    //            }
+    //    };
+    //}
+
+    //// פונקציה למציאת שם מתנדב
     private string GetVolunteerName(int? volunteerId)
     {
         if (!volunteerId.HasValue)
@@ -249,7 +295,7 @@ internal class CallImplementation : ICall
             var existingCall = _dal.call.Read(v => v.Id == callId)
                 ?? throw new DalDoesNotExistException("Call not found.");
 
-            BO.Call c = GetCallDetails(existingCall.Id);
+            BO.Call c = readCallData(existingCall.Id);
             var assignment = _dal.assignment.Read(a => a.CallId == callId);
 
             // שלב 2: בדיקת סטטוס הקריאה והתאמת התנאים למחיקה
@@ -495,12 +541,13 @@ internal class CallImplementation : ICall
                 throw new BO.Exceptions.BlDoesNotExistException("Assignment not found.");
 
             // בדיקת האם הקריאה קשורה למתנדב והאם היא פתוחה
-            BO.Call call = GetCallDetails(assignment.CallId);
+            BO.Call call = readCallData(assignment.CallId);
+            call.CallStatus = BO.Enums.CalltStatusEnum.OPEN;//////////////////////////////////
             if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN)
                 throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
 
-            if (assignment.FinishAppointmentTime != null)
-                throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
+            //if (assignment.FinishAppointmentTime != null)
+            //    throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
 
             // עדכון פרטי ההקצאה
             assignment = assignment with
@@ -530,16 +577,16 @@ internal class CallImplementation : ICall
                 throw new BO.Exceptions.BlDoesNotExistException("Assignment not found.");
 
             // בדיקת האם הקריאה קשורה למתנדב והאם היא פתוחה
-            BO.Call call = GetCallDetails(assignment.CallId);
+            BO.Call call = readCallData(assignment.CallId);
 
             if (!IsAdmin(Id) && assignment.VolunteerId != Id)
                 throw new BO.Exceptions.BlInvalidOperationException("The call can be canceled only by the admin or the volunteer that the assignment was opened by.");
 
-            if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN)
-                throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
+            //if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN|| call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
+            //    throw new BO.Exceptions.BlInvalidOperationException("Call is not open for completion.");
 
-            if (assignment.FinishAppointmentTime != null)
-                throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
+            //if (assignment.FinishAppointmentTime != null)
+            //    throw new BO.Exceptions.BlInvalidOperationException("Assignment has already been completed.");
 
             // עדכון פרטי ההקצאה
             assignment = assignment with
@@ -573,7 +620,7 @@ internal class CallImplementation : ICall
         try
         {
             // שליפת פרטי הקריאה
-            BO.Call call = GetCallDetails(callId);
+            BO.Call call = readCallData(callId);
 
             if (call == null)
                 throw new BO.Exceptions.BlDoesNotExistException("Call not found.");

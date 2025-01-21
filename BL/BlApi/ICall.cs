@@ -28,7 +28,7 @@ public interface ICall:IObservable
     /// </summary>
     /// <param name="callId">מזהה הקריאה</param>
     /// <returns>פרטי הקריאה כולל פרטי המשימות הקשורות לקריאה</returns>
-   BO. Call GetCallDetails(int callId);
+    BO.Call readCallData(int ID);
     /// <summary>
     /// מעדכן את פרטי הקריאה (למשל: שינוי מצב או מספר קריאה).
     /// </summary>

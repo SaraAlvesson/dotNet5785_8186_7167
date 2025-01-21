@@ -52,6 +52,7 @@
 //    }
 //}
 using BO;
+using DalApi;
 using DO;
 using System.Net;
 using System.Reflection;
@@ -141,6 +142,31 @@ namespace Helpers
 
 
         // The generic method works for any object, returning a string of its properties
+        //public static BO.CallStatus GetCallStatus(DO.Call doCall)
+        //{
+        //    if (doCall.MaxTimeToClose < _dal.Config.Clock)
+        //        return BO.CallStatus.Expired;
+        //    var lastAssignment = _dal.Assignment.ReadAll(ass => ass.CallId == doCall.Id).OrderByDescending(a => a.TimeStart).FirstOrDefault();
+
+        //    if (lastAssignment == null)
+        //    {
+        //        if (IsInRisk(doCall!))
+        //            return BO.CallStatus.OpenRisk;
+        //        else return BO.CallStatus.Open;
+        //    }
+        //    if (lastAssignment.TypeEndTreat.ToString() == "Treated")
+        //    {
+        //        return BO.CallStatus.Closed;
+        //    }
+        //    if (lastAssignment.TypeEndTreat == null)
+        //    {
+        //        if (IsInRisk(doCall!))
+        //            return BO.CallStatus.InProgressRisk;
+        //        else return BO.CallStatus.InProgress;
+        //    }
+        //    return BO.CallStatus.Closed;//default
+        //}
+
         public static string ToStringProperty<T>(this T t)
         {
             string str = "";
@@ -152,12 +178,25 @@ namespace Helpers
                     var value = item.GetValue(t, null);
                     if (value != null)
                     {
-                        str += "\n" + item.Name + ": " + value;
+                        if (value is System.Collections.IEnumerable enumerable && !(value is string))
+                        {
+                            str += $"\n{item.Name}: [";
+                            foreach (var subItem in enumerable)
+                            {
+                                str += subItem + ", ";
+                            }
+                            str = str.TrimEnd(',', ' ') + "]";
+                        }
+                        else
+                        {
+                            str += $"\n{item.Name}: {value}";
+                        }
                     }
                 }
             }
             return str;
         }
+
         /// <summary>
         /// Retrieves geolocation coordinates (latitude and longitude) for a given address using an external geocoding API.
         /// </summary>

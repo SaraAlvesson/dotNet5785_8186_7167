@@ -46,9 +46,9 @@ internal class VolunteerImplementation : IVolunteer
 
         if (volunteer != null)
         {
-            // שלב 2: השוואת הסיסמאות
-            if (volunteer.Password != password)
-                throw new BlPasswordNotValid("Incorrect password");
+            //// שלב 2: השוואת הסיסמאות
+            //if (volunteer.Password != password)
+            //    throw new BlPasswordNotValid("Incorrect password");
 
             // שלב 3: המרת התפקיד מה-DO ל-BO
             if (Enum.TryParse<BO.Enums.VolunteerTypeEnum>(volunteer.Position.ToString(), out var volunteerType))

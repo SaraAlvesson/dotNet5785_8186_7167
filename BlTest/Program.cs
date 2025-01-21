@@ -493,7 +493,7 @@ internal class Program
                     case 3:
                         Console.WriteLine("Enter Call Id:");
                         int idCall = int.Parse(Console.ReadLine());
-                        BO.Call c = s_bl.Call.GetCallDetails(idCall);
+                        BO.Call c = s_bl.Call.readCallData(idCall);
                         Console.WriteLine("Call Details:");
                         Console.WriteLine(c);
                         break;
