@@ -32,7 +32,7 @@ public interface IAdmin
     /// <summary>
     /// Gets the current risk time range configuration.
     /// </summary>
-    /// <returns>The current risk time range as a TimeSpan.</returns>
+    /// <returns>The current risk time range as a TimeSpan.</returns>y
     TimeSpan GetRiskTimeRange();
 
     /// <summary>
