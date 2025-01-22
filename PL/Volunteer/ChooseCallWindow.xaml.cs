@@ -233,10 +233,20 @@ namespace PL.Volunteer
             }
         }
 
-      
-        private void textrr_TextChanged_1(object sender, TextChangedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            s_bl?.Call.AddObserver(ObserveCallListChanges);  // נרשמים למשקיף
+            ObserveCallListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Call.RemoveObserver(ObserveCallListChanges);  // מסירים את המשקיף
+        }
+        private void ObserveCallListChanges()
+        {
+            LoadCalls();  // טוען את הרשימה מחדש
+        }
+
     }
 }

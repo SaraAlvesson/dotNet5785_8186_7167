@@ -403,8 +403,8 @@ internal class VolunteerImplementation : IVolunteer
 
             // שלב 2: ניסיון למחוק את המתנדב אם הוא לא מטפל בהקצאה פעילה
             _dal.Volunteer.Delete(volunteerId); // מנסה למחוק את המתנדב 
-            CallManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
-            CallManager.Observers.NotifyListUpdated(); //stage
+            VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
+            VolunteersManager.Observers.NotifyListUpdated(); //stage
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -446,6 +446,7 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             _dal.Volunteer.Create(newVolunteer);
+            VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
             VolunteersManager.Observers.NotifyListUpdated(); //stage 5   
         }
         catch (DO.DalAlreadyExistException ex)

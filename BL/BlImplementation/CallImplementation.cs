@@ -738,6 +738,8 @@ internal class CallImplementation : ICall
 
             // ניסיון הוספה לשכבת הנתונים
             _dal.assignment.Create(newAssignment);
+            CallManager.Observers.NotifyItemUpdated(newAssignment.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (DO.DalDoesNotExistException ex)
         {
