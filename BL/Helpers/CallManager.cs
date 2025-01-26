@@ -42,25 +42,8 @@ namespace Helpers
         public static void checkCallLogic(BO.Call call)
         {
             // בדיקת יחס זמנים
-            if (call.MaxFinishTime <= call.OpenTime)
+            if (call.MaxFinishTime != null && call.MaxFinishTime <= call.OpenTime)
                 throw new InvalidCallLogicException("Max finish time must be later than open time.");
-
-            // קריאה אסינכרונית לפונקציה בתוך Task.Run
-            //Task.Run(async () =>
-            //{
-            //    if (!await IsValidAddressAsync(call.Address))
-            //        throw new InvalidCallLogicException("Address is invalid or does not exist.");
-
-            //    // בדיקת התאמה בין כתובת לקואורדינטות
-            //    double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
-
-            //    double expectedLongitude = GeolocationCoordinates[0];
-            //    double expectedLatitude = GeolocationCoordinates[1];
-
-            //    // השוואה בין שני ערכים מסוג double
-            //    if (Math.Abs((double)call.Longitude - expectedLongitude) > 0.0001 || Math.Abs((double)call.Latitude - expectedLatitude) > 0.0001)
-            //        throw new InvalidCallLogicException("Longitude and Latitude do not match the provided address.");
-            //}).GetAwaiter().GetResult(); // מחכה שהמשימה תסתיים לפני המשך הקריאה
         }
 
 
@@ -76,8 +59,8 @@ namespace Helpers
                 throw new InvalidCallFormatException("Open time is not valid.");
 
             // בדיקת זמן מקסימלי
-            if (call.MaxFinishTime == default)
-                throw new InvalidCallFormatException("Max finish time is not valid.");
+            //if (call.MaxFinishTime == default)
+            //    throw new InvalidCallFormatException("Max finish time is not valid.");
 
             // בדיקת כתובת
             if (string.IsNullOrWhiteSpace(call.Address) || call.Address.Length > 200)

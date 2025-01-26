@@ -96,8 +96,8 @@ namespace Helpers
 
                 if (callTreat != null)
                 {
-                    double latitude = doVolunteer.Latitude ?? callTreat.Latitude;
-                    double longitude = doVolunteer.Longitude ?? callTreat.Longitude;
+                    double latitude = (double)(doVolunteer.Latitude ?? callTreat.Latitude);
+                    double longitude = (double)(doVolunteer.Longitude ?? callTreat.Longitude);
                     return new()
                     {
                         Id = assignmentTreat.Id,
@@ -108,7 +108,7 @@ namespace Helpers
                         OpenTime = callTreat.OpenTime,
                         MaxFinishTime = callTreat.MaxTime,
                         StartAppointmentTime = assignmentTreat.AppointmentTime,
-                        DistanceOfCall = Tools.CalculateDistance(callTreat.Latitude, callTreat.Longitude, latitude, longitude),
+                        DistanceOfCall = Tools.CalculateDistance((double)callTreat.Latitude, (double)callTreat.Longitude, latitude, longitude),
                         //Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.? BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver : BO.Enums.CalltStatusEnum.CallIsBeingTreated),
                     };
                 }

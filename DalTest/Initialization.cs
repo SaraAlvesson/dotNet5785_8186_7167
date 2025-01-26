@@ -269,6 +269,129 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
             }
         }
     }
+    private static void createAssignment()
+    {
+        var allCalls = s_dal!.call.ReadAll();
+        var allVolunteers = s_dal!.Volunteer.ReadAll();
+
+        // Remove the first two volunteers from the list
+        var availableVolunteers = allVolunteers.Skip(2).ToList();
+
+        // Keep track of assignments per volunteer and calls in treatment
+        var assignmentsPerVolunteer = new Dictionary<int, List<int>>(); // volunteerId -> list of callIds
+        var callsInTreatment = new HashSet<int>(); // callIds currently in treatment
+        var assignedCalls = new HashSet<int>(); // all assigned calls
+
+        // Get the current system time
+        DateTime currentTime = DateTime.Now;
+
+        // Select 5 volunteers who will have multiple assignments
+        var specialVolunteers = availableVolunteers.Take(5).ToList();
+        var regularVolunteers = availableVolunteers.Skip(5).ToList();
+
+        // First, create assignments for special volunteers (with multiple calls)
+        foreach (var volunteer in specialVolunteers)
+        {
+            assignmentsPerVolunteer[volunteer.Id] = new List<int>();
+
+            // Create one active treatment
+            var activeCall = allCalls.FirstOrDefault(c =>
+                !assignedCalls.Contains(c.Id) &&
+                c.MaxTime > currentTime);
+
+            if (activeCall != null)
+            {
+                DateTime treatmentStartTime = activeCall.OpenTime.AddHours(s_rand.Next(1, 24));
+
+                s_dal!.assignment.Create(new Assignment(0, activeCall.Id, volunteer.Id,
+                    treatmentStartTime, null, null));
+
+                assignmentsPerVolunteer[volunteer.Id].Add(activeCall.Id);
+                assignedCalls.Add(activeCall.Id);
+                callsInTreatment.Add(activeCall.Id);
+            }
+
+            // Create 3 additional completed/expired assignments
+            for (int i = 0; i < 3; i++)
+            {
+                var call = allCalls.FirstOrDefault(c =>
+                    !assignedCalls.Contains(c.Id));
+
+                if (call != null)
+                {
+                    DateTime treatmentStartTime = call.OpenTime.AddHours(s_rand.Next(1, 24));
+                    DateTime? treatmentEndTime;
+                    FinishAppointmentType? status;
+
+                    // Alternate between treated and expired
+                    if (call.MaxTime <= currentTime)
+                    {
+                        status = FinishAppointmentType.CancellationHasExpired;
+                        treatmentEndTime = call.MaxTime;
+                    }
+                    else
+                    {
+                        status = FinishAppointmentType.WasTreated;
+                        treatmentEndTime = treatmentStartTime.AddHours(s_rand.Next(1, 24));
+                        if (call.MaxTime.HasValue && treatmentEndTime > call.MaxTime.Value)
+                        {
+                            treatmentEndTime = call.MaxTime.Value.AddHours(-1);
+                        }
+                    }
+
+                    s_dal!.assignment.Create(new Assignment(0, call.Id, volunteer.Id,
+                        treatmentStartTime, treatmentEndTime, status));
+
+                    assignmentsPerVolunteer[volunteer.Id].Add(call.Id);
+                    assignedCalls.Add(call.Id);
+                }
+            }
+        }
+
+        // Create single assignments for regular volunteers
+        foreach (var volunteer in regularVolunteers)
+        {
+            var call = allCalls.FirstOrDefault(c =>
+                !assignedCalls.Contains(c.Id));
+
+            if (call != null)
+            {
+                DateTime treatmentStartTime = call.OpenTime.AddHours(s_rand.Next(1, 24));
+                DateTime? treatmentEndTime;
+                FinishAppointmentType? status;
+
+                if (call.MaxTime <= currentTime)
+                {
+                    status = FinishAppointmentType.CancellationHasExpired;
+                    treatmentEndTime = call.MaxTime;
+                }
+                else if (s_rand.Next(2) == 0)
+                {
+                    status = FinishAppointmentType.WasTreated;
+                    treatmentEndTime = treatmentStartTime.AddHours(s_rand.Next(1, 24));
+                    if (call.MaxTime.HasValue && treatmentEndTime > call.MaxTime.Value)
+                    {
+                        treatmentEndTime = call.MaxTime.Value.AddHours(-1);
+                    }
+                }
+                else
+                {
+                    status = null;
+                    treatmentEndTime = null;
+                }
+
+                s_dal!.assignment.Create(new Assignment(0, call.Id, volunteer.Id,
+                    treatmentStartTime, treatmentEndTime, status));
+
+                assignedCalls.Add(call.Id);
+            }
+        }
+    }
+
+
+
+
+}
 
 
     // <summary>
@@ -276,144 +399,4 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
     // - Ensures each volunteer is assigned to at least one call.
     // - Generates random times for appointment and finish time within constraints.
     // </summary>
-    private static void createAssignment()
-    {
-        // אתחול מבני נתונים למעקב
-        Dictionary<int, int> volunteerCallCount = new Dictionary<int, int>();
-        HashSet<int> assignedCalls = new HashSet<int>(); // קריאות שכבר מוקצות
-        List<int> volunteersWithoutCalls = s_dal.Volunteer.ReadAll()
-            .Where(v => v.Active) // רק מתנדבים פעילים
-            .Select(v => v.Id)
-            .ToList();
-        List<Volunteer> allVolunteersList = s_dal.Volunteer.ReadAll()
-            .Where(v => v.Active) // רק מתנדבים פעילים
-            .ToList();
-        List<Call> allCallsList = s_dal.call.ReadAll().ToList();
-        int totalVolunteers = allVolunteersList.Count;
 
-        // יצירת קריאות מגוונות
-        List<Assignment> allAssignments = new List<Assignment>();
-
-        int successfulAssignments = 0;
-
-        while (successfulAssignments < 50)
-        {
-            if (totalVolunteers == 0)
-            {
-                Console.WriteLine("No active volunteers available.");
-                break;
-            }
-
-            Volunteer volunteerToAssign;
-
-            // הגרלת מתנדב
-            int randVolunteer = s_rand.Next(totalVolunteers);
-            volunteerToAssign = allVolunteersList[randVolunteer];
-
-            // עדכון המעקב למתנדב
-            if (!volunteerCallCount.ContainsKey(volunteerToAssign.Id))
-                volunteerCallCount[volunteerToAssign.Id] = 0;
-
-            // הגרלת קריאה מתוך כל הקריאות
-            Call callToAssign = null;
-
-            foreach (var call in allCallsList)
-            {
-                if (!assignedCalls.Contains(call.Id) &&
-                    call.OpenTime <= s_dal.config.Clock &&
-                    (call.MaxTime == null || call.MaxTime > s_dal.config.Clock) &&
-                    !s_dal.assignment.ReadAll().Any(a => a.CallId == call.Id && a.FinishAppointmentType != FinishAppointmentType.SelfCancellation))
-                {
-                    callToAssign = call;
-                    break;
-                }
-            }
-
-            if (callToAssign == null)
-            {
-                // אם אין קריאה זמינה שמספקת את כל התנאים, נבחר קריאה אקראית שלא הוקצתה
-                callToAssign = allCallsList.FirstOrDefault(call => !assignedCalls.Contains(call.Id));
-            }
-
-            if (callToAssign == null)
-            {
-                Console.WriteLine("No calls available to assign.");
-                break;
-            }
-
-            // עדכון שהקריאה הוקצתה
-            assignedCalls.Add(callToAssign.Id);
-
-            // הגדרת סוג סיום
-            FinishAppointmentType? finish = null;
-            DateTime? finishTime = null;
-
-            if (callToAssign.MaxTime.HasValue && callToAssign.MaxTime <= s_dal.config.Clock)
-            {
-                finish = FinishAppointmentType.CancellationHasExpired;
-            }
-            else
-            {
-                int randFinish = s_rand.Next(0, 5);
-                switch (randFinish)
-                {
-                    case 0:
-                        finish = FinishAppointmentType.WasTreated;
-                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31));
-                        break;
-                    case 1:
-                        finish = FinishAppointmentType.SelfCancellation;
-                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31));
-                        break;
-                    case 2:
-                        finish = FinishAppointmentType.CancelingAnAdministrator;
-                        finishTime = s_dal.config.Clock.AddMinutes(s_rand.Next(5, 31));
-                        break;
-                    case 3:
-                        finish = FinishAppointmentType.CancellationHasExpired;
-                        finishTime = callToAssign.MaxTime?.AddMinutes(s_rand.Next(5, 31));
-                        break;
-                    default:
-                        finish = null; // טיפול שעדיין בעיצומו
-                        break;
-                }
-            }
-
-            // חישוב זמן הכניסה לטיפול
-            DateTime? appointmentTime = null;
-            if (callToAssign.MaxTime.HasValue)
-            {
-                double maxMinutes = (callToAssign.MaxTime.Value - callToAssign.OpenTime).TotalMinutes;
-                appointmentTime = callToAssign.OpenTime.AddMinutes(s_rand.Next(1, (int)(maxMinutes / 2)));
-            }
-            else
-            {
-                Console.WriteLine($"Call ID {callToAssign.Id} has no MaxTime defined, skipping assignment.");
-                continue;
-            }
-
-            // יצירת הקצאה
-            int newAssignmentId = s_dal.config.NextAssignmentId;
-            s_dal.assignment.Create(new Assignment
-            {
-                Id = newAssignmentId,
-                CallId = callToAssign.Id,
-                VolunteerId = volunteerToAssign.Id,
-                AppointmentTime = appointmentTime.Value,
-                FinishAppointmentTime = finishTime,
-                FinishAppointmentType = finish,
-            });
-
-            // עדכון המתנדב במעקב
-            volunteerCallCount[volunteerToAssign.Id]++;
-            if (volunteerCallCount[volunteerToAssign.Id] > 5)
-            {
-                volunteerCallCount.Remove(volunteerToAssign.Id);
-            }
-
-            successfulAssignments++;
-        }
-
-        Console.WriteLine($"Total successful assignments: {successfulAssignments}");
-    }
-}

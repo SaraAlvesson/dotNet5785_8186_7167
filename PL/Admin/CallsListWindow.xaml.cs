@@ -3,7 +3,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using static BO.Enums;
 
@@ -14,6 +16,18 @@ namespace PL.Admin
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private CallTypeEnum _selectedCallType = CallTypeEnum.None;
         private CallFieldEnum _selectedCallField = CallFieldEnum.None;
+
+        private List<BO.CallInList> _Calls;
+        public List<BO.CallInList> Calls
+        {
+            get => _Calls;
+            set
+            {
+                _Calls = value;
+                OnPropertyChanged();
+            }
+        }
+
        
         public BO.CallInList? SelectedCall { get; set; }
 
@@ -42,6 +56,7 @@ namespace PL.Admin
             {
                 SetValue(CallListProperty, value ?? new List<CallInList>());  // טיפול במקרה של null
                 OnPropertyChanged(nameof(callList));
+                
             }
         }
         // רשימת קריאות מסוננות
@@ -57,9 +72,13 @@ namespace PL.Admin
                 {
                     _selectedCallField = value;
                     OnFieldChanged();
+                    FilterCalls();
                 }
             }
         }
+
+
+        public List<string> SortOptions { get; } = Enum.GetNames(typeof(BO.Enums.CallTypeEnum)).ToList();
         public void OnFieldChanged()
         {
             UpdateCallList(_selectedCallField);
@@ -82,7 +101,7 @@ namespace PL.Admin
                 if (_selectedCallType != value)
                 {
                     _selectedCallType = value;
-                    //OnPropertyChanged(); // עידכון הממשק
+                    OnPropertyChanged(); // עידכון הממשק
                     FilterCalls(); // סינון הרשימה
                 }
             }
@@ -90,18 +109,13 @@ namespace PL.Admin
 
         private void FilterCalls()
         {
-            FilteredCalls.Clear();
-            foreach (var call in CallList)
-            {
-                if (SelectedCallField == CallFieldEnum.CallType && call.CallType == CallTypeEnum.None)
-                {
-                    FilteredCalls.Add(call);
-                }
-                else if (SelectedCallField == CallFieldEnum.CallId)
-                {
-                    FilteredCalls.Add(call);
-                }
-            }
+            //BO.Enums.CallFieldEnum? callTypeFilter = Enum.TryParse(SelectedCallType, out BO.Enums.CallFieldEnum parsedCallType)
+            //    ? parsedCallType
+            //    : (BO.Enums.CallFieldEnum?)null;
+
+           
+
+            //Calls = s_bl.Call.GetCallList( callTypeFilter )?.ToList();
         }
 
         private void LoadCallList()
@@ -143,7 +157,7 @@ namespace PL.Admin
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string propertyName=null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -154,6 +168,11 @@ namespace PL.Admin
             {
                 new SingleCallWindow(SelectedCall.CallId).Show();
             }
+        }
+
+        private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterCalls();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)

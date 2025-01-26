@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Title="Volunteer Details" Height="700" Width="800"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Closed="Window_Closed"
+        Loaded="Window_Loaded">
+    
     <Grid Margin="10,10,10,-6">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>

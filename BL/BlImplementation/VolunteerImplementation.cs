@@ -196,7 +196,7 @@ internal class VolunteerImplementation : IVolunteer
                 DistanceType = (BO.Enums.DistanceTypeEnum)volunteer.DistanceType,
                 SumCanceled = assignments.Where(a => a.FinishAppointmentType == FinishAppointmentType.SelfCancellation || a.FinishAppointmentType == FinishAppointmentType.CancelingAnAdministrator).Count(),
                 SumExpired = assignments.Where(a => a.FinishAppointmentType == FinishAppointmentType.CancellationHasExpired).Count(),
-                SumCalls = ongoingAssignments.Count(), // ספירת הקריאות שבתהליך
+                SumCalls = assignments.Where(a => a.FinishAppointmentType == FinishAppointmentType.WasTreated).Count(), // ספירת הקריאות שבתהליך
                 VolunteerTakenCare = ongoingAssignments.Select(activeAssignment =>
                 {
                     var activeCall = _dal.call.Read(activeAssignment.CallId);
@@ -361,17 +361,14 @@ internal class VolunteerImplementation : IVolunteer
             VolunteersManager.Observers.NotifyListUpdated();  // stage 5
             Console.WriteLine("Observers notified.");
         }
-        catch (DO.DalDoesNotExistException ex)
-        {
-            Console.WriteLine("Error: Volunteer not found.");
-            throw new BlDoesNotExistException("Error updating volunteer details.", ex);
-        }
+       
         catch (Exception ex)
         {
             // טיפול כללי בחריגות
             Console.WriteLine("An error occurred during update.");
             throw new CannotUpdateVolunteerException("An error occurred while updating the volunteer details.", ex);
         }
+
     }
 
 

@@ -8,7 +8,9 @@
         Title="Volunteer List Window" 
         Height="800" 
         Width="1000"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" 
+        Closed="Window_Closed"
+        Loaded="Window_Loaded">
     <!-- קישור בין XAML לקוד מאחורי החלון -->
     <Grid Margin="20">
         <Grid.RowDefinitions>

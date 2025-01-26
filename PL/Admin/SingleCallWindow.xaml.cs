@@ -63,10 +63,12 @@ namespace PL.Admin
                     // קריאה חדשה, תעודת זהות מקבלת את הערך הרץ הבא
                     CurrentCall = new BO.Call
                     {
-                        Id = GetNextId(), // קבלת ID חדש
-                        OpenTime = DateTime.Now // זמן פתיחה בהוספה
-                    };
-                }
+
+                        Id = s_bl.Call.GetNextId(),  // קריאה לפונקציה בשכבת הלוגיקה
+                        OpenTime = DateTime.Now
+                    }; 
+
+                    }
                 else
                 {
                     CurrentCall = s_bl.Call.readCallData(id);
@@ -81,12 +83,14 @@ namespace PL.Admin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BlApi.Factory.Get().Call.AddObserver(CallListObserver);
+          
+            s_bl?.Call.AddObserver(CallListObserver);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            BlApi.Factory.Get().Call.RemoveObserver(CallListObserver);
+           
+            s_bl?.Call.RemoveObserver(CallListObserver);
         }
 
         private void CallListObserver()
@@ -118,11 +122,7 @@ namespace PL.Admin
             IsMaxTimeEditable = status == CalltStatusEnum.CallIsBeingTreated || status == CalltStatusEnum.CallTreatmentAlmostOver;
         }
 
-        private int GetNextId()
-        {
-            // השגת המספר הרץ הבא
-            return s_bl.Call.GetNextId(); // השגת ה-ID הבא
-        }
+       
 
         private void UpdateCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
@@ -225,5 +225,7 @@ namespace PL.Admin
                 MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+      
     }
 }

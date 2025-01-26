@@ -1,7 +1,9 @@
 ﻿<Window x:Class="PL.Volunteer.ChooseCallWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Select Call for Handling" Height="600" Width="900" DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+        Title="Select Call for Handling" Height="600" Width="900" DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -14,16 +16,21 @@
         <!-- Filter and Update Address -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <Label Content="Filter by Call Type:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox Name="CallTypeFilter" Width="200" Margin="0,0,20,0" SelectionChanged="CallTypeFilter_SelectionChanged"
-                ItemsSource="{Binding CallTypes}" SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"/>
+            <ComboBox Name="CallTypeFilter" Width="200" Margin="0,0,20,0"
+                ItemsSource="{Binding CallTypes}" 
+                SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" 
+                SelectionChanged="CallTypeFilter_SelectionChanged"/>
 
             <Label Content="Sort by:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox Name="SortByComboBox" Width="200" Margin="0,0,20,0" SelectionChanged="SortByComboBox_SelectionChanged"
-                ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}"/>
+            <ComboBox Name="SortByComboBox" Width="200" Margin="0,0,20,0"
+                ItemsSource="{Binding SortOptions}" 
+                SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}" 
+                SelectionChanged="SortByComboBox_SelectionChanged"/>
 
             <!-- TextBox for updating volunteer location -->
             <TextBox x:Name="textrr" 
-                     Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="94" Margin="10" Height="29"  />
+                     Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     VerticalAlignment="Top" Width="94" Margin="10" Height="29"  />
 
             <Button Content="Update address" Width="100" Height="35" Click="update_click" Background="#3498DB" Foreground="White" BorderBrush="#2980B9" />
         </StackPanel>
@@ -46,15 +53,17 @@
                 <DataGridTextColumn Header="Open Time" Binding="{Binding OpenTime}" Width="150"/>
                 <DataGridTextColumn Header="Distance (km)" Binding="{Binding DistanceOfCall}" Width="100"/>
                 <DataGridTextColumn Header="Max Finish Time" Binding="{Binding MaxFinishTime}" Width="150"/>
+
                 <DataGridTemplateColumn Header="Action">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Select" Click="update_click" 
-                                    CommandParameter="{Binding}" Width="80" Height="30" Background="#4CAF50" Foreground="White" FontWeight="Bold" 
-                                    BorderBrush="#4CAF50" Cursor="Hand"/>
+                            <Button Content="Select" Click="SelectButton_Click" 
+                    CommandParameter="{Binding}" Width="80" Height="30" Background="#4CAF50" 
+                    Foreground="White" FontWeight="Bold" BorderBrush="#4CAF50" Cursor="Hand"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
             </DataGrid.Columns>
         </DataGrid>
 
