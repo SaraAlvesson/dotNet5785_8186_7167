@@ -277,7 +277,7 @@ namespace Helpers
         /// <remarks>
         /// Code by ChatGPT (OpenAI).
         /// </remarks>
-        public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        public static double CalculateDistance(double lat1=0, double lon1=0, double lat2=0, double lon2=0)
         {
             const double R = 6371; // Radius of the Earth in kilometers
 
@@ -343,6 +343,9 @@ namespace Helpers
             }
         }
 
-
+        internal static double CalculateDistance(double v1, double v2, double latitude, double? longitude)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

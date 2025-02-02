@@ -10,13 +10,13 @@ namespace PL.Volunteer
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        // אירועים לצופים
+        // Events for observers
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? CallCompleted;
         public event EventHandler? CallCancelled;
-        public event EventHandler? VolunteerUpdated;  // אירוע נוסף לצופים
+        public event EventHandler? VolunteerUpdated;
 
-        // חיבור לפונקציות שמבצעות עדכון במודל
+        // Property change notification
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -34,10 +34,10 @@ namespace PL.Volunteer
 
         protected void OnVolunteerUpdated()
         {
-            VolunteerUpdated?.Invoke(this, EventArgs.Empty);  // הפעלת צופים
+            VolunteerUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        // מאפייני המודל
+        // Dependency properties
         public IEnumerable<BO.Volunteer> Volunteer
         {
             get { return (IEnumerable<BO.Volunteer>)GetValue(VolunteerFieldListProperty); }
@@ -82,13 +82,15 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error fetching volunteer details: {ex.Message}");
             }
         }
+
         private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentVolunteer.VolunteerTakenCare == null && CurrentVolunteer.Active)
+            if (CurrentVolunteer?.VolunteerTakenCare == null && CurrentVolunteer?.Active == true)
             {
                 try
                 {
                     new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
+                    RefreshVolunteerData(CurrentVolunteer.Id);
                 }
                 catch (Exception ex)
                 {
@@ -100,6 +102,7 @@ namespace PL.Volunteer
                 MessageBox.Show("You cannot choose a call at this time.");
             }
         }
+
         private void RefreshVolunteerData(int volunteerId)
         {
             try
@@ -112,8 +115,6 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error refreshing volunteer data: {ex.Message}");
             }
         }
-
-        // עדכון מתנדב
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentVolunteer == null)
@@ -128,8 +129,11 @@ namespace PL.Volunteer
                 {
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("Volunteer updated successfully.");
+
+                    // שליחת הודעה ל-Observers
+                    OnVolunteerUpdated();
+
                     RefreshVolunteerData(CurrentVolunteer.Id);
-                    OnVolunteerUpdated();  // צופה למצב העדכון
                 }
                 catch (Exception ex)
                 {
@@ -142,7 +146,32 @@ namespace PL.Volunteer
             }
         }
 
-        // טיפול בסיום טיפול
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);
+        }
+
+      
+
+        private void ObserveVolunteerListChanges()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (CurrentVolunteer != null)
+                {
+                    RefreshVolunteerData(CurrentVolunteer.Id);
+                }
+            });
+        }
+
+
+       
         private void ButtonComplete_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -155,10 +184,17 @@ namespace PL.Volunteer
             {
                 return;
             }
-
             try
             {
+                if (CurrentVolunteer?.VolunteerTakenCare == null)
+                {
+                    MessageBox.Show("Error: No call is associated with this volunteer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // עדכון הקריאה כטופלה
                 s_bl.Call.UpdateCallAsCompleted(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
+
                 MessageBox.Show("Call ended successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 OnCallCompleted();
@@ -169,14 +205,20 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
+
+
+
+
+
         private void ButtonHistory_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentVolunteer != null)
             {
                 try
                 {
-                    var callHistory = s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
-                    // Open new window for displaying history
+                    s_bl.Call.GetVolunteerClosedCalls(CurrentVolunteer.Id, null, null);
                     new ListClosedCallsVolunteer(CurrentVolunteer.Id).Show();
                 }
                 catch (Exception ex)
@@ -189,9 +231,9 @@ namespace PL.Volunteer
                 MessageBox.Show("No volunteer selected.");
             }
         }
+
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-
             var result = MessageBox.Show(
                 "Are you sure you want to cancel your treatment for this call?",
                 "Confirmation",
@@ -205,42 +247,27 @@ namespace PL.Volunteer
 
             try
             {
-                s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
-                MessageBox.Show("Call canceled successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                if (CurrentVolunteer?.VolunteerTakenCare != null)
+                {
+                    s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
+                    MessageBox.Show("Call canceled successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    OnCallCancelled();
+                    RefreshVolunteerData(CurrentVolunteer.Id);
+                }
+                else
+                {
+                    MessageBox.Show("Error: No call is associated with this volunteer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
-
-
-        //                OnCallCancelled();
-        //                RefreshVolunteerData(CurrentVolunteer.Id);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        //            }
-        //        }
-
-        //        // תוקף העדכון
-
-        //    }
-        //}
-    
-
-
-       
-       
 
         private bool IsValidUpdate()
         {
             return !string.IsNullOrEmpty(CurrentVolunteer?.Email) && !string.IsNullOrEmpty(CurrentVolunteer?.Location);
         }
-
     }
 }
-

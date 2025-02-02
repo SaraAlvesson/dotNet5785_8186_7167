@@ -8,7 +8,9 @@
         Title="Volunteer List Window" 
         Height="800" 
         Width="1000"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" 
+        Closed="Window_Closed"
+        Loaded="Window_Loaded">
     <!-- קישור בין XAML לקוד מאחורי החלון -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -17,7 +19,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ComboBox Grid.Row="0" 
+        <ComboBox Grid.Row="0" Name="filter" 
+                  SelectionChanged="filter_SelectionChanged"
                   SelectedItem="{Binding SelectedFilter, Mode=TwoWay}" 
                   ItemsSource="{Binding SelectedCallType}" 
                   VerticalAlignment="Center" 
@@ -41,10 +44,10 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Treated Calls" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="150" />
+                    <GridViewColumn Header="Sum Calls" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="150" />
                     <GridViewColumn Header="Canceled Calls" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="150" />
                     <GridViewColumn Header="Expired Calls" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="150" />
-                    <GridViewColumn Header="Call in Treatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="150" />
+                    <GridViewColumn Header="Call Id in Treatment" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="150" />
                     <GridViewColumn Header="Actions">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

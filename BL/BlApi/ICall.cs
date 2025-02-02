@@ -97,4 +97,7 @@ public interface ICall:IObservable
     //object GetFieldValue(object entity, Enums.CallFieldEnum field);
     //void UpdateAddress(int id,string Address);
 
+
+    int GetNextId();
+
 }

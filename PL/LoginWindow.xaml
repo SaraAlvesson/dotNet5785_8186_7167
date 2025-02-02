@@ -4,8 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800">
-
+        Title="LoginWindow" Height="450" Width="800" DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Window.Resources>
+        <Style x:Key="RoundButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                CornerRadius="20" 
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid Background="#F5F5F5">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />
@@ -13,34 +31,62 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
 
-        <Label Content="Login" FontSize="30" FontWeight="Bold" Foreground="#2C3E50" 
-               HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3" Margin="0,74,0,72" />
+        <!-- Logo Placeholder -->
+        <Rectangle Grid.Row="0" Grid.Column="1" Width="200" Height="100" 
+                   HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                   Stroke="#A0A0A0" StrokeDashArray="4 2" 
+                   StrokeThickness="2" Fill="Transparent">
+            <Rectangle.Resources>
+                <Style TargetType="Rectangle">
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                </Style>
+            </Rectangle.Resources>
+        </Rectangle>
 
-        <Label Content="Username:" FontSize="16" Foreground="#2C3E50" 
-               Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" />
-        <TextBox Width="250" Height="35" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
-                 HorizontalAlignment="Right" Margin="0,0,20,0" Background="#ECF0F1" 
-                 BorderBrush="#BDC3C7" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Content="Login" FontSize="36" FontWeight="SemiBold" 
+               FontFamily="Montserrat" Foreground="#2C3E50" 
+               HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3" 
+               Margin="0,130,0,0" />
+
+        <Label Content="ID:" FontSize="16" Foreground="#2C3E50" 
+               Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
+               HorizontalAlignment="Left" Margin="20,0,0,0" />
+
+        <TextBox Width="250" Height="35" Grid.Row="1" Grid.Column="1" 
+                 VerticalAlignment="Center" HorizontalAlignment="Right" 
+                 Margin="0,0,20,0" Background="#ECF0F1" 
+                 BorderBrush="#BDC3C7" 
+                 Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Content="Password:" FontSize="16" Foreground="#2C3E50" 
-               Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" />
-        <PasswordBox Width="250" Height="35" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" 
-                     HorizontalAlignment="Right" Margin="0,0,20,0" Background="#ECF0F1" 
-                     BorderBrush="#BDC3C7" PasswordChanged="PasswordBox_PasswordChanged" />
+               Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" 
+               HorizontalAlignment="Left" Margin="20,0,0,0" />
+
+        <PasswordBox Width="250" Height="35" Grid.Row="2" Grid.Column="1" 
+                     VerticalAlignment="Center" HorizontalAlignment="Right" 
+                     Margin="0,0,20,0" Background="#ECF0F1" 
+                     BorderBrush="#BDC3C7" 
+                     PasswordChanged="PasswordBox_PasswordChanged" />
 
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" 
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
+                    HorizontalAlignment="Center" VerticalAlignment="Center" 
+                    Margin="0,20,0,0">
             <Button Content="Login" Width="100" Height="40" Margin="10,0" 
-                    Background="#4CAF50" Foreground="White" BorderBrush="#2980B9" Click="LoginButton_Click" />
+                    Background="#D32F2F" Foreground="White" 
+                    BorderBrush="#B71C1C" Click="LoginButton_Click"
+                    Style="{StaticResource RoundButtonStyle}" 
+                    FontFamily="Montserrat" FontWeight="SemiBold" />
             <Button Content="Cancel" Width="100" Height="40" Margin="10,0" 
-                    Background="#4CAF50" Foreground="White" Click="CancelButton_Click" />
+                    Background="#D32F2F" Foreground="White" 
+                    BorderBrush="#B71C1C" Click="CancelButton_Click"
+                    Style="{StaticResource RoundButtonStyle}" 
+                    FontFamily="Montserrat" FontWeight="SemiBold" />
         </StackPanel>
     </Grid>
 </Window>

@@ -2,7 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Single Call Window" Height="640" Width="800"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -31,10 +33,6 @@
         <ComboBox SelectedValue="{Binding CurrentCall.CallType, Mode=TwoWay}" 
                   Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Source={StaticResource CallTypeCollectionKey }}" />
 
-
-
-
-
         <!-- Address -->
         <Label Content="Address:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
         <TextBox Text="{Binding CurrentCall.Address, Mode=TwoWay}" 
@@ -48,38 +46,26 @@
         <!-- Open Time -->
         <Label Content="Open Time:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
         <DatePicker SelectedDate="{Binding CurrentCall.OpenTime, Mode=TwoWay}" 
-                    Grid.Row="4" Grid.Column="1" Margin="5"  />
-        <!--IsEnabled="{Binding IsEditable}"-->
+                    Grid.Row="4" Grid.Column="1" Margin="5" IsEnabled="False" />
 
         <!-- Max Finish Time -->
         <Label Content="Max Finish Time:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
         <DatePicker SelectedDate="{Binding CurrentCall.MaxFinishTime, Mode=TwoWay}" 
-                    Grid.Row="5" Grid.Column="1" Margin="5"  />
-        <!--IsEnabled="{Binding IsMaxTimeEditable}"-->
+                    Grid.Row="5" Grid.Column="1" Margin="5" IsEnabled="{Binding IsMaxTimeEditable}" />
 
         <!-- Status -->
         <Label Content="Status:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
         <ComboBox SelectedValue="{Binding CurrentCall.CallStatus, Mode=TwoWay}" 
-                  Grid.Row="6" Grid.Column="1" Margin="5" IsEnabled="{Binding IsEditable}"   />
-
-
-
+                  Grid.Row="6" Grid.Column="1" Margin="5" IsEnabled="False" />
 
         <!-- List Assignments -->
         <Label Content="List Assignments:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top" Margin="5" />
-        <ListView ItemsSource="{Binding CurrentCall.CallAssignInLists}" 
-                  Grid.Row="7" Grid.Column="1" Margin="5" />
+        <ListView ItemsSource="{Binding CallInList}" Grid.Row="7" Grid.Column="1" Margin="5"/>
 
-        <!-- addUpdate Button -->
+        <!-- Update Button -->
         <Button Content="{Binding ButtonText}" 
-                Grid.Row="8" 
-                Grid.Column="1" 
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Top" 
-                Margin="0,5,0,0" 
-                FontSize="16" 
-                Width="200" 
-                Background="Green" 
-                Foreground="White" Click="ButtonAddUpdate_Click" />
+                Command="{Binding UpdateCommand}" 
+                Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" 
+                HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Click="ButtonAddUpdate_Click"/>
     </Grid>
 </Window>

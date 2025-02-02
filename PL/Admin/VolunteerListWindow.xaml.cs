@@ -16,6 +16,7 @@ namespace PL.Admin
         public List<string> SelectedCallType { get; } = Enum.GetNames(typeof(BO.Enums.VolunteerInListField)).ToList();
         public BO.VolunteerInList? SelectedVolunteer { get; set; }
 
+        
         public VolunteerListWindow()
         {
             InitializeComponent();
@@ -57,6 +58,11 @@ namespace PL.Admin
                 OnPropertyChanged();
                 ApplyFilters();
             }
+        }
+
+        private void filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
         }
 
         private void ApplyFilters()

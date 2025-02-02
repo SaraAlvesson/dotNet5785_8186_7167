@@ -113,6 +113,15 @@ namespace PL.Volunteer
             }
         }
 
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+{
+    if (sender is Button button && button.CommandParameter is OpenCallInList selectedCall)
+    {
+        ChooseCall(selectedCall);
+    }
+}
+
+
 
 
 
@@ -122,16 +131,34 @@ namespace PL.Volunteer
             {
                 try
                 {
+                    if (CurrentVolunteer == null)
+                    {
+                        MessageBox.Show("Error: No volunteer is currently selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     s_bl.Call.AssignCallToVolunteer(CurrentVolunteer.Id, selectedCall.Id);
-                    MessageBox.Show($"You have selected Call ID {selectedCall.Id} for handling.");
+                    MessageBox.Show($"You have selected Call ID {selectedCall.Id} for handling.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     LoadCalls();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    // חריגות לוגיות מטופלות כאן
+                    MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error assigning call: {ex.Message}");
+                    // חריגות כלליות מטופלות כאן
+                    MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+            else
+            {
+                MessageBox.Show("Error: No call selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -233,10 +260,20 @@ namespace PL.Volunteer
             }
         }
 
-      
-        private void textrr_TextChanged_1(object sender, TextChangedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            s_bl?.Call.AddObserver(ObserveCallListChanges);  // נרשמים למשקיף
+            ObserveCallListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Call.RemoveObserver(ObserveCallListChanges);  // מסירים את המשקיף
+        }
+        private void ObserveCallListChanges()
+        {
+            LoadCalls();  // טוען את הרשימה מחדש
+        }
+
     }
 }

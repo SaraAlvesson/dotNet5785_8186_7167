@@ -93,12 +93,13 @@ namespace PL.Admin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BlApi.Factory.Get().Volunteer.AddObserver(volunteerListObserver);
+            s_bl?.Call.AddObserver(volunteerListObserver);
+            UpdateVolunteerList();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            BlApi.Factory.Get().Volunteer.RemoveObserver(volunteerListObserver);
+            s_bl?.Call.RemoveObserver(volunteerListObserver);
         }
 
         private void volunteerListObserver()
@@ -166,6 +167,7 @@ namespace PL.Admin
                 {
                     s_bl.Volunteer.AddVolunteer(CurrentVolunteer!);
                     MessageBox.Show("Volunteer added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
                 }
                 else
                 {

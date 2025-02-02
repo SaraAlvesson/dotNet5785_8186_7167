@@ -6,6 +6,7 @@ using static BO.Enums;
 using BO;
 using System.ComponentModel;
 using System.Windows.Controls;
+using DO;
 
 namespace PL.Admin
 {
@@ -14,6 +15,7 @@ namespace PL.Admin
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private CallFieldEnum _selectedCallField = CallFieldEnum.ID;
         public string ButtonText { get; set; }
+
         public CallFieldEnum SelectedFilter
         {
             get { return _selectedCallField; }
@@ -28,7 +30,6 @@ namespace PL.Admin
             }
         }
 
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
@@ -36,7 +37,6 @@ namespace PL.Admin
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // VolunteerInList property (DependencyProperty)
         public IEnumerable<BO.CallInList> CallInList
         {
             get { return (IEnumerable<BO.CallInList>)GetValue(callInListFieldListProperty); }
@@ -49,6 +49,7 @@ namespace PL.Admin
                typeof(IEnumerable<BO.CallInList>),
                typeof(SingleCallWindow),
                new PropertyMetadata(null));
+
         public SingleCallWindow(int id = 0)
         {
             ButtonText = id == 0 ? "Add" : "Update";
@@ -59,8 +60,15 @@ namespace PL.Admin
             {
                 if (id == 0)
                 {
-                    CurrentCall = new BO.Call();
-                }
+                    // קריאה חדשה, תעודת זהות מקבלת את הערך הרץ הבא
+                    CurrentCall = new BO.Call
+                    {
+
+                        Id = s_bl.Call.GetNextId(),  // קריאה לפונקציה בשכבת הלוגיקה
+                        OpenTime = DateTime.Now
+                    }; 
+
+                    }
                 else
                 {
                     CurrentCall = s_bl.Call.readCallData(id);
@@ -71,20 +79,20 @@ namespace PL.Admin
             {
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-           
-               
-             
-            
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BlApi.Factory.Get().Call.AddObserver(CallListObserver);
+          
+            s_bl?.Call.AddObserver(CallListObserver);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            BlApi.Factory.Get().Call.RemoveObserver(CallListObserver);
+           
+            s_bl?.Call.RemoveObserver(CallListObserver);
         }
+
         private void CallListObserver()
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -114,6 +122,8 @@ namespace PL.Admin
             IsMaxTimeEditable = status == CalltStatusEnum.CallIsBeingTreated || status == CalltStatusEnum.CallTreatmentAlmostOver;
         }
 
+       
+
         private void UpdateCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             // אם הקריאה לא ניתנת לעריכה (היא סגורה או פג תוקפה)
@@ -128,101 +138,12 @@ namespace PL.Admin
                 // עדכון פרטי הקריאה בשכבה הלוגית
                 s_bl.Call.UpdateCallDetails(CurrentCall);
 
-                // שליחת אימייל למתנדבים במרחק מתאים לאחר עדכון הקריאה
-                //  SendEmailToVolunteers(CurrentCall);
-
                 MessageBox.Show("Call updated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error updating call: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is CallFieldEnum selectedFilter)
-            {
-                SelectedFilter = selectedFilter;
-            }
-        }
-        private bool ValidateInput()
-        {
-            // כאן תוכל להוסיף את הבדיקות של הפורמט (למשל אם הכתובת חוקית או אם יש שדות חובה)
-            return true;
-        }
-
-        //private void SendEmailToVolunteers(BO.Call newCall)
-        //{
-        //    // חישוב המיקום הגיאוגרפי של הקריאה
-        //    var callLocation = GetGeolocationCoordinates(newCall.Address); // הפונקציה הזו תחזיר מיקום גיאוגרפי
-
-        //    // קבלת כל המתנדבים מתוך הרשימה
-        //    var volunteers = s_bl.Volunteer.RequestVolunteerList();
-
-        //    // סינון המתנדבים על פי המרחק
-        //    foreach (var volunteer in volunteers)
-        //    {
-        //        var volunteerLocation = volunteer.location; // הכתוב של המתנדב (קו רוחב/אורך)
-
-        //        // חישוב המרחק בין מיקום הקריאה למיקום המתנדב
-        //        double distance = CalculateDistance(callLocation, volunteerLocation);
-
-        //        // אם המרחק בטווח הקטן או שווה למרחק המוגדר
-        //        if (distance <= 10.0) // 10.0 קילומטרים לדוגמה
-        //        {
-        //            SendEmail(volunteer.email, newCall); // שליחת האימייל
-        //        }
-        //    }
-        //}
-
-        //// פונקציה לחישוב המרחק בין שתי נקודות גיאוגרפיות
-        //private double CalculateDistance(Location loc1, Location loc2)
-        //{
-        //    const double EarthRadius = 6371.0; // קילומטרים
-        //    double lat1 = loc1.Latitude;
-        //    double lon1 = loc1.Longitude;
-        //    double lat2 = loc2.Latitude;
-        //    double lon2 = loc2.Longitude;
-
-        //    double latDistance = ToRadians(lat2 - lat1);
-        //    double lonDistance = ToRadians(lon2 - lon1);
-
-        //    double a = Math.Sin(latDistance / 2) * Math.Sin(latDistance / 2) +
-        //               Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
-        //               Math.Sin(lonDistance / 2) * Math.Sin(lonDistance / 2);
-
-        //    double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-        //    return EarthRadius * c; // המרחק בקילומטרים
-        //}
-
-        private double ToRadians(double angle)
-        {
-            return angle * (Math.PI / 180);
-        }
-
-        private void SendEmail(string email, BO.Call newCall)
-        {
-            try
-            {
-                // הגדרת אימייל
-                var mail = new MailMessage();
-                mail.From = new MailAddress("no-reply@yourcompany.com");
-                mail.To.Add(email);
-                mail.Subject = $"Call updated - {newCall.CallType}";
-                mail.Body = $"Hello, \n\nThe details of a call have been updated: \n\n" +
-                            $"Address: {newCall.Address} \n" +
-                            $"Description: {newCall.VerbDesc} \n\n" +
-                            $"Please log into the system and select whether you would like to handle it.";
-
-                // שליחת האימייל
-                var smtpClient = new SmtpClient("smtp.yourserver.com");
-                smtpClient.Send(mail);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error sending email: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -240,7 +161,6 @@ namespace PL.Admin
             }
         }
 
-       
         private IEnumerable<BO.CallInList> queryCallList()
         {
             IEnumerable<BO.CallInList> calls;
@@ -248,13 +168,13 @@ namespace PL.Admin
             switch (SelectedFilter)
             {
                 case CallFieldEnum.ID:
-                    calls = BlApi.Factory.Get().Call.GetCallList( CallFieldEnum.ID, null).OrderBy(v => v.Id);
+                    calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.ID, null).OrderBy(v => v.Id);
                     break;
                 case CallFieldEnum.CallId:
-                    calls = BlApi.Factory.Get().Call.GetCallList( CallFieldEnum.CallId,null).OrderBy(v => v.CallId);
+                    calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.CallId, null).OrderBy(v => v.CallId);
                     break;
                 case CallFieldEnum.CallType:
-                    calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.Status,null).OrderBy(v => v.CallType);
+                    calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.Status, null).OrderBy(v => v.CallType);
                     break;
                 case CallFieldEnum.Status:
                     calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.Status, null).OrderBy(v => v.Status);
@@ -288,12 +208,12 @@ namespace PL.Admin
 
                 if (ButtonText == "Add")
                 {
-                    s_bl.Call.AddCall(CurrentCall!);
+                    s_bl.Call.AddCall(CurrentCall!); // הוספת קריאה חדשה
                     MessageBox.Show("Call added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    s_bl.Call.UpdateCallDetails(CurrentCall);
+                    s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
                     MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
@@ -304,7 +224,8 @@ namespace PL.Admin
             {
                 MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
+
+      
     }
 }

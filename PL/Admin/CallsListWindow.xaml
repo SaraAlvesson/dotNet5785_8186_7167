@@ -15,10 +15,8 @@
         <!-- סינון ומיון -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <TextBlock Text="Filter by:" VerticalAlignment="Center" Margin="0,0,5,0" />
-            <ComboBox Width="150" SelectedItem="{Binding SelectedCallField}" Margin="0,0,10,0">
-                <ComboBoxItem Content="Call Id" Tag="CallId" />
-                <ComboBoxItem Content="Call Type" Tag="CallType" />
-                <ComboBoxItem Content="Status" Tag="Status" />
+            <ComboBox  Name="filterBy" Width="150" SelectionChanged="SortByComboBox_SelectionChanged" ItemsSource="{Binding SortOptions }"  SelectedItem="{Binding SelectedCallField,Mode=TwoWay}" Margin="0,0,10,0">
+                
             </ComboBox>
         </StackPanel>
 
@@ -29,10 +27,10 @@
                 <GridView>
                     <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="70" />
                     <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding CallId}" Width="70" />
-                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="100" />
+                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="150" />
                     <GridViewColumn Header="Open Time" DisplayMemberBinding="{Binding OpenTime}" Width="150" />
                     <GridViewColumn Header="Time Until Finish" DisplayMemberBinding="{Binding SumTimeUntilFinish}" Width="150" />
-                    <GridViewColumn Header="Last assignment Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="150" />
+                    <GridViewColumn Header="Last assignment Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="200" />
                     <GridViewColumn Header="Sum Appointment Time" DisplayMemberBinding="{Binding SumAppointmentTime}" Width="150" />
                     <GridViewColumn Header="Total Assignments" DisplayMemberBinding="{Binding SumAssignment}" Width="150" />
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100" />

@@ -49,7 +49,10 @@ internal class CallImplementation : ICall
         return result;
     }
 
-
+    public int GetNextId()
+    {
+        return _dal.config.NextCallId;  // קריאה לשכבת הנתונים
+    }
 
     public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
     {
@@ -73,7 +76,7 @@ internal class CallImplementation : ICall
                              SumAppointmentTime = assignment != null && assignment.FinishAppointmentTime.HasValue
                                  ? assignment.FinishAppointmentTime.Value - item.OpenTime
                                  : null,
-                             Status = Tools.callStatus( item.Id),
+                             Status = Tools.callStatus(item.Id),
                              SumAssignment = assignments.Count() // ספירה מתוך הרשימה המלאה של Assignment
                          };
 
@@ -139,7 +142,7 @@ internal class CallImplementation : ICall
                 return new CallAssignInList
                 {
                     RealFinishTime = a.FinishAppointmentTime,
-                    FinishAppointmentType = CallManager.ConvertEndType(a.FinishAppointmentType),
+                    FinishAppointmentType = a.FinishAppointmentType==null?null:(FinishAppointmentTypeEnum)a.FinishAppointmentType,
                     OpenTime = a.AppointmentTime,
                     VolunteerId = a.VolunteerId,
                     VolunteerName = volunteers.Where(v => v.Id == a.VolunteerId).First().FullName,
@@ -334,6 +337,67 @@ internal class CallImplementation : ICall
 
 
 
+    //public void Create(BO.Call call)
+    //{
+    //    // Call a helper method to convert BO.Call to DO.Call
+    //    DO.Call doCall = CallManager.HelpCreateUodate(call);
+    //    try
+    //    {
+    //        // Attempt to create the new call in the database
+    //        _dal.Call.Create(doCall);
+    //    }
+    //    catch (DO.DalAlreadyExistsException ex)
+    //    {
+    //        // If the call already exists, throw a BO exception
+    //        throw new BO.BlAlreadyExistsException($"Call with ID={call.Id} already exists", ex);
+    //    }
+    //    CallManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
+    //}
+    //internal static DO.Call HelpCreateUodate(BO.Call call)
+    //{
+    //    double[] cordinate = VolunteerManager.GetCoordinates(call.Address);  // Retrieves the coordinates based on the address. Throws an exception if the address is invalid.
+    //    AdminImplementation admin = new();  // Creates an instance of AdminImplementation to access admin settings.
+
+    //    // Checks if the MaxTimeToEnd is smaller than the OpeningTime, throws exception if true.
+    //    if (call.MaxTimeToEnd < admin.GetClock() + admin.GetRiskRange())
+    //        throw new BO.BlUserCantUpdateItemExeption("Max Time To End of Call can't be smaller than the Opening Time + risk range");
+
+    //    if (call.MaxTimeToEnd < admin.GetClock())
+    //        throw new BO.BlUserCantUpdateItemExeption("Max Time To End of Call can't be smaller than the Opening Time");
+
+    //    // Returns a new DO.Call object with the updated values.
+    //    return new()
+    //    {
+    //        Id = call.Id,
+    //        TheCallType = (DO.CallType)call.TheCallType,  // Converts the call type to DO.CallType.
+    //        VerbalDescription = call.VerbalDescription,  // Sets the verbal description.
+    //        Address = call.Address,  // Sets the address.
+    //        Latitude = cordinate[0],  // Sets the latitude.
+    //        Longitude = cordinate[1],  // Sets the longitude.
+    //        OpeningTime = call.OpeningTime,  // Sets the opening time.
+    //        MaxTimeToEnd = call.MaxTimeToEnd  // Sets the max time to end.
+    //    };
+    //}
+
+    //// שלב 2: בקשת רשומת הקריאה משכבת הנתונים
+    //var existingCall = _dal.call.Read(v => v.Id != call.Id)
+    //?? throw new DalDoesNotExistException($"Call with ID {call.Id} already exists.");
+
+    // שלב 3: בדיקת כתובת ועדכון קואורדינטות
+    //Task.Run(async () =>
+    //{
+    //    bool isValidAddress = await CallManager.IsValidAddressAsync(call.Address); // קריאה אסינכרונית לפונקציה
+    //    if (!isValidAddress)
+    //    {
+    //        throw new InvalidCallFormatException("Invalid address provided.");
+    //    }
+
+    //    // עדכון אורך ורוחב לפי הכתובת
+    //    double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
+
+    //    call.Longitude = GeolocationCoordinates[0];
+    //    call.Latitude = GeolocationCoordinates[1];
+    //}).GetAwaiter().GetResult();  // מחכה לסיום לפני המשך הקריאה לפונקציות הבאו
 
     public void AddCall(BO.Call call)
     {
@@ -341,41 +405,24 @@ internal class CallImplementation : ICall
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
+            double[] cordinate = Tools.GetGeolocationCoordinates(call.Address);
             CallManager.checkCallFormat(call);
             CallManager.checkCallLogic(call);
 
-            // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
-            var existingCall = _dal.call.Read(v => v.Id != call.Id)
-                ?? throw new DalDoesNotExistException($"Call with ID {call.Id} already exists.");
-
-            // שלב 3: בדיקת כתובת ועדכון קואורדינטות
-            //Task.Run(async () =>
-            //{
-            //    bool isValidAddress = await CallManager.IsValidAddressAsync(call.Address); // קריאה אסינכרונית לפונקציה
-            //    if (!isValidAddress)
-            //    {
-            //        throw new InvalidCallFormatException("Invalid address provided.");
-            //    }
-
-            //    // עדכון אורך ורוחב לפי הכתובת
-            //    double[] GeolocationCoordinates = Tools.GetGeolocationCoordinates(call.Address);
-
-            //    call.Longitude = GeolocationCoordinates[0];
-            //    call.Latitude = GeolocationCoordinates[1];
-            //}).GetAwaiter().GetResult();  // מחכה לסיום לפני המשך הקריאה לפונקציות הבאות
 
             // שלב 4: המרת אובייקט BO.Call ל-DO.Call
-            DO.Call newCall = new()
+            DO.Call newCall = new()  
             {
                 Id = call.Id,
                 OpenTime = call.OpenTime,
-                MaxTime = call.MaxFinishTime,
-                Longitude = (double)call.Longitude,
-                Latitude = (double)call.Latitude,
+                MaxTime = call.MaxFinishTime, // ודא שהשדה תומך בערך null במסד הנתונים
+                Longitude = cordinate[1],
+                Latitude = cordinate[0],
                 Adress = call.Address,
                 CallType = (DO.CallType)call.CallType,
                 VerbDesc = call.VerbDesc,
             };
+
 
             // שלב 5: עדכון הרשומה בשכבת הנתונים
             _dal.call.Create(newCall);
@@ -498,7 +545,7 @@ internal class CallImplementation : ICall
         // סינון הקריאות הפתוחות לפי סטטוס
         var openCalls = from call in listCall
                         let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
-                        let status = Tools.callStatus( call.Id)
+                        let status = Tools.callStatus(call.Id)
                         where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
                         select new BO.OpenCallInList
                         {
@@ -508,7 +555,7 @@ internal class CallImplementation : ICall
                             VerbDesc = call.VerbDesc,
                             OpenTime = call.OpenTime,
                             MaxFinishTime = call.MaxTime,
-                            DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], call.Latitude, call.Longitude)
+                            DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], (double)call.Latitude, (double)call.Longitude)
                         };
 
         // סינון לפי סוג הקריאה אם הוזן
@@ -572,42 +619,40 @@ internal class CallImplementation : ICall
     //}
     public void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
-        // Retrieve the assignment by ID
-        var assignment = _dal.assignment.Read(AssignmentId);
-
-        if (assignment == null)
-            throw new BO.Exceptions.BlDoesNotExistException($"Assignment with id={AssignmentId} does Not exist\"");
-
-        BO.Call call = readCallData(assignment.CallId);
-        // Check if the assignment does not exist
-
-        // Check if the volunteer is not the one assigned to this assignment
-        if (assignment.VolunteerId != volunteerId)
-            throw new BO.Exceptions.CannotUpdateCallException($"Volunteer with id={volunteerId} can't change this assignment to end");
-
-        // Check if the assignment has already ended
-        if (assignment.FinishAppointmentTime != null)
-            throw new BO.Exceptions.CannotUpdateCallException("This assignment already ended");
-
-        // Create a new assignment object with updated end time and end type
-        DO.Assignment newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.WasTreated };
-
         try
         {
+            // Retrieve the assignment by ID
+            var assignment = _dal.assignment.Read(AssignmentId);
+
+            if (assignment == null)
+                throw new InvalidOperationException($"Assignment with id={AssignmentId} does not exist.");
+
+            BO.Call call = readCallData(assignment.CallId);
+
+            // Check if the volunteer is not the one assigned to this assignment
+            if (assignment.VolunteerId != volunteerId)
+                throw new InvalidOperationException($"Volunteer with id={volunteerId} can't change this assignment to end.");
+
+            // Check if the assignment has already ended
+            if (assignment.FinishAppointmentTime.HasValue)
+                throw new InvalidOperationException("This assignment already ended.");
+
+            // Create a new assignment object with updated end time and end type
+            DO.Assignment newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.WasTreated };
+
             // Attempt to update the assignment in the database
             _dal.assignment.Update(newAssign);
 
+            CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call  and observers etc.
+            CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
+            VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
+            VolunteersManager.Observers.NotifyListUpdated();
         }
-        catch (DO.DalDoesNotExistException ex)
+        catch (Exception ex)
         {
-            // If the assignment does not exist, throw a BO exception
-            throw new BO.Exceptions.BlDoesNotExistException($"Assignment with ID={AssignmentId} does not exist", ex);
+            // Handle exceptions
+            throw new InvalidOperationException($"Error updating call as completed: {ex.Message}", ex);
         }
-
-        CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call  and obserervers etc.
-        CallManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
-        VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current call  and obserervers etc.
-        VolunteersManager.Observers.NotifyListUpdated();
     }
 
     //public void UpdateToCancelCallTreatment(int Id, int assignmentId)
@@ -650,7 +695,6 @@ internal class CallImplementation : ICall
     //}
     public void UpdateToCancelCallTreatment(int RequesterId, int AssignmentId)
     {
-
         // Retrieve the assignment object based on its ID.
         var assignment = _dal.assignment.Read(AssignmentId);
         // Check if the assignment does not exist.
@@ -669,11 +713,11 @@ internal class CallImplementation : ICall
         if (assignment.VolunteerId != RequesterId && asker.Position != DO.Position.admin)
             throw new BO.Exceptions.CannotUpdateVolunteerException($"Volunteer with id={RequesterId} can't change this assignment to cancel");
 
-        //// Check if the assignment has already ended.
-        //if (assignment.TheEndType != null || assignment.ActualEndTime != null)
-        //    throw new BO.BlUserCantUpdateItemExeption("This assignment already ended");
+        // Check if the assignment has already ended.
+        if (assignment.FinishAppointmentTime.HasValue)
+            throw new BO.Exceptions.BlCantBeErased("This assignment already ended");
 
-        if ( call.CallStatus != BO.Enums.CalltStatusEnum.CallIsBeingTreated && call.CallStatus != BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver)
+        if (call.CallStatus != BO.Enums.CalltStatusEnum.CallIsBeingTreated && call.CallStatus != BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver)
             throw new BO.Exceptions.CannotUpdateCallException($"You can only unassign if the call is currently in progress.");
 
         // Create a new assignment object with updated end time and end type based on role.
@@ -686,7 +730,6 @@ internal class CallImplementation : ICall
         {
             // Update the assignment in the data layer.
             _dal.assignment.Update(newAssign);
-
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -696,8 +739,9 @@ internal class CallImplementation : ICall
         CallManager.Observers.NotifyItemUpdated(call.Id);  //update current call  and obserervers etc.
         CallManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
         VolunteersManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current call  and obserervers etc.
-        VolunteersManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
+        VolunteersManager.Observers.NotifyListUpdated();  //update list of calls  and obserervers etc.
     }
+
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);
@@ -705,52 +749,98 @@ internal class CallImplementation : ICall
             return true;
         return false;
     }
-
-
     public void AssignCallToVolunteer(int volunteerId, int callId)
+{
+    try
     {
-        try
-        {
-            // שליפת פרטי הקריאה
-            BO.Call call = readCallData(callId);
+        // שליפת פרטי הקריאה
+        BO.Call call = readCallData(callId);
 
-            if (call == null)
-                throw new BO.Exceptions.BlDoesNotExistException("Call not found.");
+        if (call == null)
+            throw new InvalidOperationException("Call not found.");
 
-            // בדיקת אם הקריאה לא טופלה ולא פג תוקפה
-            if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN)
-                throw new BO.Exceptions.BlInvalidOperationException("Call has already been treated or expired.");
+        // בדיקת אם הקריאה לא טופלה ולא פג תוקפה
+        if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN && call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
+            throw new InvalidOperationException("Call has already been treated or expired.");
 
-            // בדיקת אם קיימת הקצאה פתוחה על הקריאה
-            var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
-            if (existingAssignments != null)
-                throw new BO.Exceptions.BlInvalidOperationException("Call is already assigned to a volunteer.");
+        // בדיקת אם קיימת הקצאה פתוחה על הקריאה
+        var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
+        if (existingAssignments != null )
+            throw new InvalidOperationException("Call is already assigned to a volunteer.");
 
             // יצירת הקצאה חדשה
             DO.Assignment newAssignment = new DO.Assignment
             {
+                Id = 0,
                 VolunteerId = volunteerId,
                 CallId = callId,
                 AppointmentTime = DateTime.Now, // זמן כניסה לטיפול
-                FinishAppointmentTime = null, // עדיין לא מעודכן
-                FinishAppointmentType = null  // עדיין לא מעודכן
+                FinishAppointmentTime = null,  // עדיין לא מעודכן
+                FinishAppointmentType = null   // עדיין לא מעודכן
             };
 
-            // ניסיון הוספה לשכבת הנתונים
-            _dal.assignment.Create(newAssignment);
-        }
-        catch (DO.DalDoesNotExistException ex)
-        {
-            // החריגות נשארות רלוונטיות
-            throw new BO.Exceptions.BlDoesNotExistException("Error assigning call to volunteer.", ex);
-        }
-        catch (BO.Exceptions.BlInvalidOperationException ex)
-        {
-            // חריגות שקשורות לפעולה לא חוקית
-            throw new BO.Exceptions.BlInvalidOperationException("Error in assignment operation.", ex);
-        }
+        // ניסיון הוספה לשכבת הנתונים
+        _dal.assignment.Create(newAssignment);
 
+            
+        // עדכון תצוגת הקריאות
+        CallManager.Observers.NotifyItemUpdated(newAssignment.Id);
+        CallManager.Observers.NotifyListUpdated();
     }
+    catch (Exception ex)
+    {
+        // תרגום חריגות כלליות להודעה ברורה
+        throw new Exception("Error occurred while assigning the call: " + ex.Message, ex);
+    }
+}
+
+
+    //public void AssignCallToVolunteer(int volunteerId, int callId)
+    //{
+    //    try
+    //    {
+    //        // שליפת פרטי הקריאה
+    //        BO.Call call = readCallData(callId);
+
+    //        if (call == null)
+    //            throw new BO.Exceptions.BlDoesNotExistException("Call not found.");
+
+    //        // בדיקת אם הקריאה לא טופלה ולא פג תוקפה
+    //        if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN)
+    //            throw new BO.Exceptions.BlInvalidOperationException("Call has already been treated or expired.");
+
+    //        // בדיקת אם קיימת הקצאה פתוחה על הקריאה
+    //        var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
+    //        if (existingAssignments != null)
+    //            throw new BO.Exceptions.BlInvalidOperationException("Call is already assigned to a volunteer.");
+
+    //        // יצירת הקצאה חדשה
+    //        DO.Assignment newAssignment = new DO.Assignment
+    //        {
+    //            VolunteerId = volunteerId,
+    //            CallId = callId,
+    //            AppointmentTime = DateTime.Now, // זמן כניסה לטיפול
+    //            FinishAppointmentTime = null, // עדיין לא מעודכן
+    //            FinishAppointmentType = null  // עדיין לא מעודכן
+    //        };
+
+    //        // ניסיון הוספה לשכבת הנתונים
+    //        _dal.assignment.Create(newAssignment);
+    //        CallManager.Observers.NotifyItemUpdated(newAssignment.Id);  //stage 5
+    //        CallManager.Observers.NotifyListUpdated();  //stage 5
+    //    }
+    //    catch (DO.DalDoesNotExistException ex)
+    //    {
+    //        // החריגות נשארות רלוונטיות
+    //        throw new BO.Exceptions.BlDoesNotExistException("Error assigning call to volunteer.", ex);
+    //    }
+    //    catch (BO.Exceptions.BlInvalidOperationException ex)
+    //    {
+    //        // חריגות שקשורות לפעולה לא חוקית
+    //        throw new BO.Exceptions.BlInvalidOperationException("Error in assignment operation.", ex);
+    //    }
+
+    //}
     //public void UpdateAddress( int id,string Address)
     //{
 
