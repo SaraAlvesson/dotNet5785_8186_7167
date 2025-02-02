@@ -76,7 +76,8 @@ internal class VolunteerImplementation : IVolunteer
         throw new BlDoesNotExistException($"Username {username} not found");
     }
 
-    public IEnumerable<VolunteerInList> RequestVolunteerList(
+
+   public IEnumerable<VolunteerInList> RequestVolunteerList(
     bool? isActive,
     VolunteerInListField? sortField = null,
     CallTypeEnum? callTypeFilter = null)

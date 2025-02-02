@@ -52,8 +52,7 @@ namespace PL
                 {
                     new Volunteer.MainVolunteerWindow(Username).Show(); // Volunteer screen
                 }
-
-               // this.Hide(); // Keep login screen accessible
+               
             }
             catch (Exception ex)
             {
@@ -78,6 +77,11 @@ namespace PL
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             Password = ((PasswordBox)sender).Password;
+        }
+
+        public static void LogoutAdmin()
+        {
+            IsAdminLoggedIn = false; // Mark admin as logged out
         }
     }
 }
