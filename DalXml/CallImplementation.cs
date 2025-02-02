@@ -5,6 +5,8 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 /// <summary>
 /// The CallImplementation class provides the implementation for managing calls in the data source.
@@ -16,14 +18,37 @@ internal class CallImplementation : ICall
     /// Creates a new call by generating a unique Id and adding it to the calls list.
     /// </summary>
     /// <param name="item">The call item to be created.</param>
+    /// 
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call item)
     {
-        List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
-        int nextId = Config.NextAssignmentId;
-        Call newItem = item with { Id = nextId }; // Creates new item with the next available ID
-        Calls.Add(newItem); // Adds the new item to the list
-        XMLTools.SaveListToXMLSerializer(Calls, Config.s_calls_xml);
+        XElement calls = XMLTools.LoadListFromXMLElement(Config.s_calls_xml);
+        calls.Add(createCallElement(item));
+        XMLTools.SaveListToXMLElement(calls, Config.s_calls_xml);
     }
+    static XElement createCallElement(Call item)
+    {
+        return new XElement("Call",
+            new XElement("Id", Config.NextAssignmentId),
+            new XElement("CallType", item.CallType),
+            new XElement("VerbalDescription", item.VerbDesc),
+            new XElement("Address", item.Adress),
+            new XElement("Latitude", item.Latitude),
+            new XElement("Longitude", item.Longitude),
+            new XElement("OpeningTime", item.OpenTime),
+            new XElement("MaxTimeToEnd", item.MaxTime)
+    );
+    }
+
+    //public void Create(Call item)
+    //{
+    //    List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
+    //    int nextId = Config.NextAssignmentId;
+    //    Call newItem = item with { Id = nextId }; // Creates new item with the next available ID
+    //    Calls.Add(newItem); // Adds the new item to the list
+    //    XMLTools.SaveListToXMLSerializer(Calls, Config.s_calls_xml);
+    //}
 
     /// <summary>
     /// Reads a call from the list by its Id.

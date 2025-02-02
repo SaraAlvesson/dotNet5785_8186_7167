@@ -199,8 +199,8 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
             throw new InvalidOperationException("The call addresses list is empty. Cannot create calls.");
         }
 
-        // Generate 50 calls
-        for (int i = 0; i < 50; i++)
+        // Generate 70 calls
+        for (int i = 0; i < 70; i++)
         {
             try
             {
@@ -244,6 +244,7 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
                         throw new ArgumentOutOfRangeException(nameof(maxTime), "MaxTime must be greater than OpenTime.");
                     }
                 }
+
 
                 // Create a new call
                 Call newCall = new Call
@@ -394,9 +395,9 @@ new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.0530
 }
 
 
-    // <summary>
-    // Assigns volunteers to calls.
-    // - Ensures each volunteer is assigned to at least one call.
-    // - Generates random times for appointment and finish time within constraints.
-    // </summary>
+// <summary>
+// Assigns volunteers to calls.
+// - Ensures each volunteer is assigned to at least one call.
+// - Generates random times for appointment and finish time within constraints.
+// </summary>
 

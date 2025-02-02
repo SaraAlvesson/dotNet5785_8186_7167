@@ -116,6 +116,37 @@ namespace Helpers
             return null;
         }
 
+        private const string ApiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+
+        public static bool IsAddressValid(string address)
+        {
+
+            using (HttpClient client = new HttpClient())
+            {
+                string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={ApiKey}";
+
+                try
+                {
+                    HttpResponseMessage response = client.GetAsync(url).Result; // סינכרונית
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = response.Content.ReadAsStringAsync().Result; // סינכרונית
+
+                    // השתמש ב-System.Text.Json
+                    using (JsonDocument jsonDoc = JsonDocument.Parse(responseBody))
+                    {
+                        var status = jsonDoc.RootElement.GetProperty("status").GetString();
+
+                        return status == "OK"; // אם הסטטוס הוא "OK", הכתובת חוקית
+                    }
+                }
+                catch (Exception)
+                {
+                    return false; // טיפול בשגיאות ברשת או בשגיאות של ה-API
+                }
+            }
+        }
+
+
         internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
         {
             // וידוא שלא מדובר במחרוזת ריקה או null

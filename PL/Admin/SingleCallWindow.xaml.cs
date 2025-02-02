@@ -65,7 +65,9 @@ namespace PL.Admin
                     {
 
                         Id = s_bl.Call.GetNextId(),  // קריאה לפונקציה בשכבת הלוגיקה
-                        OpenTime = DateTime.Now
+                        OpenTime = DateTime.Now,
+                       
+
                     }; 
 
                     }
@@ -73,6 +75,7 @@ namespace PL.Admin
                 {
                     CurrentCall = s_bl.Call.readCallData(id);
                     SetEditableFields(CurrentCall.CallStatus);
+                     UpdateCallList();
                 }
             }
             catch (Exception ex)
@@ -218,11 +221,11 @@ namespace PL.Admin
                 }
 
                 UpdateCallList();
-                this.Close();
+                
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

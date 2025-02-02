@@ -1,355 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfAssignment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Assignment>
-    <Id>52</Id>
-    <CallId>1</CallId>
-    <VolunteerId>852206166</VolunteerId>
-    <AppointmentTime>2025-01-25T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T20:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>53</Id>
-    <CallId>2</CallId>
-    <VolunteerId>852206166</VolunteerId>
-    <AppointmentTime>2025-01-26T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T05:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>54</Id>
-    <CallId>3</CallId>
-    <VolunteerId>852206166</VolunteerId>
-    <AppointmentTime>2025-01-25T03:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T14:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>56</Id>
-    <CallId>4</CallId>
-    <VolunteerId>915994888</VolunteerId>
-    <AppointmentTime>2025-01-26T16:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T21:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>57</Id>
-    <CallId>5</CallId>
-    <VolunteerId>915994888</VolunteerId>
-    <AppointmentTime>2025-01-26T00:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T14:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>58</Id>
-    <CallId>6</CallId>
-    <VolunteerId>915994888</VolunteerId>
-    <AppointmentTime>2025-01-25T05:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T00:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>60</Id>
-    <CallId>8</CallId>
-    <VolunteerId>591247541</VolunteerId>
-    <AppointmentTime>2025-01-25T00:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T15:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>61</Id>
-    <CallId>9</CallId>
-    <VolunteerId>591247541</VolunteerId>
-    <AppointmentTime>2025-01-26T16:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T19:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>62</Id>
-    <CallId>11</CallId>
-    <VolunteerId>591247541</VolunteerId>
-    <AppointmentTime>2025-01-25T08:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T11:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>64</Id>
-    <CallId>12</CallId>
-    <VolunteerId>112538565</VolunteerId>
-    <AppointmentTime>2025-01-25T16:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T23:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>65</Id>
-    <CallId>13</CallId>
-    <VolunteerId>112538565</VolunteerId>
-    <AppointmentTime>2025-01-26T18:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T08:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>66</Id>
-    <CallId>14</CallId>
-    <VolunteerId>112538565</VolunteerId>
-    <AppointmentTime>2025-01-26T06:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T07:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>68</Id>
-    <CallId>15</CallId>
-    <VolunteerId>221801931</VolunteerId>
-    <AppointmentTime>2025-01-25T11:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T00:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>69</Id>
-    <CallId>16</CallId>
-    <VolunteerId>221801931</VolunteerId>
-    <AppointmentTime>2025-01-26T10:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T05:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>70</Id>
-    <CallId>17</CallId>
-    <VolunteerId>221801931</VolunteerId>
-    <AppointmentTime>2025-01-26T08:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T08:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
     <Id>71</Id>
-    <CallId>18</CallId>
-    <VolunteerId>973221232</VolunteerId>
-    <AppointmentTime>2025-01-26T22:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T11:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>1</CallId>
+    <VolunteerId>837768202</VolunteerId>
+    <AppointmentTime>0001-01-01T08:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T10:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>72</Id>
-    <CallId>19</CallId>
-    <VolunteerId>156560590</VolunteerId>
-    <AppointmentTime>2025-01-25T18:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T04:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>2</CallId>
+    <VolunteerId>837768202</VolunteerId>
+    <AppointmentTime>0001-01-01T04:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T22:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>73</Id>
-    <CallId>20</CallId>
-    <VolunteerId>612877424</VolunteerId>
-    <AppointmentTime>2025-01-26T16:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T12:41:23</FinishAppointmentTime>
+    <CallId>3</CallId>
+    <VolunteerId>837768202</VolunteerId>
+    <AppointmentTime>0001-01-01T10:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T02:00:00</FinishAppointmentTime>
     <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>74</Id>
-    <CallId>22</CallId>
-    <VolunteerId>464152266</VolunteerId>
-    <AppointmentTime>2025-01-25T14:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T08:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>4</CallId>
+    <VolunteerId>116189068</VolunteerId>
+    <AppointmentTime>0001-01-01T04:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T17:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>75</Id>
+    <CallId>5</CallId>
+    <VolunteerId>116189068</VolunteerId>
+    <AppointmentTime>0001-01-01T03:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T22:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>76</Id>
-    <CallId>25</CallId>
-    <VolunteerId>762920858</VolunteerId>
-    <AppointmentTime>2025-01-26T00:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T05:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>6</CallId>
+    <VolunteerId>116189068</VolunteerId>
+    <AppointmentTime>0001-01-01T17:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T15:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>77</Id>
-    <CallId>26</CallId>
-    <VolunteerId>414395302</VolunteerId>
-    <AppointmentTime>2025-01-26T18:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T00:41:23</FinishAppointmentTime>
+    <CallId>7</CallId>
+    <VolunteerId>454350266</VolunteerId>
+    <AppointmentTime>0001-01-01T22:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T00:00:00</FinishAppointmentTime>
     <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>78</Id>
-    <CallId>27</CallId>
-    <VolunteerId>865224539</VolunteerId>
-    <AppointmentTime>2025-01-25T01:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-25T06:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>59</Id>
-    <CallId>21</CallId>
-    <VolunteerId>591247541</VolunteerId>
-    <AppointmentTime>2025-01-26T14:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
+    <CallId>8</CallId>
+    <VolunteerId>454350266</VolunteerId>
+    <AppointmentTime>0001-01-01T15:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T05:00:00</FinishAppointmentTime>
     <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
-    <Id>55</Id>
-    <CallId>10</CallId>
-    <VolunteerId>915994888</VolunteerId>
-    <AppointmentTime>2025-01-26T21:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>75</Id>
-    <CallId>23</CallId>
-    <VolunteerId>977164486</VolunteerId>
-    <AppointmentTime>2025-01-25T09:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
+    <Id>79</Id>
+    <CallId>9</CallId>
+    <VolunteerId>454350266</VolunteerId>
+    <AppointmentTime>0001-01-01T19:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T21:00:00</FinishAppointmentTime>
     <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>80</Id>
-    <CallId>33</CallId>
-    <VolunteerId>977164486</VolunteerId>
-    <AppointmentTime>2025-01-26T18:49:52.9680165+02:00</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
+    <CallId>10</CallId>
+    <VolunteerId>677108525</VolunteerId>
+    <AppointmentTime>0001-01-01T18:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T17:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>81</Id>
-    <CallId>34</CallId>
-    <VolunteerId>977164486</VolunteerId>
-    <AppointmentTime>2025-01-26T18:56:24.5588318+02:00</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>51</Id>
-    <CallId>7</CallId>
-    <VolunteerId>852206166</VolunteerId>
-    <AppointmentTime>2025-01-27T09:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
+    <CallId>11</CallId>
+    <VolunteerId>677108525</VolunteerId>
+    <AppointmentTime>0001-01-01T20:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T23:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>82</Id>
-    <CallId>30</CallId>
-    <VolunteerId>852206166</VolunteerId>
-    <AppointmentTime>2025-01-26T20:46:29.828893+02:00</AppointmentTime>
-    <FinishAppointmentTime>2025-01-26T17:41:23</FinishAppointmentTime>
+    <CallId>12</CallId>
+    <VolunteerId>677108525</VolunteerId>
+    <AppointmentTime>0001-01-01T16:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T09:00:00</FinishAppointmentTime>
     <FinishAppointmentType>WasTreated</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>63</Id>
-    <CallId>24</CallId>
-    <VolunteerId>112538565</VolunteerId>
-    <AppointmentTime>2025-01-26T13:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>67</Id>
-    <CallId>28</CallId>
-    <VolunteerId>221801931</VolunteerId>
-    <AppointmentTime>2025-01-26T22:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>83</Id>
-    <CallId>31</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>13</CallId>
+    <VolunteerId>489776331</VolunteerId>
+    <AppointmentTime>0001-01-01T07:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T04:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>84</Id>
-    <CallId>35</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>14</CallId>
+    <VolunteerId>489776331</VolunteerId>
+    <AppointmentTime>0001-01-01T07:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T03:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>85</Id>
-    <CallId>36</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>15</CallId>
+    <VolunteerId>489776331</VolunteerId>
+    <AppointmentTime>0001-01-01T09:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T01:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>86</Id>
-    <CallId>37</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>16</CallId>
+    <VolunteerId>474997506</VolunteerId>
+    <AppointmentTime>0001-01-01T10:00:00</AppointmentTime>
+    <FinishAppointmentTime xsi:nil="true" />
+    <FinishAppointmentType xsi:nil="true" />
   </Assignment>
   <Assignment>
     <Id>87</Id>
-    <CallId>39</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>17</CallId>
+    <VolunteerId>477792449</VolunteerId>
+    <AppointmentTime>0001-01-01T06:00:00</AppointmentTime>
+    <FinishAppointmentTime xsi:nil="true" />
+    <FinishAppointmentType xsi:nil="true" />
   </Assignment>
   <Assignment>
     <Id>88</Id>
-    <CallId>42</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>18</CallId>
+    <VolunteerId>693214713</VolunteerId>
+    <AppointmentTime>0001-01-01T21:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T20:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>89</Id>
-    <CallId>43</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>19</CallId>
+    <VolunteerId>490319372</VolunteerId>
+    <AppointmentTime>0001-01-01T15:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T19:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>90</Id>
-    <CallId>44</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>20</CallId>
+    <VolunteerId>568142245</VolunteerId>
+    <AppointmentTime>0001-01-01T04:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-01T19:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>91</Id>
-    <CallId>49</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>21</CallId>
+    <VolunteerId>278620357</VolunteerId>
+    <AppointmentTime>0001-01-01T17:00:00</AppointmentTime>
+    <FinishAppointmentTime>0001-01-02T08:00:00</FinishAppointmentTime>
+    <FinishAppointmentType>WasTreated</FinishAppointmentType>
   </Assignment>
   <Assignment>
     <Id>92</Id>
-    <CallId>50</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+    <CallId>22</CallId>
+    <VolunteerId>838036252</VolunteerId>
+    <AppointmentTime>0001-01-01T13:00:00</AppointmentTime>
+    <FinishAppointmentTime xsi:nil="true" />
+    <FinishAppointmentType xsi:nil="true" />
   </Assignment>
   <Assignment>
     <Id>93</Id>
-    <CallId>41</CallId>
-    <VolunteerId>0</VolunteerId>
-    <AppointmentTime>2025-01-27T17:41:23</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>94</Id>
-    <CallId>45</CallId>
-    <VolunteerId>414395302</VolunteerId>
-    <AppointmentTime>2025-01-26T23:14:49.1176219+02:00</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
-  </Assignment>
-  <Assignment>
-    <Id>95</Id>
-    <CallId>79</CallId>
-    <VolunteerId>414395302</VolunteerId>
-    <AppointmentTime>2025-01-26T23:17:04.4844785+02:00</AppointmentTime>
-    <FinishAppointmentTime>2025-01-27T17:41:23</FinishAppointmentTime>
-    <FinishAppointmentType>WasTreated</FinishAppointmentType>
+    <CallId>23</CallId>
+    <VolunteerId>896819015</VolunteerId>
+    <AppointmentTime>0001-01-01T10:00:00</AppointmentTime>
+    <FinishAppointmentTime xsi:nil="true" />
+    <FinishAppointmentType xsi:nil="true" />
   </Assignment>
 </ArrayOfAssignment>

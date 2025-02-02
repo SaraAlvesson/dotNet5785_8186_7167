@@ -185,10 +185,7 @@ namespace PL
         {
             new Admin.CallsListWindow().Show();
         }
-        private void textrr_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            // הוספת קוד פעולה במקרה של שינוי בטקסט
-        }
+        
 
 
     }

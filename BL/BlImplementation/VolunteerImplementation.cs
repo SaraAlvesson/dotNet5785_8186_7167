@@ -4,6 +4,7 @@ using BO;
 using DO;
 using Helpers;
 using System;
+using System.Web;
 using static BO.Enums;
 using static BO.Exceptions;
 
@@ -39,18 +40,28 @@ internal class VolunteerImplementation : IVolunteer
     //    throw new BlDoesNotExistException($"Username {username} not found");
 
     //}
+
+    // שלב 4: אם המשתמש לא נמצא
     public string Login(int username, string password)
     {
-        // שלב 1: שליפת המתנדב עם שם המשתמש (יכול להיות גם לפי מזהה ייחודי)
+        // שלב 1: שליפת המתנדב לפי מזהה
         var volunteer = _dal.Volunteer.ReadAll(v => v.Id == username).FirstOrDefault();
 
         if (volunteer != null)
         {
-            // שלב 2: השוואת הסיסמאות
-            if (volunteer.Password != password)
-                throw new BlPasswordNotValid("Incorrect password");
+            // שלב 2: פענוח סיסמת המתנדב מה-XML
+            string decodedPassword = HttpUtility.HtmlDecode(volunteer.Password);
 
-            // שלב 3: המרת התפקיד מה-DO ל-BO
+            // שלב 3: פענוח סיסמת הקלט של המשתמש (למקרה שהיא מקודדת)
+            string inputPassword = HttpUtility.HtmlDecode(password);
+
+            // השוואת הסיסמאות לאחר הפענוח
+            if (decodedPassword != inputPassword)
+            {
+                throw new BlPasswordNotValid("Incorrect password");
+            }
+
+            // שלב 4: המרת תפקיד
             if (Enum.TryParse<BO.Enums.VolunteerTypeEnum>(volunteer.Position.ToString(), out var volunteerType))
             {
                 return volunteerType.ToString();
@@ -61,12 +72,11 @@ internal class VolunteerImplementation : IVolunteer
             }
         }
 
-        // שלב 4: אם המשתמש לא נמצא
-        throw new BlDoesNotExistException($"Username {username} not found");
+        // שלב 5: אם המשתמש לא נמצא
+        throw new BlDoesNotExistException($"Username {username} not found");
     }
 
-
-   public IEnumerable<VolunteerInList> RequestVolunteerList(
+    public IEnumerable<VolunteerInList> RequestVolunteerList(
     bool? isActive,
     VolunteerInListField? sortField = null,
     CallTypeEnum? callTypeFilter = null)
@@ -311,6 +321,9 @@ internal class VolunteerImplementation : IVolunteer
                 throw new BlPhoneNumberNotCorrect("Invalid phone number format.");
             if (!Helpers.VolunteersManager.IsValidId(volunteerDetails.Id))
                 throw new BlIdNotValid("Invalid ID format.");
+          //  if (!Helpers.VolunteersManager.IsAddressValid(volunteerDetails.Location))
+             //   throw new BlIdNotValid("Invalid address format.");
+
 
             Console.WriteLine("Format checks passed.");
 

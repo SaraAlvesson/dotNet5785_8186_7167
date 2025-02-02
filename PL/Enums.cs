@@ -19,3 +19,9 @@ internal class DistanceTypeCollection : IEnumerable
     static readonly IEnumerable<BO.Enums.DistanceTypeEnum> s_enums = (Enum.GetValues(typeof(BO.Enums.DistanceTypeEnum)) as IEnumerable<BO.Enums.DistanceTypeEnum>)!;
     public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
 }
+
+internal class StatusTypeCollection : IEnumerable
+{
+    static readonly IEnumerable<BO.Enums.CalltStatusEnum> s_enums = (Enum.GetValues(typeof(BO.Enums.CalltStatusEnum)) as IEnumerable<BO.Enums.CalltStatusEnum>)!;
+    public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
+}

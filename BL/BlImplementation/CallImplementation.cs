@@ -54,6 +54,7 @@ internal class CallImplementation : ICall
         return _dal.config.NextCallId;  // קריאה לשכבת הנתונים
     }
 
+
     public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
     {
         var listCall = _dal.call.ReadAll();
@@ -161,6 +162,8 @@ internal class CallImplementation : ICall
                 DO.CallType.MedicalAssistance => BO.Enums.CallTypeEnum.MedicalAssistance,
                 DO.CallType.EmotionalSupport => BO.Enums.CallTypeEnum.EmotionalSupport,
                 DO.CallType.PackingSupplies => BO.Enums.CallTypeEnum.PackingSupplies,
+           
+
                 _ => throw new FormatException("Unknown Call Type!")
             },
             Address = doCall.Adress,
@@ -405,11 +408,10 @@ internal class CallImplementation : ICall
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            double[] cordinate = Tools.GetGeolocationCoordinates(call.Address);
             CallManager.checkCallFormat(call);
             CallManager.checkCallLogic(call);
-
-
+            double[] cordinate = Tools.GetGeolocationCoordinates(call.Address);
+           
             // שלב 4: המרת אובייקט BO.Call ל-DO.Call
             DO.Call newCall = new()  
             {
@@ -432,6 +434,7 @@ internal class CallImplementation : ICall
         catch (Exception ex)
         {
             // טיפול בשגיאות אם יש
+            throw new Exception($"Error occurred while adding call: {ex.Message}");
             Console.WriteLine($"Error occurred while adding call: {ex.Message}");
         }
     }
@@ -507,7 +510,7 @@ internal class CallImplementation : ICall
         }
 
         if (!listAssignment.Any())
-        {
+        { 
             throw new Exception("No assignments found in the database.");
         }
 

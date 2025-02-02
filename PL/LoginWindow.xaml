@@ -38,10 +38,10 @@
         </Grid.ColumnDefinitions>
 
         <!-- Logo Placeholder -->
-        <Rectangle Grid.Row="0" Grid.Column="1" Width="200" Height="100" 
-                   HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+        <Rectangle Grid.Row="0" Grid.Column="1" Width="276" Height="111" 
+                   HorizontalAlignment="Center" VerticalAlignment="Top" 
                    Stroke="#A0A0A0" StrokeDashArray="4 2" 
-                   StrokeThickness="2" Fill="Transparent">
+                   StrokeThickness="2" Fill="Transparent" Margin="0,34,0,0" Grid.RowSpan="2">
             <Rectangle.Resources>
                 <Style TargetType="Rectangle">
                     <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -56,21 +56,21 @@
 
         <Label Content="ID:" FontSize="16" Foreground="#2C3E50" 
                Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
-               HorizontalAlignment="Left" Margin="20,0,0,0" />
+               HorizontalAlignment="Left" Width="28" Margin="21,0,0,0" />
 
-        <TextBox Width="250" Height="35" Grid.Row="1" Grid.Column="1" 
-                 VerticalAlignment="Center" HorizontalAlignment="Right" 
-                 Margin="0,0,20,0" Background="#ECF0F1" 
+        <TextBox Width="258" Height="35" Grid.Row="1" Grid.Column="1" 
+                 VerticalAlignment="Center" HorizontalAlignment="Left" 
+                 Margin="80,0,0,0" Background="#ECF0F1" 
                  BorderBrush="#BDC3C7" 
                  Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Content="Password:" FontSize="16" Foreground="#2C3E50" 
                Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" 
-               HorizontalAlignment="Left" Margin="20,0,0,0" />
+               HorizontalAlignment="Left" Width="100" />
 
-        <PasswordBox Width="250" Height="35" Grid.Row="2" Grid.Column="1" 
-                     VerticalAlignment="Center" HorizontalAlignment="Right" 
-                     Margin="0,0,20,0" Background="#ECF0F1" 
+        <PasswordBox Width="258" Height="35" Grid.Row="2" Grid.Column="1" 
+                     VerticalAlignment="Center" HorizontalAlignment="Left" 
+                     Margin="80,0,0,0" Background="#ECF0F1" 
                      BorderBrush="#BDC3C7" 
                      PasswordChanged="PasswordBox_PasswordChanged" />
 

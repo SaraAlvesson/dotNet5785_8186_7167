@@ -8,6 +8,12 @@
             <local:CallTypeCollection x:Key="CallTypeCollectionKey" />
             <local:PositionCollection x:Key="PositionCollectionKey" />
             <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey" />
+            <!--<local:StatusTypeCollection x:Key="StatusTypeCollectionKey" />-->
+
+
+
+            <!--<local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>-->
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

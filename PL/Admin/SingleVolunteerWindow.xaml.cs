@@ -176,7 +176,7 @@ namespace PL.Admin
                 }
 
                 UpdateVolunteerList();
-                this.Close();
+                
             }
             catch (Exception ex)
             {

@@ -4,7 +4,83 @@
         Title="Single Call Window" Height="640" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="Window_Loaded"
-        Closed="Window_Closed">
+        Closed="Window_Closed"
+        Background="#D32F2F">
+
+    <Window.Resources>
+        <!-- Common Button Style -->
+        <Style x:Key="CommonButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#D32F2F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" 
+                                CornerRadius="5">
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontWeight="{TemplateBinding FontWeight}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#B71C1C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Label Style -->
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#ECF0F1"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- ComboBox Style -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#ECF0F1"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Height" Value="30"/>
+        </Style>
+
+        <!-- DatePicker Style -->
+        <Style TargetType="DatePicker">
+            <Setter Property="Background" Value="#ECF0F1"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="Height" Value="30"/>
+        </Style>
+
+        <!-- ListView Style -->
+        <Style TargetType="ListView">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -24,48 +100,66 @@
         </Grid.RowDefinitions>
 
         <!-- Id -->
-        <Label Content="Id:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Id:" Grid.Row="0" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.Id, Mode=TwoWay}" 
-                 Grid.Row="0" Grid.Column="1" Margin="5" IsReadOnly="True"/>
+                 Grid.Row="0" Grid.Column="1" IsReadOnly="True"/>
 
         <!-- Call type -->
-        <Label Content="Call Type:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Call Type:" Grid.Row="1" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallType, Mode=TwoWay}" 
-                  Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Source={StaticResource CallTypeCollectionKey }}" />
+                  Grid.Row="1" Grid.Column="1"
+                  ItemsSource="{Binding Source={StaticResource CallTypeCollectionKey}}"/>
 
         <!-- Address -->
-        <Label Content="Address:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Address:" Grid.Row="2" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.Address, Mode=TwoWay}" 
-                 Grid.Row="2" Grid.Column="1" Margin="5" />
+                 Grid.Row="2" Grid.Column="1"/>
 
         <!-- Description -->
-        <Label Content="Description:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Description:" Grid.Row="3" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.VerbDesc, Mode=TwoWay}" 
-                 Grid.Row="3" Grid.Column="1" Margin="5" />
+                 Grid.Row="3" Grid.Column="1"/>
 
         <!-- Open Time -->
-        <Label Content="Open Time:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Open Time:" Grid.Row="4" Grid.Column="0"/>
         <DatePicker SelectedDate="{Binding CurrentCall.OpenTime, Mode=TwoWay}" 
-                    Grid.Row="4" Grid.Column="1" Margin="5" IsEnabled="False" />
+                    Grid.Row="4" Grid.Column="1" IsEnabled="False"/>
 
         <!-- Max Finish Time -->
-        <Label Content="Max Finish Time:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Max Finish Time:" Grid.Row="5" Grid.Column="0"/>
         <DatePicker SelectedDate="{Binding CurrentCall.MaxFinishTime, Mode=TwoWay}" 
-                    Grid.Row="5" Grid.Column="1" Margin="5" IsEnabled="{Binding IsMaxTimeEditable}" />
+                    Grid.Row="5" Grid.Column="1" 
+                    IsEnabled="{Binding SetEditableFields}"/>
 
         <!-- Status -->
-        <Label Content="Status:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <Label Content="Status:" Grid.Row="6" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallStatus, Mode=TwoWay}" 
-                  Grid.Row="6" Grid.Column="1" Margin="5" IsEnabled="False" />
+                  Grid.Row="6" Grid.Column="1"/>
 
         <!-- List Assignments -->
-        <Label Content="List Assignments:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top" Margin="5" />
-        <ListView ItemsSource="{Binding CallInList}" Grid.Row="7" Grid.Column="1" Margin="5"/>
+        <Label Content="List Assignments:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top"/>
+        <ListView ItemsSource="{Binding CallInList}" 
+                  Grid.Row="7" Grid.Column="1"/>
 
         <!-- Update Button -->
         <Button Content="{Binding ButtonText}" 
                 Command="{Binding UpdateCommand}" 
-                Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" 
-                HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Click="ButtonAddUpdate_Click"/>
+                Grid.Row="7" Grid.Column="1" 
+                Style="{StaticResource CommonButtonStyle}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Width="155"
+                Height="20"
+                Margin="0,322,0,0"
+                Click="ButtonAddUpdate_Click" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
     </Grid>
 </Window>
