@@ -87,22 +87,23 @@ namespace PL.Admin
         {
             try
             {
-                BO.Enums.CallTypeEnum? callTypeFilter = Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType)
-                    ? parsedCallType
-                    : (BO.Enums.CallTypeEnum?)null;
+                IEnumerable<CallInList> calls = s_bl.Call.GetCallList(null, null, null); // קבלת כל הקריאות
 
-                BO.Enums.CallFieldEnum? sortFieldFilter = Enum.TryParse(SelectedSortOption, out BO.Enums.CallFieldEnum parsedSortField)
-                    ? parsedSortField
-                    : (BO.Enums.CallFieldEnum?)null;
+                if (!string.IsNullOrEmpty(SelectedCallType) && Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType))
+                {
+                    calls = calls.Where(call => call.CallType == parsedCallType); // ביצוע סינון
+                }
 
-                // קבלת כל הקריאות עם הסינון והמיון שבחרת
-                var updatedCalls = ReadAllCalls(callTypeFilter, sortFieldFilter);
+                if (!string.IsNullOrEmpty(SelectedSortOption) && Enum.TryParse(SelectedSortOption, out BO.Enums.CallFieldEnum parsedSortField))
+                {
+                    calls = calls.OrderBy(call => call.GetType().GetProperty(parsedSortField.ToString())?.GetValue(call)); // ביצוע מיון
+                }
 
                 // עדכון הרשימה
-                FilteredCalls.Clear();
-                foreach (var call in updatedCalls)
+                FilteredCalls.Clear(); // Clear the current list
+                foreach (var call in calls)
                 {
-                    FilteredCalls.Add(call);  // הוסף את הקריאות החדשות לרשימה
+                    FilteredCalls.Add(call); // Add the updated calls
                 }
             }
             catch (Exception ex)
@@ -110,6 +111,8 @@ namespace PL.Admin
                 MessageBox.Show($"Error updating the call list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
 
         private void LoadCallList()
         {
@@ -156,17 +159,17 @@ namespace PL.Admin
                 new SingleCallWindow(SelectedCall.CallId).Show();
             }
         }
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            new SingleCallWindow().Show();
+        }
 
         private void FilterByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateCallList();  // עדכון הרשימה לפי הבחירה בסינון
         }
 
-        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            new SingleCallWindow().Show();
-        }
-
+       
         private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateCallList();  // עדכון הרשימה לפי הבחירה במיון
@@ -185,7 +188,7 @@ namespace PL.Admin
                 var smtpClient = new SmtpClient("smtp.company.com")
                 {
                     Port = 587,
-                    Credentials = new System.Net.NetworkCredential("admin@company.com", "password"),
+                    Credentials = new System.Net.NetworkCredential("admin@company.com", "password"), // מומלץ לשמור נתונים אלה מחוץ לקוד
                     EnableSsl = true
                 };
                 smtpClient.Send(mailMessage);
@@ -196,44 +199,20 @@ namespace PL.Admin
             }
         }
 
-        //// פונקציה לביטול ההקצאה של קריאה
-        //private void CancelAssignment(CallInList call)
-        //{
-        //    if (call.Status == BO.Enums.CalltStatusEnum.CallIsBeingTreated && call.LastVolunteerName != null)
-        //    {
-        //        // שלח את האימייל למתנדב
-        //       // SendCancellationEmail(call..Email, $"קריאה מספר {call.CallId} בוטלה.");
-        //        //call.AssignedVolunteer = null; // עדכון הקריאה לביטול ההקצאה
-
-        //        UpdateCallList(); // עדכון הרשימה אחרי ביטול ההקצאה
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("לא ניתן לבטל הקצאה לקריאה זו.", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //    }
-        //}
-
-        // פונקציה למחיקת קריאה
-
-        public bool IsDeletable
-        {
-            get
-            {
-                return SelectedCall != null &&
-                       SelectedCall.Status == BO.Enums.CalltStatusEnum.OPEN &&
-                       string.IsNullOrEmpty(SelectedCall.LastVolunteerName);  // קריאה פתוחה ולא הוקצתה למתנדב
-            }
-        }
-
-
         private void DeleteCall(CallInList call)
         {
+            
+
             if (call != null)
             {
-                if (call.Status == BO.Enums.CalltStatusEnum.OPEN && string.IsNullOrEmpty(call.LastVolunteerName))
+                if (call.Status == BO.Enums.CalltStatusEnum.OPEN ||
+                    call.Status == BO.Enums.CalltStatusEnum.CallAlmostOver && string.IsNullOrEmpty(call.LastVolunteerName))
                 {
-                    s_bl.Call.DeleteCall(call.CallId);  // מחיקת הקריאה ממאגר
-                    UpdateCallList();  // עדכון הרשימה לאחר המחיקה
+                    // מחיקת הקריאה ממאגר
+                    s_bl.Call.DeleteCall(call.CallId);
+
+                    // עדכון הרשימה אחרי המחיקה
+                    UpdateCallList();  // עדכון הרשימה הכללית
                 }
                 else
                 {
@@ -242,9 +221,18 @@ namespace PL.Admin
             }
         }
 
+
+        //private string GetVolunteerEmail(CallInList call)
+        //{
+        //    // כאן תוכל להוסיף את הקוד כדי להחזיר את כתובת האימייל של המתנדב
+        //    // לדוגמה, אם יש לך גישה למידע זה דרך call או דרך אובייקט אחר, 
+        //    // אתה יכול לשלוף את כתובת הדוא"ל של המתנדב מכאן.
+        //    return "volunteer@example.com";  // לדוגמה
+        //}
+
         private bool CanDeleteCall(CallInList call)
         {
-            return call != null && call.Status == BO.Enums.CalltStatusEnum.OPEN && string.IsNullOrEmpty(call.LastVolunteerName);
+            return call != null && call.Status == BO.Enums.CalltStatusEnum.OPEN || call.Status == BO.Enums.CalltStatusEnum.CallAlmostOver && string.IsNullOrEmpty(call.LastVolunteerName);
         }
 
         public class RelayCommand<T> : ICommand
@@ -276,6 +264,3 @@ namespace PL.Admin
         }
     }
 }
-
-    
-

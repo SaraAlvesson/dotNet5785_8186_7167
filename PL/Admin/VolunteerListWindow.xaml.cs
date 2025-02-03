@@ -83,13 +83,15 @@ namespace PL.Admin
 
             if (volFilter.HasValue)
             {
-                // אם volFilter הוא שם (לא Enum, אלא String או חלק ממנו)
-               filteredVolunteers = filteredVolunteers.Where(v => v.FullName.Contains((char)volFilter.Value)).ToList();
-
+                // סינון לפי שם מלא, אם volFilter הוא Enum
+                filteredVolunteers = filteredVolunteers
+                    .Where(v => v.FullName.Contains(volFilter.Value.ToString(), StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
 
             if (sortField.HasValue)
             {
+                // סינון לפי סוג הקריאה
                 filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType).ToList();
             }
 
@@ -175,7 +177,10 @@ namespace PL.Admin
                 new SingleVolunteerWindow(SelectedVolunteer.Id).Show();
         }
 
-        
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
 //using PL.privateVolunteer;

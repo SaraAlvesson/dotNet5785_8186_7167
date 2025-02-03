@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Net.Mail;
-using static BO.Enums;
-using BO;
 using System.ComponentModel;
 using System.Windows.Controls;
+using BO;
 using DO;
+using static BO.Enums;
 
 namespace PL.Admin
 {
@@ -63,19 +63,15 @@ namespace PL.Admin
                     // קריאה חדשה, תעודת זהות מקבלת את הערך הרץ הבא
                     CurrentCall = new BO.Call
                     {
-
                         Id = s_bl.Call.GetNextId(),  // קריאה לפונקציה בשכבת הלוגיקה
                         OpenTime = DateTime.Now,
-                       
-
-                    }; 
-
-                    }
+                    };
+                }
                 else
                 {
                     CurrentCall = s_bl.Call.readCallData(id);
                     SetEditableFields(CurrentCall.CallStatus);
-                     UpdateCallList();
+                    UpdateCallList();
                 }
             }
             catch (Exception ex)
@@ -86,13 +82,11 @@ namespace PL.Admin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-          
             s_bl?.Call.AddObserver(CallListObserver);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-           
             s_bl?.Call.RemoveObserver(CallListObserver);
         }
 
@@ -124,8 +118,6 @@ namespace PL.Admin
             // ניתן לערוך רק את הזמן המקסימלי לסיום אם הסטטוס הוא בטיפול או בטיפול בסיכון
             IsMaxTimeEditable = status == CalltStatusEnum.CallIsBeingTreated || status == CalltStatusEnum.CallTreatmentAlmostOver;
         }
-
-       
 
         private void UpdateCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
@@ -216,19 +208,39 @@ namespace PL.Admin
                 }
                 else
                 {
+                    // בדיקה אם הקריאה ניתנת לעדכון
+                    if (!IsEditable)
+                    {
+                        MessageBox.Show("You cannot edit this call because it's closed or expired.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
                     MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
                 UpdateCallList();
-                
+               
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
-
       
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

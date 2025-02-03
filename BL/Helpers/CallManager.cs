@@ -108,16 +108,13 @@ namespace Helpers
             if (call.OpenTime == default)
                 throw new InvalidCallFormatException("Open time is not valid.");
 
-            // בדיקת זמן מקסימלי
-            //if (call.MaxFinishTime == default)
-            //    throw new InvalidCallFormatException("Max finish time is not valid.");
-
             // בדיקת כתובת
-            
+            if (string.IsNullOrWhiteSpace(call.Address))
+                throw new InvalidCallFormatException("Address cannot be empty.");
 
-            if (string.IsNullOrWhiteSpace(call.Address)||IsAddressValid(call.Address)==false)
-                throw new InvalidCallFormatException("Address is either empty or exceeds the maximum length (200 characters).");
-          
+            if (call.Address.Length > 200)
+                throw new InvalidCallFormatException("Address exceeds the maximum length of 200 characters.");
+
             // בדיקת אורך ורוחב
             if (call.Longitude < -180 || call.Longitude > 180)
                 throw new InvalidCallFormatException("Longitude must be between -180 and 180 degrees.");
@@ -125,6 +122,7 @@ namespace Helpers
             if (call.Latitude < -90 || call.Latitude > 90)
                 throw new InvalidCallFormatException("Latitude must be between -90 and 90 degrees.");
         }
+
 
         public static async Task<bool> IsValidAddressAsync(string address)
         {

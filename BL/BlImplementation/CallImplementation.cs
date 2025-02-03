@@ -306,13 +306,17 @@ internal class CallImplementation : ICall
 
             // שלב 2: בדיקת סטטוס הקריאה והתאמת התנאים למחיקה
             Console.WriteLine($"Call status: {c.CallStatus}");  // הדפסת סטטוס לקריאה
-            if (c.CallStatus != Enums.CalltStatusEnum.OPEN)
+            if (c.CallStatus != Enums.CalltStatusEnum.OPEN&& c.CallStatus != Enums.CalltStatusEnum.CallAlmostOver)
+            {
                 throw new BLDeletionImpossible("Only open calls can be deleted.");
+            }
 
             // שלב 3: בדיקה אם הקריאה הוקצתה למתנדב
-            Console.WriteLine($"Assignment VolunteerId: {assignment?.VolunteerId}");  // הדפסת מזהה המתנדב אם קיים
             if (assignment?.VolunteerId != null)
+            {
+                Console.WriteLine($"Assignment VolunteerId: {assignment.VolunteerId}");  // הדפסת מזהה המתנדב אם קיים
                 throw new BLDeletionImpossible("Cannot delete call as it has been assigned to a volunteer.");
+            }
 
             // שלב 4: ניסיון מחיקת הקריאה משכבת הנתונים
             try
@@ -322,7 +326,6 @@ internal class CallImplementation : ICall
                 CallManager.Observers.NotifyItemUpdated(callId);  //stage 5
                 CallManager.Observers.NotifyListUpdated();  //stage 5
             }
-
             catch (DO.DalDeletionImpossible ex)
             {
                 // שלב 5: אם יש בעיה במחיקה בשכבת הנתונים, זריקת חריגה מתאימה לכיוון שכבת התצוגה

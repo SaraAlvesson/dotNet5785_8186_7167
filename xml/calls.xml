@@ -1,633 +1,663 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Call>
     <Id>1</Id>
-    <Adress />
-    <Latitude>32.095183</Latitude>
-    <Longitude>34.768234</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Yarkon Park, Tel Aviv, Israel</Adress>
+    <Latitude>32.087573</Latitude>
+    <Longitude>34.781904</Longitude>
+    <OpenTime>2025-02-02T01:43:21</OpenTime>
     <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-02T02:43:21</MaxTime>
   </Call>
   <Call>
     <Id>2</Id>
-    <Adress />
-    <Latitude>32.070504</Latitude>
-    <Longitude>34.776377</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Sheinkin Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.065034</Latitude>
+    <Longitude>34.770086</Longitude>
+    <OpenTime>2025-02-02T13:38:02</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-02-02T20:38:02</MaxTime>
   </Call>
   <Call>
     <Id>3</Id>
-    <Adress />
-    <Latitude>32.070603</Latitude>
-    <Longitude>34.768185</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Jaffa Flea Market, Tel Aviv, Israel</Adress>
+    <Latitude>32.053333</Latitude>
+    <Longitude>34.757233</Longitude>
+    <OpenTime>2025-02-02T22:48:26</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-02-03T01:48:26</MaxTime>
   </Call>
   <Call>
     <Id>4</Id>
-    <Adress />
-    <Latitude>32.115225</Latitude>
-    <Longitude>34.803378</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Carmel Market, Tel Aviv, Israel</Adress>
+    <Latitude>32.065013</Latitude>
+    <Longitude>34.76837</Longitude>
+    <OpenTime>2025-02-02T03:15:49</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-02-02T21:15:49</MaxTime>
   </Call>
   <Call>
     <Id>5</Id>
-    <Adress />
-    <Latitude>32.070043</Latitude>
-    <Longitude>34.767118</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Tel Aviv University, Tel Aviv, Israel</Adress>
+    <Latitude>32.11312</Latitude>
+    <Longitude>34.804338</Longitude>
+    <OpenTime>2025-01-21T23:26:29</OpenTime>
     <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-22T13:26:29</MaxTime>
   </Call>
   <Call>
     <Id>6</Id>
-    <Adress />
-    <Latitude>32.073743</Latitude>
-    <Longitude>34.770498</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Rabin Square, Tel Aviv, Israel</Adress>
+    <Latitude>32.07857</Latitude>
+    <Longitude>34.768721</Longitude>
+    <OpenTime>2025-02-02T13:16:52</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-02-02T14:16:52</MaxTime>
   </Call>
   <Call>
     <Id>7</Id>
-    <Adress />
-    <Latitude>32.095183</Latitude>
-    <Longitude>34.768234</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Jaffa Port, Tel Aviv, Israel</Adress>
+    <Latitude>32.053704</Latitude>
+    <Longitude>34.756671</Longitude>
+    <OpenTime>2025-02-02T03:36:42</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-02-02T04:36:42</MaxTime>
   </Call>
   <Call>
     <Id>8</Id>
-    <Adress />
-    <Latitude>32.055823</Latitude>
-    <Longitude>34.759151</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Habima Theatre, Tel Aviv, Israel</Adress>
+    <Latitude>32.073743</Latitude>
+    <Longitude>34.770498</Longitude>
+    <OpenTime>2025-01-28T23:49:51</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-29T08:49:51</MaxTime>
   </Call>
   <Call>
     <Id>9</Id>
-    <Adress />
-    <Latitude>32.070856</Latitude>
-    <Longitude>34.772402</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Tel Aviv University, Tel Aviv, Israel</Adress>
+    <Latitude>32.11312</Latitude>
+    <Longitude>34.804338</Longitude>
+    <OpenTime>2025-01-26T23:53:56</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-27T10:53:56</MaxTime>
   </Call>
   <Call>
     <Id>10</Id>
-    <Adress />
-    <Latitude>32.099791</Latitude>
-    <Longitude>34.769077</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Shalom Meir Tower, Tel Aviv, Israel</Adress>
+    <Latitude>32.063725</Latitude>
+    <Longitude>34.774329</Longitude>
+    <OpenTime>2025-02-02T03:16:25</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-02-02T19:16:25</MaxTime>
   </Call>
   <Call>
     <Id>11</Id>
-    <Adress />
-    <Latitude>32.070856</Latitude>
-    <Longitude>34.772402</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Gordon Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <OpenTime>2025-01-25T23:45:45</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-26T00:45:45</MaxTime>
   </Call>
   <Call>
     <Id>12</Id>
-    <Adress />
-    <Latitude>32.061425</Latitude>
-    <Longitude>34.766412</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Florentin, Tel Aviv, Israel</Adress>
+    <Latitude>32.054186</Latitude>
+    <Longitude>34.759738</Longitude>
+    <OpenTime>2025-01-20T23:16:09</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-21T00:16:09</MaxTime>
   </Call>
   <Call>
     <Id>13</Id>
-    <Adress />
-    <Latitude>32.061425</Latitude>
-    <Longitude>34.766412</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Jaffa Road, Tel Aviv, Israel</Adress>
+    <Latitude>32.055823</Latitude>
+    <Longitude>34.759151</Longitude>
+    <OpenTime>2025-02-02T02:42:11</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-02-02T08:42:11</MaxTime>
   </Call>
   <Call>
     <Id>14</Id>
-    <Adress />
-    <Latitude>32.05083</Latitude>
-    <Longitude>34.75278</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Tel Aviv-Yafo, Tel Aviv, Israel</Adress>
+    <Latitude>32.054166</Latitude>
+    <Longitude>34.765746</Longitude>
+    <OpenTime>2025-01-24T23:12:04</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-25T06:12:04</MaxTime>
   </Call>
   <Call>
     <Id>15</Id>
-    <Adress />
-    <Latitude>32.078323</Latitude>
-    <Longitude>34.77034</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Bograshov Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.070603</Latitude>
+    <Longitude>34.768185</Longitude>
+    <OpenTime>2025-02-02T14:34:13</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-02-02T15:34:13</MaxTime>
   </Call>
   <Call>
     <Id>16</Id>
-    <Adress />
-    <Latitude>32.070603</Latitude>
-    <Longitude>34.768185</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Tel Aviv Museum of Art, Tel Aviv, Israel</Adress>
+    <Latitude>32.073418</Latitude>
+    <Longitude>34.781046</Longitude>
+    <OpenTime>2025-01-22T23:41:06</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-01-23T14:41:06</MaxTime>
   </Call>
   <Call>
     <Id>17</Id>
-    <Adress />
-    <Latitude>32.055823</Latitude>
-    <Longitude>34.759151</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Ben Yehuda Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.0655</Latitude>
+    <Longitude>34.767028</Longitude>
+    <OpenTime>2025-01-20T23:51:40</OpenTime>
     <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-01-21T00:51:40</MaxTime>
   </Call>
   <Call>
     <Id>18</Id>
-    <Adress />
-    <Latitude>32.0655</Latitude>
-    <Longitude>34.767028</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Azrieli Center, Tel Aviv, Israel</Adress>
+    <Latitude>32.0737</Latitude>
+    <Longitude>34.791202</Longitude>
+    <OpenTime>2025-02-02T00:20:22</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-02-02T16:20:22</MaxTime>
   </Call>
   <Call>
     <Id>19</Id>
-    <Adress />
-    <Latitude>32.095183</Latitude>
-    <Longitude>34.768234</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Dizengoff Square, Tel Aviv, Israel</Adress>
+    <Latitude>32.078323</Latitude>
+    <Longitude>34.77034</Longitude>
+    <OpenTime>2025-01-29T23:25:39</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-30T21:25:39</MaxTime>
   </Call>
   <Call>
     <Id>20</Id>
-    <Adress />
-    <Latitude>32.054186</Latitude>
-    <Longitude>34.759738</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Dizengoff Center, Tel Aviv, Israel</Adress>
+    <Latitude>32.075389</Latitude>
+    <Longitude>34.771455</Longitude>
+    <OpenTime>2025-01-24T00:06:52</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-24T20:06:52</MaxTime>
   </Call>
   <Call>
     <Id>21</Id>
-    <Adress />
-    <Latitude>32.075389</Latitude>
-    <Longitude>34.771455</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Palmach Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.070043</Latitude>
+    <Longitude>34.767118</Longitude>
+    <OpenTime>2025-01-31T23:52:25</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-02-01T15:52:25</MaxTime>
   </Call>
   <Call>
     <Id>22</Id>
-    <Adress />
-    <Latitude>32.078298</Latitude>
-    <Longitude>34.786209</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Florentin, Tel Aviv, Israel</Adress>
+    <Latitude>32.054186</Latitude>
+    <Longitude>34.759738</Longitude>
+    <OpenTime>2025-02-02T12:16:15</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-02-02T19:16:15</MaxTime>
   </Call>
   <Call>
     <Id>23</Id>
-    <Adress />
-    <Latitude>32.11312</Latitude>
-    <Longitude>34.804338</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Neve Tzedek, Tel Aviv, Israel</Adress>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <OpenTime>2025-01-24T23:24:40</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-01-25T03:24:40</MaxTime>
   </Call>
   <Call>
     <Id>24</Id>
-    <Adress />
-    <Latitude>32.054166</Latitude>
-    <Longitude>34.765746</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>25</Id>
-    <Adress />
-    <Latitude>32.065034</Latitude>
-    <Longitude>34.770086</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Ramat Gan, Tel Aviv, Israel</Adress>
+    <Latitude>32.073208</Latitude>
+    <Longitude>34.817878</Longitude>
+    <OpenTime>2025-01-23T23:53:09</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-01-24T08:53:09</MaxTime>
   </Call>
   <Call>
     <Id>26</Id>
-    <Adress />
-    <Latitude>32.054166</Latitude>
-    <Longitude>34.765746</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Jaffa Flea Market, Tel Aviv, Israel</Adress>
+    <Latitude>32.053333</Latitude>
+    <Longitude>34.757233</Longitude>
+    <OpenTime>2025-02-02T20:24:37</OpenTime>
     <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>27</Id>
-    <Adress />
-    <Latitude>32.078298</Latitude>
-    <Longitude>34.786209</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-02-03T15:24:37</MaxTime>
   </Call>
   <Call>
     <Id>28</Id>
-    <Adress />
-    <Latitude>32.095183</Latitude>
-    <Longitude>34.768234</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>29</Id>
-    <Adress />
-    <Latitude>32.054186</Latitude>
-    <Longitude>34.759738</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>30</Id>
-    <Adress />
-    <Latitude>32.073208</Latitude>
-    <Longitude>34.817878</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>31</Id>
-    <Adress />
-    <Latitude>32.073487</Latitude>
-    <Longitude>34.758676</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>32</Id>
-    <Adress />
-    <Latitude>32.11312</Latitude>
-    <Longitude>34.804338</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>33</Id>
-    <Adress />
-    <Latitude>32.063725</Latitude>
-    <Longitude>34.774329</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Kikar Hamedina, Tel Aviv, Israel</Adress>
+    <Latitude>32.078298</Latitude>
+    <Longitude>34.786209</Longitude>
+    <OpenTime>2025-02-02T23:58:30</OpenTime>
     <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
-  </Call>
-  <Call>
-    <Id>34</Id>
-    <Adress />
-    <Latitude>32.078323</Latitude>
-    <Longitude>34.77034</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-02-03T00:58:30</MaxTime>
   </Call>
   <Call>
     <Id>35</Id>
-    <Adress />
-    <Latitude>32.065034</Latitude>
-    <Longitude>34.770086</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Givatayim, Tel Aviv, Israel</Adress>
+    <Latitude>32.070946</Latitude>
+    <Longitude>34.78358</Longitude>
+    <OpenTime>2025-02-02T10:47:57</OpenTime>
     <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-02-03T09:47:57</MaxTime>
   </Call>
   <Call>
     <Id>36</Id>
-    <Adress />
-    <Latitude>32.115225</Latitude>
-    <Longitude>34.803378</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Kikar Hamedina, Tel Aviv, Israel</Adress>
+    <Latitude>32.078298</Latitude>
+    <Longitude>34.786209</Longitude>
+    <OpenTime>2025-01-22T23:41:18</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-23T00:41:18</MaxTime>
   </Call>
   <Call>
     <Id>37</Id>
-    <Adress />
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Shuk HaCarmel, Tel Aviv, Israel</Adress>
+    <Latitude>32.065013</Latitude>
+    <Longitude>34.76837</Longitude>
+    <OpenTime>2025-01-31T23:43:01</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-02-01T00:43:01</MaxTime>
   </Call>
   <Call>
     <Id>38</Id>
-    <Adress />
-    <Latitude>32.053333</Latitude>
-    <Longitude>34.757233</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Gordon Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <OpenTime>2025-02-02T07:49:49</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-02-02T17:49:49</MaxTime>
   </Call>
   <Call>
     <Id>39</Id>
-    <Adress />
-    <Latitude>32.087573</Latitude>
-    <Longitude>34.781904</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Kikar Hamedina, Tel Aviv, Israel</Adress>
+    <Latitude>32.078298</Latitude>
+    <Longitude>34.786209</Longitude>
+    <OpenTime>2025-02-02T04:36:16</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-02-02T20:36:16</MaxTime>
   </Call>
   <Call>
     <Id>40</Id>
-    <Adress />
-    <Latitude>32.070504</Latitude>
-    <Longitude>34.776377</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Gordon Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <OpenTime>2025-02-02T01:26:00</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-02T21:26:00</MaxTime>
   </Call>
   <Call>
     <Id>41</Id>
-    <Adress />
-    <Latitude>32.073487</Latitude>
-    <Longitude>34.758676</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Neve Tzedek, Tel Aviv, Israel</Adress>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <OpenTime>2025-01-31T23:49:45</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-01T00:49:45</MaxTime>
   </Call>
   <Call>
     <Id>42</Id>
-    <Adress />
-    <Latitude>32.053241</Latitude>
-    <Longitude>34.759167</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Azrieli Sarona Tower, Tel Aviv, Israel</Adress>
+    <Latitude>32.073719</Latitude>
+    <Longitude>34.785553</Longitude>
+    <OpenTime>2025-02-02T09:36:52</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-02-02T10:36:52</MaxTime>
   </Call>
   <Call>
     <Id>43</Id>
-    <Adress />
-    <Latitude>32.053241</Latitude>
-    <Longitude>34.759167</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Dizengoff Square, Tel Aviv, Israel</Adress>
+    <Latitude>32.078323</Latitude>
+    <Longitude>34.77034</Longitude>
+    <OpenTime>2025-02-02T14:30:31</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-02-02T15:30:31</MaxTime>
   </Call>
   <Call>
     <Id>44</Id>
-    <Adress />
-    <Latitude>32.115225</Latitude>
-    <Longitude>34.803378</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Old Jaffa, Tel Aviv, Israel</Adress>
+    <Latitude>32.053241</Latitude>
+    <Longitude>34.759167</Longitude>
+    <OpenTime>2025-01-29T23:47:03</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-30T22:47:03</MaxTime>
   </Call>
   <Call>
     <Id>45</Id>
-    <Adress />
-    <Latitude>32.054166</Latitude>
-    <Longitude>34.765746</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Shuk HaCarmel, Tel Aviv, Israel</Adress>
+    <Latitude>32.065013</Latitude>
+    <Longitude>34.76837</Longitude>
+    <OpenTime>2025-02-02T01:25:19</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-02-02T02:25:19</MaxTime>
   </Call>
   <Call>
     <Id>46</Id>
-    <Adress />
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Neve Tzedek, Tel Aviv, Israel</Adress>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <OpenTime>2025-02-02T09:14:20</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-03T06:14:20</MaxTime>
   </Call>
   <Call>
     <Id>47</Id>
-    <Adress />
-    <Latitude>32.0655</Latitude>
-    <Longitude>34.767028</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Habima Theatre, Tel Aviv, Israel</Adress>
+    <Latitude>32.073743</Latitude>
+    <Longitude>34.770498</Longitude>
+    <OpenTime>2025-02-02T03:57:32</OpenTime>
     <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-02T13:57:32</MaxTime>
   </Call>
   <Call>
     <Id>48</Id>
-    <Adress />
-    <Latitude>32.054166</Latitude>
-    <Longitude>34.765746</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Gordon Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <OpenTime>2025-02-02T21:07:56</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-02-03T06:07:56</MaxTime>
   </Call>
   <Call>
     <Id>49</Id>
-    <Adress />
-    <Latitude>32.11312</Latitude>
-    <Longitude>34.804338</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Tel Aviv Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.071535</Latitude>
+    <Longitude>34.767631</Longitude>
+    <OpenTime>2025-01-26T23:41:05</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-27T06:41:05</MaxTime>
   </Call>
   <Call>
     <Id>50</Id>
-    <Adress />
-    <Latitude>32.087573</Latitude>
-    <Longitude>34.781904</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Old Jaffa, Tel Aviv, Israel</Adress>
+    <Latitude>32.053241</Latitude>
+    <Longitude>34.759167</Longitude>
+    <OpenTime>2025-01-26T23:34:05</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-01-27T17:34:05</MaxTime>
   </Call>
   <Call>
     <Id>51</Id>
-    <Adress />
-    <Latitude>32.0655</Latitude>
-    <Longitude>34.767028</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Jaffa Flea Market, Tel Aviv, Israel</Adress>
+    <Latitude>32.053333</Latitude>
+    <Longitude>34.757233</Longitude>
+    <OpenTime>2025-01-27T23:58:47</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-28T19:58:47</MaxTime>
   </Call>
   <Call>
     <Id>52</Id>
-    <Adress />
-    <Latitude>32.070504</Latitude>
-    <Longitude>34.776377</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Ramat Gan, Tel Aviv, Israel</Adress>
+    <Latitude>32.073208</Latitude>
+    <Longitude>34.817878</Longitude>
+    <OpenTime>2025-02-02T21:48:18</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-02-02T22:48:18</MaxTime>
   </Call>
   <Call>
     <Id>53</Id>
-    <Adress />
-    <Latitude>32.0655</Latitude>
-    <Longitude>34.767028</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Rabin Square, Tel Aviv, Israel</Adress>
+    <Latitude>32.07857</Latitude>
+    <Longitude>34.768721</Longitude>
+    <OpenTime>2025-02-01T23:10:34</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-02-02T00:10:34</MaxTime>
   </Call>
   <Call>
     <Id>54</Id>
-    <Adress />
-    <Latitude>32.065013</Latitude>
-    <Longitude>34.76837</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Alma Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.073487</Latitude>
+    <Longitude>34.758676</Longitude>
+    <OpenTime>2025-02-02T03:38:48</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-02-03T02:38:48</MaxTime>
   </Call>
   <Call>
     <Id>55</Id>
-    <Adress />
-    <Latitude>32.053076</Latitude>
-    <Longitude>34.759602</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Azrieli Sarona Tower, Tel Aviv, Israel</Adress>
+    <Latitude>32.073719</Latitude>
+    <Longitude>34.785553</Longitude>
+    <OpenTime>2025-02-02T17:31:04</OpenTime>
+    <CallType>TransportAssistance</CallType>
+    <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
+    <MaxTime>2025-02-02T18:31:04</MaxTime>
   </Call>
   <Call>
     <Id>56</Id>
-    <Adress />
-    <Latitude>32.065013</Latitude>
-    <Longitude>34.76837</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
+    <Adress>Tel Aviv Museum of Art, Tel Aviv, Israel</Adress>
+    <Latitude>32.073418</Latitude>
+    <Longitude>34.781046</Longitude>
+    <OpenTime>2025-01-21T23:17:02</OpenTime>
     <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-22T22:17:02</MaxTime>
   </Call>
   <Call>
     <Id>57</Id>
-    <Adress />
-    <Latitude>32.070043</Latitude>
-    <Longitude>34.767118</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Neve Tzedek, Tel Aviv, Israel</Adress>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <OpenTime>2025-02-02T13:44:43</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-02-02T16:44:43</MaxTime>
   </Call>
   <Call>
     <Id>58</Id>
-    <Adress />
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Azrieli Center, Tel Aviv, Israel</Adress>
+    <Latitude>32.0737</Latitude>
+    <Longitude>34.791202</Longitude>
+    <OpenTime>2025-02-02T05:20:08</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-02-02T17:20:08</MaxTime>
   </Call>
   <Call>
     <Id>59</Id>
-    <Adress />
-    <Latitude>32.075389</Latitude>
-    <Longitude>34.771455</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Ben Yehuda Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.0655</Latitude>
+    <Longitude>34.767028</Longitude>
+    <OpenTime>2025-02-02T21:33:05</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-03T07:33:05</MaxTime>
   </Call>
   <Call>
     <Id>60</Id>
-    <Adress />
+    <Adress>Jaffa Flea Market, Tel Aviv, Israel</Adress>
     <Latitude>32.053333</Latitude>
     <Longitude>34.757233</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <OpenTime>2025-01-31T23:09:50</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-02-01T17:09:50</MaxTime>
   </Call>
   <Call>
     <Id>61</Id>
-    <Adress />
-    <Latitude>32.065034</Latitude>
-    <Longitude>34.770086</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>ProvidingShelter</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Carmel Market, Tel Aviv, Israel</Adress>
+    <Latitude>32.065013</Latitude>
+    <Longitude>34.76837</Longitude>
+    <OpenTime>2025-01-28T23:57:26</OpenTime>
+    <CallType>FixingEquipment</CallType>
+    <VerbDesc>Repairing essential tools or equipment.</VerbDesc>
+    <MaxTime>2025-01-29T00:57:26</MaxTime>
   </Call>
   <Call>
     <Id>62</Id>
-    <Adress />
-    <Latitude>32.0737</Latitude>
-    <Longitude>34.791202</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Givatayim, Tel Aviv, Israel</Adress>
+    <Latitude>32.070946</Latitude>
+    <Longitude>34.78358</Longitude>
+    <OpenTime>2025-01-27T23:23:27</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Providing mental health support through conversations.</VerbDesc>
+    <MaxTime>2025-01-28T17:23:27</MaxTime>
   </Call>
   <Call>
     <Id>63</Id>
-    <Adress />
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>TransportingFood</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Habima Theatre, Tel Aviv, Israel</Adress>
+    <Latitude>32.073743</Latitude>
+    <Longitude>34.770498</Longitude>
+    <OpenTime>2025-02-02T23:53:26</OpenTime>
+    <CallType>PackingSupplies</CallType>
+    <VerbDesc>Organizing and packing necessary supplies for distribution.</VerbDesc>
+    <MaxTime>2025-02-03T10:53:26</MaxTime>
   </Call>
   <Call>
     <Id>64</Id>
-    <Adress />
-    <Latitude>32.071024</Latitude>
-    <Longitude>34.767232</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Sheinkin Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.065034</Latitude>
+    <Longitude>34.770086</Longitude>
+    <OpenTime>2025-02-02T23:14:41</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-02-03T00:14:41</MaxTime>
   </Call>
   <Call>
     <Id>65</Id>
-    <Adress />
-    <Latitude>32.054186</Latitude>
-    <Longitude>34.759738</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>FixingEquipment</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Shenkin Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.065034</Latitude>
+    <Longitude>34.770086</Longitude>
+    <OpenTime>2025-01-26T23:18:56</OpenTime>
+    <CallType>MedicalAssistance</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-01-27T10:18:56</MaxTime>
   </Call>
   <Call>
     <Id>66</Id>
-    <Adress />
-    <Latitude>32.073418</Latitude>
-    <Longitude>34.781046</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Neve Tzedek, Tel Aviv, Israel</Adress>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <OpenTime>2025-02-02T11:48:11</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-02-02T12:48:11</MaxTime>
   </Call>
   <Call>
     <Id>67</Id>
-    <Adress />
-    <Latitude>32.115225</Latitude>
-    <Longitude>34.803378</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Jaffa, Tel Aviv, Israel</Adress>
+    <Latitude>32.05083</Latitude>
+    <Longitude>34.75278</Longitude>
+    <OpenTime>2025-01-31T23:27:16</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-02-01T05:27:16</MaxTime>
   </Call>
   <Call>
     <Id>68</Id>
-    <Adress />
-    <Latitude>32.065013</Latitude>
-    <Longitude>34.76837</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>EmotionalSupport</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Gordon Beach, Tel Aviv, Israel</Adress>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <OpenTime>2025-01-28T00:07:17</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-28T01:07:17</MaxTime>
   </Call>
   <Call>
     <Id>69</Id>
-    <Adress />
-    <Latitude>32.095183</Latitude>
-    <Longitude>34.768234</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>PackingSupplies</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Old Jaffa, Tel Aviv, Israel</Adress>
+    <Latitude>32.053241</Latitude>
+    <Longitude>34.759167</Longitude>
+    <OpenTime>2025-01-21T23:35:44</OpenTime>
+    <CallType>TransportingFood</CallType>
+    <VerbDesc>Delivering prepared food to designated locations.</VerbDesc>
+    <MaxTime>2025-01-22T06:35:44</MaxTime>
   </Call>
   <Call>
     <Id>70</Id>
-    <Adress />
-    <Latitude>32.07857</Latitude>
-    <Longitude>34.768721</Longitude>
-    <OpenTime>0001-01-01T00:00:00</OpenTime>
-    <CallType>MedicalAssistance</CallType>
-    <MaxTime xsi:nil="true" />
+    <Adress>Shenkin Street, Tel Aviv, Israel</Adress>
+    <Latitude>32.065034</Latitude>
+    <Longitude>34.770086</Longitude>
+    <OpenTime>2025-01-26T23:29:39</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Arranging or offering temporary accommodation.</VerbDesc>
+    <MaxTime>2025-01-27T01:29:39</MaxTime>
+  </Call>
+  <Call>
+    <Id>34</Id>
+    <Adress>Bauhaus Center, Tel Aviv, Israel</Adress>
+    <Latitude>32.071024</Latitude>
+    <Longitude>34.767232</Longitude>
+    <OpenTime>2025-02-02T02:41:40</OpenTime>
+    <CallType>ProvidingShelter</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-02-02T06:41:40</MaxTime>
+  </Call>
+  <Call>
+    <Id>29</Id>
+    <Adress>Ramat Aviv, Tel Aviv, Israel</Adress>
+    <Latitude>32.115225</Latitude>
+    <Longitude>34.803378</Longitude>
+    <OpenTime>2025-01-28T23:56:48</OpenTime>
+    <CallType>EmotionalSupport</CallType>
+    <VerbDesc>Delivering medical supplies or offering first aid.</VerbDesc>
+    <MaxTime>2025-01-29T04:56:48</MaxTime>
+  </Call>
+  <Call>
+    <Id>99</Id>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>doing nathing</VerbDesc>
+    <Adress>Rothschild Boulevard, Tel Aviv, Israel</Adress>
+    <Latitude>32.0720324</Latitude>
+    <Longitude>34.779107</Longitude>
+    <OpenTime>2025-02-03T01:48:44</OpenTime>
+    <MaxTime>2025-02-06T00:00:00</MaxTime>
+  </Call>
+  <Call>
+    <Id>100</Id>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>making food </VerbDesc>
+    <Adress>Jaffa, Tel Aviv, Israel</Adress>
+    <Latitude>32.0443395</Latitude>
+    <Longitude>34.7509908</Longitude>
+    <OpenTime>2025-02-03T01:53:37</OpenTime>
+    <MaxTime>2025-02-04T00:00:00</MaxTime>
   </Call>
 </ArrayOfCall>

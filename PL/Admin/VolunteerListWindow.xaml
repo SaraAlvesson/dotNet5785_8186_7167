@@ -51,7 +51,7 @@
                   BorderBrush="#FFCDD2"
                   ItemsSource="{Binding Volunteers}"
                   SelectedItem="{Binding SelectedVolunteer}"
-                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
+                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick" SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="80"/>
@@ -69,6 +69,7 @@
                     <GridViewColumn Header="Canceled" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="100"/>
                     <GridViewColumn Header="Expired" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="100"/>
                     <GridViewColumn Header="Current Call ID" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="120"/>
+                    <GridViewColumn Header="Current Call Type" DisplayMemberBinding="{Binding CallType}" Width="120"/>
                     <GridViewColumn Header="Actions" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
