@@ -74,26 +74,26 @@ public class RoleToEditableConverter : IValueConverter
 }
 
 //If the role is "Volunteer", they can't modify the Id
-public class VolunteerRoleToEnabledConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        // Check if the value is a "Volunteer" role
-        if (value is BO.Enums.VolunteerTypeEnum role && role == BO.Enums.VolunteerTypeEnum.volunteer)
-        {
-            // If the role is "Volunteer", disable the field (return false)
-            return false;
-        }
+//public class VolunteerRoleToEnabledConverter : IValueConverter
+//{
+//    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+//    {
+//        // Check if the value is a "Volunteer" role
+//        if (value is BO.Enums.VolunteerTypeEnum role && role == BO.Enums..volunteer)
+//        {
+//            // If the role is "Volunteer", disable the field (return false)
+//            return false;
+//        }
 
-        // Otherwise, enable the field (return true)
-        return true;
-    }
+//        // Otherwise, enable the field (return true)
+//        return true;
+//    }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
+//    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+//    {
+//        throw new NotImplementedException();
+//    }
+//}
 
 public class CallStatusToVisibilityConverter : IValueConverter
 {

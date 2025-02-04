@@ -58,8 +58,6 @@ public class Enums
         None
     }
 
-
-
     #region EmergencyTypeEnum
     // <summary>
     // Enumeration for different call types.
@@ -71,7 +69,6 @@ public class Enums
     }
     #endregion
 
-
     /// <summary>
     /// Enumeration for fields that can be used to filter or sort call lists.
     /// </summary>
@@ -80,18 +77,17 @@ public class Enums
     {
         ID,         // מזהה קריאה
         Address,     // סטטוס
-        CallType,       // סוג
         OpenTime,       // תאריך
         TreatmentStartTime,  // מתנדב
         RealFinishTime,
         FinishAppointmentType,
+        None
     }
     #endregion
     public enum CallFieldEnum
     {
         ID,         // מזהה קריאה
         CallId,     // סטטוס
-        CallType,       // סוג
         OpenTime,       // תאריך
         SumTimeUntilFinish,  // מתנדב
         LastVolunteerName,
@@ -103,12 +99,12 @@ public class Enums
     public enum OpenCallEnum
     {
         Id,         // מזהה קריאה
-        CallType,     // סטטוס
         VerbDesc,       // סוג
         Address,       // תאריך
         OpenTime,  // מתנדב
         MaxFinishTime,
         DistanceOfCall,
+        None
 
     }
     public enum VolunteerInListField
@@ -120,7 +116,6 @@ public class Enums
      SumCanceledCalls,
      SumExpiredCalls,
      CallIdInTreatment ,
-     CallType ,
       None
 }
 
@@ -131,8 +126,9 @@ public class Enums
     /// </summary>
     public enum VolunteerTypeEnum
     {
-        admin,   // מנהל
-        volunteer  // רגיל
+        // מנהל
+        volunteer,
+          admin // רגיל
     }
     #endregion    
 
@@ -140,36 +136,36 @@ public class Enums
     /// <summary>
     /// Enumeration for different risk levels associated with calls or actions.
     /// </summary>
-    public enum RiskLevelEnum
-    {
-        LOW,    // סיכון נמוך
-        MEDIUM, // סיכון בינוני
-        HIGH    // סיכון גבוה
-    }
+    //public enum RiskLevelEnum
+    //{
+    //    LOW,    // סיכון נמוך
+    //    MEDIUM, // סיכון בינוני
+    //    HIGH    // סיכון גבוה
+    //}
     #endregion
 
     #region VolunteerStatusEnum
     /// <summary>
     /// Enumeration for volunteer status types.
     /// </summary>
-    public enum VolunteerStatusEnum
-    {
-        ACTIVE,   // פעיל
-        INACTIVE, // לא פעיל
-        PENDING   // ממתין
-    }
+    //public enum VolunteerStatusEnum
+    //{
+    //    ACTIVE,   // פעיל
+    //    INACTIVE, // לא פעיל
+    //    PENDING   // ממתין
+    //}
     #endregion
 
     #region AssignmentStatusEnum
     /// <summary>
     /// Enumeration for the assignment status types.
-    /// </summary>
-    public enum AssignmentStatusEnum
-    {
-        ASSIGNED,   // הוקצתה
-        COMPLETED,  // הושלמה
-        CANCELLED   // בוטלה
-    }
+    ///// </summary>
+    //public enum AssignmentStatusEnum
+    //{
+    //    ASSIGNED,   // הוקצתה
+    //    COMPLETED,  // הושלמה
+    //    CANCELLED   // בוטלה
+    //}
 
     #endregion
     public enum DistanceTypeEnum

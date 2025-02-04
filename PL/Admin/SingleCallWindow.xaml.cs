@@ -168,9 +168,9 @@ namespace PL.Admin
                 case CallFieldEnum.CallId:
                     calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.CallId, null).OrderBy(v => v.CallId);
                     break;
-                case CallFieldEnum.CallType:
-                    calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.Status, null).OrderBy(v => v.CallType);
-                    break;
+                //case CallFieldEnum.CallType:
+                //    calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.Status, null).OrderBy(v => v.CallType);
+                //    break;
                 case CallFieldEnum.Status:
                     calls = BlApi.Factory.Get().Call.GetCallList(CallFieldEnum.Status, null).OrderBy(v => v.Status);
                     break;

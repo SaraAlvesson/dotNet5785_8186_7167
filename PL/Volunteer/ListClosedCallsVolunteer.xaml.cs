@@ -36,6 +36,7 @@ namespace PL.Volunteer
                 ApplyFilters();
             }
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             s_bl?.Volunteer.AddObserver(ObserveCallsListChanges);  // נרשמים למשקיף
@@ -51,6 +52,7 @@ namespace PL.Volunteer
         {
             LoadClosedCalls();  // טוען את הרשימה מחדש
         }
+
         private string _selectedSortOption;
         public string SelectedSortOption
         {
@@ -80,14 +82,29 @@ namespace PL.Volunteer
 
         private void ApplyFilters()
         {
-            BO.Enums.CallTypeEnum? callTypeFilter = Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType)
-                ? parsedCallType
-                : (BO.Enums.CallTypeEnum?)null;
+            BO.Enums.CallTypeEnum? callTypeFilter = null;
 
-            BO.Enums.ClosedCallFieldEnum? sortField = Enum.TryParse(SelectedSortOption, out BO.Enums.ClosedCallFieldEnum parsedSortField)
-                ? parsedSortField
-                : (BO.Enums.ClosedCallFieldEnum?)null;
+            // אם לא נבחר "None" או אם נבחר ערך תקני, נבצע סינון לפי סוג הקריאה
+            if (!string.IsNullOrEmpty(SelectedCallType) && SelectedCallType != "None")
+            {
+                if (Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType))
+                {
+                    callTypeFilter = parsedCallType;
+                }
+            }
 
+            BO.Enums.ClosedCallFieldEnum? sortField = null;
+
+            // אם לא נבחר "None" או אם נבחר ערך תקני, נבצע סינון לפי הסדר
+            if (!string.IsNullOrEmpty(SelectedSortOption) && SelectedSortOption != "None")
+            {
+                if (Enum.TryParse(SelectedSortOption, out BO.Enums.ClosedCallFieldEnum parsedSortField))
+                {
+                    sortField = parsedSortField;
+                }
+            }
+
+            // נטען את הקריאות עם הסינונים החדשים
             ClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, callTypeFilter, sortField)?.ToList();
         }
 

@@ -24,67 +24,65 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Background="#F5F5F5">
+
+    <Grid Background="#E1F5FE">
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Logo Placeholder -->
-        <Rectangle Grid.Row="0" Grid.Column="1" Width="276" Height="111" 
-                   HorizontalAlignment="Center" VerticalAlignment="Top" 
-                   Stroke="#A0A0A0" StrokeDashArray="4 2" 
-                   StrokeThickness="2" Fill="Transparent" Margin="0,34,0,0" Grid.RowSpan="2">
-            <Rectangle.Resources>
-                <Style TargetType="Rectangle">
-                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                </Style>
-            </Rectangle.Resources>
-        </Rectangle>
+        <!-- לוגו של העמותה -->
+        <Image Grid.Column="1" 
+               Source="pack://application:,,,/Images/download.png" 
+               Width="166" Height="90" 
+               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="140,4,0,0" />
 
+        <!-- כותרת "Login" -->
         <Label Content="Login" FontSize="36" FontWeight="SemiBold" 
                FontFamily="Montserrat" Foreground="#2C3E50" 
-               HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3" 
-               Margin="0,130,0,0" />
+               HorizontalAlignment="Left" Grid.Column="1" 
+               Margin="139,104,0,1" RenderTransformOrigin="0.5,0.162" Width="141" />
 
+        <!-- ID Label ו-Textbox -->
         <Label Content="ID:" FontSize="16" Foreground="#2C3E50" 
-               Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
-               HorizontalAlignment="Left" Width="28" Margin="21,0,0,0" />
-
-        <TextBox Width="258" Height="35" Grid.Row="1" Grid.Column="1" 
+               Grid.Row="3" Grid.Column="1" VerticalAlignment="Top" 
+               HorizontalAlignment="Left" Margin="20,3,0,0" />
+        <TextBox Width="258" Height="35" Grid.Row="3" Grid.Column="1" 
                  VerticalAlignment="Center" HorizontalAlignment="Left" 
-                 Margin="80,0,0,0" Background="#ECF0F1" 
+                 Margin="77,0,0,0" Background="#ECF0F1" 
                  BorderBrush="#BDC3C7" 
                  Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
 
+        <!-- Password Label ו-PasswordBox -->
         <Label Content="Password:" FontSize="16" Foreground="#2C3E50" 
-               Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" 
-               HorizontalAlignment="Left" Width="100" />
-
-        <PasswordBox Width="258" Height="35" Grid.Row="2" Grid.Column="1" 
-                     VerticalAlignment="Center" HorizontalAlignment="Left" 
-                     Margin="80,0,0,0" Background="#ECF0F1" 
+               Grid.Row="4" VerticalAlignment="Top" 
+               HorizontalAlignment="Left" Margin="170,44,0,0" Grid.ColumnSpan="2" />
+        <PasswordBox Width="258" Height="35" Grid.Row="4" Grid.Column="1" 
+                     VerticalAlignment="Top" HorizontalAlignment="Left" 
+                     Margin="77,44,0,0" Background="#ECF0F1" 
                      BorderBrush="#BDC3C7" 
                      PasswordChanged="PasswordBox_PasswordChanged" />
 
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" 
-                    HorizontalAlignment="Center" VerticalAlignment="Center" 
-                    Margin="0,20,0,0">
-            <Button Content="Login" Width="100" Height="40" Margin="10,0" 
-                    Background="#D32F2F" Foreground="White" 
-                    BorderBrush="#B71C1C" Click="LoginButton_Click"
-                    Style="{StaticResource RoundButtonStyle}" 
-                    FontFamily="Montserrat" FontWeight="SemiBold" />
-            <Button Content="Cancel" Width="100" Height="40" Margin="10,0" 
-                    Background="#D32F2F" Foreground="White" 
-                    BorderBrush="#B71C1C" Click="CancelButton_Click"
+        <!-- כפתורים - Login ו-Cancel -->
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" 
+                    HorizontalAlignment="Center" VerticalAlignment="Top" Height="76" Width="360" Margin="0,114,0,0">
+            <Button Content="Login" Width="156" Height="47" Margin="10" 
+        Background="#1ABC9C" Foreground="White" 
+        BorderBrush="#16A085" Click="LoginButton_Click"
+        Style="{StaticResource RoundButtonStyle}" 
+        FontFamily="Montserrat" FontWeight="SemiBold" />
+
+            <Button Content="Cancel" Width="160" Height="45" Margin="10" 
+                    Background="#E53935" Foreground="White" 
+                    BorderBrush="#C62828" Click="CancelButton_Click"
                     Style="{StaticResource RoundButtonStyle}" 
                     FontFamily="Montserrat" FontWeight="SemiBold" />
         </StackPanel>

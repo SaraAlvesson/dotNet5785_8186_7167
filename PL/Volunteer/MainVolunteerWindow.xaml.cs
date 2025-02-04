@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using BO;
+using static BO.Enums;
 
 namespace PL.Volunteer
 {
@@ -21,6 +23,8 @@ namespace PL.Volunteer
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public ObservableCollection<VolunteerTypeEnum> PositionCollection { get; set; }
 
         protected void OnCallCompleted()
         {
@@ -54,7 +58,11 @@ namespace PL.Volunteer
         public BO.Volunteer? CurrentVolunteer
         {
             get { return (BO.Volunteer?)GetValue(CurrentVolunteerProperty); }
-            set { SetValue(CurrentVolunteerProperty, value); }
+            set
+            {
+                SetValue(CurrentVolunteerProperty, value);
+                OnPropertyChanged(nameof(CurrentVolunteer)); // Ensure property change notification
+            }
         }
 
         public static readonly DependencyProperty CurrentVolunteerProperty =
@@ -72,7 +80,7 @@ namespace PL.Volunteer
         public MainVolunteerWindow(int id)
         {
             InitializeComponent();
-
+            this.DataContext = this;
             try
             {
                 RefreshVolunteerData(id);
@@ -99,7 +107,8 @@ namespace PL.Volunteer
             }
             else
             {
-                MessageBox.Show("You cannot choose a call at this time.");
+                MessageBox.Show("You cannot choose a call at the moment. You are either already handling a call or not active.");
+
             }
         }
 
@@ -108,13 +117,14 @@ namespace PL.Volunteer
             try
             {
                 CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(volunteerId);
-                OnPropertyChanged(nameof(CurrentVolunteer));
+                OnPropertyChanged(nameof(CurrentVolunteer)); // Ensure property change notification
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error refreshing volunteer data: {ex.Message}");
             }
         }
+
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentVolunteer == null)
@@ -130,7 +140,7 @@ namespace PL.Volunteer
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("Volunteer updated successfully.");
 
-                    // שליחת הודעה ל-Observers
+                    // Notify observers
                     OnVolunteerUpdated();
 
                     RefreshVolunteerData(CurrentVolunteer.Id);
@@ -146,7 +156,6 @@ namespace PL.Volunteer
             }
         }
 
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);
@@ -156,8 +165,6 @@ namespace PL.Volunteer
         {
             s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);
         }
-
-      
 
         private void ObserveVolunteerListChanges()
         {
@@ -170,8 +177,6 @@ namespace PL.Volunteer
             });
         }
 
-
-       
         private void ButtonComplete_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -192,7 +197,7 @@ namespace PL.Volunteer
                     return;
                 }
 
-                // עדכון הקריאה כטופלה
+                // Mark call as completed
                 s_bl.Call.UpdateCallAsCompleted(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
 
                 MessageBox.Show("Call ended successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -205,12 +210,6 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
-
-
-
-
 
         private void ButtonHistory_Click(object sender, RoutedEventArgs e)
         {
@@ -256,7 +255,7 @@ namespace PL.Volunteer
                 }
                 else
                 {
-                    MessageBox.Show("Error: No call is associated with this volunteer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                    MessageBox.Show("Error: No call is associated with this volunteer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

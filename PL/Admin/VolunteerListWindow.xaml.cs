@@ -169,10 +169,10 @@ namespace PL.Admin
                     case VolunteerInListField.CallIdInTreatment:
                         filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallIdInTreatment).ToList();
                         break;
-                    case VolunteerInListField.CallType:
-                        // שימוש ב-ToString למקרה שהמיון לפי enum צריך להיות לפי שמו
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType.ToString()).ToList();
-                        break;
+                    //case VolunteerInListField.CallType:
+                    //    // שימוש ב-ToString למקרה שהמיון לפי enum צריך להיות לפי שמו
+                    //    filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType.ToString()).ToList();
+                    //    break;
                     default:
                         break;
                 }

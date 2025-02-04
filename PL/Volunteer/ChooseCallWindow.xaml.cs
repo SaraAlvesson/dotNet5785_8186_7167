@@ -17,7 +17,6 @@ namespace PL.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private BO.Volunteer CurrentVolunteer;
 
-        // רשימות לסוגי קריאות ואופציות מיון
         public List<string> CallTypes { get; } = Enum.GetNames(typeof(BO.Enums.CallTypeEnum)).ToList();
         public List<string> SortOptions { get; } = Enum.GetNames(typeof(BO.Enums.OpenCallEnum)).ToList();
 
@@ -31,6 +30,12 @@ namespace PL.Volunteer
                 OnPropertyChanged();
                 LoadCalls(); // ריענון הקריאות לאחר שינוי הפילטר
             }
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            s_bl?.Call.AddObserver(ObserveCallListChanges);
+            ObserveCallListChanges();
         }
 
         private string _addressFilter;
@@ -69,7 +74,6 @@ namespace PL.Volunteer
 
             CurrentVolunteer = volunteer;
 
-            // קישור טקסט-בוקס ל-Location במודל
             textrr.SetBinding(TextBox.TextProperty, new Binding("CurrentVolunteer.Location")
             {
                 Mode = BindingMode.TwoWay,
@@ -84,22 +88,18 @@ namespace PL.Volunteer
             try
             {
                 BO.Enums.CallTypeEnum? callTypeEnum = null;
-                if (!string.IsNullOrEmpty(SelectedTypeFilter) && Enum.TryParse<BO.Enums.CallTypeEnum>(SelectedTypeFilter, out var tempCallType))
+                if (!string.IsNullOrEmpty(SelectedTypeFilter) && SelectedTypeFilter != "None" && Enum.TryParse<BO.Enums.CallTypeEnum>(SelectedTypeFilter, out var tempCallType))
                 {
                     callTypeEnum = tempCallType;
                 }
 
                 BO.Enums.OpenCallEnum? openCallEnum = null;
-                if (!string.IsNullOrEmpty(AddressFilter) && Enum.TryParse<BO.Enums.OpenCallEnum>(AddressFilter, out var tempOpenCall))
+                if (!string.IsNullOrEmpty(AddressFilter) && AddressFilter != "None" && Enum.TryParse<BO.Enums.OpenCallEnum>(AddressFilter, out var tempOpenCall))
                 {
                     openCallEnum = tempOpenCall;
                 }
 
-                var calls = s_bl.Call.GetOpenCallInLists(
-                    CurrentVolunteer.Id,
-                    callTypeEnum,
-                    openCallEnum
-                );
+                var calls = s_bl.Call.GetOpenCallInLists(CurrentVolunteer.Id, callTypeEnum, openCallEnum);
 
                 Calls.Clear();
                 foreach (var call in calls)
@@ -113,17 +113,35 @@ namespace PL.Volunteer
             }
         }
 
+        private void ApplyFilters()
+        {
+            BO.Enums.CallTypeEnum? callTypeFilter = string.IsNullOrEmpty(SelectedCallType) || SelectedCallType == "None"
+                ? (BO.Enums.CallTypeEnum?)null
+                : Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType)
+                    ? parsedCallType
+                    : (BO.Enums.CallTypeEnum?)null;
+
+            BO.Enums.OpenCallEnum? openCallFilter = string.IsNullOrEmpty(SelectedSortOption) || SelectedSortOption == "None"
+                ? (BO.Enums.OpenCallEnum?)null
+                : Enum.TryParse(SelectedSortOption, out BO.Enums.OpenCallEnum parsedOpenCall)
+                    ? parsedOpenCall
+                    : (BO.Enums.OpenCallEnum?)null;
+
+            var filteredCalls = s_bl.Call.GetOpenCallInLists(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
+            Calls.Clear();
+            foreach (var call in filteredCalls)
+            {
+                Calls.Add(call);
+            }
+        }
+
         private void SelectButton_Click(object sender, RoutedEventArgs e)
-{
-    if (sender is Button button && button.CommandParameter is OpenCallInList selectedCall)
-    {
-        ChooseCall(selectedCall);
-    }
-}
-
-
-
-
+        {
+            if (sender is Button button && button.CommandParameter is OpenCallInList selectedCall)
+            {
+                ChooseCall(selectedCall);
+            }
+        }
 
         private void ChooseCall(OpenCallInList selectedCall)
         {
@@ -144,12 +162,10 @@ namespace PL.Volunteer
                 }
                 catch (InvalidOperationException ex)
                 {
-                    // חריגות לוגיות מטופלות כאן
                     MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    // חריגות כלליות מטופלות כאן
                     MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -158,7 +174,6 @@ namespace PL.Volunteer
                 MessageBox.Show("Error: No call selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -205,24 +220,6 @@ namespace PL.Volunteer
             }
         }
 
-        private void ApplyFilters()
-        {
-            BO.Enums.CallTypeEnum? callTypeFilter = Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType)
-                ? parsedCallType
-                : (BO.Enums.CallTypeEnum?)null;
-
-            BO.Enums.OpenCallEnum? openCallFilter = Enum.TryParse(SelectedSortOption, out BO.Enums.OpenCallEnum parsedOpenCall)
-                ? parsedOpenCall
-                : (BO.Enums.OpenCallEnum?)null;
-
-            var filteredCalls = s_bl.Call.GetOpenCallInLists(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
-            Calls.Clear();
-            foreach (var call in filteredCalls)
-            {
-                Calls.Add(call);
-            }
-        }
-
         public ObservableCollection<OpenCallInList> Calls { get; } = new ObservableCollection<OpenCallInList>();
 
         private void CallsDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
@@ -230,11 +227,11 @@ namespace PL.Volunteer
             var selectedCall = (OpenCallInList)CallsDataGrid.SelectedItem;
             if (selectedCall != null)
             {
-                SelectedCallDetails = selectedCall.VerbDesc; // עדכון התיאור המילולי
+                SelectedCallDetails = selectedCall.VerbDesc;
             }
             else
             {
-                SelectedCallDetails = "No call selected"; // הודעת ברירת מחדל כאשר אין קריאה נבחרת
+                SelectedCallDetails = "No call selected";
             }
         }
 
@@ -242,16 +239,11 @@ namespace PL.Volunteer
         {
             try
             {
-                // עדכון הכתובת לפי הערך מה-TextBox
                 CurrentVolunteer.Location = textrr.Text;
 
-                // עדכון במערכת
                 s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
-
-                // עדכון ה-PropertyChanged כדי להפעיל את ה-Binding
                 OnPropertyChanged(nameof(CurrentVolunteer.Location));
 
-                // ריענון הקריאות לאחר עדכון הכתובת
                 LoadCalls();
             }
             catch (Exception ex)
@@ -260,20 +252,24 @@ namespace PL.Volunteer
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            s_bl?.Call.AddObserver(ObserveCallListChanges);  // נרשמים למשקיף
-            ObserveCallListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
-        }
-
         private void Window_Closed(object sender, EventArgs e)
         {
-            s_bl?.Call.RemoveObserver(ObserveCallListChanges);  // מסירים את המשקיף
-        }
-        private void ObserveCallListChanges()
-        {
-            LoadCalls();  // טוען את הרשימה מחדש
+            s_bl?.Call.RemoveObserver(ObserveCallListChanges);
         }
 
+        private void ObserveCallListChanges()
+        {
+            LoadCalls();
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void textrr_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

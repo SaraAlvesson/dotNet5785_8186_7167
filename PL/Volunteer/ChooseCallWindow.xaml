@@ -30,7 +30,7 @@
             <!-- TextBox for updating volunteer location -->
             <TextBox x:Name="textrr" 
                      Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                     VerticalAlignment="Top" Width="94" Margin="10" Height="29"  />
+                     VerticalAlignment="Top" Width="94" Margin="10" Height="29" TextChanged="textrr_TextChanged"  />
 
             <Button Content="Update address" Width="100" Height="35" Click="update_click" Background="#3498DB" Foreground="White" BorderBrush="#2980B9" />
         </StackPanel>
@@ -70,20 +70,18 @@
         <!-- Map and Call Details -->
         <Grid Grid.Row="2" Margin="0,20,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="285*"/>
+                <ColumnDefinition Width="0*"/>
+                <ColumnDefinition Width="231*"/>
+                <ColumnDefinition Width="344*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Map Section -->
-            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Margin="10">
-                <WebBrowser HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            </Border>
 
             <!-- Call Details Section -->
-            <StackPanel Grid.Column="1" Margin="10">
+            <StackPanel Grid.Column="3" Margin="10,10,10,10">
                 <TextBlock Text="Call Details" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
                 <TextBox TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Height="69" Margin="0,0,0,10" 
-                         Text="{Binding SelectedCallDetails}" />
+                         Text="{Binding SelectedCallDetails}" TextChanged="TextBox_TextChanged" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -9,7 +9,7 @@
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Closed="Window_Closed"
         Loaded="Window_Loaded">
-    
+
     <Grid Margin="10,10,10,-6">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -32,10 +32,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ID (Read-Only) -->
-        <Label Grid.Row="0" Grid.Column="0" Margin="5" Content="ID:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding CurrentVolunteer.Id, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" 
-                 IsEnabled="{Binding CurrentVolunteer.Position}" />
+        <!-- Full Name -->
+        <Label Grid.Row="0" Grid.Column="0" Margin="5" Content="Id:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="5"
+         Text="{Binding CurrentVolunteer.Id, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+         IsReadOnly="True" />
+
 
         <!-- Full Name -->
         <Label Grid.Row="1" Grid.Column="0" Margin="5" Content="Full Name:" VerticalAlignment="Center" />
@@ -43,56 +45,65 @@
                  Text="{Binding CurrentVolunteer.FullName, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
         <!-- Email -->
-        <Label Grid.Row="2" Grid.Column="0" Margin="5" Content="Email:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="5"
+        <Label Grid.Row="3" Grid.Column="0" Margin="5" Content="Email:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.Email, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
         <!-- Phone Number -->
-        <Label Grid.Row="3" Grid.Column="0" Margin="5" Content="Phone Number:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="5"
+        <Label Grid.Row="2" Grid.Column="0" Margin="5" Content="Phone Number:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
+        <!-- Password-->
+        <Label Grid.Row="4" Grid.Column="0" Margin="5" Content="Password:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="5"
+          Text="{Binding CurrentVolunteer.Password, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
         <!-- Address -->
-        <Label Grid.Row="4" Grid.Column="0" Margin="5" Content="Address:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="4" Grid.Column="1" Margin="5"
+        <Label Grid.Row="5" Grid.Column="0" Margin="5" Content="Address:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" />
 
+        <!-- Position -->
+        <Label Content="Position:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <TextBlock Text="{Binding CurrentVolunteer.Position}" Grid.Row="6" Grid.Column="1" Margin="5"/>
+
+
         <!-- IsActive -->
-        <Label Grid.Row="6" Grid.Column="0" Margin="5" Content="Active:" VerticalAlignment="Center" />
-        <CheckBox Grid.Row="6" Grid.Column="1" Margin="5"
+        <Label Grid.Row="7" Grid.Column="0" Margin="5" Content="Active:" VerticalAlignment="Center" />
+        <CheckBox Grid.Row="7" Grid.Column="1" Margin="5"
                   IsChecked="{Binding CurrentVolunteer.Active, Mode=TwoWay}" />
 
         <!-- Max Distance -->
-        <Label Grid.Row="7" Grid.Column="0" Margin="5" Content="Max Distance:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="7" Grid.Column="1" Margin="5"
-                 Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" />
+        <Label Grid.Row="8" Grid.Column="0" Margin="5" Content="Max Distance:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="8" Grid.Column="1" Margin="5"
+         Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" />
 
         <!-- Distance Type -->
-        <Label Grid.Row="8" Grid.Column="0" Margin="5" Content="Distance Type:" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="8" Grid.Column="1" Margin="5"
-                  SelectedItem="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource DistanceTypeCollectionKey}}" />
+        <Label Content="Distance Type:" Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+        <TextBlock Text="{Binding CurrentVolunteer.DistanceType}" Grid.Row="9" Grid.Column="1" Margin="5"/>
+
 
         <!-- Handled Calls -->
-        <Label Grid.Row="9" Grid.Column="0" Margin="5" Content="Handled Calls:" VerticalAlignment="Bottom" />
-        <TextBox Grid.Row="9" Grid.Column="1" Margin="5"
+        <Label Grid.Row="10" Grid.Column="0" Margin="5" Content="sum Calls:" VerticalAlignment="Bottom" />
+        <TextBox Grid.Row="10" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.SumCalls}" 
                  IsReadOnly="True" />
 
         <!-- Canceled Calls -->
-        <Label Grid.Row="10" Grid.Column="0" Margin="5" Content="Canceled Calls:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="10" Grid.Column="1" Margin="5"
+        <Label Grid.Row="11" Grid.Column="0" Margin="5" Content="Canceled Calls:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="11" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.SumCanceled}" 
                  IsReadOnly="True" />
 
         <!-- Expired Calls -->
-        <Label Grid.Row="11" Grid.Column="0" Margin="5" Content="Expired Calls:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="11" Grid.Column="1" Margin="5"
+        <Label Grid.Row="12" Grid.Column="0" Margin="5" Content="Expired Calls:" VerticalAlignment="Center" />
+        <TextBox Grid.Row="12" Grid.Column="1" Margin="5"
                  Text="{Binding CurrentVolunteer.SumExpired}" 
                  IsReadOnly="True" />
 
         <!-- Current Call Details -->
-        <Label Grid.Row="12" Grid.Column="0" Margin="5" Content="Current Call:" VerticalAlignment="Top" />
-        <StackPanel Grid.Row="12" Grid.Column="1" Margin="5">
+        <Label Grid.Row="13" Grid.Column="0" Margin="5" Content="Current Call:" VerticalAlignment="Top" />
+        <StackPanel Grid.Row="13" Grid.Column="1" Margin="5">
             <!-- Allocation ID (ID of the Assignment) -->
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Allocation ID: " FontWeight="Bold" />
@@ -152,11 +163,11 @@
                 <TextBlock Text="Status: " FontWeight="Bold" />
                 <TextBlock Text="{Binding  CurrentVolunteer.VolunteerTakenCare.Status}" />
             </StackPanel>
-            
+
         </StackPanel>
 
         <!-- Buttons for Finish and Cancel Treatment -->
-        <StackPanel Grid.Row="12" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40">
+        <StackPanel Grid.Row="13" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40">
             <Button Margin="5" HorizontalAlignment="Stretch" Width="150"
                     Content="Finish Treatment" Click="ButtonComplete_Click"
                     IsEnabled="{Binding CurrentVolunteer.VolunteerTakenCare}" />
@@ -164,10 +175,10 @@
                     Content="Cancel Treatment" Click="ButtonCancel_Click"
                     IsEnabled="{Binding CurrentVolunteer.VolunteerTakenCare}" />
         </StackPanel>
-        
+
 
         <!-- Buttons for Choose Call and Historic Calls -->
-        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,40">
+        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="65,142,0,-47" Width="390">
             <Button Margin="5" Width="120" Height="40" Content="History" Click="ButtonHistory_Click" />
             <Button Margin="5" Width="120" Height="40" Content="Update" Click="ButtonUpdate_Click" />
             <Button Margin="5" Width="120" Height="40" Content="Choose Call" Click="ButtonChosenCall_Click"  />

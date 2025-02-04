@@ -22,9 +22,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <!-- Row with dynamic height for everything else -->
             <RowDefinition Height="Auto" />
+            <!-- Last row for the button -->
         </Grid.RowDefinitions>
 
         <!-- Id -->
@@ -91,51 +92,74 @@
 
         <!-- Is Active -->
         <Label Content="Is Active:" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
-        <CheckBox IsChecked="{Binding CurrentVolunteer.Active, Mode=TwoWay}" Grid.Row="12" Grid.Column="1" Margin="5" />
+        <CheckBox IsChecked="{Binding CurrentVolunteer.Active, Mode=TwoWay}" 
+                  Grid.Row="12" Grid.Column="1" Margin="5" />
 
+        <!-- Volunteer Taken Care -->
         <Label Content="Volunteer Taken Care:" Grid.Row="13" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+        <StackPanel Grid.Row="13" Grid.Column="1" Margin="5" VerticalAlignment="Top">
+            <!-- Allocation ID (ID of the Assignment) -->
+            <StackPanel Orientation="Horizontal" Height="18">
+                <TextBlock Text="Allocation ID: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.Id}" />
+            </StackPanel>
 
-        <ListView ItemsSource="{Binding CurrentVolunteer.VolunteerTakenCare}" 
-          Grid.Row="13" Grid.Column="1" Margin="5"
-          SelectionChanged="ListView_SelectionChanged"
-          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto">
-            <ListView.View>
-                <GridView>
-                    <!-- הצגת השדה Id -->
-                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="100"/>
+            <!-- Call ID -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Call ID: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.CallId}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה CallId -->
-                    <GridViewColumn Header="CallId" DisplayMemberBinding="{Binding CallId}" Width="100"/>
+            <!-- Call Type -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Call Type: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.CallType}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה CallType -->
-                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="150"/>
+            <!-- Description -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Description: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.VerbDesc}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה VerbDesc -->
-                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding VerbDesc}" Width="200"/>
+            <!-- Full Address -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Full Address: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.CallAddress}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה CallAddress -->
-                    <GridViewColumn Header="Call Address" DisplayMemberBinding="{Binding CallAddress}" Width="200"/>
+            <!-- Opening Time -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Opening Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.OpenTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה OpenTime -->
-                    <GridViewColumn Header="Open Time" DisplayMemberBinding="{Binding OpenTime}" Width="150"/>
+            <!-- Max Finish Time -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Max Finish Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.MaxFinishTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה MaxFinishTime -->
-                    <GridViewColumn Header="Max Finish Time" DisplayMemberBinding="{Binding MaxFinishTime}" Width="150"/>
+            <!-- Start Appointment Time -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Start Appointment Time: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.StartAppointmentTime, StringFormat={}{0:HH:mm:ss}}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה StartAppointmentTime -->
-                    <GridViewColumn Header="Start Appointment" DisplayMemberBinding="{Binding StartAppointmentTime}" Width="150"/>
+            <!-- Distance of Call -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Distance of Call: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.DistanceOfCall}" />
+            </StackPanel>
 
-                    <!-- הצגת השדה DistanceOfCall -->
-                    <GridViewColumn Header="Distance" DisplayMemberBinding="{Binding DistanceOfCall}" Width="100"/>
+            <!-- Status -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Status: " FontWeight="Bold" />
+                <TextBlock Text="{Binding CurrentVolunteer.VolunteerTakenCare.Status}" />
+            </StackPanel>
+        </StackPanel>
 
-                    <!-- הצגת השדה Status -->
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-
-
-        <!-- Add/Update Button -->
+        <!-- Add/Update Button at the very bottom -->
         <Button Content="{Binding ButtonText}" 
                 Grid.Row="14" Grid.Column="1" 
                 HorizontalAlignment="Center" Margin="10" 
