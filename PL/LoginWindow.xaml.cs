@@ -79,9 +79,6 @@ namespace PL
             Password = ((PasswordBox)sender).Password;
         }
 
-        public static void LogoutAdmin()
-        {
-            IsAdminLoggedIn = false; // Mark admin as logged out
-        }
+       
     }
 }

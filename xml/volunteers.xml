@@ -29,20 +29,6 @@
     <MaxDistance>14</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>837768202</Id>
-    <FullName>Yaakov Goldstein</FullName>
-    <PhoneNumber>0563686867</PhoneNumber>
-    <Email>volunteer3@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>g4!Mg7W@TSf8</Password>
-    <Location>Jaffa, Tel Aviv, Israel</Location>
-    <Latitude>32.055823</Latitude>
-    <Longitude>34.759151</Longitude>
-    <MaxDistance>14</MaxDistance>
-  </Volunteer>
-  <Volunteer>
     <Id>116189068</Id>
     <FullName>Moshe Friedman</FullName>
     <PhoneNumber>0511747128</PhoneNumber>
@@ -195,5 +181,19 @@
     <Latitude>32.0737</Latitude>
     <Longitude>34.791202</Longitude>
     <MaxDistance>19</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>837768202</Id>
+    <FullName>Yaakov Goldstein</FullName>
+    <PhoneNumber>0563686867</PhoneNumber>
+    <Email>volunteer3@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>g4!Mg7W@TSf8</Password>
+    <Location>Jaffa, Tel Aviv, Israel</Location>
+    <Latitude>32.055823</Latitude>
+    <Longitude>34.759151</Longitude>
+    <MaxDistance>14</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>
