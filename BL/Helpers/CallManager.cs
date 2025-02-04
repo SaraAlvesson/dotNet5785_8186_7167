@@ -54,49 +54,6 @@ namespace Helpers
 
 
 
-        public static bool IsAddressValid(string address)
-        {
-            // ודא שהכנסת את המפתח שלך כאן
-            string ApiKey = "YOUR_GOOGLE_MAPS_API_KEY";  // הכנס את ה-API Key שלך כאן
-
-            using (HttpClient client = new HttpClient())
-            {
-                string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={ApiKey}";
-
-                try
-                {
-                    // שליחת הבקשה ל-Google Geocoding API
-                    HttpResponseMessage response = client.GetAsync(url).Result; // סינכרונית
-                    response.EnsureSuccessStatusCode(); // אם לא הצליחה, תזרוק שגיאה
-                    string responseBody = response.Content.ReadAsStringAsync().Result; // סינכרונית
-
-                    // השתמש ב-System.Text.Json כדי לנתח את התשובה
-                    using (JsonDocument jsonDoc = JsonDocument.Parse(responseBody))
-                    {
-                        // הדפסת התשובה כולה כדי לבדוק
-                        Console.WriteLine("API Response: " + responseBody);
-
-                        var status = jsonDoc.RootElement.GetProperty("status").GetString();
-                        Console.WriteLine("Status: " + status);  // הדפס את הסטטוס
-
-                        // אם הסטטוס הוא "OK", הכתובת חוקית
-                        return status == "OK";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                    return false; // טיפול בשגיאות ברשת או בשגיאות של ה-API
-                }
-            }
-        }
-
-
-
-
-
-
-
 
         public static void checkCallFormat(BO.Call call)
         {
@@ -109,7 +66,7 @@ namespace Helpers
                 throw new InvalidCallFormatException("Open time is not valid.");
 
             // בדיקת כתובת
-            if (string.IsNullOrWhiteSpace(call.Address))
+            if (Tools.IsAddressValid(call.Address))
                 throw new InvalidCallFormatException("Address cannot be empty.");
 
             if (call.Address.Length > 200)
