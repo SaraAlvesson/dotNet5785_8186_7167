@@ -10,8 +10,11 @@ internal class AdminImplementation : IAdmin
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
     // Method to advance the system clock by a specified time unit
+
     public void UpdateClock(TimeUnitEnum unit)
-    {
+           {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         DateTime newTime = AdminManager.Now; // Get the current time from ClockManager
 
         // Switch case to handle different time units
@@ -60,6 +63,8 @@ internal class AdminImplementation : IAdmin
     // Method to initialize the database
     public void InitializeDatabase()
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         try
         {
             // Ensure DAL is initialized
@@ -85,6 +90,8 @@ internal class AdminImplementation : IAdmin
     // Method to reset the database (clear all data and reset configurations)
     public void ResetDatabase()
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         // Ensure DAL is initialized
         if (_dal == null)
         {
@@ -119,16 +126,43 @@ internal class AdminImplementation : IAdmin
     public void RemoveConfigObserver(Action configObserver) =>
     AdminManager.ConfigUpdatedObservers -= configObserver;
     #endregion Stage 5
+    /// <summary>
+    /// Sets a new risk range value in the DAL.
+    /// </summary>
+    /// <param name="riskRange">The new risk range value to set.</param>
+    /// 
 
-
-    public void SetRiskTimeRange(TimeSpan maxRange)
+    public void SetRiskTimeRange(TimeSpan riskRange)
     {
-        AdminManager.MaxRange = (int)maxRange.TotalMinutes; // או TotalSeconds, TotalHours, תלוי מה אתה רוצה
+        AdminManager.ThrowOnSimulatorIsRunning();
+        AdminManager.RiskRange = riskRange; // Set the new risk range in the DAL configuration.
     }
 
-    // GetRiskTimeRange - מחזיר את הערך כ- TimeSpan (למשל, דקות)
+
+
+    /// <summary>
+    /// Retrieves the risk range from the DAL.
+    /// </summary>
+    /// <returns>The time span representing the risk range.</returns>
     public TimeSpan GetRiskTimeRange()
     {
-        return TimeSpan.FromMinutes(AdminManager.MaxRange); // ממיר בחזרה ל- TimeSpan (לדוג' דקות)
+        return AdminManager.RiskRange; // Retrieve the risk range configuration from the DAL.
     }
+
+    /// <summary>
+    /// Starts the simulator with a specified interval.
+    /// </summary>
+    /// <param name="interval">The time interval for the simulator updates.</param>
+    public void StartSimulator(int interval) // Stage 7
+    {
+        AdminManager.ThrowOnSimulatorIsRunning(); // Ensures the simulator is not already running
+        AdminManager.Start(interval); // Starts the simulator with the given interval
+    }
+
+    /// <summary>
+    /// Stops the simulator.
+    /// </summary>
+    public void StopSimulator()
+        => AdminManager.Stop(); // Stops the simulator
+
 }

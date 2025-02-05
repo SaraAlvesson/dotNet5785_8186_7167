@@ -1,5 +1,7 @@
 ﻿
 namespace Dal;
+
+using System.Runtime.CompilerServices;
 using DalApi;
 using DO;
 
@@ -7,12 +9,17 @@ using DO;
 /// The AssignmentImplementation class provides the implementation for managing assignments in the data source.
 /// It handles CRUD operations (Create, Read, Update, Delete) for the Assignment objects.
 /// </summary>
+/// 
+
 internal class AssignmentImplementation : IAssignment
 {
     /// <summary>
     /// Creates a new assignment by generating a unique Id and adding it to the assignments list.
     /// </summary>
     /// <param name="item">The assignment item to be created.</param>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Create(Assignment item)
     {
         Assignment newItem = item with { Id = Config.NextAssignmentId}; // Creates new item with the next available ID
@@ -24,6 +31,9 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The Id of the assignment to be read.</param>
     /// <returns>The assignment with the matching Id, or null if not found.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Assignment? Read(int id)
     {
         return DataSource.Assignments.FirstOrDefault(obj => obj.Id == id); // Returns the assignment with the matching Id, or null if not found
@@ -34,6 +44,9 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">A filter function to match the assignment.</param>
     /// <returns>The first assignment that matches the filter, or null if no match is found.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Assignment? Read(Func<Assignment, bool> filter) // Stage 2
     => DataSource.Assignments.FirstOrDefault(filter); // Returns the first matching assignment based on the filter
 
@@ -42,6 +55,9 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">An optional filter function to match assignments. If null, returns all assignments.</param>
     /// <returns>An IEnumerable of assignments that match the filter, or all assignments if no filter is provided.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null) // Stage 2
     => filter == null
         ? DataSource.Assignments.Select(obj => obj) // If no filter, returns all assignments
@@ -51,6 +67,9 @@ internal class AssignmentImplementation : IAssignment
     /// Updates an existing assignment by first deleting the old one (if it exists) and then creating the new one.
     /// </summary>
     /// <param name="item">The assignment to be updated.</param>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Update(Assignment item)
     {
         Delete(item.Id); // If the item exists, it is deleted first (throws an exception if not found)
@@ -62,6 +81,9 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id">The Id of the assignment to be deleted.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the assignment with the given Id is not found.</exception>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Delete(int id)
     {
         Assignment? ToDelete = Read(id); // Retrieves the assignment to delete
@@ -78,6 +100,9 @@ internal class AssignmentImplementation : IAssignment
     /// <summary>
     /// Deletes all assignments from the list.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void DeleteAll()
     {
         DataSource.Assignments.Clear(); // Clears all items from the list

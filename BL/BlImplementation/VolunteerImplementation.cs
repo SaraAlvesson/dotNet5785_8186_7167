@@ -340,6 +340,7 @@ internal class VolunteerImplementation : IVolunteer
     //}
     public void UpdateVolunteerDetails(int requesterId, BO.Volunteer volunteerDetails)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
             // שלב 1: בקשת רשומת המתנדב משכבת הנתונים
@@ -467,6 +468,7 @@ internal class VolunteerImplementation : IVolunteer
 
     public void DeleteVolunteer(int volunteerId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
             // שלב 1: בדוק אם המתנדב מטפל בקריאה פעילה
@@ -497,7 +499,8 @@ internal class VolunteerImplementation : IVolunteer
 
     public void AddVolunteer(BO.Volunteer volunteer)
     {
-        
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         DO.Volunteer newVolunteer = new()
 
         {   Id = volunteer.Id,
@@ -536,10 +539,7 @@ internal class VolunteerImplementation : IVolunteer
 
     }
 
-    public IEnumerable<VolunteerInList> RequestVolunteerList()
-    {
-        throw new NotImplementedException();
-    }
+    
 }
 
 

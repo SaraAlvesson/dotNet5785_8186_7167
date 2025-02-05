@@ -1,4 +1,6 @@
 ﻿namespace Dal;
+
+using System.Runtime.CompilerServices;
 using DalApi;
 using DO;
 
@@ -12,6 +14,9 @@ internal class CallImplementation : ICall
     /// Creates a new call by generating a unique Id and adding it to the calls list.
     /// </summary>
     /// <param name="item">The call item to be created.</param>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Create(Call item)
     {
         Call newItem = item with { Id = Config.NextCallId }; // Creates new item with the next available ID
@@ -23,6 +28,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to be read.</param>
     /// <returns>The call with the matching Id, or null if not found.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Call? Read(int id)
     {
         return DataSource.Calls.FirstOrDefault(obj => obj.Id == id); // Returns the call with the matching Id, or null if not found
@@ -33,6 +41,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">A filter function to match the call.</param>
     /// <returns>The first call that matches the filter, or null if no match is found.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Call? Read(Func<Call, bool> filter) // Stage 2
     => DataSource.Calls.FirstOrDefault(filter); // Returns the first matching call based on the filter
 
@@ -41,6 +52,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">An optional filter function to match calls. If null, returns all calls.</param>
     /// <returns>An IEnumerable of calls that match the filter, or all calls if no filter is provided.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null) // Stage 2
     => filter == null
         ? DataSource.Calls.Select(obj => obj) // If no filter, returns all calls
@@ -50,6 +64,9 @@ internal class CallImplementation : ICall
     /// Updates an existing call by first deleting the old one (if it exists) and then creating the new one.
     /// </summary>
     /// <param name="item">The call to be updated.</param>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Update(Call item)
     {
         Delete(item.Id); // If the item exists, it is deleted first (throws an exception if not found)
@@ -61,6 +78,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to be deleted.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the call with the given Id is not found.</exception>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Delete(int id)
     {
         Call? ToDelete = Read(id); // Retrieves the call to delete
@@ -77,6 +97,9 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes all calls from the list.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void DeleteAll()
     {
         DataSource.Calls.Clear(); // Clears all items from the list

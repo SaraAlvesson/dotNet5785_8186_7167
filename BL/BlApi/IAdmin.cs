@@ -50,4 +50,7 @@ public interface IAdmin
     /// Initializes the database with default data values.
     /// </summary>
     void InitializeDatabase();
+    void StartSimulator(int interval); //stage 7
+    void StopSimulator(); //stage 7
+
 }
