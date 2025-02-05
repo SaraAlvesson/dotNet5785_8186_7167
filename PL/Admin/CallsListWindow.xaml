@@ -134,7 +134,7 @@
         HorizontalAlignment="Left" 
         Width="150"
         Click="ButtonAdd_Click" 
-        Margin="355,5,0,0">
+        Margin="355,5,0,0" Height="18" VerticalAlignment="Top">
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Background" Value="#40E0D0"/>
