@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using BO;
 using static BO.Enums;
 
@@ -14,12 +14,13 @@ namespace PL.Admin
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private VolunteerInListField _selectedVolunteerField = VolunteerInListField.None;
 
-        // תכונה (Property) שמייצגת את הטקסט שעל הכפתור
+        public ObservableCollection<CallInProgress> VolunteerTakenCare { get; set; } = new();
+
         public string ButtonText { get; set; }
 
         public VolunteerInListField SelectedFilter
         {
-            get { return _selectedVolunteerField; }
+            get => _selectedVolunteerField;
             set
             {
                 if (_selectedVolunteerField != value)
@@ -30,10 +31,11 @@ namespace PL.Admin
                 }
             }
         }
+
         private bool _isIdEnabled;
         public bool IsIdEnabled
         {
-            get { return _isIdEnabled; }
+            get => _isIdEnabled;
             set
             {
                 if (_isIdEnabled != value)
@@ -43,37 +45,26 @@ namespace PL.Admin
                 }
             }
         }
-        public ObservableCollection<CallInProgress> VolunteerTakenCare { get; set; }
-
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // VolunteerInList property (DependencyProperty)
         public IEnumerable<BO.VolunteerInList> VolunteerInList
         {
-            get { return (IEnumerable<BO.VolunteerInList>)GetValue(VolunteerInListFieldListProperty); }
-            set { SetValue(VolunteerInListFieldListProperty, value); }
+            get => (IEnumerable<BO.VolunteerInList>)GetValue(VolunteerInListFieldListProperty);
+            set => SetValue(VolunteerInListFieldListProperty, value);
         }
 
         public static readonly DependencyProperty VolunteerInListFieldListProperty =
-           DependencyProperty.Register(
-               "VolunteerInList",
-               typeof(IEnumerable<BO.VolunteerInList>),
-               typeof(SingleVolunteerWindow),
-               new PropertyMetadata(null));
+           DependencyProperty.Register("VolunteerInList", typeof(IEnumerable<BO.VolunteerInList>), typeof(SingleVolunteerWindow), new PropertyMetadata(null));
 
-        // קונסטרוקטור של החלון
         public SingleVolunteerWindow(int id = 0)
         {
             ButtonText = id == 0 ? "Add" : "Update";
             InitializeComponent();
-
-            // חיבור התכונה למנגנון Binding, כדי שה-XAML יקבל את הערך שלה
             this.DataContext = this;
 
             try
@@ -81,12 +72,13 @@ namespace PL.Admin
                 if (id == 0)
                 {
                     CurrentVolunteer = new BO.Volunteer();
-                    IsIdEnabled = true;  // ה-Id ניתן לשינוי בהוספה
+                    IsIdEnabled = true;
                 }
                 else
                 {
                     CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id);
-                    IsIdEnabled = false;   // ה-Id לא ניתן לשינוי בעדכון
+                    IsIdEnabled = false;
+                    LoadVolunteerTakenCare();
                 }
             }
             catch (Exception ex)
@@ -94,18 +86,34 @@ namespace PL.Admin
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void LoadVolunteerTakenCare()
+        {
+            if (CurrentVolunteer == null) return;
+
+            var volunteerDetails = s_bl.Volunteer.RequestVolunteerDetails(CurrentVolunteer.Id);
+            var call = volunteerDetails?.VolunteerTakenCare; // הנחה שהשדה נקרא כך
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                VolunteerTakenCare.Clear();
+                if (call != null)
+                {
+                    VolunteerTakenCare.Add(call);  // אם אתה מצפה לרשימה, הוסף את אובייקט ה-CallInProgress לרשימה
+                }
+            });
+        }
+
+
 
         private void UpdateVolunteerList()
         {
             try
             {
-                IEnumerable<BO.VolunteerInList> volunteers = queryVolunteerList();
-                VolunteerInList = volunteers;
+                VolunteerInList = queryVolunteerList();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while loading the volunteer list: {ex.Message}",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"An error occurred while loading the volunteer list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -121,42 +129,28 @@ namespace PL.Admin
 
         private void volunteerListObserver()
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                UpdateVolunteerList();
-            });
+            Application.Current.Dispatcher.Invoke(UpdateVolunteerList);
         }
 
         private IEnumerable<BO.VolunteerInList> queryVolunteerList()
         {
-            IEnumerable<BO.VolunteerInList> volunteers;
-
-            switch (SelectedFilter)
+            return SelectedFilter switch
             {
-                case VolunteerInListField.Id:
-                    volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(null, VolunteerInListField.Id).OrderBy(v => v.Id);
-                    break;
-                case VolunteerInListField.FullName:
-                    volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(null, VolunteerInListField.FullName).OrderBy(v => v.FullName);
-                    break;
-                case VolunteerInListField.Active:
-                    volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(true, VolunteerInListField.Active).Where(v => v.Active);
-                    break;
-                case VolunteerInListField.None:
-                    volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(null, null);
-                    break;
-                default:
-                    volunteers = BlApi.Factory.Get().Volunteer.RequestVolunteerList(null, null);
-                    break;
-            }
-
-            return volunteers;
+                VolunteerInListField.Id => s_bl.Volunteer.RequestVolunteerList(null, VolunteerInListField.Id).OrderBy(v => v.Id),
+                VolunteerInListField.FullName => s_bl.Volunteer.RequestVolunteerList(null, VolunteerInListField.FullName).OrderBy(v => v.FullName),
+                VolunteerInListField.Active => s_bl.Volunteer.RequestVolunteerList(true, VolunteerInListField.Active).Where(v => v.Active),
+                _ => s_bl.Volunteer.RequestVolunteerList(null, null)
+            };
         }
 
         public BO.Volunteer? CurrentVolunteer
         {
-            get { return (BO.Volunteer?)GetValue(CurrentVolunteerProperty); }
-            set { SetValue(CurrentVolunteerProperty, value); }
+            get => (BO.Volunteer?)GetValue(CurrentVolunteerProperty);
+            set
+            {
+                SetValue(CurrentVolunteerProperty, value);
+                LoadVolunteerTakenCare();
+            }
         }
 
         public static readonly DependencyProperty CurrentVolunteerProperty =
@@ -194,15 +188,9 @@ namespace PL.Admin
                 UpdateVolunteerList();
                 this.Close();
             }
-            catch (ArgumentException ex)
-            {
-                // במקרה של חריגה מותאמת
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
             catch (Exception ex)
             {
-                // במקרה של חריגה כללית
-                MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -210,7 +198,5 @@ namespace PL.Admin
         {
 
         }
-
-       
     }
-    }
+}

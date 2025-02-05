@@ -11,6 +11,7 @@
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	  <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+	  <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +22,44 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CefSharp.Wpf" Version="132.3.11" />
+    <PackageReference Include="Microsoft.Maps.MapControl.WPF" Version="1.0.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\chromiumembeddedframework.runtime.win-x86\132.3.1\buildTransitive\..\runtimes\win-x86\native\resources.pak" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Images\download.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\download.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.exe" />
   </ItemGroup>
 
 </Project>

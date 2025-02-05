@@ -7,7 +7,9 @@
         Title="Volunteer Closed Call History" Height="500" Width="900" 
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="Window_Loaded"
-        Closed="Window_Closed">
+        Closed="Window_Closed"
+        Background="#D0F0FF">
+    <!-- רקע תכלת בהיר -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,28 +17,36 @@
         </Grid.RowDefinitions>
 
         <!-- Filter and Sort -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="85,-2,55,12">
             <Label Content="Filter by Call Type:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox Name="CallTypeFilter" Width="200" Margin="0,0,20,0" SelectionChanged="CallTypeFilter_SelectionChanged"
+            <ComboBox Name="CallTypeFilter" Width="249" Margin="0,0,20,0" SelectionChanged="CallTypeFilter_SelectionChanged"
                       ItemsSource="{Binding CallTypes}" SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"/>
 
             <Label Content="Sort by:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox Name="SortByComboBox" Width="200" Margin="0,0,20,0" SelectionChanged="SortByComboBox_SelectionChanged"
+            <ComboBox x:Name="SortByComboBox" Width="249" SelectionChanged="SortByComboBox_SelectionChanged"
                       ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}"/>
         </StackPanel>
 
         <!-- DataGrid for displaying closed call history -->
         <DataGrid Name="ClosedCallsDataGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" 
                   CanUserSortColumns="True" AlternatingRowBackground="#F9F9F9" 
-                  ItemsSource="{Binding ClosedCalls}">
+                  ItemsSource="{Binding ClosedCalls}" SelectionChanged="ClosedCallsDataGrid_SelectionChanged">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#40E0D0"/>
+                    <!-- צבע טורקיז לכותרות -->
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Call ID" Binding="{Binding Id}" Width="100"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="25"/>
                 <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="200"/>
-                <DataGridTextColumn Header="Call Type" Binding="{Binding CallType}" Width="150"/>
-                <DataGridTextColumn Header="Opening Time" Binding="{Binding OpenTime}" Width="150"/>
-                <DataGridTextColumn Header="Treatment Start Time" Binding="{Binding TreatmentStartTime}" Width="150"/>
-                <DataGridTextColumn Header="Actual Completion Time" Binding="{Binding RealFinishTime}" Width="150"/>
-                <DataGridTextColumn Header="Completion Type" Binding="{Binding FinishAppointmentType}" Width="150"/>
+                <DataGridTextColumn Header="Call Type" Binding="{Binding CallType}" Width="115"/>
+                <DataGridTextColumn Header="Opening Time" Binding="{Binding OpenTime}" Width="130"/>
+                <DataGridTextColumn Header="Treatment Start Time" Binding="{Binding TreatmentStartTime}" Width="130"/>
+                <DataGridTextColumn Header="Actual Completion Time" Binding="{Binding RealFinishTime}" Width="130"/>
+                <DataGridTextColumn Header="Completion Type" Binding="{Binding FinishAppointmentType}" Width="140"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

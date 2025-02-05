@@ -169,10 +169,10 @@ namespace PL.Admin
                     case VolunteerInListField.CallIdInTreatment:
                         filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallIdInTreatment).ToList();
                         break;
-                    case VolunteerInListField.CallType:
-                        // שימוש ב-ToString למקרה שהמיון לפי enum צריך להיות לפי שמו
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType.ToString()).ToList();
-                        break;
+                    //case VolunteerInListField.CallType:
+                    //    // שימוש ב-ToString למקרה שהמיון לפי enum צריך להיות לפי שמו
+                    //    filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType.ToString()).ToList();
+                    //    break;
                     default:
                         break;
                 }
@@ -248,10 +248,13 @@ namespace PL.Admin
         }
 
         // לחצן הוספה
-        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            new SingleVolunteerWindow().Show();
-        }
+      private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+{
+
+        new SingleVolunteerWindow().Show();
+    }
+    
+
 
         // לחיצה כפולה על פריט ברשימה לצפייה בפרטים
         private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)

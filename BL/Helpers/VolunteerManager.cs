@@ -117,16 +117,6 @@ namespace Helpers
             return null;
         }
 
-        public class InvalidAddressFormatException : Exception
-        {
-            public InvalidAddressFormatException(string message) : base(message) { }
-        }
-
-        public class InvalidGeolocationException : Exception
-        {
-            public InvalidGeolocationException(string message) : base(message) { }
-        }
-
        
 
         internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
@@ -157,6 +147,68 @@ namespace Helpers
 
 
 
+        //internal static double ConvertDistance(double? originalDistance, Enums.DistanceTypeEnum distanceType)
+        //{
+        //    string apiKey = "678694850f91d165965268skuda91dd"; // המפתח שלך
+
+        //    // הגדרת ה-API URL בהתאם לסוג המרחק
+        //    string requestUrl = string.Empty;
+
+        //    switch (distanceType)
+        //    {
+        //        case Enums.DistanceTypeEnum.AerialDistance:
+        //            // חישוב מרחק איירי
+        //            requestUrl = $"https://geocode.maps.co/convert-to-aerial?distance={originalDistance}&api_key={apiKey}";
+        //            break;
+
+        //        case Enums.DistanceTypeEnum.WalkingDistance:
+        //            // חישוב מרחק הליכה
+        //            requestUrl = $"https://geocode.maps.co/convert-to-walking?distance={originalDistance}&api_key={apiKey}";
+        //            break;
+
+        //        case Enums.DistanceTypeEnum.DrivingDistance:
+        //            // חישוב מרחק ברכב
+        //            requestUrl = $"https://geocode.maps.co/convert-to-driving?distance={originalDistance}&api_key={apiKey}";
+        //            break;
+
+        //        default:
+        //            throw new ArgumentException("Unknown DistanceTypeEnum.");
+        //    }
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // שליחת הבקשה ל-API בצורה סינכרונית
+        //            HttpResponseMessage response = client.GetAsync(requestUrl).Result;
+
+        //            // בדיקה אם התשובה תקינה
+        //            if (!response.IsSuccessStatusCode)
+        //            {
+        //                string errorContent = response.Content.ReadAsStringAsync().Result;
+        //                throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
+        //            }
+
+        //            // קריאת התשובה
+        //            string jsonResponse = response.Content.ReadAsStringAsync().Result;
+
+        //            // ניתוח התשובה והחזרת המרחק המעודכן
+        //            // מניחים שה-API מחזיר את המרחק המעודכן כערך מספרי
+        //            var updatedDistance = double.Parse(jsonResponse); // אם זה לא ערך מספרי, יש לבצע טיפול בשגיאות
+
+        //            return updatedDistance;
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            throw new Exception("Error sending web request: " + ex.Message);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new Exception("An error occurred while converting the distance.", ex);
+        //        }
+        //    }
+        //}
+
 
 
 
@@ -168,8 +220,8 @@ namespace Helpers
                 throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
             }
 
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(co\.il|gov\.il|ac\.il|org\.il|net\.il|k12\.il|muni\.il)$";
-
+            // תבנית המייל שתומכת בסיומות ישראליות וגם סיומות בינלאומיות
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(co\.il|gov\.il|ac\.il|org\.il|net\.il|k12\.il|muni\.il|com|org|net|edu|info|biz|us|uk|ca|de|fr|jp|au|in|cn|ru)$";
 
             if (!Regex.IsMatch(volunteer.Email, pattern))
             {
@@ -180,7 +232,6 @@ namespace Helpers
                 return true;
             }
         }
-
 
 
 

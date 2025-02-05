@@ -91,7 +91,7 @@ internal class CallImplementation : ICall
                 {
                     BO.Enums.CallFieldEnum.ID => call.Id?.Equals(toFilter) == true,
                     BO.Enums.CallFieldEnum.CallId => call.CallId.Equals(toFilter),
-                    BO.Enums.CallFieldEnum.CallType => call.CallType.Equals(toFilter),
+                    //BO.Enums.CallFieldEnum.CallType => call.CallType.Equals(toFilter),
                     BO.Enums.CallFieldEnum.OpenTime => call.OpenTime.Equals(toFilter),
                     BO.Enums.CallFieldEnum.SumTimeUntilFinish => call.SumTimeUntilFinish?.Equals(toFilter) == true,
                     BO.Enums.CallFieldEnum.LastVolunteerName => call.LastVolunteerName?.Equals(toFilter) == true,
@@ -110,7 +110,7 @@ internal class CallImplementation : ICall
             {
                 BO.Enums.CallFieldEnum.ID => callInList.OrderBy(call => call.Id),
                 BO.Enums.CallFieldEnum.CallId => callInList.OrderBy(call => call.CallId),
-                BO.Enums.CallFieldEnum.CallType => callInList.OrderBy(call => call.CallType),
+                //BO.Enums.CallFieldEnum.CallType => callInList.OrderBy(call => call.CallType),
                 BO.Enums.CallFieldEnum.OpenTime => callInList.OrderBy(call => call.OpenTime),
                 BO.Enums.CallFieldEnum.SumTimeUntilFinish => callInList.OrderBy(call => call.SumTimeUntilFinish),
                 BO.Enums.CallFieldEnum.LastVolunteerName => callInList.OrderBy(call => call.LastVolunteerName),
@@ -480,7 +480,7 @@ internal class CallImplementation : ICall
             {
                 BO.Enums.ClosedCallFieldEnum.ID => closedCalls.OrderBy(call => call.Id),
                 BO.Enums.ClosedCallFieldEnum.Address => closedCalls.OrderBy(call => call.Address),
-                BO.Enums.ClosedCallFieldEnum.CallType => closedCalls.OrderBy(call => call.CallType),
+                //BO.Enums.ClosedCallFieldEnum.CallType => closedCalls.OrderBy(call => call.CallType),
                 BO.Enums.ClosedCallFieldEnum.OpenTime => closedCalls.OrderBy(call => call.OpenTime),
                 BO.Enums.ClosedCallFieldEnum.TreatmentStartTime => closedCalls.OrderBy(call => call.TreatmentStartTime),
                 BO.Enums.ClosedCallFieldEnum.RealFinishTime => closedCalls.OrderBy(call => call.RealFinishTime),
@@ -574,7 +574,6 @@ internal class CallImplementation : ICall
         openCalls = toSort switch
         {
             BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
-            BO.Enums.OpenCallEnum.CallType => openCalls.OrderBy(call => call.CallType),
             BO.Enums.OpenCallEnum.Address => openCalls.OrderBy(call => call.Address),
             BO.Enums.OpenCallEnum.OpenTime => openCalls.OrderBy(call => call.OpenTime),
             BO.Enums.OpenCallEnum.MaxFinishTime => openCalls.OrderBy(call => call.MaxFinishTime),

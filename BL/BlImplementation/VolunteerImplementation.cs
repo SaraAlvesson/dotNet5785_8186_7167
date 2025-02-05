@@ -107,7 +107,6 @@ internal class VolunteerImplementation : IVolunteer
                 VolunteerInListField.SumCanceledCalls => volunteerList.OrderBy(v => v.SumCanceledCalls).ThenBy(v => v.Id).ToList(),
                 VolunteerInListField.SumExpiredCalls => volunteerList.OrderBy(v => v.SumExpiredCalls).ThenBy(v => v.Id).ToList(),
                 VolunteerInListField.CallIdInTreatment => volunteerList.OrderBy(v => v.CallIdInTreatment ?? -1).ThenBy(v => v.Id).ToList(),
-                VolunteerInListField.CallType => volunteerList.OrderBy(v => v.CallType).ThenBy(v => v.Id).ToList(),
                 _ => volunteerList.OrderBy(v => v.Id).ToList(), // ברירת מחדל
             };
 
@@ -350,7 +349,7 @@ internal class VolunteerImplementation : IVolunteer
             Console.WriteLine("Existing volunteer found.");
 
             // שלב 2: בדיקה אם המבקש לעדכן הוא המנהל או המתנדב עצמו
-            if (requesterId != volunteerDetails.Id && !IsAdmin(requesterId))
+            if (requesterId != volunteerDetails.Id && IsAdmin(requesterId))
             {
                 throw new UnauthorizedAccessException("Unauthorized to update volunteer details.");
             }
@@ -364,9 +363,6 @@ internal class VolunteerImplementation : IVolunteer
                 throw new BlPhoneNumberNotCorrect("Invalid phone number format.");
             if (!Helpers.VolunteersManager.IsValidId(volunteerDetails.Id))
                 throw new BlIdNotValid("Invalid ID format.");
-          //  if (!Helpers.VolunteersManager.IsAddressValid(volunteerDetails.Location))
-             //   throw new BlIdNotValid("Invalid address format.");
-
 
             Console.WriteLine("Format checks passed.");
 
@@ -376,9 +372,10 @@ internal class VolunteerImplementation : IVolunteer
 
             Console.WriteLine("Location checks passed.");
 
-            // שלב 5: בדיקה אם מותר לשנות תפקיד
             if ((Enums.VolunteerTypeEnum)existingVolunteer.Position != volunteerDetails.Position && !IsAdmin(volunteerDetails.Id))
+            {
                 throw new BlUnauthorizedAccessException("Only admins can update the position.");
+            }
 
             Console.WriteLine("Position update authorized.");
 
@@ -393,7 +390,7 @@ internal class VolunteerImplementation : IVolunteer
                 Email = volunteerDetails.Email,
                 Active = volunteerDetails.Active,
                 DistanceType = (DO.DistanceType)volunteerDetails.DistanceType,
-                Position = (DO.Position)volunteerDetails.Position,
+                Position = (DO.Position)volunteerDetails.Position,  // חשוב לוודא ש-Position כאן לא משאיר ערך לא מעודכן
                 Latitude = volunteerDetails.Latitude,
                 Longitude = volunteerDetails.Longitude,
                 MaxDistance = volunteerDetails.MaxDistance,
@@ -417,28 +414,56 @@ internal class VolunteerImplementation : IVolunteer
             VolunteersManager.Observers.NotifyListUpdated();  // stage 5
             Console.WriteLine("Observers notified.");
         }
-       
+        catch (DalDoesNotExistException ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
+        catch (BlEmailNotCorrect ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
+        catch (BlPhoneNumberNotCorrect ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
+        catch (BlIdNotValid ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
+        catch (BlInvalidLocationException ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
+        catch (BlUnauthorizedAccessException ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;  // מיידע על חריגה ספציפית
+        }
         catch (Exception ex)
         {
-            // טיפול כללי בחריגות
             Console.WriteLine("An error occurred during update.");
             throw new CannotUpdateVolunteerException("An error occurred while updating the volunteer details.", ex);
         }
-
     }
-
-
     private bool IsAdmin(int id)
     {
         var volunteer = _dal.Volunteer.Read(v => v.Id == id);
         if (volunteer != null && volunteer.Position == DO.Position.admin)
             return true;
+
         return false;
     }
-
-
-
-
+ 
 
     public void DeleteVolunteer(int volunteerId)
     {

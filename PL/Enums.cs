@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace PL;
 
@@ -8,10 +9,16 @@ internal class CallTypeCollection : IEnumerable
     public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
 }
 
-internal class PositionCollection : IEnumerable
+internal class PositionCollection : ObservableCollection<BO.Enums.VolunteerTypeEnum>
 {
-    static readonly IEnumerable<BO.Enums.VolunteerTypeEnum> s_enums = (Enum.GetValues(typeof(BO.Enums.VolunteerTypeEnum)) as IEnumerable<BO.Enums.VolunteerTypeEnum>)!;
-    public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
+    public PositionCollection()
+    {
+        // הוספת ערכים באופן ידני או אוטומטי
+        foreach (var value in Enum.GetValues(typeof(BO.Enums.VolunteerTypeEnum)).Cast<BO.Enums.VolunteerTypeEnum>())
+        {
+            this.Add(value);
+        }
+    }
 }
 
 internal class DistanceTypeCollection : IEnumerable

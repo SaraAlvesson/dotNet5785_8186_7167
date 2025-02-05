@@ -4,13 +4,13 @@
         Title="Manage Calls" Height="600" Width="900" 
         DataContext="{Binding RelativeSource={RelativeSource Self}}" 
         Loaded="Window_Loaded" Closed="Window_Closed"
-        Background="#D32F2F">
+        Background="#ADD8E6">
     <Window.Resources>
         <!-- Common Button Style -->
         <Style x:Key="CommonButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#D32F2F"/>
+            <Setter Property="Background" Value="#ADD8E6"/>
             <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="BorderBrush" Value="#ADD8E6"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="10,5"/>
@@ -29,7 +29,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#B71C1C"/>
+                                <Setter Property="Background" Value="#ADD8E6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -41,7 +41,7 @@
         <Style TargetType="ComboBox">
             <Setter Property="Background" Value="#ECF0F1"/>
             <Setter Property="Foreground" Value="#2C3E50"/>
-            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="BorderBrush" Value="#ADD8E6"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="Margin" Value="5,0,10,0"/>
@@ -58,7 +58,7 @@
         <!-- ListView Style -->
         <Style TargetType="ListView">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="BorderBrush" Value="#ADD8E6"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Margin" Value="0,10"/>
         </Style>
@@ -76,7 +76,7 @@
         </Grid.RowDefinitions>
 
         <!-- Filter and Sort Panel -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="180,4,180,6">
             <TextBlock Text="Filter By:" />
             <ComboBox 
                 Name="filterBy" 
@@ -101,23 +101,25 @@
                   MouseDoubleClick="lsvCallList_MouseDoubleClick" Margin="0,10,55,10">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="70" />
-                    <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding CallId}" Width="70" />
-                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="150" />
-                    <GridViewColumn Header="Open Time" DisplayMemberBinding="{Binding OpenTime}" Width="150" />
-                    <GridViewColumn Header="Time Until Finish" DisplayMemberBinding="{Binding SumTimeUntilFinish}" Width="150" />
-                    <GridViewColumn Header="Last Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="200" />
-                    <GridViewColumn Header="Sum Appointment Time" DisplayMemberBinding="{Binding SumAppointmentTime}" Width="150" />
-                    <GridViewColumn Header="Total Assignments" DisplayMemberBinding="{Binding SumAssignment}" Width="150" />
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100" />
+                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="25" />
+                    <GridViewColumn Header="Call Id" DisplayMemberBinding="{Binding CallId}" Width="40" />
+                    <GridViewColumn Header="Call Type" DisplayMemberBinding="{Binding CallType}" Width="115" />
+                    <GridViewColumn Header="Open Time" DisplayMemberBinding="{Binding OpenTime}" Width="130" />
+                    <GridViewColumn Header="Time Until Finish" DisplayMemberBinding="{Binding SumTimeUntilFinish}" Width="125" />
+                    <GridViewColumn Header="Last Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="120" />
+                    <GridViewColumn Header="Sum Appointment Time" DisplayMemberBinding="{Binding SumAppointmentTime}" Width="125" />
+                    <GridViewColumn Header="Total Assignments" DisplayMemberBinding="{Binding SumAssignment}" Width="30" />
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="120" />
                     <GridViewColumn Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Delete" 
-                                        Command="{Binding DataContext.DeleteCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                        CommandParameter="{Binding}" 
-                                        Visibility="{Binding Status, Converter={StaticResource CallStatusToVisibilityConverter}}"
-                                        Style="{StaticResource CommonButtonStyle}"/>
+        Command="{Binding DataContext.DeleteCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+        CommandParameter="{Binding}" 
+        Visibility="{Binding Status, Converter={StaticResource CallStatusToVisibilityConverter}}"
+        Background="Red"
+        Style="{StaticResource CommonButtonStyle}"/>
+
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -126,12 +128,41 @@
         </ListView>
 
         <!-- Add Button -->
+        <!-- Add Button -->
         <Button Grid.Row="2" 
-                Content="Add Call" 
-                HorizontalAlignment="Left" 
-                Width="150" 
-                Height="40"
-                Click="ButtonAdd_Click" 
-                Style="{StaticResource CommonButtonStyle}" Margin="355,5,0,5"/>
+        Content="Add Call" 
+        HorizontalAlignment="Left" 
+        Width="150"
+        Click="ButtonAdd_Click" 
+        Margin="355,5,0,0">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#40E0D0"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#2DA4A7"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" 
+                                CornerRadius="20">
+                                    <!-- הפינה מעוגלת, ניתן להתאים את הערך לפי הצורך -->
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#2DA4A7"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
     </Grid>
 </Window>
