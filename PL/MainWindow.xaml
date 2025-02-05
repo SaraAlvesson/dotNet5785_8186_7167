@@ -11,12 +11,14 @@
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="MainWindow_Loaded" 
         Closed="MainWindow_Closed"
-        Background="#F0F3F4">
+        Background="#B3E5FC">
+    <!-- רקע חלון: תכלת בהיר -->
     <Window.Resources>
-        <Style x:Key="RedButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#D32F2F"/>
+        <!-- סגנון לכפתורים שאינם מתנדבים/קריאות – גוון תכלת כהה יותר -->
+        <Style x:Key="DarkerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#007C91"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="BorderBrush" Value="#005F6A"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="10,5"/>
@@ -35,7 +37,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#B71C1C"/>
+                                <Setter Property="Background" Value="#005F6A"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -43,10 +45,11 @@
             </Setter>
         </Style>
 
-        <Style x:Key="TimeButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#D32F2F"/>
+        <!-- סגנון לכפתורי "Handle Volunteers" ו-"Handle Calls" – גווני תורכיז -->
+        <Style x:Key="VolunteerCallButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#40E0D0"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#B71C1C"/>
+            <Setter Property="BorderBrush" Value="#2DA4A7"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="10,5"/>
@@ -65,30 +68,42 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#B71C1C"/>
+                                <Setter Property="Background" Value="#2DA4A7"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- לסידור כפתורי זמן נשמר הסגנון הקיים, אך מעדכנים אותו לגוון הכהה -->
+        <Style x:Key="TimeButtonStyle" TargetType="Button" BasedOn="{StaticResource DarkerButtonStyle}"/>
+
+        <!-- אם יש צורך, ניתן גם להגדיר את סגנון "RedButtonStyle" (לפעולות DB) כבסיס את אותו DarkerButtonStyle -->
+        <Style x:Key="RedButtonStyle" TargetType="Button" BasedOn="{StaticResource DarkerButtonStyle}"/>
     </Window.Resources>
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
+            <!-- תצוגת זמן -->
             <RowDefinition Height="Auto"/>
+            <!-- כפתורי שינוי זמן -->
+            <RowDefinition Height="Auto"/>
+            <!-- כפתורי פעולות במסד הנתונים -->
+            <RowDefinition Height="Auto"/>
+            <!-- אפשר לשמור שורה נוספת אם נדרש מקום נוסף -->
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Time Display -->
+        <!-- תצוגת זמן -->
         <StackPanel Grid.Row="0" HorizontalAlignment="Center">
             <Label Content="Current Time:" 
-                   FontSize="18" 
+                   FontSize="50" 
                    FontWeight="Bold" 
                    Foreground="#2C3E50" 
-                   HorizontalAlignment="Center"/>
+                   HorizontalAlignment="Center" 
+                   Height="84" 
+                   Width="366"/>
             <Label Content="{Binding CurrentTime}" 
                    FontSize="24" 
                    FontWeight="Bold" 
@@ -96,84 +111,59 @@
                    HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <!-- Database Operation Buttons -->
+        <!-- כפתורי שינוי זמן – שמירת הגודל והמרווח כפי שהוגדר -->
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Center" 
                     Grid.Row="1" 
-                    VerticalAlignment="Center">
-            <Button Content="Initialize DB" 
-                    Width="120" 
-                    Height="40" 
-                    Click="btnInit" 
-                    Style="{StaticResource RedButtonStyle}"/>
-            <Button Content="Reset DB" 
-                    Width="120" 
-                    Height="40" 
-                    Click="btnReset" 
-                    Style="{StaticResource RedButtonStyle}"/>
-            <Button Content="Handle Volunteers" 
-                    Width="120" 
-                    Height="40" 
-                    Click="btnVolunteerList" 
-                    Style="{StaticResource RedButtonStyle}"/>
-            <Button Content="Handle Calls" 
-                    Width="120" 
-                    Height="40" 
-                    Click="btnHandleCalls" 
-                    Style="{StaticResource RedButtonStyle}"/>
+                    Margin="0,20,0,20">
+            <Button Content="Add Minute" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
+                    Click="btnAddMin" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"/>
+            <Button Content="Add Hour" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
+                    Click="btnAddHour" Style="{StaticResource TimeButtonStyle}" Height="52" Width="111"/>
+            <Button Content="Add Day" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
+                    Click="btnAddDay" Style="{StaticResource TimeButtonStyle}" Height="52" Width="112"/>
+            <Button Content="Add Month" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
+                    Click="btnAddMonth" Style="{StaticResource TimeButtonStyle}" Height="52" Width="107"/>
+            <Button Content="Add Year" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
+                    Click="btnAddYear" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"/>
         </StackPanel>
 
-        <!-- Time Manipulation Buttons -->
-        <StackPanel Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    Grid.Row="2" 
-                    Margin="0,20,0,0">
-            <Button Content="Add Minute" 
-                    Width="110" 
-                    Height="40" 
-                    Click="btnAddMin" 
-                    Style="{StaticResource TimeButtonStyle}"/>
-            <Button Content="Add Hour" 
-                    Width="110" 
-                    Height="40" 
-                    Click="btnAddHour" 
-                    Style="{StaticResource TimeButtonStyle}"/>
-            <Button Content="Add Day"
-                    Width="110" 
-                    Height="40" 
-                    Click="btnAddDay" 
-                    Style="{StaticResource TimeButtonStyle}"/>
-            <Button Content="Add Month" 
-                    Width="110" 
-                    Height="40" 
-                    Click="btnAddMonth" 
-                    Style="{StaticResource TimeButtonStyle}"/>
-            <Button Content="Add Year" 
-                    Width="110" 
-                    Height="40" 
-                    Click="btnAddYear" 
-                    Style="{StaticResource TimeButtonStyle}"/>
-        </StackPanel>
+        <!-- כפתורי פעולות במסד הנתונים -->
+        <!-- חלוקה לתת-Grid עם 3 שורות: 
+             שורה ראשונה - כפתורי מתנדבים וקריאות (משתמשים בסגנון VolunteerCallButtonStyle)
+             שורה שנייה ושלישית – כפתורים נוספים (משתמשים בסגנון DarkerButtonStyle/RedButtonStyle) -->
+        <Grid Grid.Row="2" Margin="0,20,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- RiskRange Update Section -->
-        <StackPanel Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    Grid.Row="3" 
-                    Margin="0,30,0,0">
-            <TextBox Name="textrr" 
-                     Width="150" 
-                     Height="35" 
+            <!-- שורה 1: כפתורי מתנדבים וקריאות -->
+            <Button Grid.Row="0" Grid.Column="0" Content="Handle Volunteers" 
+                    Click="btnVolunteerList" Style="{StaticResource VolunteerCallButtonStyle}" Margin="195,5,75,-16" Grid.RowSpan="3" />
+            <Button Grid.Row="0" Grid.Column="1" Content="Handle Calls" 
+                    Click="btnHandleCalls" Style="{StaticResource VolunteerCallButtonStyle}" Margin="90,3,175,-16" Grid.RowSpan="3" />
+
+            <!-- שורה 2: כפתורי אתחול ואיפוס (משתמשים בסגנון DarkerButtonStyle, כאן מופיע תחת "RedButtonStyle" שמבוסס על DarkerButtonStyle) -->
+            <Button Grid.Row="2" Grid.Column="0" Content="Initialize DB" 
+                    Click="btnInit" Style="{StaticResource RedButtonStyle}" Margin="280,125,30,-136" />
+            <Button Grid.Row="2" Content="Reset DB" 
+                    Click="btnReset" Style="{StaticResource RedButtonStyle}" Margin="60,125,245,-136" Grid.Column="1" />
+
+            <!-- שורה 3: כפתור עידכון יחד עם תיבת הטקסט -->
+            <Button Grid.Row="2" Grid.Column="0" Content="Update Risk Range" 
+                    Click="update_click" Style="{StaticResource RedButtonStyle}" FontSize="20" Margin="215,246,20,-236" />
+            <TextBox Grid.Row="2" x:Name="textrr" 
                      Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" 
                      Background="#ECF0F1" 
                      BorderBrush="#E74C3C" 
                      Foreground="#2C3E50" 
-                     Margin="0,0,10,0" 
-                   />
-            <Button Content="Update" 
-                    Width="100" 
-                    Height="35" 
-                    Click="update_click" 
-                    Style="{StaticResource RedButtonStyle}"/>
-        </StackPanel>
+                     Margin="60,246,230,-236" Grid.Column="1"/>
+        </Grid>
     </Grid>
 </Window>

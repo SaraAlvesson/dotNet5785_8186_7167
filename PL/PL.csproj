@@ -42,4 +42,24 @@
     <Resource Include="Images\download.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.exe" />
+  </ItemGroup>
+
 </Project>

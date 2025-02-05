@@ -73,14 +73,14 @@
 
         <!-- כפתורים - Login ו-Cancel -->
         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" 
-                    HorizontalAlignment="Center" VerticalAlignment="Top" Height="76" Width="360" Margin="0,114,0,0">
-            <Button Content="Login" Width="156" Height="47" Margin="10" 
+                    HorizontalAlignment="Left" VerticalAlignment="Top" Height="76" Width="360" Margin="65,113,0,0" Grid.ColumnSpan="2">
+            <Button Content="Login" Width="120" Height="40" Margin="10" 
         Background="#1ABC9C" Foreground="White" 
         BorderBrush="#16A085" Click="LoginButton_Click"
         Style="{StaticResource RoundButtonStyle}" 
         FontFamily="Montserrat" FontWeight="SemiBold" />
 
-            <Button Content="Cancel" Width="160" Height="45" Margin="10" 
+            <Button Content="Cancel" Width="120" Height="40" Margin="10" 
                     Background="#E53935" Foreground="White" 
                     BorderBrush="#C62828" Click="CancelButton_Click"
                     Style="{StaticResource RoundButtonStyle}" 

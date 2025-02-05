@@ -248,10 +248,13 @@ namespace PL.Admin
         }
 
         // לחצן הוספה
-        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            new SingleVolunteerWindow().Show();
-        }
+      private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+{
+
+        new SingleVolunteerWindow().Show();
+    }
+    
+
 
         // לחיצה כפולה על פריט ברשימה לצפייה בפרטים
         private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
