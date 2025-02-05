@@ -120,14 +120,20 @@ internal class Exceptions
         public BlInvalidLocationException(string? message) : base(message) { }
         public BlInvalidLocationException(string message, Exception innerException) : base(message, innerException) { }
     }
-    public class InvalidAddressFormatException : Exception
-    {
-        public InvalidAddressFormatException(string message) : base(message) { }
-    }
 
-    public class InvalidGeolocationException : Exception
+    [Serializable]
+    internal class BLTemporaryNotAvailableException : Exception
     {
-        public InvalidGeolocationException(string message) : base(message) { }
-    }
+        public BLTemporaryNotAvailableException()
+        {
+        }
 
+        public BLTemporaryNotAvailableException(string? message) : base(message)
+        {
+        }
+
+        public BLTemporaryNotAvailableException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+    }
 }

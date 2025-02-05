@@ -1,4 +1,6 @@
 ﻿namespace Dal;
+
+using System.Runtime.CompilerServices;
 using DalApi;
 using DO;
 
@@ -13,6 +15,9 @@ internal class VolunteerImplementation : IVolunteer
     /// Adds the volunteer to the list if no existing volunteer has the same ID.
     /// Throws a DalAlreadyExistException if the volunteer with the same ID already exists.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Create(Volunteer item)
     {
         if (Read(item.Id) == null) // אם המתנדב לא קיים כבר
@@ -32,6 +37,9 @@ internal class VolunteerImplementation : IVolunteer
     /// If the volunteer with the given ID is found, it is removed from the list.
     /// Throws a DalDoesNotExistException if the volunteer with the given ID does not exist.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
 
     public void Delete(int id)
     {
@@ -51,6 +59,9 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes all volunteer records from the list.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void DeleteAll()
     {
         DataSource.Volunteers.Clear(); // Clear the list of all volunteers
@@ -60,6 +71,9 @@ internal class VolunteerImplementation : IVolunteer
     /// Reads a volunteer record by its ID.
     /// Returns the volunteer if found, otherwise returns null.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Volunteer? Read(int id)
     {
         return DataSource.Volunteers.FirstOrDefault(obj => obj.Id == id); // Return volunteer with the matching ID, or null if not found
@@ -69,6 +83,9 @@ internal class VolunteerImplementation : IVolunteer
     /// Reads a volunteer record based on a given filter.
     /// Returns the first volunteer that matches the filter criteria, or null if no match is found.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Volunteer? Read(Func<Volunteer, bool> filter) // Stage 2
         => DataSource.Volunteers.FirstOrDefault(filter); // Return the first volunteer matching the filter, or null if none matches
 
@@ -76,6 +93,9 @@ internal class VolunteerImplementation : IVolunteer
     /// Reads all volunteer records, optionally filtered by a given condition.
     /// If no filter is provided, returns all volunteers.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null) // Stage 2
         => filter == null
             ? DataSource.Volunteers.Select(obj => obj) // Return all volunteers if no filter is provided
@@ -85,6 +105,9 @@ internal class VolunteerImplementation : IVolunteer
     /// Updates an existing volunteer record.
     /// Deletes the existing volunteer and then creates the new one in the list.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Update(Volunteer item)
     {
         try

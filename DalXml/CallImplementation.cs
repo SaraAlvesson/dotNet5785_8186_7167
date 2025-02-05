@@ -56,6 +56,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to be read.</param>
     /// <returns>The call with the matching Id, or null if not found.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Call Read(int id)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -68,6 +71,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">A filter function to match the call.</param>
     /// <returns>The first call that matches the filter, or null if no match is found.</returns>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public Call? Read(Func<Call, bool> filter) // Stage 2
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -94,6 +100,9 @@ internal class CallImplementation : ICall
     /// Updates an existing call by first deleting the old one (if it exists) and then creating the new one.
     /// </summary>
     /// <param name="item">The call to be updated.</param>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Update(Call item)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -108,6 +117,9 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to be deleted.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the call with the given Id is not found.</exception>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Delete(int id)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -119,6 +131,9 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes all calls from the list.
     /// </summary>
+    /// 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Call>(), Config.s_calls_xml);

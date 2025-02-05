@@ -241,6 +241,7 @@ internal class CallImplementation : ICall
 
     public void UpdateCallDetails(BO.Call callDetails)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
@@ -295,6 +296,7 @@ internal class CallImplementation : ICall
 
     public void DeleteCall(int callId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
             // שלב 1: בקשת הקריאה משכבת הנתונים
@@ -407,6 +409,7 @@ internal class CallImplementation : ICall
 
     public void AddCall(BO.Call call)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
 
         try
         {
@@ -624,6 +627,7 @@ internal class CallImplementation : ICall
     //}
     public void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
             // Retrieve the assignment by ID

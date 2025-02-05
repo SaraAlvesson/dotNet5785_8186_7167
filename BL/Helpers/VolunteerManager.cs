@@ -383,7 +383,79 @@ namespace Helpers
             return password.Any(char.IsUpper) && password.Any(char.IsDigit);
         }
 
+        #region Simulation
 
+    // Static random number generator used throughout the simulation
+    private static readonly Random s_rand = new();
+
+    // Counter to track the number of simulator threads
+    private static int s_simulatorCounter = 0;
+
+    // Counter to randomly choose volunteers every iteration
+    private static int s_Counter = 0; // for the func to choose completely random volunteers every iteration
+
+    /// <summary>
+    /// Simulates the assignment of volunteers to calls. It processes all active volunteers and assigns them calls.
+    /// </summary>
+    internal static void SimulateAssignForVolunteer()
+    {
+        // Set the thread's name for identification purposes
+        Thread.CurrentThread.Name = $"Simulator{++s_simulatorCounter}";
+
+        // Declare a list to store active volunteers
+        IEnumerable<DO.Volunteer> DoVolList;
+
+        // Locking the critical section to ensure thread safety while accessing the volunteer data
+        lock (AdminManager.BlMutex) //stage 7
+            DoVolList = s_dal.Volunteer.ReadAll(v => v.Active == true).ToList();
+
+        // Loop through each active volunteer
+        foreach (DO.Volunteer doVolunteer in DoVolList)
+        {
+            // Check if the volunteer currently has an ongoing call
+            CallInProgress? currentCall = GetCallIn(doVolunteer);
+
+            // Increment the global counter for tracking iterations
+            s_Counter++;
+
+            // If the volunteer doesn't have an active call
+            if (currentCall == null)
+            {
+                // Every 3rd iteration, try to assign an open call to the volunteer
+                if (s_Counter % 3 == 0)
+                {
+                    // Get the list of open calls for the volunteer
+                    var availableCalls = CallManager.GetOpenCallInLists(doVolunteer.Id, null, null);
+                    int cntOpenCall = availableCalls.Count();
+
+                    // If there are open calls available, randomly choose one to assign
+                    if (cntOpenCall != 0)
+                    {
+                        int callId = availableCalls.Skip(s_rand.Next(0, cntOpenCall)).First()!.Id;
+                        // Assign the selected call to the volunteer
+                        CallManager.AssignCallToVolunteer(doVolunteer.Id, callId);
+                    }
+                }
+            }
+            else
+            {
+                // Calculate the maximum time the volunteer can be busy with the current call
+                DateTime maxTime = currentCall.OpenTime.AddHours(currentCall.DistanceOfCall).AddMonths(1);
+
+                // If the current time exceeds the maximum time, end the treatment
+                if (AdminManager.Now > maxTime)
+                {
+                    CallManager.UpdateCallAsCompleted(doVolunteer.Id, currentCall.Id);
+                }
+                // Every 10th iteration, cancel the treatment for the current volunteer
+                else if (s_Counter % 10 == 0)
+                {
+                    CallManager.UpdateToCancelCallTreatment(doVolunteer.Id, currentCall.Id);
+                }
+            }
+        }
+    }
+    #endregion
 
 
 
