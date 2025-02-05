@@ -54,49 +54,6 @@ namespace Helpers
 
 
 
-        public static bool IsAddressValid(string address)
-        {
-            // ודא שהכנסת את המפתח שלך כאן
-            string ApiKey = "YOUR_GOOGLE_MAPS_API_KEY";  // הכנס את ה-API Key שלך כאן
-
-            using (HttpClient client = new HttpClient())
-            {
-                string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={ApiKey}";
-
-                try
-                {
-                    // שליחת הבקשה ל-Google Geocoding API
-                    HttpResponseMessage response = client.GetAsync(url).Result; // סינכרונית
-                    response.EnsureSuccessStatusCode(); // אם לא הצליחה, תזרוק שגיאה
-                    string responseBody = response.Content.ReadAsStringAsync().Result; // סינכרונית
-
-                    // השתמש ב-System.Text.Json כדי לנתח את התשובה
-                    using (JsonDocument jsonDoc = JsonDocument.Parse(responseBody))
-                    {
-                        // הדפסת התשובה כולה כדי לבדוק
-                        Console.WriteLine("API Response: " + responseBody);
-
-                        var status = jsonDoc.RootElement.GetProperty("status").GetString();
-                        Console.WriteLine("Status: " + status);  // הדפס את הסטטוס
-
-                        // אם הסטטוס הוא "OK", הכתובת חוקית
-                        return status == "OK";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                    return false; // טיפול בשגיאות ברשת או בשגיאות של ה-API
-                }
-            }
-        }
-
-
-
-
-
-
-
 
         public static void checkCallFormat(BO.Call call)
         {
@@ -108,16 +65,13 @@ namespace Helpers
             if (call.OpenTime == default)
                 throw new InvalidCallFormatException("Open time is not valid.");
 
-            // בדיקת זמן מקסימלי
-            //if (call.MaxFinishTime == default)
-            //    throw new InvalidCallFormatException("Max finish time is not valid.");
-
             // בדיקת כתובת
-            
+            if (Tools.IsAddressValid(call.Address))
+                throw new InvalidCallFormatException("Address cannot be empty.");
 
-            if (string.IsNullOrWhiteSpace(call.Address)||IsAddressValid(call.Address)==false)
-                throw new InvalidCallFormatException("Address is either empty or exceeds the maximum length (200 characters).");
-          
+            if (call.Address.Length > 200)
+                throw new InvalidCallFormatException("Address exceeds the maximum length of 200 characters.");
+
             // בדיקת אורך ורוחב
             if (call.Longitude < -180 || call.Longitude > 180)
                 throw new InvalidCallFormatException("Longitude must be between -180 and 180 degrees.");
@@ -125,6 +79,7 @@ namespace Helpers
             if (call.Latitude < -90 || call.Latitude > 90)
                 throw new InvalidCallFormatException("Latitude must be between -90 and 90 degrees.");
         }
+
 
         public static async Task<bool> IsValidAddressAsync(string address)
         {

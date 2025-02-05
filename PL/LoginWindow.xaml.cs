@@ -79,6 +79,6 @@ namespace PL
             Password = ((PasswordBox)sender).Password;
         }
 
-       
+      
     }
 }

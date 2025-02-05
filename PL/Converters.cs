@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows;
-
+namespace PL;
 public class ConvertUpdateToReadOnly : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -16,6 +16,24 @@ public class ConvertUpdateToReadOnly : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+    public class BoolToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue)
+            {
+                return boolValue ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
 //if there is no current call, the currentCall details will not be displayed
 public class CallInProgressToVisibilityConverter : IValueConverter
@@ -77,11 +95,20 @@ public class VolunteerRoleToEnabledConverter : IValueConverter
     }
 }
 
-public class BooleanToVisibilityConverter : IValueConverter
+public class CallStatusToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return (value is bool && (bool)value) ? Visibility.Visible : Visibility.Collapsed;
+        if (value is BO.Enums.CalltStatusEnum status)
+        {
+            // מחזיר Visibility.Visible רק אם הסטטוס הוא OPEN או CallAlmostOver
+            if (status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver)
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        return Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -89,4 +116,5 @@ public class BooleanToVisibilityConverter : IValueConverter
         return (value is Visibility && (Visibility)value == Visibility.Visible);
     }
 }
+
 

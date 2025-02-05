@@ -108,7 +108,8 @@
         <Label Content="Call Type:" Grid.Row="1" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallType, Mode=TwoWay}" 
                   Grid.Row="1" Grid.Column="1"
-                  ItemsSource="{Binding Source={StaticResource CallTypeCollectionKey}}"/>
+                  ItemsSource="{Binding Source={StaticResource CallTypeCollectionKey}}" 
+                  SelectionChanged="ComboBox_SelectionChanged"/>
 
         <!-- Address -->
         <Label Content="Address:" Grid.Row="2" Grid.Column="0"/>
@@ -134,32 +135,26 @@
         <!-- Status -->
         <Label Content="Status:" Grid.Row="6" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallStatus, Mode=TwoWay}" 
-                  Grid.Row="6" Grid.Column="1"/>
+                  Grid.Row="6" Grid.Column="1"
+                  ItemsSource="{Binding Source={StaticResource StatusTypeCollectionKey}}" 
+                  IsEnabled="False" SelectionChanged="ComboBox_SelectionChanged_1" />
+        <!-- לא ניתן לערוך את הסטטוס -->
 
         <!-- List Assignments -->
         <Label Content="List Assignments:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top"/>
-        <ListView ItemsSource="{Binding CallInList}" 
-                  Grid.Row="7" Grid.Column="1"/>
+        <ListView ItemsSource="{Binding CurrentCall.CallAssignInLists}" 
+                  Grid.Row="7" Grid.Column="1" 
+                  SelectionChanged="ListView_SelectionChanged"/>
+        <!-- Add/Update Button -->
 
-        <!-- Update Button -->
         <Button Content="{Binding ButtonText}" 
-                Command="{Binding UpdateCommand}" 
-                Grid.Row="7" Grid.Column="1" 
-                Style="{StaticResource CommonButtonStyle}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Width="155"
-                Height="20"
-                Margin="0,322,0,0"
-                Click="ButtonAddUpdate_Click" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Button.RenderTransform>
-        </Button>
+     Grid.Row="13" 
+     Grid.Column="1" 
+     Style="{StaticResource CommonButtonStyle}"
+     HorizontalAlignment="Center"
+     Width="200"
+     Height="45"
+     Margin="0,20,0,0"
+     Click="ButtonAddUpdate_Click"/>
     </Grid>
 </Window>

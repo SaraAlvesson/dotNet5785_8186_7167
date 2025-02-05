@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,6 +30,21 @@ namespace PL.Admin
                 }
             }
         }
+        private bool _isIdEnabled;
+        public bool IsIdEnabled
+        {
+            get { return _isIdEnabled; }
+            set
+            {
+                if (_isIdEnabled != value)
+                {
+                    _isIdEnabled = value;
+                    OnPropertyChanged(nameof(IsIdEnabled));
+                }
+            }
+        }
+        public ObservableCollection<CallInProgress> VolunteerTakenCare { get; set; }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -65,10 +81,12 @@ namespace PL.Admin
                 if (id == 0)
                 {
                     CurrentVolunteer = new BO.Volunteer();
+                    IsIdEnabled = true;  // ה-Id ניתן לשינוי בהוספה
                 }
                 else
                 {
                     CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(id);
+                    IsIdEnabled = false;   // ה-Id לא ניתן לשינוי בעדכון
                 }
             }
             catch (Exception ex)
@@ -93,13 +111,12 @@ namespace PL.Admin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            s_bl?.Call.AddObserver(volunteerListObserver);
-            UpdateVolunteerList();
+            BlApi.Factory.Get().Volunteer.AddObserver(volunteerListObserver);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            s_bl?.Call.RemoveObserver(volunteerListObserver);
+            BlApi.Factory.Get().Volunteer.RemoveObserver(volunteerListObserver);
         }
 
         private void volunteerListObserver()
@@ -167,7 +184,6 @@ namespace PL.Admin
                 {
                     s_bl.Volunteer.AddVolunteer(CurrentVolunteer!);
                     MessageBox.Show("Volunteer added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 }
                 else
                 {
@@ -176,12 +192,25 @@ namespace PL.Admin
                 }
 
                 UpdateVolunteerList();
-                
+                this.Close();
+            }
+            catch (ArgumentException ex)
+            {
+                // במקרה של חריגה מותאמת
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error occurred: {ex.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                // במקרה של חריגה כללית
+                MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+       
     }
-}
+    }

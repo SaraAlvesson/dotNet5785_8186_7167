@@ -38,15 +38,29 @@ static class XMLTools
         try
         {
             if (!File.Exists(xmlFilePath)) return new();
+
             using FileStream file = new(xmlFilePath, FileMode.Open);
             XmlSerializer x = new(typeof(List<T>));
-            return x.Deserialize(file) as List<T> ?? new();
+            List<T> result = x.Deserialize(file) as List<T> ?? new();
+
+            // הדפסת פרטי קריאת שדה זמן פתיחה
+            foreach (var item in result)
+            {
+                if (item is Call call)
+                {
+                    Console.WriteLine($"OpenTime: {call.OpenTime}");  // הדפסה לבדוק את ערך OpenTime
+                }
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
             throw new DalXMLFileLoadCreateException($"fail to load xml file: {xmlFilePath}, {ex.Message}");
         }
     }
+
+
     #endregion
 
     #region SaveLoadWithXElement
@@ -210,8 +224,10 @@ static class XMLTools
             Latitude = (double?)s.Element("Latitude") ?? throw new FormatException("Latitude is missing"),
             Longitude = (double?)s.Element("Longitude") ?? throw new FormatException("Longitude is missing"),
 
-            // טיפול בשדה מסוג DateTime? (nullable)
-            OpenTime = DateTime.TryParse((string?)s.Element("OpenTime"), out DateTime openTime) ? openTime : throw new FormatException("Invalid OpenTime"),
+            // טיפול בשדה מסוג DateTime? (nullable) עם ParseExact
+            OpenTime = DateTime.TryParseExact((string?)s.Element("OpenTime"), "yyyy-MM-dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime openTime)
+                ? openTime
+                : throw new FormatException("Invalid OpenTime"),
 
             // טיפול בשדה מסוג Enum? (nullable) - עם Enum.TryParse
             CallType = Enum.TryParse((string?)s.Element("CallType"), out CallType callType) ? callType : throw new FormatException("Invalid CallType"),
@@ -222,6 +238,7 @@ static class XMLTools
             MaxTime = DateTime.TryParse((string?)s.Element("MaxTime"), out DateTime maxTime) ? maxTime : (DateTime?)null
         };
     }
+
 
 
     #endregion

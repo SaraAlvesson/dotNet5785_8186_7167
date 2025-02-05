@@ -13,6 +13,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static BO.Exceptions;
+using static Helpers.Tools;
 
 namespace Helpers
 {
@@ -116,36 +117,17 @@ namespace Helpers
             return null;
         }
 
-        private const string ApiKey = "YOUR_GOOGLE_MAPS_API_KEY";
-
-        public static bool IsAddressValid(string address)
+        public class InvalidAddressFormatException : Exception
         {
-
-            using (HttpClient client = new HttpClient())
-            {
-                string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={ApiKey}";
-
-                try
-                {
-                    HttpResponseMessage response = client.GetAsync(url).Result; // סינכרונית
-                    response.EnsureSuccessStatusCode();
-                    string responseBody = response.Content.ReadAsStringAsync().Result; // סינכרונית
-
-                    // השתמש ב-System.Text.Json
-                    using (JsonDocument jsonDoc = JsonDocument.Parse(responseBody))
-                    {
-                        var status = jsonDoc.RootElement.GetProperty("status").GetString();
-
-                        return status == "OK"; // אם הסטטוס הוא "OK", הכתובת חוקית
-                    }
-                }
-                catch (Exception)
-                {
-                    return false; // טיפול בשגיאות ברשת או בשגיאות של ה-API
-                }
-            }
+            public InvalidAddressFormatException(string message) : base(message) { }
         }
 
+        public class InvalidGeolocationException : Exception
+        {
+            public InvalidGeolocationException(string message) : base(message) { }
+        }
+
+       
 
         internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
         {
@@ -174,8 +156,8 @@ namespace Helpers
         }
 
 
-       
-        
+
+
 
 
 
@@ -184,17 +166,21 @@ namespace Helpers
             if (string.IsNullOrEmpty(volunteer.Email) || volunteer.Email.Count(c => c == '@') != 1)
             {
                 throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
-
             }
-            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(co\.il|gov\.il|ac\.il|org\.il|net\.il|k12\.il|muni\.il)$";
+
 
             if (!Regex.IsMatch(volunteer.Email, pattern))
             {
-                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email}  Is incorrect  ");
+                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
             }
             else
+            {
                 return true;
+            }
         }
+
 
 
 

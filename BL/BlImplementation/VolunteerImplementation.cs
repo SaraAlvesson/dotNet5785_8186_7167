@@ -26,22 +26,7 @@ internal class VolunteerImplementation : IVolunteer
     #endregion Stage 5
 
 
-    //public string Login(string username, string password)
-    //{
-
-    //    var volunteer = _dal.Volunteer.ReadAll(v => v.FullName == username).FirstOrDefault();
-    //    if (volunteer != null)
-    //    {
-    //        if (volunteer.Password != password)
-    //            throw new BlPasswordNotValid("Incorrect password");
-
-    //        return ((Enums.VolunteerTypeEnum)volunteer.Position).ToString();
-    //    }
-    //    throw new BlDoesNotExistException($"Username {username} not found");
-
-    //}
-
-    // שלב 4: אם המשתמש לא נמצא
+  
     public string Login(int username, string password)
     {
         // שלב 1: שליפת המתנדב לפי מזהה
@@ -75,98 +60,155 @@ internal class VolunteerImplementation : IVolunteer
         // שלב 5: אם המשתמש לא נמצא
         throw new BlDoesNotExistException($"Username {username} not found");
     }
-
-
-   public IEnumerable<VolunteerInList> RequestVolunteerList(
-    bool? isActive,
-    VolunteerInListField? sortField = null,
-    CallTypeEnum? callTypeFilter = null)
-{
-    try
+    public IEnumerable<VolunteerInList> RequestVolunteerList(
+      bool? isActive,
+      VolunteerInListField? sortField = null,
+      CallTypeEnum? callTypeFilter = null)  // הוספת פילטר לסוג קריאה
     {
-        var volunteers = _dal.Volunteer.ReadAll();
-
-        if (isActive.HasValue)
+        try
         {
-            volunteers = volunteers.Where(v => v.Active == isActive.Value).ToList();
-            Console.WriteLine($"Active filter applied: {isActive.Value}");
-        }
+            var volunteers = _dal.Volunteer.ReadAll();
 
-        if (!volunteers.Any())
-        {
-            Console.WriteLine("No volunteers found after applying active filter.");
-        }
-
-        var volunteerDetailsMap = volunteers
-            .Select(v => RequestVolunteerDetails(v.Id))
-            .ToDictionary(d => d.Id);
-
-        var volunteerList = volunteerDetailsMap.Values.Select(details => new VolunteerInList
-        {
-            Id = details.Id,
-            FullName = details.FullName,
-            Active = details.Active,
-            SumTreatedCalls = details.SumCalls,
-            SumCanceledCalls = details.SumCanceled,
-            SumExpiredCalls = details.SumExpired,
-            CallIdInTreatment = details.VolunteerTakenCare?.CallId,
-            CallType = details.VolunteerTakenCare?.CallType ?? default(CallTypeEnum)
-        }).ToList();
-
-        if (callTypeFilter.HasValue)
-        {
-            volunteerList = volunteerList.Where(v => v.CallType == callTypeFilter.Value).ToList();
-            Console.WriteLine($"Call type filter applied: {callTypeFilter.Value}");
-        }
-
-        if (!volunteerList.Any())
-        {
-            Console.WriteLine("No volunteers found after applying call type filter.");
-        }
-
-        if (sortField.HasValue)
-        {
-            Console.WriteLine($"Sorting by: {sortField}");
-            switch (sortField)
+            // סינון לפי פעילות
+            if (isActive.HasValue)
             {
-                case VolunteerInListField.FullName:
-                    volunteerList = volunteerList.OrderBy(v => v.FullName).ThenBy(v => v.Id).ToList();
-                    break;
-                case VolunteerInListField.Active:
-                    volunteerList = volunteerList.OrderBy(v => v.Active).ThenBy(v => v.Id).ToList();
-                    break;
-                case VolunteerInListField.SumTreatedCalls:
-                    volunteerList = volunteerList.OrderBy(v => v.SumTreatedCalls).ThenBy(v => v.Id).ToList();
-                    break;
-                case VolunteerInListField.SumCanceledCalls:
-                    volunteerList = volunteerList.OrderBy(v => v.SumCanceledCalls).ThenBy(v => v.Id).ToList();
-                    break;
-                case VolunteerInListField.SumExpiredCalls:
-                    volunteerList = volunteerList.OrderBy(v => v.SumExpiredCalls).ThenBy(v => v.Id).ToList();
-                    break;
-                case VolunteerInListField.CallIdInTreatment:
-                    volunteerList = volunteerList.OrderBy(v => v.CallIdInTreatment ?? -1).ThenBy(v => v.Id).ToList();
-                    break;
-                case VolunteerInListField.CallType:
-                    volunteerList = volunteerList.OrderBy(v => v.CallType).ThenBy(v => v.Id).ToList();
-                    break;
-                default:
-                    volunteerList = volunteerList.OrderBy(v => v.Id).ToList();
-                    break;
+                volunteers = volunteers.Where(v => v.Active == isActive.Value).ToList();
             }
-        }
-        else
-        {
-            volunteerList = volunteerList.OrderBy(v => v.Id).ToList();
-        }
 
-        return volunteerList;
+            // הבאת הנתונים לאחר הסינון
+            var volunteerDetailsMap = volunteers
+                .Select(v => RequestVolunteerDetails(v.Id))
+                .ToDictionary(d => d.Id);
+
+            var volunteerList = volunteerDetailsMap.Values.Select(details => new VolunteerInList
+            {
+                Id = details.Id,
+                FullName = details.FullName,
+                Active = details.Active,
+                SumTreatedCalls = details.SumCalls,
+                SumCanceledCalls = details.SumCanceled,
+                SumExpiredCalls = details.SumExpired,
+                CallIdInTreatment = details.VolunteerTakenCare?.CallId,
+                CallType = details.VolunteerTakenCare?.CallType ?? default(CallTypeEnum)
+            }).ToList();
+
+            // סינון לפי סוג קריאה אם יש צורך
+            if (callTypeFilter.HasValue)
+            {
+                volunteerList = volunteerList.Where(v => v.CallType == callTypeFilter.Value).ToList();
+            }
+
+            // מיון
+            volunteerList = sortField switch
+            {
+                VolunteerInListField.FullName => volunteerList.OrderBy(v => v.FullName).ThenBy(v => v.Id).ToList(),
+                VolunteerInListField.Active => volunteerList.OrderBy(v => v.Active).ThenBy(v => v.Id).ToList(),
+                VolunteerInListField.SumTreatedCalls => volunteerList.OrderBy(v => v.SumTreatedCalls).ThenBy(v => v.Id).ToList(),
+                VolunteerInListField.SumCanceledCalls => volunteerList.OrderBy(v => v.SumCanceledCalls).ThenBy(v => v.Id).ToList(),
+                VolunteerInListField.SumExpiredCalls => volunteerList.OrderBy(v => v.SumExpiredCalls).ThenBy(v => v.Id).ToList(),
+                VolunteerInListField.CallIdInTreatment => volunteerList.OrderBy(v => v.CallIdInTreatment ?? -1).ThenBy(v => v.Id).ToList(),
+                VolunteerInListField.CallType => volunteerList.OrderBy(v => v.CallType).ThenBy(v => v.Id).ToList(),
+                _ => volunteerList.OrderBy(v => v.Id).ToList(), // ברירת מחדל
+            };
+
+            return volunteerList;
+        }
+        catch (Exception ex)
+        {
+            throw new BO.Exceptions.BlDoesNotExistException("Error retrieving volunteer list.", ex);
+        }
     }
-    catch (Exception ex)
-    {
-        throw new BO.Exceptions.BlDoesNotExistException("Error retrieving volunteer list.", ex);
-    }
-}
+
+
+    //   public IEnumerable<VolunteerInList> RequestVolunteerList(
+    //    bool? isActive,
+    //    VolunteerInListField? sortField = null)
+    //{
+    //    try
+    //    {
+    //        var volunteers = _dal.Volunteer.ReadAll();
+
+    //        if (isActive.HasValue)
+    //        {
+    //            volunteers = volunteers.Where(v => v.Active == isActive.Value).ToList();
+    //            Console.WriteLine($"Active filter applied: {isActive.Value}");
+    //        }
+
+    //        if (!volunteers.Any())
+    //        {
+    //            Console.WriteLine("No volunteers found after applying active filter.");
+    //        }
+
+    //        var volunteerDetailsMap = volunteers
+    //            .Select(v => RequestVolunteerDetails(v.Id))
+    //            .ToDictionary(d => d.Id);
+
+    //        var volunteerList = volunteerDetailsMap.Values.Select(details => new VolunteerInList
+    //        {
+    //            Id = details.Id,
+    //            FullName = details.FullName,
+    //            Active = details.Active,
+    //            SumTreatedCalls = details.SumCalls,
+    //            SumCanceledCalls = details.SumCanceled,
+    //            SumExpiredCalls = details.SumExpired,
+    //            CallIdInTreatment = details.VolunteerTakenCare?.CallId,
+    //            CallType = details.VolunteerTakenCare?.CallType ?? default(CallTypeEnum)
+    //        }).ToList();
+
+    //        if (callTypeFilter.HasValue)
+    //        {
+    //            volunteerList = volunteerList.Where(v => v.CallType == callTypeFilter.Value).ToList();
+    //            Console.WriteLine($"Call type filter applied: {callTypeFilter.Value}");
+    //        }
+
+    //        if (!volunteerList.Any())
+    //        {
+    //            Console.WriteLine("No volunteers found after applying call type filter.");
+    //        }
+
+    //        if (sortField.HasValue)
+    //        {
+    //            Console.WriteLine($"Sorting by: {sortField}");
+    //            switch (sortField)
+    //            {
+    //                case VolunteerInListField.FullName:
+    //                    volunteerList = volunteerList.OrderBy(v => v.FullName).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                case VolunteerInListField.Active:
+    //                    volunteerList = volunteerList.OrderBy(v => v.Active).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                case VolunteerInListField.SumTreatedCalls:
+    //                    volunteerList = volunteerList.OrderBy(v => v.SumTreatedCalls).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                case VolunteerInListField.SumCanceledCalls:
+    //                    volunteerList = volunteerList.OrderBy(v => v.SumCanceledCalls).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                case VolunteerInListField.SumExpiredCalls:
+    //                    volunteerList = volunteerList.OrderBy(v => v.SumExpiredCalls).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                case VolunteerInListField.CallIdInTreatment:
+    //                    volunteerList = volunteerList.OrderBy(v => v.CallIdInTreatment ?? -1).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                case VolunteerInListField.CallType:
+    //                    volunteerList = volunteerList.OrderBy(v => v.CallType).ThenBy(v => v.Id).ToList();
+    //                    break;
+    //                default:
+    //                    volunteerList = volunteerList.OrderBy(v => v.Id).ToList();
+    //                    break;
+    //            }
+    //        }
+    //        else
+    //        {
+    //            volunteerList = volunteerList.OrderBy(v => v.Id).ToList();
+    //        }
+
+    //        return volunteerList;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw new BO.Exceptions.BlDoesNotExistException("Error retrieving volunteer list.", ex);
+    //    }
+    //}
 
 
     public BO.Volunteer RequestVolunteerDetails(int volunteerId)
@@ -454,6 +496,8 @@ internal class VolunteerImplementation : IVolunteer
             throw new BlIdNotValid("Invalid ID format.");
         if (!(Helpers.VolunteersManager.IsPhoneNumberValid(volunteer)))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
+        if (!(Helpers.Tools.IsAddressValid(volunteer.Location)))
+            throw new BlPhoneNumberNotCorrect("Invalid Location format.");
         try
         {
             _dal.Volunteer.Create(newVolunteer);
@@ -474,277 +518,3 @@ internal class VolunteerImplementation : IVolunteer
 }
 
 
-//namespace BlImplementation;
-//    using BlApi;
-//using BO;
-//    internal class VolunteerImplementation : IVolunteer
-//    {
-//        private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-
-//        // פונקציה לביצוע התחברות של המתנדב לפי שם משתמש וסיסמה
-//        public string Login(string username, string password)
-//        {
-//            var volunteer = _dal.Volunteer.ReadAll(v => v.FullName == username).FirstOrDefault();
-//            if (volunteer != null)
-//            {
-//                if (volunteer.Password != password)
-//                    throw new ArgumentException("Incorrect password");
-
-//                return ((Enums.VolunteerTypeEnum)volunteer.Position).ToString();
-//            }
-//            throw new ArgumentException($"Username {username} not found");
-//        }
-
-//        // פונקציה להחזרת רשימה של מתנדבים, עם סינונים ואופציות מיון
-//        public IEnumerable<BO.VolunteerInList> RequestVolunteerList(bool? isActive = null, VolunteerInList? sortField = null)
-//        {
-//            var volunteers = _dal.Volunteer.ReadAll()
-//                .Select(v => new BO.VolunteerInList
-//                {
-//                    Id = v.Id,
-//                    FullName = v.FullName,
-//                    Active = v.Active,
-//                }).AsQueryable();
-
-//            // סינון לפי סטטוס פעיל אם הוגדר
-//            if (isActive.HasValue)
-//            {
-//                volunteers = volunteers.Where(v => v.Active == isActive.Value);
-//            }
-
-//            // מיון לפי השדה המבוקש
-//            if (sortField.HasValue)
-//            {
-//                switch (sortField.Value)
-//                {
-//                    case VolunteerInList.FullName:
-//                        volunteers = volunteers.OrderBy(v => v.FullName);
-//                        break;
-//                    case VolunteerInList.Active:
-//                        volunteers = volunteers.OrderBy(v => v.Active);
-//                        break;
-//                        // אפשר להוסיף מקרים נוספים לפי שדות נוספים של המתנדב
-//                }
-//            }
-
-//            return volunteers.ToList();
-//        }
-
-//        // פונקציה לבקשת פרטי מתנדב ספציפי לפי מזהה
-//        public BO.Volunteer RequestVolunteerDetails(int volunteerId)
-//        {
-//            var volunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerId).FirstOrDefault();
-//            if (volunteer == null)
-//                throw new ArgumentException($"Volunteer with id {volunteerId} not found");
-
-//            return new BO.Volunteer
-//            {
-//                Id = volunteer.Id,
-//                FullName = volunteer.FullName,
-//                Position = (Enums.VolunteerTypeEnum)volunteer.Position,
-//                Active = volunteer.Active
-//            };
-//        }
-
-//        // פונקציה לעדכון פרטי מתנדב
-//        public void UpdateVolunteerDetails(BO.Volunteer volunteer)
-//        {
-//            var existingVolunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteer.Id).FirstOrDefault();
-//            if (existingVolunteer == null)
-//                throw new ArgumentException($"Volunteer with id {volunteer.Id} not found");
-
-//            // עדכון פרטי המתנדב במערכת
-//            existingVolunteer.FullName = volunteer.FullName;
-//            existingVolunteer.Position = (DalApi.Enums.VolunteerTypeEnum)volunteer.Position;
-//            existingVolunteer.Active = volunteer.Active;
-
-//            _dal.Volunteer.Update(existingVolunteer);
-//        }
-
-//   public void DeleteVolunteer(int volunteerId)
-//        {
-//            var volunteer = _dal.Volunteers.FirstOrDefault(v => v.Id == id)
-//                ?? throw new KeyNotaFoundException("Volunteer not found.");
-
-//            if (_dal.Calls.Any(c => c.VolunteerId == id))
-//                throw new InvalidOperationException("Cannot delete a volunteer with active or past calls.");
-
-//            _dal.Volunteers.Remove(volunteer);
-//        }
-
-//        private void ValidateVolunteer(Volunteer volunteer)
-//        {
-//            if (string.IsNullOrEmpty(volunteer.FullName) || string.IsNullOrEmpty(volunteer.Email))
-//                throw new ArgumentException("Volunteer name and email must not be empty.");
-//        }
-
-//        private bool IsAdmin(int id)
-//        {
-//            var volunteer = _dal.Volunteers.FirstOrDefault(v => v.Id == id);
-//            return volunteer?.Role == "Admin";
-//        }
-//        public void AddVolunteer(Volunteer volunteerDetails)
-//        {
-
-//        }
-//    }
-
-
-//namespace BlImplementation;
-//    using BlApi;
-//    using BO;
-
-//    internal class VolunteerImplementation : IVolunteer
-//    {
-//        private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-
-//    // פונקציה לביצוע התחברות של מתנדב עם שם משתמש וסיסמה
-//    public string Login(string username, string password)
-//    {
-
-//        var volunteer = _dal.Volunteer.ReadAll(v => v.FullName == username).FirstOrDefault();
-//        if (volunteer != null)
-//        {
-//            if (volunteer.Password != password)
-//                throw new ArgumentException("Incorrect password");
-
-//            return ((Enums.VolunteerTypeEnum)volunteer.Position).ToString();
-//        }
-//        throw new ArgumentException($"Username {username} not found");
-
-//    }
-//    //פונקציה להחזרת רשימת מתנדבים, עם אפשרות לסינון לפי מצב פעיל ומיון
-//    public IEnumerable<VolunteerInList> RequestVolunteerList(bool? isActive = null, VolunteerInList? sortField = null)
-//    {
-//        var volunteers = _dal.Volunteer.ReadAll()
-//            .Select(v => new VolunteerInList
-//            {
-//                Id = v.Id,
-//                FullName = v.FullName,
-//                Active = v.Active,
-//            }).AsQueryable();
-
-//        // סינון לפי מצב פעיל אם נתון
-//        if (isActive.HasValue)
-//        {
-//            volunteers = volunteers.Where(v => v.Active == isActive.Value);
-//        }
-
-//        // מיון לפי השדה המבוקש
-//        if (sortField.HasValue)
-//        {
-//            switch (sortField.Value)
-//            {
-//                case VolunteerInList.FullName:
-//                    volunteers = volunteers.OrderBy(v => v.FullName);
-//                    break;
-//                case VolunteerInList.Active:
-//                    volunteers = volunteers.OrderBy(v => v.Active);
-//                    break;
-//                    // ניתן להוסיף יותר מקרים למיון לפי שדות נוספים
-//            }
-//        }
-
-//        return volunteers.ToList();
-//    }
-
-
-
-//   // פונקציה לבקשה לפרטי מתנדב לפי מזהה
-//     public BO.Volunteer RequestVolunteerDetails(int volunteerId)
-//    {
-//        try
-//        {
-//            // שליפת פרטי מתנדב משכבת הנתונים
-//            var volunteer = _dal.Volunteer.Read(volunteerId)
-//                ?? throw new BO.BlDoesNotExistException($"Volunteer with ID {volunteerId} not found.");
-
-//            // שליפת קריאה בטיפול, אם קיימת
-//            var call = _dal.call.ReadAll().FirstOrDefault(c => c.Id == volunteerId);
-
-//            // החזרת האובייקט הלוגי "מתנדב" עם קריאה בטיפול (אם קיימת)
-//            return new BO.Volunteer
-//            {
-//                Id = volunteer.Id,
-//                FullName = volunteer.FullName,
-//                Email = volunteer.Email,
-//                VolunteerTakenCare = call == null
-//                    ? null
-//                    : new BO.CallInProgress
-//                    {
-//                        Id = call.Id,
-//                        CallType = (BO.Enums.CallTypeEnum)call.CallType, // המרה ישירה ל-Enum
-//                        VerbDesc = call.VerbDesc,
-//                        CallAddress = call.Adress, // תיקון שם שדה אם צריך
-//                        OpenTime = call.OpenTime,
-//                        MaxFinishTime = (DateTime)call.MaxTime,
-//                        StartAppointmentTime = call.OpenTime,
-//                        DistanceOfCall = call.Latitude, //longtitude and latitude
-//                        Status = ((BO.Enums.CallStatusEnum)(DO.FinishAppointmentType)Assignment.FinishAppointmentType).ToString()
-//                    },
-//            };
-//        }
-//        catch (Exception ex)
-//        {
-//            throw new ArgumentException("Error retrieving volunteer details.", ex);
-//        }
-//    }
-//    //// פונקציה לבקשת פרטי מתנדב ספציפי לפי מזהה
-//    // public BO.Volunteer RequestVolunteerDetails(int volunteerId)
-//    // {
-//    //     var volunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerId).FirstOrDefault();
-//    //     if (volunteer == null)
-//    //         throw new ArgumentException($"Volunteer with id {volunteerId} not found");
-
-//    //     return new BO.Volunteer
-//    //     {
-//    //         Id = volunteer.Id,
-//    //         FullName = volunteer.FullName,
-//    //         Position = (Enums.VolunteerTypeEnum)volunteer.Position,
-//    //         Active = volunteer.Active
-//    //     };
-//    // }
-
-//    //  פונקציה לעדכון פרטי מתנדב
-//    // פונקציה לעדכון פרטי מתנדב
-//    public void UpdateVolunteerDetails(BO.Volunteer volunteer)
-//    {
-//        var existingVolunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteer.Id).FirstOrDefault();
-//        if (existingVolunteer == null)
-//            throw new ArgumentException($"Volunteer with id {volunteer.Id} not found");
-
-//        // עדכון פרטי המתנדב במערכת
-//        existingVolunteer.Volunteer.FullName = volunteer.FullName;
-//        existingVolunteer.Position = (DalApi.Enums.VolunteerTypeEnum)volunteer.Position;
-//        existingVolunteer.Active = volunteer.Active;
-
-//        _dal.Volunteer.Update(existingVolunteer);
-//    }
-
-
-//    //פונקציה למחיקת מתנדב
-//    public void DeleteVolunteer(int volunteerId)
-//        {
-//            var volunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerId).FirstOrDefault();
-//            if (volunteer == null)
-//                throw new ArgumentException($"Volunteer with id {volunteerId} not found");
-
-//            _dal.Volunteer.Delete(volunteerId);
-//        }
-
-//        // פונקציה להוספת מתנדב חדש
-//        public void AddVolunteer(Volunteer volunteerDetails)
-//        {
-//            var newVolunteer = new DalApi.DTO.Volunteer
-//            {
-//                FullName = volunteerDetails.FullName,
-//                Email = volunteerDetails.Email,
-//                Active = volunteerDetails.Active,
-//                Position = (int)volunteerDetails.Position,
-//                Latitude = volunteerDetails.Latitude,
-//                Longitude = volunteerDetails.Longitude
-//            };
-
-//            _dal.Volunteer.Create(newVolunteer);
-//        }
-//    }

@@ -5,6 +5,7 @@ using DO;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
+using static BO.Exceptions;
 
 namespace Helpers
 {
@@ -245,6 +246,74 @@ namespace Helpers
         }
 
 
+        internal static bool IsAddressValid(string address)
+        {
+            // בדיקת אם הכתובת לא ריקה או null
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                throw new InvalidAddressFormatException("Address cannot be empty or null.");
+            }
+
+            // נניח שהכתובת צריכה לכלול לפחות 3 חלקים: רחוב, עיר, מדינה
+            // נפריד את הכתובת למילים ונבדוק אם יש מספיק מידע
+            var addressParts = address.Split(',');
+
+            if (addressParts.Length < 3)
+            {
+                throw new InvalidAddressFormatException("Address must contain at least street, city, and country.");
+            }
+
+            // נחתוך כל חלק ולוודא שהוא לא ריק
+            string street = addressParts[0].Trim();
+            string city = addressParts.Length > 1 ? addressParts[1].Trim() : string.Empty;
+            string country = addressParts.Length > 2 ? addressParts[2].Trim() : string.Empty;
+
+            // אם אחד החלקים חסר, הכתובת לא תקינה
+            if (string.IsNullOrEmpty(street) || string.IsNullOrEmpty(city) || string.IsNullOrEmpty(country))
+            {
+                throw new InvalidAddressFormatException("Address is missing essential parts like street, city, or country.");
+            }
+
+            // אם הכתובת תקינה, נבדוק אם היא קיימת דרך ה-API
+            string apiKey = "678694850f91d165965268skuda91dd"; // המפתח שלך
+            string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={apiKey}"; // URL של Forward Geocoding
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // שליחת הבקשה לשרת
+                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
+
+                    // אם התשובה היא חיובית, הכתובת קיימת
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
+
+                        if (locationData != null && locationData.Length > 0)
+                        {
+                            // הכתובת תקינה, יש תוצאה
+                            return true;
+                        }
+                        else
+                        {
+                            throw new InvalidGeolocationException("No geolocation data found for the provided address.");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidGeolocationException($"Failed to retrieve data for the address. Status code: {response.StatusCode}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // במקרה של בעיה בביצוע הבקשה
+                    throw new InvalidGeolocationException("An error occurred while verifying the geolocation: " + ex.Message);
+                }
+            }
+        }
 
         /// <summary>
         /// Represents a location result returned by the geocoding service.

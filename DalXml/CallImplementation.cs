@@ -32,14 +32,15 @@ internal class CallImplementation : ICall
         return new XElement("Call",
             new XElement("Id", Config.NextAssignmentId),
             new XElement("CallType", item.CallType),
-            new XElement("VerbalDescription", item.VerbDesc),
-            new XElement("Address", item.Adress),
+            new XElement("VerbDesc", item.VerbDesc),
+            new XElement("Adress", item.Adress),
             new XElement("Latitude", item.Latitude),
             new XElement("Longitude", item.Longitude),
-            new XElement("OpeningTime", item.OpenTime),
-            new XElement("MaxTimeToEnd", item.MaxTime)
-    );
+            new XElement("OpenTime", item.OpenTime.ToString("yyyy-MM-ddTHH:mm:ss")), // מבלי לכלול אזור זמן
+            new XElement("MaxTime", item.MaxTime?.ToString("yyyy-MM-ddTHH:mm:ss")) // גם כאן
+        );
     }
+
 
     //public void Create(Call item)
     //{
@@ -55,11 +56,11 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The Id of the call to be read.</param>
     /// <returns>The call with the matching Id, or null if not found.</returns>
-    public Call? Read(int id)
+    public Call Read(int id)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
-        XMLTools.SaveListToXMLSerializer(Calls, Config.s_calls_xml);
-        return Calls.FirstOrDefault(obj => obj.Id == id); // Returns the Calls with the matching Id, or null if not found  
+     
+        return Calls.FirstOrDefault(obj => obj.Id == id); // Returns the Calls with the matching Id, or null if not found
     }
 
     /// <summary>

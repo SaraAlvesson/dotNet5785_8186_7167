@@ -7,105 +7,191 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using BO;
+using static BO.Enums;
 
 namespace PL.Admin
 {
     public partial class VolunteerListWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        public List<string> SelectedCallType { get; } = Enum.GetNames(typeof(BO.Enums.VolunteerInListField)).ToList();
-        public BO.Enums.CallTypeEnum callType { get; set; } = BO.Enums.CallTypeEnum.None;
 
-        public BO.VolunteerInList? SelectedVolunteer { get; set; }
+        #region Filtering and Sorting Properties
 
-        
-        public VolunteerListWindow()
-        {
-            InitializeComponent();
-            this.DataContext = this;  // DataContext יהיה חלון זה עצמו
+        // מקור נתונים עבור סינון לפי סוג קריאה (CallTypeEnum)
+        public IEnumerable<CallTypeEnum> CallTypeOptions => Enum.GetValues(typeof(CallTypeEnum)).Cast<CallTypeEnum>();
 
-            LoadVolunteerList(); // טוען את הרשימה הראשונית
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);  // נרשמים למשקיף
-            ObserveVolunteerListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);  // מסירים את המשקיף
-        }
-
-        private string _selectedCallType;
-        public string SelectedFilter
+        private CallTypeEnum _selectedCallType;
+        public CallTypeEnum SelectedCallType
         {
             get => _selectedCallType;
             set
             {
-                _selectedCallType = value;
-                OnPropertyChanged();
-                ApplyFilters();
+                if (_selectedCallType != value)
+                {
+                    _selectedCallType = value;
+                    OnPropertyChanged(nameof(SelectedCallType));
+                    ApplyFilters();
+                }
             }
         }
 
-        private string _selectedSortOption;
-        public string SelectedSortOption
+        // מקור נתונים עבור מיון לפי שדה (VolunteerInListField)
+        public IEnumerable<VolunteerInListField> SortOptions => Enum.GetValues(typeof(VolunteerInListField)).Cast<VolunteerInListField>();
+
+        private VolunteerInListField _selectedSortOption;
+        public VolunteerInListField SelectedSortOption
         {
             get => _selectedSortOption;
             set
             {
-                _selectedSortOption = value;
-                OnPropertyChanged();
-                ApplyFilters();
+                if (_selectedSortOption != value)
+                {
+                    _selectedSortOption = value;
+                    OnPropertyChanged(nameof(SelectedSortOption));
+                    ApplyFilters();
+                }
             }
         }
-        
 
-        private void filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // מקור נתונים עבור סינון לפי סטטוס פעיל/לא פעיל (All, Active, Inactive)
+        public List<string> ActiveFilterOptions { get; } = new List<string>
         {
-            ApplyFilters();
+            "All",
+            "Active",
+            "Inactive"
+        };
+
+        private string _selectedActiveFilter;
+        public string SelectedActiveFilter
+        {
+            get => _selectedActiveFilter;
+            set
+            {
+                if (_selectedActiveFilter != value)
+                {
+                    _selectedActiveFilter = value;
+                    OnPropertyChanged(nameof(SelectedActiveFilter));
+                    ApplyFilters();
+                }
+            }
         }
 
+        #endregion
+
+        // הבחירה של המתנדב הנבחר
+        public VolunteerInList? SelectedVolunteer { get; set; }
+
+        // הרשימה המוצגת של מתנדבים
+        private ObservableCollection<VolunteerInList> _volunteers = new();
+        public ObservableCollection<VolunteerInList> Volunteers
+        {
+            get => _volunteers;
+            set
+            {
+                _volunteers = value;
+                OnPropertyChanged(nameof(Volunteers));
+            }
+        }
+
+        public VolunteerListWindow()
+        {
+            InitializeComponent();
+            DataContext = this; // DataContext יהיה החלון הזה עצמו
+
+            // אתחול ערכי ברירת מחדל
+            SelectedCallType = CallTypeEnum.None;
+            SelectedActiveFilter = "All";
+            SelectedSortOption = VolunteerInListField.None;
+
+            LoadVolunteerList(); // טעינת הרשימה הראשונית
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges); // נרשמים למשקיף
+            ObserveVolunteerListChanges(); // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges); // מסירים את המשקיף
+        }
+
+        /// <summary>
+        /// פונקציית סינון ומיון שמתעדכנת בכל שינוי בהגדרות.
+        /// </summary>
         private void ApplyFilters()
         {
-            BO.Enums.VolunteerInListField? volFilter = Enum.TryParse(SelectedFilter, out BO.Enums.VolunteerInListField parsedCallType)
-                ? parsedCallType
-                : (BO.Enums.VolunteerInListField?)null;
+            // --- סינון לפי סוג קריאה ---
+            // אם נבחר ערך שונה מ־None, נשלח אותו, אחרת null (כל הערכים)
+            CallTypeEnum? callTypeFilter = SelectedCallType != CallTypeEnum.None ? SelectedCallType : (CallTypeEnum?)null;
 
-            BO.Enums.CallTypeEnum? sortField = Enum.TryParse(SelectedSortOption, out BO.Enums.CallTypeEnum parsedSortField)
-                ? parsedSortField
-                : (BO.Enums.CallTypeEnum?)null;
-
-            // סינון הרשימה לפי הקריטריונים שנבחרו
-            var filteredVolunteers = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
-
-            if (volFilter.HasValue)
+            // --- סינון לפי סטטוס פעיל/לא פעיל ---
+            bool? isActiveFilter = null;
+            if (!string.IsNullOrEmpty(SelectedActiveFilter))
             {
-                // אם volFilter הוא שם (לא Enum, אלא String או חלק ממנו)
-               filteredVolunteers = filteredVolunteers.Where(v => v.FullName.Contains((char)volFilter.Value)).ToList();
-
+                if (SelectedActiveFilter.Equals("Active", StringComparison.OrdinalIgnoreCase))
+                    isActiveFilter = true;
+                else if (SelectedActiveFilter.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
+                    isActiveFilter = false;
+                // "All" או ערך אחר → נשאר null (כל המתנדבים)
             }
 
-            if (sortField.HasValue)
+            // --- קריאה לרשימת המתנדבים עם הסינונים מה-BL ---
+            // החתימה: RequestVolunteerList(bool? isActive, VolunteerInListField? sortField = null, CallTypeEnum? callTypeFilter = null)
+            // עבור המיון בצד השרת נשלח null ונבצע את המיון כאן
+            var filteredVolunteers = s_bl?.Volunteer.RequestVolunteerList(isActiveFilter, null, callTypeFilter)
+                                      ?? new List<VolunteerInList>();
+
+            // --- מיון לפי שדה (בצד לקוח) ---
+            if (SelectedSortOption != VolunteerInListField.None)
             {
-                filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType).ToList();
+                switch (SelectedSortOption)
+                {
+                    case VolunteerInListField.Id:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.Id).ToList();
+                        break;
+                    case VolunteerInListField.FullName:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.FullName).ToList();
+                        break;
+                    case VolunteerInListField.Active:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.Active).ToList();
+                        break;
+                    case VolunteerInListField.SumTreatedCalls:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.SumTreatedCalls).ToList();
+                        break;
+                    case VolunteerInListField.SumCanceledCalls:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.SumCanceledCalls).ToList();
+                        break;
+                    case VolunteerInListField.SumExpiredCalls:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.SumExpiredCalls).ToList();
+                        break;
+                    case VolunteerInListField.CallIdInTreatment:
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallIdInTreatment).ToList();
+                        break;
+                    case VolunteerInListField.CallType:
+                        // שימוש ב-ToString למקרה שהמיון לפי enum צריך להיות לפי שמו
+                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType.ToString()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            // עדכון הרשימה
+            // --- עדכון הרשימה ---
             Volunteers = new ObservableCollection<VolunteerInList>(filteredVolunteers);
+            // חשוב לעדכן גם את ה-PropertyChanged, מה שמבטיח את רענון ה-UI
+            OnPropertyChanged(nameof(Volunteers));
         }
 
-        // תכונת תלות לרשימת המתנדבים
-        public ObservableCollection<VolunteerInList> Volunteers { get; set; } = new();
-
-        // טעינת הרשימה
+        /// <summary>
+        /// טוען את רשימת המתנדבים הראשונית (ללא סינונים)
+        /// </summary>
         private void LoadVolunteerList()
         {
             try
             {
-                Volunteers.Clear();  // ניקוי הרשימה לפני הוספה חדשה
+                Volunteers.Clear(); // ניקוי הרשימה לפני הוספה חדשה
 
                 var volunteerList = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
 
@@ -120,26 +206,15 @@ namespace PL.Admin
             }
         }
 
+        /// <summary>
+        /// Observer שמשדר עדכון כאשר רשימת המתנדבים משתנה.
+        /// </summary>
         private void ObserveVolunteerListChanges()
         {
-            LoadVolunteerList();  // טוען את הרשימה מחדש
+            LoadVolunteerList(); // טוען את הרשימה מחדש
         }
 
-        // מחיקת מתנדב
-        private void DeleteVolunteer(int volunteerId)
-        {
-            try
-            {
-                var bl = BlApi.Factory.Get().Volunteer;
-                bl.DeleteVolunteer(volunteerId); // מחיקת המתנדב
-                LoadVolunteerList();  // עדכון הרשימה
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while deleting the volunteer: {ex.Message}",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        #region פעולות UI
 
         // לחצן מחיקה
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -147,12 +222,28 @@ namespace PL.Admin
             if (sender is Button button && button.Tag is int volunteerId)
             {
                 var result = MessageBox.Show("Are you sure you want to delete this volunteer?",
-                    "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
+                                             "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    DeleteVolunteer(volunteerId); // קריאה למחיקה
+                    DeleteVolunteer(volunteerId);
                 }
+            }
+        }
+
+        /// <summary>
+        /// מבצע מחיקת מתנדב ועדכון הרשימה.
+        /// </summary>
+        private void DeleteVolunteer(int volunteerId)
+        {
+            try
+            {
+                s_bl?.Volunteer.DeleteVolunteer(volunteerId);
+                LoadVolunteerList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while deleting the volunteer: {ex.Message}",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -162,189 +253,43 @@ namespace PL.Admin
             new SingleVolunteerWindow().Show();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        // Double-click on volunteer list to view details
+        // לחיצה כפולה על פריט ברשימה לצפייה בפרטים
         private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (SelectedVolunteer != null)
                 new SingleVolunteerWindow(SelectedVolunteer.Id).Show();
         }
 
-        
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // אין צורך בפעולה מיוחדת כאן
+        }
+
+        private void SortField_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void CallTypeFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void IsActiveFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged Implementation
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 }
-//using PL.privateVolunteer;
-//using System.Windows;
-//using System.Windows.Controls;
-//using System.Windows.Input;
-
-//namespace PL.Volunteer;
-
-///// <summary>
-///// Interaction logic for VolunteerListWindow.xaml
-///// </summary>
-//public partial class VolunteerListWindow : Window
-//{
-//    /// <summary>
-//    /// Static instance of the business logic layer (BL).
-//    /// </summary>
-//    static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-
-//    /// <summary>
-//    /// Initializes a new instance of the <see cref="VolunteerListWindow"/> class.
-//    /// </summary>
-//    public VolunteerListWindow()
-//    {
-//        InitializeComponent();
-//    }
-
-//    /// <summary>
-//    /// Dependency property for the VolunteerList, which is bound to the DataGrid in the XAML.
-//    /// </summary>
-//    public IEnumerable<BO.VolunteerInList> VolunteerList
-//    {
-//        get { return (IEnumerable<BO.VolunteerInList>)GetValue(VolunteerListProperty); }
-//        set { SetValue(VolunteerListProperty, value); }
-//    }
-
-//    /// <summary>
-//    /// Registration of the dependency property for VolunteerList.
-//    /// </summary>
-//    public static readonly DependencyProperty VolunteerListProperty =
-//        DependencyProperty.Register("VolunteerList", typeof(IEnumerable<BO.VolunteerInList>), typeof(VolunteerListWindow), new PropertyMetadata(null));
-
-//    /// <summary>
-//    /// Property to store the currently selected call type filter.
-//    /// </summary>
-//    public BO.CallType callType { get; set; } = BO.CallType.None;
-
-//    /// <summary>
-//    /// Event handler triggered when the call type ComboBox selection changes.
-//    /// Updates the volunteer list based on the selected call type filter.
-//    /// </summary>
-//    private void CallTypeSelectionChanged(object sender, SelectionChangedEventArgs e)
-//    {
-//        VolunteerList = helpReadAllVolunteer(callType);
-//    }
-
-//    /// <summary>
-//    /// Refreshes the VolunteerList property with updated data.
-//    /// </summary>
-//    private void RefreshVolunteerList()
-//    {
-//        VolunteerList = helpReadAllVolunteer(callType);
-//    }
-
-//    /// <summary>
-//    /// Helper method to fetch the list of volunteers based on the selected call type filter.
-//    /// </summary>
-//    /// <param name="callTypeHelp">The call type filter to apply.</param>
-//    /// <returns>List of volunteers matching the filter.</returns>
-//    private static IEnumerable<BO.VolunteerInList> helpReadAllVolunteer(BO.CallType callTypeHelp)
-//    {
-//        return (callTypeHelp == BO.CallType.None)
-//            ? s_bl?.Volunteer.ReadAll(null, BO.FieldsVolunteerInList.Id, null)!
-//            : s_bl?.Volunteer.ReadAll(null, BO.FieldsVolunteerInList.Id, callTypeHelp)!;
-//    }
-
-//    /// <summary>
-//    /// Observer to refresh the volunteer list whenever there are updates.
-//    /// </summary>
-//    private void volunteerListObserver() => RefreshVolunteerList();
-
-//    /// <summary>
-//    /// Adds the observer when the window is loaded.
-//    /// </summary>
-//    private void Window_Loaded(object sender, RoutedEventArgs e)
-//        => s_bl.Volunteer.AddObserver(volunteerListObserver);
-
-//    /// <summary>
-//    /// Removes the observer when the window is closed.
-//    /// </summary>
-//    private void Window_Closed(object sender, EventArgs e)
-//        => s_bl.Volunteer.RemoveObserver(volunteerListObserver);
-
-//    /// <summary>
-//    /// Event handler for selection change in the DataGrid.
-//    /// Placeholder for additional functionality if needed.
-//    /// </summary>
-//    private void DataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-//    {
-//        // Placeholder
-//    }
-
-//    /// <summary>
-//    /// Opens the VolunteerWindow to add a new volunteer when the Add button is clicked.
-//    /// </summary>
-//    private void btnAdd_Click(object sender, RoutedEventArgs e)
-//    {
-//        new VolunteerWindow().Show();
-//    }
-
-//    /// <summary>
-//    /// Property to store the currently selected volunteer in the DataGrid.
-//    /// </summary>
-//    public BO.VolunteerInList? SelectedVolunteer { get; set; }
-
-//    /// <summary>
-//    /// Opens the VolunteerWindow for the selected volunteer when the user double-clicks a row in the DataGrid.
-//    /// </summary>
-//    private void lsvVolunteersList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-//    {
-//        if (SelectedVolunteer != null)
-//            new VolunteerWindow(SelectedVolunteer.Id).Show();
-//    }
-
-//    /// <summary>
-//    /// Deletes the selected volunteer when the Delete button is clicked.
-//    /// Shows a confirmation dialog before performing the delete operation.
-//    /// </summary>
-//    private void btnDelete_Click(object sender, RoutedEventArgs e)
-//    {
-//        if (sender is Button button && button.Tag is int volunteerId)
-//        {
-//            var result = MessageBox.Show(
-//                "Are you sure you want to delete the volunteer?",
-//                "Confirmation",
-//                MessageBoxButton.YesNo,
-//                MessageBoxImage.Question);
-
-//            if (result != MessageBoxResult.Yes)
-//            {
-//                return;
-//            }
-
-//            try
-//            {
-//                // Close all related windows before deleting the volunteer
-//                var windowsToClose = Application.Current.Windows
-//                 .OfType<Window>()
-//                 .Where(w =>
-//                     w is MainVolunteerWindow mvw && mvw.CurrentVolunteer.Id == volunteerId ||
-//                     w is SelectCallWindow scw && scw.CurrentVolunteer.Id == volunteerId ||
-//                     w is CallHistoryWindow chw && chw.CurrentVolunteer.Id == volunteerId ||
-//                     w is VolunteerWindow vw && vw.CurrentVolunteer.Id == volunteerId).ToList();
-
-//                foreach (var window in windowsToClose)
-//                {
-//                    window.Close();
-//                }
-
-//                // Delete the volunteer from the database
-//                s_bl.Volunteer.Delete(volunteerId);
-
-//                MessageBox.Show("Volunteer deleted successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-//            }
-//            catch (Exception ex)
-//            {
-//                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-//            }
-//        }
-//    }
-//}
