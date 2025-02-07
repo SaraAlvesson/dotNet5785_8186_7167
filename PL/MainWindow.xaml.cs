@@ -1,55 +1,125 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using BlApi;
 using DalApi;
 using PL.Admin;
 
 namespace PL
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+       
+       
+            private bool _isSimulatorRunning;
 
-        // הגדרת הצופים
+            public bool IsSimulatorRunning
+            {
+                get { return _isSimulatorRunning; }
+                set
+                {
+                    if (_isSimulatorRunning != value)
+                    {
+                        _isSimulatorRunning = value;
+                        OnPropertyChanged(nameof(IsSimulatorRunning)); // זה יעדכן את ה-binding
+                    }
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            protected void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            public int Interval { get; set; }
+       
+
         private Action clockObserver;
         private Action configObserver;
+        private volatile bool clockFlag = false;
+        private volatile bool configFlag = false;
 
         public MainWindow()
         {
             InitializeComponent();
-
+            this.DataContext = this;
             this.Loaded += MainWindow_Loaded;
-            this.Closed += MainWindow_Closed; // רישום לאירוע סגירת החלון
+            this.Closed += MainWindow_Closed;
+        }
+
+        // שלב 8: סגירת הסימולטור בעת סגירת החלון
+        protected override void OnClosed(EventArgs e)
+        {
+            if (IsSimulatorRunning)
+            {
+                StopSimulator();
+            }
+            base.OnClosed(e);
+        }
+
+        public void StopSimulator()
+        {
+            // עצירת הסימולטור
+            s_bl.Admin.StopSimulator();
+            IsSimulatorRunning = false;
+
+            // שלב 9: החזרת מצב הפקדים לאחר עצירת הסימולטור
+            textrr.IsEnabled = true;
+
+            // אם יש שדות אחרים שצריך להחזיר אליהם את האפשרות לשימוש
+            // הוסף אותם כאן
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // השמת הערך הנוכחי של שעון המערכת
-            CurrentTime = s_bl.Admin.GetCurrentTime();
+            Console.WriteLine("clockObserver activated - Time is updating");
 
-            // השמת ערך משתני התצורה
+            CurrentTime = s_bl.Admin.GetCurrentTime();
             RiskRange = s_bl.Admin.GetRiskTimeRange();
 
-            // יצירת הצופים
-            clockObserver = () => CurrentTime = s_bl.Admin.GetCurrentTime();
-            configObserver = () => RiskRange = s_bl.Admin.GetRiskTimeRange();
+            clockObserver = () =>
+            {
+                Console.WriteLine("clockObserver activated"); // בדיקה אם זה בכלל רץ
+                if (!clockFlag)
+                {
+                    clockFlag = true;
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        DateTime newTime = s_bl.Admin.GetCurrentTime();
+                        Console.WriteLine($"Previous Time: {CurrentTime}");
+                        Console.WriteLine($"New Time: {newTime}");
+                        CurrentTime = newTime; // עדכון השעה
+                        clockFlag = false;
+                    }));
+                }
+            };
 
-            // הוספת המשקיפים
+            configObserver = () =>
+            {
+                if (!configFlag)
+                {
+                    configFlag = true;
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        RiskRange = s_bl.Admin.GetRiskTimeRange();
+                        configFlag = false;
+                    }));
+                }
+            };
+
             s_bl.Admin.AddClockObserver(clockObserver);
+            Console.WriteLine("clockObserver was added.");
+
             s_bl.Admin.AddConfigObserver(configObserver);
         }
 
-        // סגירת כל החלונות הפתוחים חוץ מהחלון הראשי
         private void CloseAllOtherWindows()
         {
             foreach (Window window in Application.Current.Windows)
             {
-                // סגור את כל החלונות חוץ מהחלון הראשי
                 if (window != this)
                 {
                     window.Close();
@@ -57,18 +127,13 @@ namespace PL
             }
         }
 
-        // מתודת סגירת החלון
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            // הסרת הצופים
             s_bl.Admin.RemoveClockObserver(clockObserver);
             s_bl.Admin.RemoveConfigObserver(configObserver);
-
-            // סגירת כל החלונות חוץ מהחלון הראשי
             CloseAllOtherWindows();
         }
 
-        // רכיבי ממשק המשתמש
         public DateTime CurrentTime
         {
             get { return (DateTime)GetValue(CurrentTimeProperty); }
@@ -88,9 +153,8 @@ namespace PL
               nameof(RiskRange),
               typeof(TimeSpan),
               typeof(MainWindow),
-            new PropertyMetadata(s_bl.Admin.GetRiskTimeRange())); // או מתודה אחרת שמחזירה את הערך
+            new PropertyMetadata(s_bl.Admin.GetRiskTimeRange()));
 
-        // פעולות הקידום
         private void btnAddDay(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.UpdateClock(BO.Enums.TimeUnitEnum.DAY);
@@ -116,11 +180,19 @@ namespace PL
             s_bl.Admin.UpdateClock(BO.Enums.TimeUnitEnum.YEAR);
         }
 
-        // עדכון משתני התצורה
         private void update_click(object sender, RoutedEventArgs e)
         {
-            TimeSpan RiskRangetxt = TimeSpan.Parse(textrr.Text);
-            s_bl.Admin.SetRiskTimeRange(RiskRangetxt);
+            try
+            {
+                TimeSpan RiskRangetxt = TimeSpan.Parse(textrr.Text);
+                s_bl.Admin.SetRiskTimeRange(RiskRangetxt);
+                MessageBox.Show("העדכון בוצע בהצלחה!", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"אירעה שגיאה בעת עדכון בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+           
         }
 
         private void btnVolunteerList(object sender, RoutedEventArgs e)
@@ -130,19 +202,12 @@ namespace PL
 
         private void btnReset(object sender, RoutedEventArgs e)
         {
-            // בקשה לאישור מהמשתמש
             var result = MessageBox.Show("האם אתה בטוח שברצונך לאפס את בסיס הנתונים?", "אישור איפוס", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                //// שינוי אייקון העכבר לשעון חול
-                //Mouse.OverrideCursor = Cursors.Wait;
-
-                // סגירת כל החלונות הפתוחים (חוץ מהחלון הראשי)
                 CloseAllOtherWindows();
-
                 try
                 {
-                    // קריאה לפוקנציה של איפוס בסיס הנתונים ב-BL
                     s_bl.Admin.ResetDatabase();
                     MessageBox.Show("האיפוס בוצע בהצלחה!", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -150,11 +215,6 @@ namespace PL
                 {
                     MessageBox.Show($"אירעה שגיאה בעת איפוס בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                //finally
-                //{
-                //    // החזרת אייקון העכבר לברירת המחדל
-                //    Mouse.OverrideCursor = null;
-                //}
             }
         }
 
@@ -163,12 +223,8 @@ namespace PL
             var result = MessageBox.Show("Do you want to Initialize DataBase?", "אישור אתחול", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-
-
-           
                 try
                 {
-                    // קריאה לפוקנציה של אתחול בסיס הנתונים ב-BL
                     s_bl.Admin.InitializeDatabase();
                     MessageBox.Show("האתחול בוצע בהצלחה!", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -176,16 +232,39 @@ namespace PL
                 {
                     MessageBox.Show($"אירעה שגיאה בעת אתחול בסיס הנתונים: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
             }
         }
+
+
+
 
         private void btnHandleCalls(object sender, RoutedEventArgs e)
         {
             new Admin.CallsListWindow().Show();
         }
-        
 
+        private void StartStopSimulator(object sender, RoutedEventArgs e)
+        {
+            if (IsSimulatorRunning)
+            {
+                // עצור את הסימולטור
+                s_bl.Admin.StopSimulator();
+            }
+            else
+            {
+                // הפעל את הסימולטור
+                s_bl.Admin.StartSimulator(Interval);
+            }
 
+            // עדכון המאפיין של IsSimulatorRunning
+            IsSimulatorRunning = !IsSimulatorRunning;
+
+            // עדכון כפתור (לא חייבים לעשות את זה כאן, ה-binding יעשה את זה אוטומטית)
+        }
+
+        private void txtClockSpeed_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
-}
+    }

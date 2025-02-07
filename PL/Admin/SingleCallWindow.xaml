@@ -102,7 +102,7 @@
         <!-- Id -->
         <Label Content="Id:" Grid.Row="0" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.Id, Mode=TwoWay}" 
-                 Grid.Row="0" Grid.Column="1" IsReadOnly="True" Margin="0,3,185,3"/>
+                 Grid.Row="0" Grid.Column="1" IsReadOnly="True" Margin="0,3,185,0" Height="30" TextChanged="TextBox_TextChanged" VerticalAlignment="Top"/>
 
         <!-- Call type -->
         <Label Content="Call Type:" Grid.Row="1" Grid.Column="0"/>
@@ -114,12 +114,12 @@
         <!-- Address -->
         <Label Content="Address:" Grid.Row="2" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.Address, Mode=TwoWay}" 
-                 Grid.Row="2" Grid.Column="1" Margin="0,3,185,3"/>
+                 Grid.Row="2" Grid.Column="1" Margin="0,3,185,3" TextChanged="TextBox_TextChanged_1"/>
 
         <!-- Description -->
         <Label Content="Description:" Grid.Row="3" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.VerbDesc, Mode=TwoWay}" 
-                 Grid.Row="3" Grid.Column="1" Margin="0,3,185,3"/>
+                 Grid.Row="3" Grid.Column="1" Margin="0,3,185,3" TextChanged="TextBox_TextChanged_2"/>
 
         <!-- Open Time -->
         <Label Content="Open Time:" Grid.Row="4" Grid.Column="0"/>
@@ -137,7 +137,7 @@
         <ComboBox SelectedValue="{Binding CurrentCall.CallStatus, Mode=TwoWay}" 
                   Grid.Row="6" Grid.Column="1"
                   ItemsSource="{Binding Source={StaticResource StatusTypeCollectionKey}}" 
-                  IsEnabled="False" SelectionChanged="ComboBox_SelectionChanged_1" Margin="0,3,185,3" />
+                  IsEnabled="True" SelectionChanged="ComboBox_SelectionChanged_1" Margin="0,3,185,0" Height="30" VerticalAlignment="Top" />
         <!-- לא ניתן לערוך את הסטטוס -->
 
         <!-- List Assignments -->
@@ -155,9 +155,9 @@
         HorizontalAlignment="Left"
         Width="200"
         Height="45"
-        Margin="250,10,0,10"
+        Margin="250,10,0,0"
         Click="ButtonAddUpdate_Click" 
-        Grid.ColumnSpan="2"/>
+        Grid.ColumnSpan="2" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

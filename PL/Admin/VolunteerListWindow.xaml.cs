@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using BO;
 using static BO.Enums;
+using System.Windows.Threading;
 
 namespace PL.Admin
 {
@@ -17,10 +18,11 @@ namespace PL.Admin
 
         #region Filtering and Sorting Properties
 
-        // מקור נתונים עבור סינון לפי סוג קריאה (CallTypeEnum)
         public IEnumerable<CallTypeEnum> CallTypeOptions => Enum.GetValues(typeof(CallTypeEnum)).Cast<CallTypeEnum>();
 
         private CallTypeEnum _selectedCallType;
+        private bool _isUpdating = false; // דגל (flag) עדכון
+
         public CallTypeEnum SelectedCallType
         {
             get => _selectedCallType;
@@ -35,7 +37,6 @@ namespace PL.Admin
             }
         }
 
-        // מקור נתונים עבור מיון לפי שדה (VolunteerInListField)
         public IEnumerable<VolunteerInListField> SortOptions => Enum.GetValues(typeof(VolunteerInListField)).Cast<VolunteerInListField>();
 
         private VolunteerInListField _selectedSortOption;
@@ -53,7 +54,6 @@ namespace PL.Admin
             }
         }
 
-        // מקור נתונים עבור סינון לפי סטטוס פעיל/לא פעיל (All, Active, Inactive)
         public List<string> ActiveFilterOptions { get; } = new List<string>
         {
             "All",
@@ -78,126 +78,120 @@ namespace PL.Admin
 
         #endregion
 
-        // הבחירה של המתנדב הנבחר
         public VolunteerInList? SelectedVolunteer { get; set; }
 
-        // הרשימה המוצגת של מתנדבים
         private ObservableCollection<VolunteerInList> _volunteers = new();
         public ObservableCollection<VolunteerInList> Volunteers
         {
             get => _volunteers;
             set
             {
-                _volunteers = value;
-                OnPropertyChanged(nameof(Volunteers));
+                if (_volunteers != value)
+                {
+                    _volunteers = value;
+                    OnPropertyChanged(nameof(Volunteers)); // יזום עדכון אוטומטי של ה-UI
+                }
             }
         }
 
         public VolunteerListWindow()
         {
             InitializeComponent();
-            DataContext = this; // DataContext יהיה החלון הזה עצמו
+            DataContext = this;
 
-            // אתחול ערכי ברירת מחדל
             SelectedCallType = CallTypeEnum.None;
             SelectedActiveFilter = "All";
             SelectedSortOption = VolunteerInListField.None;
 
-            LoadVolunteerList(); // טעינת הרשימה הראשונית
+            LoadVolunteerList();
+            StartAutoRefresh(); // קריאה להפעלת הטיימר
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges); // נרשמים למשקיף
-            ObserveVolunteerListChanges(); // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
+            s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);
+            ObserveVolunteerListChanges();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges); // מסירים את המשקיף
+            s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);
         }
 
-        /// <summary>
-        /// פונקציית סינון ומיון שמתעדכנת בכל שינוי בהגדרות.
-        /// </summary>
         private void ApplyFilters()
         {
-            // --- סינון לפי סוג קריאה ---
-            // אם נבחר ערך שונה מ־None, נשלח אותו, אחרת null (כל הערכים)
+            if (_isUpdating) // אם הדגל פעיל, אל תבצע עדכון
+                return;
+
+            _isUpdating = true; // הדלקת הדגל
+
+            // הגדרת סינון לפי קריאה וסוג הפעילות
             CallTypeEnum? callTypeFilter = SelectedCallType != CallTypeEnum.None ? SelectedCallType : (CallTypeEnum?)null;
-
-            // --- סינון לפי סטטוס פעיל/לא פעיל ---
-            bool? isActiveFilter = null;
-            if (!string.IsNullOrEmpty(SelectedActiveFilter))
+            bool? isActiveFilter = SelectedActiveFilter switch
             {
-                if (SelectedActiveFilter.Equals("Active", StringComparison.OrdinalIgnoreCase))
-                    isActiveFilter = true;
-                else if (SelectedActiveFilter.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
-                    isActiveFilter = false;
-                // "All" או ערך אחר → נשאר null (כל המתנדבים)
-            }
+                "Active" => true,
+                "Inactive" => false,
+                _ => null
+            };
 
-            // --- קריאה לרשימת המתנדבים עם הסינונים מה-BL ---
-            // החתימה: RequestVolunteerList(bool? isActive, VolunteerInListField? sortField = null, CallTypeEnum? callTypeFilter = null)
-            // עבור המיון בצד השרת נשלח null ונבצע את המיון כאן
-            var filteredVolunteers = s_bl?.Volunteer.RequestVolunteerList(isActiveFilter, null, callTypeFilter)
-                                      ?? new List<VolunteerInList>();
-
-            // --- מיון לפי שדה (בצד לקוח) ---
-            if (SelectedSortOption != VolunteerInListField.None)
+            // יצירת פעולת סינון ומיון
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                switch (SelectedSortOption)
+                try
                 {
-                    case VolunteerInListField.Id:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.Id).ToList();
-                        break;
-                    case VolunteerInListField.FullName:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.FullName).ToList();
-                        break;
-                    case VolunteerInListField.Active:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.Active).ToList();
-                        break;
-                    case VolunteerInListField.SumTreatedCalls:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.SumTreatedCalls).ToList();
-                        break;
-                    case VolunteerInListField.SumCanceledCalls:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.SumCanceledCalls).ToList();
-                        break;
-                    case VolunteerInListField.SumExpiredCalls:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.SumExpiredCalls).ToList();
-                        break;
-                    case VolunteerInListField.CallIdInTreatment:
-                        filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallIdInTreatment).ToList();
-                        break;
-                    //case VolunteerInListField.CallType:
-                    //    // שימוש ב-ToString למקרה שהמיון לפי enum צריך להיות לפי שמו
-                    //    filteredVolunteers = filteredVolunteers.OrderBy(v => v.CallType.ToString()).ToList();
-                    //    break;
-                    default:
-                        break;
-                }
-            }
+                    // שימוש באופציה של סינון בלבד (בלי קריאות נוספות)
+                    var filteredVolunteers = s_bl?.Volunteer.RequestVolunteerList(isActiveFilter, null, callTypeFilter)
+                                                      ?? new List<VolunteerInList>();
 
-            // --- עדכון הרשימה ---
-            Volunteers = new ObservableCollection<VolunteerInList>(filteredVolunteers);
-            // חשוב לעדכן גם את ה-PropertyChanged, מה שמבטיח את רענון ה-UI
-            OnPropertyChanged(nameof(Volunteers));
+                    // סינון לפי מיון אם יש
+                    if (SelectedSortOption != VolunteerInListField.None)
+                    {
+                        filteredVolunteers = SelectedSortOption switch
+                        {
+                            VolunteerInListField.Id => filteredVolunteers.OrderBy(v => v.Id).ToList(),
+                            VolunteerInListField.FullName => filteredVolunteers.OrderBy(v => v.FullName).ToList(),
+                            VolunteerInListField.Active => filteredVolunteers.OrderBy(v => v.Active).ToList(),
+                            VolunteerInListField.SumTreatedCalls => filteredVolunteers.OrderBy(v => v.SumTreatedCalls).ToList(),
+                            VolunteerInListField.SumCanceledCalls => filteredVolunteers.OrderBy(v => v.SumCanceledCalls).ToList(),
+                            VolunteerInListField.SumExpiredCalls => filteredVolunteers.OrderBy(v => v.SumExpiredCalls).ToList(),
+                            VolunteerInListField.CallIdInTreatment => filteredVolunteers.OrderBy(v => v.CallIdInTreatment).ToList(),
+                            _ => filteredVolunteers
+                        };
+                    }
+
+                    // עדכון הרשימה שהוזנה עם הערכים המסוננים והממוינים
+                    Volunteers.Clear();
+                    foreach (var volunteer in filteredVolunteers)
+                    {
+                        Volunteers.Add(volunteer);
+                    }
+                    OnPropertyChanged(nameof(Volunteers));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error applying filters: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    _isUpdating = false; // כיבוי הדגל לאחר סיום העדכון
+                }
+            }), DispatcherPriority.Background);
         }
 
-        /// <summary>
-        /// טוען את רשימת המתנדבים הראשונית (ללא סינונים)
-        /// </summary>
+
+
         private void LoadVolunteerList()
         {
             try
             {
-                Volunteers.Clear(); // ניקוי הרשימה לפני הוספה חדשה
-
-                var volunteerList = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
-
-                foreach (var volunteer in volunteerList)
+                // טעינה רק אם הרשימה ריקה
+                if (!Volunteers.Any())
                 {
-                    Volunteers.Add(volunteer);
+                    var volunteerList = s_bl?.Volunteer.RequestVolunteerList(null,null,null) ;
+                    foreach (var volunteer in volunteerList)
+                    {
+                        Volunteers.Add(volunteer);
+                    }
                 }
             }
             catch (Exception ex)
@@ -206,17 +200,51 @@ namespace PL.Admin
             }
         }
 
-        /// <summary>
-        /// Observer שמשדר עדכון כאשר רשימת המתנדבים משתנה.
-        /// </summary>
-        private void ObserveVolunteerListChanges()
+
+
+        private DispatcherTimer _timer;
+
+        private void StartAutoRefresh()
         {
-            LoadVolunteerList(); // טוען את הרשימה מחדש
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5) // רענון כל 5 שניות
+            };
+            _timer.Tick += (s, e) => ObserveVolunteerListChanges();
+            _timer.Start();
         }
 
-        #region פעולות UI
+        private void ObserveVolunteerListChanges()
+        {
+            if (_isUpdating) return; // אם כבר יש עדכון פעיל, לא לבצע שוב
 
-        // לחצן מחיקה
+            _isUpdating = true; // מונע עדכונים כפולים
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                try
+                {
+                    var updatedVolunteers = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
+                    Volunteers.Clear();
+                    foreach (var volunteer in updatedVolunteers)
+                    {
+                        Volunteers.Add(volunteer);
+                    }
+                    OnPropertyChanged(nameof(Volunteers)); // עדכון ה-UI
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error observing volunteer list changes: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    _isUpdating = false; // החזרת הדגל למצב רגיל
+                }
+            }));
+        }
+
+        #region UI Actions
+
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is int volunteerId)
@@ -230,9 +258,6 @@ namespace PL.Admin
             }
         }
 
-        /// <summary>
-        /// מבצע מחיקת מתנדב ועדכון הרשימה.
-        /// </summary>
         private void DeleteVolunteer(int volunteerId)
         {
             try
@@ -247,16 +272,18 @@ namespace PL.Admin
             }
         }
 
-        // לחצן הוספה
-      private void ButtonAdd_Click(object sender, RoutedEventArgs e)
-{
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new SingleVolunteerWindow().Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-        new SingleVolunteerWindow().Show();
-    }
-    
-
-
-        // לחיצה כפולה על פריט ברשימה לצפייה בפרטים
         private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (SelectedVolunteer != null)
@@ -265,7 +292,7 @@ namespace PL.Admin
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // אין צורך בפעולה מיוחדת כאן
+            // No action needed here
         }
 
         private void SortField_SelectionChanged(object sender, SelectionChangedEventArgs e)

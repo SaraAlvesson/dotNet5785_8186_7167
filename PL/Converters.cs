@@ -94,6 +94,31 @@ public class RoleToEditableConverter : IValueConverter
 //        throw new NotImplementedException();
 //    }
 //}
+public class BooleanToStartStopButtonTextConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (bool)value ? "Stop Simulator" : "Start Simulator";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return value.ToString() == "Stop Simulator";
+    }
+}
+
+public class InverseBooleanConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return !(bool)value;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return !(bool)value;
+    }
+}
 
 public class CallStatusToVisibilityConverter : IValueConverter
 {

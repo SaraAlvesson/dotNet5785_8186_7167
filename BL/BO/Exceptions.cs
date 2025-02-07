@@ -122,7 +122,7 @@ internal class Exceptions
     }
 
     [Serializable]
-    internal class BLTemporaryNotAvailableException : Exception
+    public class BLTemporaryNotAvailableException : Exception
     {
         public BLTemporaryNotAvailableException()
         {
@@ -133,6 +133,34 @@ internal class Exceptions
         }
 
         public BLTemporaryNotAvailableException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+    }
+    internal class InvalidAddressFormatException : Exception
+    {
+        public InvalidAddressFormatException()
+        {
+        }
+
+        public InvalidAddressFormatException(string? message) : base(message)
+        {
+        }
+
+        public InvalidAddressFormatException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+    }
+    internal class InvalidGeolocationException : Exception
+    {
+        public InvalidGeolocationException()
+        {
+        }
+
+        public InvalidGeolocationException(string? message) : base(message)
+        {
+        }
+
+        public InvalidGeolocationException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
     }

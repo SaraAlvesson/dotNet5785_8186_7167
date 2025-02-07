@@ -26,7 +26,7 @@
         <!-- TextBox עבור עדכון מיקום מתנדב -->
         <TextBox x:Name="textrr" 
                  Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                 VerticalAlignment="Top" Width="275" Height="45" Canvas.Left="400" Canvas.Top="479" HorizontalAlignment="Left"/>
+                 VerticalAlignment="Top" Width="275" Height="45" Canvas.Left="400" Canvas.Top="479" HorizontalAlignment="Left" TextChanged="textrr_TextChanged"/>
 
         <!-- כפתור לעדכון כתובת -->
         <Button Content="Update address" Width="150" Height="35" Click="update_click" Background="#40E0D0" Foreground="White" BorderBrush="#2980B9" Canvas.Left="205" Canvas.Top="484" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -73,7 +73,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Call Details Section -->
-            <StackPanel Grid.Column="3" Margin="180,79,-160,-59">
+            <StackPanel Grid.Column="3" Margin="180,79,0,-59" HorizontalAlignment="Left" Width="475">
                 <TextBlock FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Height="25"><Run Text="                                     "/><Run Text="Cal"/><Run Language="en-gb" Text="l Selected"/><Run Text=" Descriptio"/><Run Text="n:"/></TextBlock>
                 <TextBox TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Height="31" 
                          Text="{Binding SelectedCallDetails}" TextChanged="TextBox_TextChanged" Width="475" />

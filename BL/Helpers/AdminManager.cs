@@ -84,6 +84,8 @@ internal static class AdminManager // Stage 4
     /// <param name="newClock">The updated clock value.</param>
     internal static void UpdateClock(DateTime newClock) // Stage 4-7
     {
+        Console.WriteLine($"UpdateClock called with time: {newClock}");
+
         lock (BlMutex) // Ensuring thread safety
             s_dal.config.Clock = newClock; // Stage 4 - Updates clock in configuration
 
@@ -91,6 +93,8 @@ internal static class AdminManager // Stage 4
             _periodicTask = Task.Run(() => CallManager.UpdateExpired());
 
         // Notifies all observers about the clock update
+        Console.WriteLine("ClockUpdatedObservers invoked");
+
         ClockUpdatedObservers?.Invoke(); // Prepared for stage 5
     }
 

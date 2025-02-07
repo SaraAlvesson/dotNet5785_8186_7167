@@ -8,17 +8,21 @@ using System.Windows.Controls;
 using System.ComponentModel;
 using System.Windows.Input;
 using static BO.Enums;
-using System.Net.Mail; // הוספת ספריית שליחה אימייל
+using System.Net.Mail;
+using System.Windows.Threading;
 
 namespace PL.Admin
 {
     public partial class CallsListWindow : Window, INotifyPropertyChanged
     {
+        private DispatcherTimer _timer;
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public List<string> CallFieldsSort { get; } = Enum.GetNames(typeof(BO.Enums.CallTypeEnum)).ToList();
         public List<string> SortOptionsCall { get; } = Enum.GetNames(typeof(BO.Enums.CallFieldEnum)).ToList();
 
         private string _selectedCallType;
+        private bool _isUpdatingCallList; // דגל המתודת השקפה של עדכון הקריאות
+
         public string SelectedCallType
         {
             get => _selectedCallType;
@@ -47,6 +51,7 @@ namespace PL.Admin
                 }
             }
         }
+
         public ICommand DeleteCallCommand { get; private set; }
         public ObservableCollection<CallInList> FilteredCalls { get; set; } = new ObservableCollection<CallInList>();
 
@@ -56,7 +61,19 @@ namespace PL.Admin
             this.DataContext = this;
             DeleteCallCommand = new RelayCommand<CallInList>(DeleteCall, CanDeleteCall);
             LoadCallList();
+
+            // אתחול טיימר
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1); // כל שנייה
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
+        private void Timer_Tick(object sender, EventArgs e)
+{
+    // Logic to execute every time the timer ticks
+    // For example, refreshing the call list or updating some UI element:
+    UpdateCallList();  // Refresh the call list every second (or implement specific behavior)
+}
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -67,6 +84,7 @@ namespace PL.Admin
         {
             s_bl?.Call.RemoveObserver(callListObserver);
         }
+
         public BO.CallInList? SelectedCurrentCall { get; set; }
 
         private static IEnumerable<CallInList> ReadAllCalls(BO.Enums.CallTypeEnum? callTypeFilter, BO.Enums.CallFieldEnum? sortFieldFilter)
@@ -81,47 +99,56 @@ namespace PL.Admin
                 return Enumerable.Empty<CallInList>();
             }
         }
+       
 
-
+      
         public void UpdateCallList()
         {
+            if (_isUpdatingCallList) return;
+            _isUpdatingCallList = true;
+
             try
             {
                 IEnumerable<CallInList> calls = s_bl.Call.GetCallList(null, null, null); // קבלת כל הקריאות
 
-                if (!string.IsNullOrEmpty(SelectedCallType) && Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType))
+                // סינון ומיון כמו בקוד שלך
+                if (!string.IsNullOrEmpty(SelectedCallType) && SelectedCallType != "None" && Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType))
                 {
                     calls = calls.Where(call => call.CallType == parsedCallType); // ביצוע סינון
                 }
 
-                if (!string.IsNullOrEmpty(SelectedSortOption) && Enum.TryParse(SelectedSortOption, out BO.Enums.CallFieldEnum parsedSortField))
+                if (!string.IsNullOrEmpty(SelectedSortOption) && SelectedSortOption != "None" && Enum.TryParse(SelectedSortOption, out BO.Enums.CallFieldEnum parsedSortField))
                 {
                     calls = calls.OrderBy(call => call.GetType().GetProperty(parsedSortField.ToString())?.GetValue(call)); // ביצוע מיון
                 }
 
                 // עדכון הרשימה
-                FilteredCalls.Clear(); // Clear the current list
-                foreach (var call in calls)
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    FilteredCalls.Add(call); // Add the updated calls
-                }
+                    FilteredCalls.Clear();
+                    foreach (var call in calls)
+                    {
+                        FilteredCalls.Add(call); // הוספת הקריאות המעודכנות
+                    }
+                    _isUpdatingCallList = false; // כיבוי הדגל לאחר העדכון
+                }));
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error updating the call list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _isUpdatingCallList = false;
             }
         }
-
-
-
         private void LoadCallList()
         {
             UpdateCallList();  // טוען את הרשימה הראשונית ללא סינון
         }
+
         public BO.CallInList? SelectedCall { get; set; }
         private void ObserveCallListChanges()
         {
-            LoadCallList();
+            // עדכון ברגע שיש שינוי
+            UpdateCallList();
         }
 
         private void callListObserver() => RefreshCallList();
@@ -138,11 +165,14 @@ namespace PL.Admin
 
             var updatedCalls = ReadAllCalls(callTypeFilter, sortFieldFilter);
 
-            FilteredCalls.Clear();
-            foreach (var call in updatedCalls)
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                FilteredCalls.Add(call);
-            }
+                FilteredCalls.Clear();
+                foreach (var call in updatedCalls)
+                {
+                    FilteredCalls.Add(call);
+                }
+            }));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -159,6 +189,7 @@ namespace PL.Admin
                 new SingleCallWindow(SelectedCall.CallId).Show();
             }
         }
+
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
             new SingleCallWindow().Show();
@@ -169,7 +200,6 @@ namespace PL.Admin
             UpdateCallList();  // עדכון הרשימה לפי הבחירה בסינון
         }
 
-       
         private void SortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateCallList();  // עדכון הרשימה לפי הבחירה במיון
@@ -188,7 +218,7 @@ namespace PL.Admin
                 var smtpClient = new SmtpClient("smtp.company.com")
                 {
                     Port = 587,
-                    Credentials = new System.Net.NetworkCredential("admin@company.com", "password"), // מומלץ לשמור נתונים אלה מחוץ לקוד
+                    Credentials = new System.Net.NetworkCredential("admin@company.com", "password"),
                     EnableSsl = true
                 };
                 smtpClient.Send(mailMessage);
@@ -201,8 +231,6 @@ namespace PL.Admin
 
         private void DeleteCall(CallInList call)
         {
-            
-
             if (call != null)
             {
                 if (call.Status == BO.Enums.CalltStatusEnum.OPEN ||
@@ -221,18 +249,10 @@ namespace PL.Admin
             }
         }
 
-
-        //private string GetVolunteerEmail(CallInList call)
-        //{
-        //    // כאן תוכל להוסיף את הקוד כדי להחזיר את כתובת האימייל של המתנדב
-        //    // לדוגמה, אם יש לך גישה למידע זה דרך call או דרך אובייקט אחר, 
-        //    // אתה יכול לשלוף את כתובת הדוא"ל של המתנדב מכאן.
-        //    return "volunteer@example.com";  // לדוגמה
-        //}
-
         private bool CanDeleteCall(CallInList call)
         {
-            return call != null && call.Status == BO.Enums.CalltStatusEnum.OPEN || call.Status == BO.Enums.CalltStatusEnum.CallAlmostOver && string.IsNullOrEmpty(call.LastVolunteerName);
+            return call != null && (call.Status == BO.Enums.CalltStatusEnum.OPEN ||
+                                     (call.Status == BO.Enums.CalltStatusEnum.CallAlmostOver && string.IsNullOrEmpty(call.LastVolunteerName)));
         }
 
         public class RelayCommand<T> : ICommand

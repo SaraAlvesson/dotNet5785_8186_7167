@@ -107,7 +107,7 @@
                     <GridViewColumn Header="Open Time" DisplayMemberBinding="{Binding OpenTime}" Width="130" />
                     <GridViewColumn Header="Time Until Finish" DisplayMemberBinding="{Binding SumTimeUntilFinish}" Width="125" />
                     <GridViewColumn Header="Last Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="120" />
-                    <GridViewColumn Header="Sum Appointment Time" DisplayMemberBinding="{Binding SumAppointmentTime}" Width="125" />
+                    <GridViewColumn Header="Sum Appointment Time" DisplayMemberBinding="{Binding SumAppointmentTime}" Width="130" />
                     <GridViewColumn Header="Total Assignments" DisplayMemberBinding="{Binding SumAssignment}" Width="30" />
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="120" />
                     <GridViewColumn Width="100">

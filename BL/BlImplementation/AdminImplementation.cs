@@ -1,5 +1,4 @@
-﻿namespace BlImplementation;
-using BlApi;
+﻿using BlApi;
 using BO;
 using Helpers;
 using static BO.Enums;
@@ -10,9 +9,8 @@ internal class AdminImplementation : IAdmin
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
     // Method to advance the system clock by a specified time unit
-
     public void UpdateClock(TimeUnitEnum unit)
-           {
+    {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
 
         DateTime newTime = AdminManager.Now; // Get the current time from ClockManager
@@ -20,11 +18,9 @@ internal class AdminImplementation : IAdmin
         // Switch case to handle different time units
         switch (unit)
         {
-
             case TimeUnitEnum.SECOND:
                 newTime = AdminManager.Now.AddSeconds(1);
                 break;
-
             case TimeUnitEnum.MINUTE:
                 newTime = AdminManager.Now.AddMinutes(1); // Advance by 1 minute
                 break;
@@ -40,13 +36,15 @@ internal class AdminImplementation : IAdmin
             case TimeUnitEnum.YEAR:
                 newTime = AdminManager.Now.AddYears(1); // Advance by 1 year
                 break;
-                
             default:
                 throw new ArgumentException("Invalid TimeUnit value"); // Handle invalid time unit
         }
 
         // Update the clock with the new time
-        AdminManager.UpdateClock(newTime);
+        lock (AdminManager.BlMutex)  // עוטף את הפעולה בנעילה
+        {
+            AdminManager.UpdateClock(newTime); // Update the clock
+        }
     }
 
     // Method to get the current system time
@@ -55,12 +53,7 @@ internal class AdminImplementation : IAdmin
         return AdminManager.Now; // Return the current time from ClockManager
     }
 
-    // Method to get the configured risk time range
-
-
-
     // Method to initialize the database by resetting it and adding initial data
-    // Method to initialize the database
     public void InitializeDatabase()
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
@@ -74,18 +67,16 @@ internal class AdminImplementation : IAdmin
             }
 
             // Add the initial data
-            DalTest.Initialization.Do();
-            //AdminManager.UpdateClock(AdminManager.Now); // Ensure the clock is updated after initialization
-            //AdminManager.MaxRange = AdminManager.MaxRange; // Reset MaxRange if needed
+            lock (AdminManager.BlMutex)  // עוטף את הפעולה בנעילה
+            {
+                DalTest.Initialization.Do();  // Initialize the database
+            }
         }
         catch (Exception ex)
         {
-            // Log detailed exception
-          
             throw new InvalidOperationException("Error during initialization", ex);
         }
     }
-
 
     // Method to reset the database (clear all data and reset configurations)
     public void ResetDatabase()
@@ -99,22 +90,18 @@ internal class AdminImplementation : IAdmin
         }
 
         // Reset the database through the DAL
-      
-
-        // Reinitialize data and configurations
         try
         {
-            _dal.ResetDB();
-
+            lock (AdminManager.BlMutex)  // עוטף את הפעולה בנעילה
+            {
+                _dal.ResetDB();  // Reset the database
+            }
         }
         catch (Exception ex)
         {
-            // Handle reset failure, log or show message
             throw new InvalidOperationException("Error during reset", ex);
         }
     }
-
-
 
     #region Stage 5
     public void AddClockObserver(Action clockObserver) =>
@@ -126,19 +113,16 @@ internal class AdminImplementation : IAdmin
     public void RemoveConfigObserver(Action configObserver) =>
     AdminManager.ConfigUpdatedObservers -= configObserver;
     #endregion Stage 5
+
     /// <summary>
     /// Sets a new risk range value in the DAL.
     /// </summary>
     /// <param name="riskRange">The new risk range value to set.</param>
-    /// 
-
     public void SetRiskTimeRange(TimeSpan riskRange)
     {
         AdminManager.ThrowOnSimulatorIsRunning();
         AdminManager.RiskRange = riskRange; // Set the new risk range in the DAL configuration.
     }
-
-
 
     /// <summary>
     /// Retrieves the risk range from the DAL.
@@ -164,5 +148,4 @@ internal class AdminImplementation : IAdmin
     /// </summary>
     public void StopSimulator()
         => AdminManager.Stop(); // Stops the simulator
-
 }

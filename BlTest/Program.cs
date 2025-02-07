@@ -513,7 +513,7 @@ internal class Program
 
                     case 6:
                         BO.Call CallidToAdd = GetCallFromUser();
-                        s_bl.Call.AddCall(CallidToAdd);
+                        s_bl.Call.AddCallAsync(CallidToAdd);
                         Console.WriteLine("Call Added:");
                         break;
                     case 7:
@@ -581,7 +581,7 @@ internal class Program
                                 ? (Enums.OpenCallEnum?)sortFieldResultOpen
                                 : null;
 
-                        var openCalls = s_bl.Call.GetOpenCallInLists(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // Renamed to match method signature
+                        var openCalls = s_bl.Call.GetOpenCallInListsAsync(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // Renamed to match method signature
 
                         Console.WriteLine("Open calls: ");
                         if (!openCalls.Any())

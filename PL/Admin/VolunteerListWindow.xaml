@@ -86,7 +86,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="All Calls" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="60"/>
+                    <GridViewColumn Header="Treated" DisplayMemberBinding="{Binding SumTreatedCalls}" Width="60"/>
                     <GridViewColumn Header="Canceled" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="60"/>
                     <GridViewColumn Header="Expired" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="60"/>
                     <GridViewColumn Header="Current Call ID" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="130"/>

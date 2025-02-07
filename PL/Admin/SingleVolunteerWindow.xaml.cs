@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using BO;
 using static BO.Enums;
 
@@ -46,6 +47,9 @@ namespace PL.Admin
             }
         }
 
+        // Flag for handling updates asynchronously
+        private volatile bool _isUpdateInProgress = false;
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
@@ -80,36 +84,62 @@ namespace PL.Admin
                     IsIdEnabled = false;
                     LoadVolunteerTakenCare();
                 }
+
+                UpdateVolunteerList();
+
+                _timer = new DispatcherTimer(DispatcherPriority.Background);
+                _timer.Interval = TimeSpan.FromSeconds(1);
+                _timer.Tick += Timer_Tick;
+                _timer.Start();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private void LoadVolunteerTakenCare()
+
+        private DispatcherTimer _timer;
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            if (CurrentVolunteer == null) return;
-
-            var volunteerDetails = s_bl.Volunteer.RequestVolunteerDetails(CurrentVolunteer.Id);
-            var call = volunteerDetails?.VolunteerTakenCare; // הנחה שהשדה נקרא כך
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                VolunteerTakenCare.Clear();
-                if (call != null)
-                {
-                    VolunteerTakenCare.Add(call);  // אם אתה מצפה לרשימה, הוסף את אובייקט ה-CallInProgress לרשימה
-                }
-            });
+            // Logic to execute every time the timer ticks
+            LoadVolunteerTakenCare(); // Refresh the call list every second (or implement specific behavior)
         }
 
+    private void LoadVolunteerTakenCare()
+{
+    if (CurrentVolunteer == null) return;
+
+    var volunteerDetails = s_bl.Volunteer.RequestVolunteerDetails(CurrentVolunteer.Id);
+    var calls = volunteerDetails?.VolunteerTakenCare;
+
+    //Application.Current.Dispatcher.Invoke(() =>
+    //{
+    //    VolunteerTakenCare.Clear();
+    //    if (calls != null)
+    //    {
+    //        if(calls!=null)
+    //        {
+    //            VolunteerTakenCare.Add(calls);
+    //        }
+    //    }
+    //    OnPropertyChanged(nameof(VolunteerTakenCare));
+    //});
+}
 
 
         private void UpdateVolunteerList()
         {
             try
             {
-                VolunteerInList = queryVolunteerList();
+                // Update asynchronously with flag check
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    if (_isUpdateInProgress) return;
+
+                    _isUpdateInProgress = true;
+                    VolunteerInList = queryVolunteerList();
+                    _isUpdateInProgress = false;
+                });
             }
             catch (Exception ex)
             {
@@ -127,9 +157,26 @@ namespace PL.Admin
             BlApi.Factory.Get().Volunteer.RemoveObserver(volunteerListObserver);
         }
 
+        private volatile bool isUpdating = false;
         private void volunteerListObserver()
         {
-            Application.Current.Dispatcher.Invoke(UpdateVolunteerList);
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // אם יש עדכון שממתין, לא נבצע עדכון נוסף
+                if (isUpdating)
+                    return;
+
+                isUpdating = true;
+                try
+                {
+                    // הוספתי קריאה ל-Dispatcher.Invoke לעדכון סטטוס בצורה בטוחה
+                    UpdateVolunteerList();
+                }
+                finally
+                {
+                    isUpdating = false;
+                }
+            }));
         }
 
         private IEnumerable<BO.VolunteerInList> queryVolunteerList()
@@ -178,15 +225,17 @@ namespace PL.Admin
                 {
                     s_bl.Volunteer.AddVolunteer(CurrentVolunteer!);
                     MessageBox.Show("Volunteer added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
                 }
                 else
                 {
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer!.Id, CurrentVolunteer!);
                     MessageBox.Show("Volunteer updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
                 }
 
                 UpdateVolunteerList();
-               
+
             }
             catch (Exception ex)
             {
@@ -196,7 +245,7 @@ namespace PL.Admin
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            // Handle selection change if necessary
         }
     }
 }

@@ -17,6 +17,10 @@ namespace PL.Volunteer
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private BO.Volunteer CurrentVolunteer;
 
+        // דגלים למניעת עדכונים כפולים
+        private volatile bool _isUpdatingCalls = false;
+        private volatile bool _isUpdatingLocation = false;
+
         public List<string> CallTypes { get; } = Enum.GetNames(typeof(BO.Enums.CallTypeEnum)).ToList();
         public List<string> SortOptions { get; } = Enum.GetNames(typeof(BO.Enums.OpenCallEnum)).ToList();
 
@@ -31,9 +35,9 @@ namespace PL.Volunteer
                 LoadCalls(); // ריענון הקריאות לאחר שינוי הפילטר
             }
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             s_bl?.Call.AddObserver(ObserveCallListChanges);
             ObserveCallListChanges();
         }
@@ -85,6 +89,9 @@ namespace PL.Volunteer
 
         private void LoadCalls()
         {
+            if (_isUpdatingCalls) return; // אם כבר מתבצע עדכון, לא נבצע עדכון נוסף
+            _isUpdatingCalls = true;
+
             try
             {
                 BO.Enums.CallTypeEnum? callTypeEnum = null;
@@ -99,7 +106,7 @@ namespace PL.Volunteer
                     openCallEnum = tempOpenCall;
                 }
 
-                var calls = s_bl.Call.GetOpenCallInLists(CurrentVolunteer.Id, callTypeEnum, openCallEnum);
+                var calls = s_bl.Call.GetOpenCallInListsAsync(CurrentVolunteer.Id, callTypeEnum, openCallEnum);
 
                 Calls.Clear();
                 foreach (var call in calls)
@@ -110,6 +117,10 @@ namespace PL.Volunteer
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading calls: {ex.Message}");
+            }
+            finally
+            {
+                _isUpdatingCalls = false;
             }
         }
 
@@ -127,7 +138,7 @@ namespace PL.Volunteer
                     ? parsedOpenCall
                     : (BO.Enums.OpenCallEnum?)null;
 
-            var filteredCalls = s_bl.Call.GetOpenCallInLists(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
+            var filteredCalls = s_bl.Call.GetOpenCallInListsAsync(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
             Calls.Clear();
             foreach (var call in filteredCalls)
             {
@@ -237,6 +248,9 @@ namespace PL.Volunteer
 
         private void update_click(object sender, RoutedEventArgs e)
         {
+            if (_isUpdatingLocation) return; // אם כבר מתבצע עדכון, לא נבצע עדכון נוסף
+            _isUpdatingLocation = true;
+
             try
             {
                 CurrentVolunteer.Location = textrr.Text;
@@ -250,6 +264,10 @@ namespace PL.Volunteer
             {
                 MessageBox.Show($"Error updating address: {ex.Message}");
             }
+            finally
+            {
+                _isUpdatingLocation = false;
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -259,7 +277,16 @@ namespace PL.Volunteer
 
         private void ObserveCallListChanges()
         {
-            LoadCalls();
+            if (_isUpdatingCalls) return; // אם כבר מתבצע עדכון, לא נבצע עדכון נוסף
+            _isUpdatingCalls = true;
+
+            // עדכון התצוגה באמצעות Dispatcher
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                LoadCalls();
+            }));
+
+            _isUpdatingCalls = false;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

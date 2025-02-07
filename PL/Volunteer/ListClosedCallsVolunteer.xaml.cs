@@ -37,22 +37,6 @@ namespace PL.Volunteer
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            s_bl?.Volunteer.AddObserver(ObserveCallsListChanges);  // נרשמים למשקיף
-            ObserveCallsListChanges();  // מבצע את הקריאה כדי להוריד את הרשימה המעודכנת
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            s_bl?.Volunteer.RemoveObserver(ObserveCallsListChanges);  // מסירים את המשקיף
-        }
-
-        private void ObserveCallsListChanges()
-        {
-            LoadClosedCalls();  // טוען את הרשימה מחדש
-        }
-
         private string _selectedSortOption;
         public string SelectedSortOption
         {
@@ -67,6 +51,9 @@ namespace PL.Volunteer
 
         private readonly int _volunteerId;
 
+        // דגלים למניעת עדכונים כפולים
+        private volatile bool _isUpdatingCallList = false;
+
         public ListClosedCallsVolunteer(int volunteerId)
         {
             InitializeComponent();
@@ -80,11 +67,39 @@ namespace PL.Volunteer
             return s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList() ?? new List<BO.ClosedCallInList>();
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            s_bl?.Volunteer.AddObserver(ObserveCallsListChanges);
+            ObserveCallsListChanges();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            s_bl?.Volunteer.RemoveObserver(ObserveCallsListChanges);
+        }
+
+        private void ObserveCallsListChanges()
+        {
+            // אם יש עדכון קיים, התעלם עד שהקודם יסתיים
+            if (_isUpdatingCallList)
+                return;
+
+            // הדלק את הדגל לפני שמבצעים את העדכון
+            _isUpdatingCallList = true;
+
+            // עדכון התצוגה יבוצע על Dispatcher כדי למנוע חריגה
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // עדכון התצוגה רק אחרי שה-Dispatcher סיים את המשימה
+                LoadClosedCalls();
+                _isUpdatingCallList = false;  // כיבוי הדגל
+            }));
+        }
+
         private void ApplyFilters()
         {
             BO.Enums.CallTypeEnum? callTypeFilter = null;
 
-            // אם לא נבחר "None" או אם נבחר ערך תקני, נבצע סינון לפי סוג הקריאה
             if (!string.IsNullOrEmpty(SelectedCallType) && SelectedCallType != "None")
             {
                 if (Enum.TryParse(SelectedCallType, out BO.Enums.CallTypeEnum parsedCallType))
@@ -95,7 +110,6 @@ namespace PL.Volunteer
 
             BO.Enums.ClosedCallFieldEnum? sortField = null;
 
-            // אם לא נבחר "None" או אם נבחר ערך תקני, נבצע סינון לפי הסדר
             if (!string.IsNullOrEmpty(SelectedSortOption) && SelectedSortOption != "None")
             {
                 if (Enum.TryParse(SelectedSortOption, out BO.Enums.ClosedCallFieldEnum parsedSortField))
@@ -104,7 +118,6 @@ namespace PL.Volunteer
                 }
             }
 
-            // נטען את הקריאות עם הסינונים החדשים
             ClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, callTypeFilter, sortField)?.ToList();
         }
 
