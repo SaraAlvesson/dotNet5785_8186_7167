@@ -1,4 +1,4 @@
-﻿namespace Dal;
+namespace Dal;
 
 using DalApi;
 using DO;
@@ -43,16 +43,19 @@ static class XMLTools
         {
             if (!File.Exists(xmlFilePath)) return new();
 
-            using FileStream file = new(xmlFilePath, FileMode.Open);
+            using FileStream file = new(xmlFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             XmlSerializer x = new(typeof(List<T>));
             List<T> result = x.Deserialize(file) as List<T> ?? new();
 
-            // הדפסת פרטי קריאת שדה זמן פתיחה
-            foreach (var item in result)
+            // רק אם זה קריאה חדשה נדפיס את הזמן
+            if (typeof(T) == typeof(Call))
             {
-                if (item is Call call)
+                foreach (var item in result.Take(1)) // בודקים רק את הפריט הראשון
                 {
-                    Console.WriteLine($"OpenTime: {call.OpenTime}");  // הדפסה לבדוק את ערך OpenTime
+                    if (item is Call call)
+                    {
+                        Console.WriteLine($"First Call OpenTime: {call.OpenTime}");
+                    }
                 }
             }
 

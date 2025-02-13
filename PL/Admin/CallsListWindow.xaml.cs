@@ -1,4 +1,4 @@
-﻿using BO;
+using BO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -184,9 +184,18 @@ namespace PL.Admin
 
         private void lsvCallList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedCall != null)
+            if (sender is ListView listView && listView.SelectedItem is CallInList selectedCall)
             {
-                new SingleCallWindow(SelectedCall.CallId).Show();
+                try
+                {
+                    var singleCallWindow = new SingleCallWindow(selectedCall.CallId);
+                    singleCallWindow.Owner = this; // הגדרת החלון הנוכחי כ-Owner
+                    singleCallWindow.Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error opening call details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-﻿namespace DalTest;
+namespace DalTest;
 using Dal;
 
 using DalApi;

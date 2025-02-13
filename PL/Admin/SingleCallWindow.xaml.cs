@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -67,39 +67,26 @@ namespace PL.Admin
             {
                 if (id == 0)
                 {
-                    // קריאה חדשה, תעודת זהות מקבלת את הערך הרץ הבא
-                    try
+                    // קריאה חדשה
+                    CurrentCall = new BO.Call
                     {
-                        CurrentCall = new BO.Call
-                        {
-                            Id = s_bl.Call.GetNextId(),
-                            OpenTime = DateTime.Now,
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error getting next ID: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                        OpenTime = DateTime.Now,
+                    };
                 }
                 else
                 {
-                    LoadCurrentCallDetails();
-                    try
-                    {
-                        CurrentCall = s_bl.Call.readCallData(id);
-                        LoadCurrentCallDetails();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error loading call data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    CurrentCall = s_bl.Call.readCallData(id);
+                    LoadCurrentCallDetails(); // טוען פרטים נוספים של הקריאה רק אם זו לא קריאה חדשה
                 }
-                UpdateCallList();
-                // אתחול טיימר
-                _timer = new DispatcherTimer();
-                _timer.Interval = TimeSpan.FromSeconds(1); // כל שנייה
-                _timer.Tick += Timer_Tick;
-                _timer.Start();
+
+                // אתחול טיימר רק אם זו לא קריאה חדשה
+                if (id != 0)
+                {
+                    _timer = new DispatcherTimer();
+                    _timer.Interval = TimeSpan.FromSeconds(1);
+                    _timer.Tick += Timer_Tick;
+                    _timer.Start();
+                }
             }
             catch (Exception ex)
             {
@@ -110,21 +97,42 @@ namespace PL.Admin
         private DispatcherTimer _timer;
         private void Timer_Tick(object sender, EventArgs e)
         {
-            // Logic to execute every time the timer ticks
-            // For example, refreshing the call list or updating some UI element:
-            LoadCurrentCallDetails(); // Refresh the call list every second (or implement specific behavior)
+            if (CurrentCall?.Id > 0) // בודק שיש קריאה קיימת
+            {
+                try
+                {
+                    LoadCurrentCallDetails();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error updating call details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void LoadCurrentCallDetails()
         {
-            // Fetch current call details and set CurrentCall property
-            var callDetails = s_bl.Call.readCallData(CurrentCall.Id);
-            CurrentCall = callDetails;
+            if (CurrentCall?.Id > 0) // רק אם יש קריאה קיימת
+            {
+                try
+                {
+                    var updatedCall = s_bl.Call.readCallData(CurrentCall.Id);
+                    if (updatedCall != null)
+                    {
+                        CurrentCall = updatedCall;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading call details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         public bool IsEditable()
         {
-            return CurrentCall.CallStatus == CalltStatusEnum.OPEN || CurrentCall.CallStatus == CalltStatusEnum.CallAlmostOver;
+            return CurrentCall?.CallStatus == CalltStatusEnum.OPEN || 
+                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver;
         }
 
         // Notify UI of property changes
@@ -207,19 +215,20 @@ namespace PL.Admin
 
         private void UpdateCallList()
         {
-            try
+            if (CurrentCall?.Id > 0) // רק אם יש קריאה קיימת
             {
-                IEnumerable<BO.CallInList> call = queryCallList();
-                // שימוש ב-Dispatcher.Invoke לעדכון UI בצורה בטוחה
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    CallInList = call;
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while loading the calls list: {ex.Message}",
-                                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var updatedCall = s_bl.Call.readCallData(CurrentCall.Id);
+                    if (updatedCall != null)
+                    {
+                        CurrentCall = updatedCall;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error updating call: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

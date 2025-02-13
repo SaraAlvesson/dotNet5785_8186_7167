@@ -1,9 +1,9 @@
-﻿namespace BlImplementation;
+namespace BlImplementation;
 using BlApi;
 using BO;
-
 using DO;
 using Helpers;
+using BL.Helpers;
 using static BO.Enums;
 using static BO.Exceptions;
 
@@ -281,7 +281,7 @@ internal class CallImplementation : ICall
 
 
 
-    public  void AddCallAsync(BO.Call call)
+    public async Task AddCallAsync(BO.Call call)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
 
@@ -290,7 +290,7 @@ internal class CallImplementation : ICall
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
             CallManager.checkCallFormat(call);
             CallManager.checkCallLogic(call);
-            double[] cordinate = Tools.GetGeolocationCoordinatesAsync(call.Address);
+            double[] cordinate =  Tools.GetGeolocationCoordinatesAsync(call.Address);
 
             // שלב 4: המרת אובייקט BO.Call ל-DO.Call
             DO.Call newCall = new()
@@ -420,7 +420,7 @@ internal class CallImplementation : ICall
             double[] volunteerLocation;
             try
             {
-                volunteerLocation = Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+                volunteerLocation =  Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
             }
             catch (Exception ex)
             {
@@ -470,6 +470,27 @@ internal class CallImplementation : ICall
             return openCalls.ToList();
         }
     }
+
+    //public async<BO.Call> CalculateDistanceAndAssignVolunteer(int callId, int volunteerId)
+    //{
+    //    lock (AdminManager.BlMutex)
+    //    {
+    //        var call = _dal.call.Read(callId);
+    //        var volunteer = _dal.Volunteer.Read(volunteerId);
+
+    //        if (call == null || volunteer == null)
+    //            throw new BlDoesNotExistException("Call or Volunteer not found");
+
+    //        string volunteerAddress = volunteer.Location;
+    //        string callAddress = call.Adress;
+
+    //        // הוספת await כאן
+    //        double[] volunteerLocation =Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+    //        double[] callLocation = Tools.GetGeolocationCoordinatesAsync(callAddress);
+
+    //        // ... (שאר הקוד)
+    //    }
+    //}
 
     public  void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
@@ -624,4 +645,3 @@ internal class CallImplementation : ICall
         }
     }
 }
-

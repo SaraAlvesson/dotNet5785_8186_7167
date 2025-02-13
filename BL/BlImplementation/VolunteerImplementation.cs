@@ -1,4 +1,6 @@
-﻿namespace BlImplementation;
+namespace BlImplementation;
+
+using BL.Helpers;
 using BlApi;
 using BO;
 using DO;
@@ -31,27 +33,27 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-            // עטיפת שליפת המתנדב בבלוק נעילה כדי להבטיח שלמות הנתונים
+            // ????? ????? ?????? ????? ????? ??? ?????? ????? ???????
             lock (AdminManager.BlMutex)
             {
-                // שלב 1: שליפת המתנדב לפי מזהה
+                // ??? 1: ????? ?????? ??? ????
                 var volunteer = _dal.Volunteer.ReadAll(v => v.Id == username).FirstOrDefault();
 
                 if (volunteer != null)
                 {
-                    // שלב 2: פענוח סיסמת המתנדב מה-XML
+                    // ??? 2: ????? ????? ?????? ??-XML
                     string decodedPassword = HttpUtility.HtmlDecode(volunteer.Password);
 
-                    // שלב 3: פענוח סיסמת הקלט של המשתמש (למקרה שהיא מקודדת)
+                    // ??? 3: ????? ????? ???? ?? ?????? (????? ???? ??????)
                     string inputPassword = HttpUtility.HtmlDecode(password);
 
-                    // השוואת הסיסמאות לאחר הפענוח
+                    // ?????? ???????? ???? ??????
                     if (decodedPassword != inputPassword)
                     {
                         throw new BlPasswordNotValid("Incorrect password");
                     }
 
-                    // שלב 4: המרת תפקיד
+                    // ??? 4: ???? ?????
                     if (Enum.TryParse<BO.Enums.VolunteerTypeEnum>(volunteer.Position.ToString(), out var volunteerType))
                     {
                         return volunteerType.ToString();
@@ -63,12 +65,12 @@ internal class VolunteerImplementation : IVolunteer
                 }
             }
 
-            // שלב 5: אם המשתמש לא נמצא
+            // ??? 5: ?? ?????? ?? ????
             throw new BlDoesNotExistException($"Username {username} not found");
         }
         catch (Exception ex)
         {
-            // טיפול בחריגות
+            // ????? ???????
             throw new Exception("An error occurred during the login process: " + ex.Message, ex);
         }
     }
@@ -76,25 +78,25 @@ internal class VolunteerImplementation : IVolunteer
     public IEnumerable<VolunteerInList> RequestVolunteerList(
      bool? isActive,
      VolunteerInListField? sortField = null,
-     CallTypeEnum? callTypeFilter = null)  // הוספת פילטר לסוג קריאה
+     CallTypeEnum? callTypeFilter = null)  // ????? ????? ???? ?????
     {
         try
         {
             IEnumerable<DO.Volunteer> volunteers;
 
-            // נעילה סביב קריאה ל-DAL
+            // ????? ???? ????? ?-DAL
             lock (AdminManager.BlMutex)
             {
                 volunteers = _dal.Volunteer.ReadAll();
             }
 
-            // סינון לפי פעילות
+            // ????? ??? ??????
             if (isActive.HasValue)
             {
                 volunteers = volunteers.Where(v => v.Active == isActive.Value).ToList();
             }
 
-            // הבאת הנתונים לאחר הסינון
+            // ???? ??????? ???? ??????
             var volunteerDetailsMap = volunteers
                 .Select(v => RequestVolunteerDetails(v.Id))
                 .ToDictionary(d => d.Id);
@@ -111,13 +113,13 @@ internal class VolunteerImplementation : IVolunteer
                 CallType = details.VolunteerTakenCare?.CallType ?? default(CallTypeEnum)
             }).ToList();
 
-            // סינון לפי סוג קריאה אם יש צורך
+            // ????? ??? ??? ????? ?? ?? ????
             if (callTypeFilter.HasValue)
             {
                 volunteerList = volunteerList.Where(v => v.CallType == callTypeFilter.Value).ToList();
             }
 
-            // מיון
+            // ????
             volunteerList = sortField switch
             {
                 VolunteerInListField.FullName => volunteerList.OrderBy(v => v.FullName).ThenBy(v => v.Id).ToList(),
@@ -126,7 +128,7 @@ internal class VolunteerImplementation : IVolunteer
                 VolunteerInListField.SumCanceledCalls => volunteerList.OrderBy(v => v.SumCanceledCalls).ThenBy(v => v.Id).ToList(),
                 VolunteerInListField.SumExpiredCalls => volunteerList.OrderBy(v => v.SumExpiredCalls).ThenBy(v => v.Id).ToList(),
                 VolunteerInListField.CallIdInTreatment => volunteerList.OrderBy(v => v.CallIdInTreatment ?? -1).ThenBy(v => v.Id).ToList(),
-                _ => volunteerList.OrderBy(v => v.Id).ToList(), // ברירת מחדל
+                _ => volunteerList.OrderBy(v => v.Id).ToList(), // ????? ????
             };
 
             return volunteerList;
@@ -143,17 +145,17 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-            // עטיפת כל הפניות ל-DAL ב-lock
+            // ????? ?? ?????? ?-DAL ?-lock
             lock (AdminManager.BlMutex)
             {
-                // שליפת פרטי המתנדב
+                // ????? ???? ??????
                 DO.Volunteer volunteer = _dal.Volunteer.Read(volunteerId)
                     ?? throw new BO.Exceptions.BlDoesNotExistException($"Volunteer with ID {volunteerId} not found.");
 
-                // שליפת כל ההקצאות של המתנדב
+                // ????? ?? ??????? ?? ??????
                 var assignments = _dal.assignment.ReadAll(a => a.VolunteerId == volunteerId);
 
-                // סינון הקריאות שבתהליך
+                // ????? ??????? ???????
                 var ongoingAssignments = assignments.Where(a =>
                 {
                     DO.Call call = _dal.call.Read(a.CallId);
@@ -162,7 +164,7 @@ internal class VolunteerImplementation : IVolunteer
                            status == BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver;
                 });
 
-                // יצירת אובייקט לוגי "מתנדב" והחזרת הקריאות שבתהליך בלבד
+                // ????? ??????? ???? "?????" ?????? ??????? ??????? ????
                 return new BO.Volunteer()
                 {
                     Id = volunteer.Id,
@@ -200,7 +202,7 @@ internal class VolunteerImplementation : IVolunteer
                                 volunteer.Longitude ?? 0
                             ),
                         };
-                    }).FirstOrDefault() // אם יש קריאה אחת לפחות בטיפול
+                    }).FirstOrDefault() // ?? ?? ????? ??? ????? ??????
                 };
             }
         }
@@ -220,15 +222,15 @@ internal class VolunteerImplementation : IVolunteer
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
         try
         {
-            lock (AdminManager.BlMutex)  // נעילה על קריאות ושינויים
+            lock (AdminManager.BlMutex)  // ????? ?? ?????? ????????
             {
-                // שלב 1: בקשת רשומת המתנדב משכבת הנתונים
+                // ??? 1: ???? ????? ?????? ????? ???????
                 var existingVolunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerDetails.Id).FirstOrDefault()
                     ?? throw new DalDoesNotExistException($"Volunteer with ID {volunteerDetails.Id} not found.");
 
                 Console.WriteLine("Existing volunteer found.");
 
-                // שלב 2: בדיקה אם המבקש לעדכן הוא המנהל או המתנדב עצמו
+                // ??? 2: ????? ?? ????? ????? ??? ????? ?? ?????? ????
                 if (requesterId != volunteerDetails.Id && IsAdmin(requesterId))
                 {
                     throw new UnauthorizedAccessException("Unauthorized to update volunteer details.");
@@ -236,17 +238,17 @@ internal class VolunteerImplementation : IVolunteer
 
                 Console.WriteLine("Access authorization passed.");
 
-                // שלב 3: בדיקת ערכים מבחינת פורמט
-                if (!Helpers.VolunteersManager.checkVolunteerEmail(volunteerDetails))
+                // ??? 3: ????? ????? ?????? ?????
+                if (!VolunteersManager.checkVolunteerEmail(volunteerDetails))
                     throw new BlEmailNotCorrect("Invalid email format.");
-                if (!Helpers.VolunteersManager.IsPhoneNumberValid(volunteerDetails))
+                if (!VolunteersManager.IsPhoneNumberValid(volunteerDetails))
                     throw new BlPhoneNumberNotCorrect("Invalid phone number format.");
-                if (!Helpers.VolunteersManager.IsValidId(volunteerDetails.Id))
+                if (!VolunteersManager.IsValidId(volunteerDetails.Id))
                     throw new BlIdNotValid("Invalid ID format.");
 
                 Console.WriteLine("Format checks passed.");
 
-                // שלב 4: בדיקה לוגית של הערכים
+                // ??? 4: ????? ????? ?? ??????
                 if (volunteerDetails.Latitude == null || volunteerDetails.Longitude == null)
                     throw new BlInvalidLocationException("Location must include valid latitude and longitude.");
 
@@ -259,7 +261,7 @@ internal class VolunteerImplementation : IVolunteer
 
                 Console.WriteLine("Position update authorized.");
 
-                // שלב 6: העברת נתונים מ-BO ל-DO
+                // ??? 6: ????? ?????? ?-BO ?-DO
                 DO.Volunteer newVolunteer = new DO.Volunteer
                 {
                     Id = volunteerDetails.Id,
@@ -270,7 +272,7 @@ internal class VolunteerImplementation : IVolunteer
                     Email = volunteerDetails.Email,
                     Active = volunteerDetails.Active,
                     DistanceType = (DO.DistanceType)volunteerDetails.DistanceType,
-                    Position = (DO.Position)volunteerDetails.Position,  // חשוב לוודא ש-Position כאן לא משאיר ערך לא מעודכן
+                    Position = (DO.Position)volunteerDetails.Position,  // ???? ????? ?-Position ??? ?? ????? ??? ?? ??????
                     Latitude = volunteerDetails.Latitude,
                     Longitude = volunteerDetails.Longitude,
                     MaxDistance = volunteerDetails.MaxDistance,
@@ -278,10 +280,10 @@ internal class VolunteerImplementation : IVolunteer
 
                 Console.WriteLine("Volunteer data mapped to DO object.");
 
-                // שלב 7: עדכון רשומת המתנדב בשכבת הנתונים
+                // ??? 7: ????? ????? ?????? ????? ???????
                 _dal.Volunteer.Update(newVolunteer);
 
-                // שלב 8: קריאה חוזרת לרשומה על מנת לוודא שהיא אכן עודכנה
+                // ??? 8: ????? ????? ?????? ?? ??? ????? ???? ??? ??????
                 var updatedVolunteer = _dal.Volunteer.Read(v => v.Id == newVolunteer.Id);
                 if (updatedVolunteer == null)
                 {
@@ -298,37 +300,37 @@ internal class VolunteerImplementation : IVolunteer
         catch (DalDoesNotExistException ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (UnauthorizedAccessException ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (BlEmailNotCorrect ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (BlPhoneNumberNotCorrect ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (BlIdNotValid ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (BlInvalidLocationException ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (BlUnauthorizedAccessException ex)
         {
             Console.WriteLine(ex.Message);
-            throw;  // מיידע על חריגה ספציפית
+            throw;  // ????? ?? ????? ???????
         }
         catch (Exception ex)
         {
@@ -339,7 +341,7 @@ internal class VolunteerImplementation : IVolunteer
 
     private bool IsAdmin(int id)
     {
-        lock (AdminManager.BlMutex)  // עטיפה ב-lock
+        lock (AdminManager.BlMutex)  // ????? ?-lock
         {
             var volunteer = _dal.Volunteer.Read(v => v.Id == id);
             if (volunteer != null && volunteer.Position == DO.Position.admin)
@@ -356,23 +358,23 @@ internal class VolunteerImplementation : IVolunteer
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
         {
-            // שלב 1: בדוק אם המתנדב מטפל בקריאה פעילה
-            lock (AdminManager.BlMutex)  // עטיפה ב-lock עבור קריאת ה-DAL
+            // ??? 1: ???? ?? ?????? ???? ?????? ?????
+            lock (AdminManager.BlMutex)  // ????? ?-lock ???? ????? ?-DAL
             {
                 var assignments = _dal.assignment.ReadAll(a => a.VolunteerId == volunteerId).ToList();
-                var activeAssignment = assignments.FirstOrDefault(a => a.FinishAppointmentType == null); // אם יש הקצאה פעילה
+                var activeAssignment = assignments.FirstOrDefault(a => a.FinishAppointmentType == null); // ?? ?? ????? ?????
 
                 if (activeAssignment != null)
                 {
-                    // אם המתנדב מטפל בהקצאה פעילה, יש לזרוק חריגה
+                    // ?? ?????? ???? ?????? ?????, ?? ????? ?????
                     throw new BlCantBeErased($"Volunteer with id {volunteerId} cannot be erased because they are currently handling a call.");
                 }
             }
 
-            // שלב 2: ניסיון למחוק את המתנדב אם הוא לא מטפל בהקצאה פעילה
-            lock (AdminManager.BlMutex)  // עטיפה ב-lock עבור קריאת ה-DAL למחיקה
+            // ??? 2: ?????? ????? ?? ?????? ?? ??? ?? ???? ?????? ?????
+            lock (AdminManager.BlMutex)  // ????? ?-lock ???? ????? ?-DAL ??????
             {
-                _dal.Volunteer.Delete(volunteerId); // מנסה למחוק את המתנדב
+                _dal.Volunteer.Delete(volunteerId); // ???? ????? ?? ??????
             }
 
             VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
@@ -380,7 +382,7 @@ internal class VolunteerImplementation : IVolunteer
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            // טיפול בחריגה במקרה של מתנדב שלא נמצא
+            // ????? ?????? ????? ?? ????? ??? ????
             throw new BlDoesNotExistException($"Volunteer with id {volunteerId} not found.", ex);
         }
     }
@@ -409,18 +411,18 @@ internal class VolunteerImplementation : IVolunteer
             MaxDistance = volunteer.MaxDistance,
         };
 
-        if (!(Helpers.VolunteersManager.checkVolunteerEmail(volunteer)))
+        if (!(VolunteersManager.checkVolunteerEmail(volunteer)))
             throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!(Helpers.VolunteersManager.IsValidId(volunteer.Id)))
+        if (!(VolunteersManager.IsValidId(volunteer.Id)))
             throw new BlIdNotValid("Invalid ID format.");
-        if (!(Helpers.VolunteersManager.IsPhoneNumberValid(volunteer)))
+        if (!(VolunteersManager.IsPhoneNumberValid(volunteer)))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
         if (!(Helpers.Tools.IsAddressValid(volunteer.Location)))
             throw new BlPhoneNumberNotCorrect("Invalid Location format.");
 
         try
         {
-            // עטיפה ב-lock עבור קריאה ל-DAL (יצירת המתנדב)
+            // ????? ?-lock ???? ????? ?-DAL (????? ??????)
             lock (AdminManager.BlMutex)
             {
                 _dal.Volunteer.Create(newVolunteer);

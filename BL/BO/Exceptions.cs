@@ -120,6 +120,13 @@ internal class Exceptions
         public BlInvalidLocationException(string? message) : base(message) { }
         public BlInvalidLocationException(string message, Exception innerException) : base(message, innerException) { }
     }
+    public class BlBadVolunteerLogicException : Exception
+    {
+
+        public BlBadVolunteerLogicException(string? message) : base(message) { }
+        public BlBadVolunteerLogicException(string message, Exception innerException) : base(message, innerException) { }
+    }
+    
 
     [Serializable]
     public class BLTemporaryNotAvailableException : Exception

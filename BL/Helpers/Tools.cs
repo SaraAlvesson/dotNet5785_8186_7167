@@ -1,4 +1,4 @@
-﻿using BO;
+using BO;
 using DalApi;
 using DO;
 using System.Net;
@@ -128,7 +128,7 @@ namespace Helpers
             }
         }
 
-        internal static bool IsAddressValid(string address)
+        public static bool IsAddressValid(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
             {
@@ -186,12 +186,22 @@ namespace Helpers
                 }
             }
         }
-        public class LocationResult
-{
-    public string Lat { get; set; }
-    public string Lon { get; set; }
-}
 
+        public static bool IsValidAddress(string? address)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+                return false;
+
+            // בדיקה בסיסית לכתובת תקינה
+            // ניתן להרחיב את הבדיקה בהתאם לדרישות הספציפיות
+            return address.Length >= 5 && address.Contains(' ');
+        }
+
+        public class LocationResult
+        {
+            public string Lat { get; set; }
+            public string Lon { get; set; }
+        }
 
         public static double CalculateDistance(double lat1 = 0, double lon1 = 0, double lat2 = 0, double lon2 = 0)
         {

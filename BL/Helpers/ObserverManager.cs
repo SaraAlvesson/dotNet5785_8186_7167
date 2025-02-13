@@ -1,4 +1,4 @@
-﻿namespace Helpers;
+namespace BL.Helpers;
 
 /// <summary>
 /// This class is a helper class allowing to manage observers for different logical entities
@@ -70,13 +70,13 @@ class ObserverManager //stage 5
     /// Notify all the observers that there is a change for one or more entities in the list
     /// that may affect the whole list presentation
     /// </summary>
-    internal void NotifyListUpdated() => _listObservers?.Invoke();
+    public void NotifyListUpdated() => _listObservers?.Invoke();
 
     /// <summary>
-    /// Notify observers of an e specific entity  that there was some change in the entity
+    /// Notify observers of a specific entity that there was some change in the entity
     /// </summary>
     /// <param name="id">a specific entity ID</param>
-    internal void NotifyItemUpdated(int id)
+    public void NotifyItemUpdated(int id)
     {
         if (_specificObservers.ContainsKey(id))
             _specificObservers[id]?.Invoke();

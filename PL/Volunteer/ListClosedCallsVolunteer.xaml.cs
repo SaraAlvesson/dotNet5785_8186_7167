@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading; // הוספת using עבור DispatcherTimer
 
 namespace PL.Volunteer
 {
@@ -54,46 +55,132 @@ namespace PL.Volunteer
         // דגלים למניעת עדכונים כפולים
         private volatile bool _isUpdatingCallList = false;
 
+        private DispatcherTimer _simulatorUpdateTimer;
+        private bool _isSimulatorRunning = false;
+
         public ListClosedCallsVolunteer(int volunteerId)
         {
             InitializeComponent();
 
             _volunteerId = volunteerId;
-            ClosedCalls = LoadClosedCalls();
+            LoadClosedCalls();
         }
 
-        private List<BO.ClosedCallInList> LoadClosedCalls()
+        private void LoadClosedCalls()
         {
-            return s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList() ?? new List<BO.ClosedCallInList>();
+            ClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList() ?? new List<BO.ClosedCallInList>();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             s_bl?.Volunteer.AddObserver(ObserveCallsListChanges);
             ObserveCallsListChanges();
+
+            // הגדרת טיימר לעדכון בזמן הסימולטור
+            _simulatorUpdateTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(2)
+            };
+            _simulatorUpdateTimer.Tick += SimulatorUpdateTimer_Tick;
+            _simulatorUpdateTimer.Start();
+        }
+
+        private void SimulatorUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            // בדיקה אם הסימולטור פועל
+            bool currentSimulatorState = Application.Current.MainWindow is MainWindow mainWindow && mainWindow.IsSimulatorRunning;
+            
+            if (currentSimulatorState != _isSimulatorRunning)
+            {
+                _isSimulatorRunning = currentSimulatorState;
+                
+                if (_isSimulatorRunning)
+                {
+                    // הפעלת עדכון מיידי כאשר הסימולטור מתחיל
+                    ObserveCallsListChanges();
+                }
+            }
+            
+            // עדכון רק אם הסימולטור פועל
+            if (_isSimulatorRunning)
+            {
+                ObserveCallsListChanges();
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             s_bl?.Volunteer.RemoveObserver(ObserveCallsListChanges);
+            
+            // עצירת הטיימר
+            _simulatorUpdateTimer?.Stop();
+            _simulatorUpdateTimer = null;
         }
 
         private void ObserveCallsListChanges()
         {
-            // אם יש עדכון קיים, התעלם עד שהקודם יסתיים
+            // מניעת עדכונים כפולים
             if (_isUpdatingCallList)
                 return;
 
-            // הדלק את הדגל לפני שמבצעים את העדכון
             _isUpdatingCallList = true;
 
-            // עדכון התצוגה יבוצע על Dispatcher כדי למנוע חריגה
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                // עדכון התצוגה רק אחרי שה-Dispatcher סיים את המשימה
-                LoadClosedCalls();
-                _isUpdatingCallList = false;  // כיבוי הדגל
+                try 
+                {
+                    // קבלת רשימת הקריאות הסגורות העדכנית
+                    var updatedClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList() 
+                                             ?? new List<BO.ClosedCallInList>();
+
+                    // עדכון הרשימה רק אם יש שינוי
+                    if (!AreListsEqual(ClosedCalls, updatedClosedCalls))
+                    {
+                        ClosedCalls = updatedClosedCalls;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // טיפול בשגיאות אפשריות
+                    MessageBox.Show($"שגיאה בעדכון רשימת קריאות סגורות: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    _isUpdatingCallList = false;
+                }
             }));
+        }
+
+        // השוואת רשימות קריאות סגורות
+        private bool AreListsEqual(List<BO.ClosedCallInList> list1, List<BO.ClosedCallInList> list2)
+        {
+            if (list1 == null && list2 == null) return true;
+            if (list1 == null || list2 == null) return false;
+            if (list1.Count != list2.Count) return false;
+
+            return list1.SequenceEqual(list2, new ClosedCallInListComparer());
+        }
+
+        // מחלקת השוואה מותאמת לקריאות סגורות
+        private class ClosedCallInListComparer : IEqualityComparer<BO.ClosedCallInList>
+        {
+            public bool Equals(BO.ClosedCallInList x, BO.ClosedCallInList y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (x is null || y is null) return false;
+
+                return x.Id == y.Id &&
+                       x.CallType == y.CallType &&
+                       x.Address == y.Address &&
+                       x.OpenTime == y.OpenTime &&
+                       x.TreatmentStartTime == y.TreatmentStartTime &&
+                       x.RealFinishTime == y.RealFinishTime;
+            }
+
+            public int GetHashCode(BO.ClosedCallInList obj)
+            {
+                return HashCode.Combine(obj.Id, obj.CallType, obj.Address, obj.OpenTime, obj.TreatmentStartTime, obj.RealFinishTime);
+            }
         }
 
         private void ApplyFilters()

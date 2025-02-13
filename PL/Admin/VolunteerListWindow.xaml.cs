@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -21,7 +21,8 @@ namespace PL.Admin
         public IEnumerable<CallTypeEnum> CallTypeOptions => Enum.GetValues(typeof(CallTypeEnum)).Cast<CallTypeEnum>();
 
         private CallTypeEnum _selectedCallType;
-        private bool _isUpdating = false; // דגל (flag) עדכון
+        private bool _isUpdating = false; 
+        private bool _isInitializing = false; 
 
         public CallTypeEnum SelectedCallType
         {
@@ -32,7 +33,7 @@ namespace PL.Admin
                 {
                     _selectedCallType = value;
                     OnPropertyChanged(nameof(SelectedCallType));
-                    ApplyFilters();
+                    if (!_isInitializing) ApplyFilters();
                 }
             }
         }
@@ -49,7 +50,7 @@ namespace PL.Admin
                 {
                     _selectedSortOption = value;
                     OnPropertyChanged(nameof(SelectedSortOption));
-                    ApplyFilters();
+                    if (!_isInitializing) ApplyFilters();
                 }
             }
         }
@@ -71,7 +72,7 @@ namespace PL.Admin
                 {
                     _selectedActiveFilter = value;
                     OnPropertyChanged(nameof(SelectedActiveFilter));
-                    ApplyFilters();
+                    if (!_isInitializing) ApplyFilters();
                 }
             }
         }
@@ -89,22 +90,22 @@ namespace PL.Admin
                 if (_volunteers != value)
                 {
                     _volunteers = value;
-                    OnPropertyChanged(nameof(Volunteers)); // יזום עדכון אוטומטי של ה-UI
+                    OnPropertyChanged(nameof(Volunteers)); 
                 }
             }
         }
 
         public VolunteerListWindow()
         {
+            // אתחול ערכי ברירת מחדל לפני יצירת הממשק
+            _selectedCallType = CallTypeEnum.None;
+            _selectedActiveFilter = "All";
+            _selectedSortOption = VolunteerInListField.None;
+
             InitializeComponent();
             DataContext = this;
-
-            SelectedCallType = CallTypeEnum.None;
-            SelectedActiveFilter = "All";
-            SelectedSortOption = VolunteerInListField.None;
-
             LoadVolunteerList();
-            StartAutoRefresh(); // קריאה להפעלת הטיימר
+            StartAutoRefresh();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -120,10 +121,10 @@ namespace PL.Admin
 
         private void ApplyFilters()
         {
-            if (_isUpdating) // אם הדגל פעיל, אל תבצע עדכון
+            if (_isUpdating) 
                 return;
 
-            _isUpdating = true; // הדלקת הדגל
+            _isUpdating = true; 
 
             // הגדרת סינון לפי קריאה וסוג הפעילות
             CallTypeEnum? callTypeFilter = SelectedCallType != CallTypeEnum.None ? SelectedCallType : (CallTypeEnum?)null;
@@ -173,7 +174,7 @@ namespace PL.Admin
                 }
                 finally
                 {
-                    _isUpdating = false; // כיבוי הדגל לאחר סיום העדכון
+                    _isUpdating = false; 
                 }
             }), DispatcherPriority.Background);
         }
@@ -184,14 +185,12 @@ namespace PL.Admin
         {
             try
             {
-                // טעינה רק אם הרשימה ריקה
-                if (!Volunteers.Any())
+                // טעינת כל המתנדבים בלי סינון
+                var volunteerList = s_bl?.Volunteer.RequestVolunteerList(null, null, null);
+                Volunteers.Clear();
+                foreach (var volunteer in volunteerList)
                 {
-                    var volunteerList = s_bl?.Volunteer.RequestVolunteerList(null,null,null) ;
-                    foreach (var volunteer in volunteerList)
-                    {
-                        Volunteers.Add(volunteer);
-                    }
+                    Volunteers.Add(volunteer);
                 }
             }
             catch (Exception ex)
@@ -208,7 +207,7 @@ namespace PL.Admin
         {
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(5) // רענון כל 5 שניות
+                Interval = TimeSpan.FromSeconds(5) 
             };
             _timer.Tick += (s, e) => ObserveVolunteerListChanges();
             _timer.Start();
@@ -216,21 +215,47 @@ namespace PL.Admin
 
         private void ObserveVolunteerListChanges()
         {
-            if (_isUpdating) return; // אם כבר יש עדכון פעיל, לא לבצע שוב
+            if (_isUpdating) return;
 
-            _isUpdating = true; // מונע עדכונים כפולים
+            _isUpdating = true;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 try
                 {
-                    var updatedVolunteers = s_bl?.Volunteer.RequestVolunteerList(null) ?? new List<VolunteerInList>();
+                    // שימוש בפילטרים הנוכחיים
+                    CallTypeEnum? callTypeFilter = SelectedCallType == CallTypeEnum.None ? null : SelectedCallType;
+                    bool? isActiveFilter = SelectedActiveFilter switch
+                    {
+                        "Active" => true,
+                        "Inactive" => false,
+                        _ => null
+                    };
+
+                    var updatedVolunteers = s_bl?.Volunteer.RequestVolunteerList(isActiveFilter, null, callTypeFilter) ?? new List<VolunteerInList>();
+
+                    // שימוש במיון הנוכחי
+                    if (SelectedSortOption != VolunteerInListField.None)
+                    {
+                        updatedVolunteers = SelectedSortOption switch
+                        {
+                            VolunteerInListField.Id => updatedVolunteers.OrderBy(v => v.Id).ToList(),
+                            VolunteerInListField.FullName => updatedVolunteers.OrderBy(v => v.FullName).ToList(),
+                            VolunteerInListField.Active => updatedVolunteers.OrderBy(v => v.Active).ToList(),
+                            VolunteerInListField.SumTreatedCalls => updatedVolunteers.OrderBy(v => v.SumTreatedCalls).ToList(),
+                            VolunteerInListField.SumCanceledCalls => updatedVolunteers.OrderBy(v => v.SumCanceledCalls).ToList(),
+                            VolunteerInListField.SumExpiredCalls => updatedVolunteers.OrderBy(v => v.SumExpiredCalls).ToList(),
+                            VolunteerInListField.CallIdInTreatment => updatedVolunteers.OrderBy(v => v.CallIdInTreatment).ToList(),
+                            _ => updatedVolunteers
+                        };
+                    }
+
                     Volunteers.Clear();
                     foreach (var volunteer in updatedVolunteers)
                     {
                         Volunteers.Add(volunteer);
                     }
-                    OnPropertyChanged(nameof(Volunteers)); // עדכון ה-UI
+                    OnPropertyChanged(nameof(Volunteers));
                 }
                 catch (Exception ex)
                 {
@@ -238,7 +263,7 @@ namespace PL.Admin
                 }
                 finally
                 {
-                    _isUpdating = false; // החזרת הדגל למצב רגיל
+                    _isUpdating = false;
                 }
             }));
         }
@@ -286,8 +311,19 @@ namespace PL.Admin
 
         private void lsvVolunteerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedVolunteer != null)
-                new SingleVolunteerWindow(SelectedVolunteer.Id).Show();
+            if (sender is ListView listView && listView.SelectedItem is VolunteerInList selectedVolunteer)
+            {
+                try
+                {
+                    var singleVolunteerWindow = new SingleVolunteerWindow(selectedVolunteer.Id);
+                    singleVolunteerWindow.Owner = this; 
+                    singleVolunteerWindow.Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error opening volunteer details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

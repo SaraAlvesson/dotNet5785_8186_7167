@@ -1,4 +1,4 @@
-﻿using BO;
+using BO;
 using System.Text.Json; // שים לב לשימוש ב- System.Text.Json במקום Newtonsoft.Json
 using DalApi;
 using DO;
@@ -10,9 +10,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using static BO.Enums;
 using static BO.Exceptions;
+using BL.Helpers; // Added this line
+using Helpers; // Added this line for AdminManager
 
 
-namespace Helpers;
+namespace BL.Helpers;
 
 internal static class CallManager
 {
@@ -310,7 +312,7 @@ internal static class CallManager
             {
                 // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
                 var existingCall = s_dal.call.Read(v => v.Id == callDetails.Id)
-                    ?? throw new DalDoesNotExistException($"Call with ID {callDetails.Id} not found.");
+                    ?? throw new BO.Exceptions.BlDoesNotExistException($"Call with ID={callDetails.Id} does Not exist");
 
                 // שלב 4: המרת אובייקט BO.Call ל-DO.Call
                 DO.Call newCall = new()
@@ -354,7 +356,7 @@ internal static class CallManager
             lock (AdminManager.BlMutex)  // stage 7
             {
                 var existingCall = s_dal.call.Read(v => v.Id == callId)
-                    ?? throw new DalDoesNotExistException("Call not found.");
+                    ?? throw new BO.Exceptions.BlDoesNotExistException("Call not found.");
 
                 c = readCallData(existingCall.Id);  // שמירה במשתנה מחוץ לבלוק
                 assignment = s_dal.assignment.Read(a => a.CallId == callId);  // שמירה במשתנה מחוץ לבלוק
@@ -621,8 +623,8 @@ catch (Exception ex)
                 // Notify observers within the lock to ensure thread safety
                 CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call and observers etc.
                 CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-                VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
-                VolunteersManager.Observers.NotifyListUpdated();
+                BL.Helpers.VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
+                BL.Helpers.VolunteersManager.Observers.NotifyListUpdated();
             }
         }
         catch (Exception ex)
@@ -634,7 +636,7 @@ catch (Exception ex)
 
 
 
-    public  static void UpdateToCancelCallTreatment(int RequesterId, int AssignmentId)
+    public static void UpdateToCancelCallTreatment(int RequesterId, int AssignmentId)
     {
         // Locking the block to ensure thread safety for DAL operations
         lock (AdminManager.BlMutex)
@@ -687,13 +689,13 @@ catch (Exception ex)
             // Notify observers inside the lock to ensure thread safety
             CallManager.Observers.NotifyItemUpdated(call.Id);  //update current call and observers etc.
             CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-            VolunteersManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
-            VolunteersManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
+            BL.Helpers.VolunteersManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
+            BL.Helpers.VolunteersManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
         }
     }
 
 
-    public static  void AssignCallToVolunteer(int volunteerId, int callId)
+    public static void AssignCallToVolunteer(int volunteerId, int callId)
     {
         try
         {
@@ -702,10 +704,6 @@ catch (Exception ex)
 
             if (call == null)
                 throw new InvalidOperationException("Call not found.");
-
-            //// בדיקת אם הקריאה לא טופלה ולא פג תוקפה
-            //if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN && call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
-            //    throw new InvalidOperationException("Call has already been treated or expired.");
 
             // בדיקת אם קיימת הקצאה פתוחה על הקריאה
             var existingAssignments = s_dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
@@ -718,7 +716,7 @@ catch (Exception ex)
                 Id = 0,
                 VolunteerId = volunteerId,
                 CallId = callId,
-                AppointmentTime = DateTime.Now, // זמן כניסה לטיפול
+                AppointmentTime = AdminManager.Now, // זמן כניסה לטיפול
                 FinishAppointmentTime = null,  // עדיין לא מעודכן
                 FinishAppointmentType = null   // עדיין לא מעודכן
             };
@@ -730,9 +728,11 @@ catch (Exception ex)
                 s_dal.assignment.Create(newAssignment);
             }
 
-            // עדכון תצוגת הקריאות
-            CallManager.Observers.NotifyItemUpdated(newAssignment.Id);
-            CallManager.Observers.NotifyListUpdated();
+            // עדכון תצוגת הקריאות והמתנדבים
+            CallManager.Observers.NotifyItemUpdated(callId);  // מעדכן את הקריאה הספציפית
+            CallManager.Observers.NotifyListUpdated();  // מעדכן את רשימת הקריאות
+            BL.Helpers.VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  // מעדכן את המתנדב הספציפי
+            BL.Helpers.VolunteersManager.Observers.NotifyListUpdated();  // מעדכן את רשימת המתנדבים
         }
         catch (Exception ex)
         {
