@@ -488,4 +488,12 @@
     <FinishAppointmentTime>2025-02-13T05:23:11</FinishAppointmentTime>
     <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
+  <Assignment>
+    <Id>132</Id>
+    <CallId>40</CallId>
+    <VolunteerId>697725983</VolunteerId>
+    <AppointmentTime>2025-02-16T01:11:27.6439196+02:00</AppointmentTime>
+    <FinishAppointmentTime>2025-02-13T06:13:11</FinishAppointmentTime>
+    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
+  </Assignment>
 </ArrayOfAssignment>

@@ -39,6 +39,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <local:EnumToColorConverter x:Key="EnumToColorConverter"/>
     </Window.Resources>
 
     <Grid Margin="25">
@@ -113,7 +114,15 @@
                     <GridViewColumn Header="Canceled" DisplayMemberBinding="{Binding SumCanceledCalls}" Width="70"/>
                     <GridViewColumn Header="Expired" DisplayMemberBinding="{Binding SumExpiredCalls}" Width="70"/>
                     <GridViewColumn Header="Current Call ID" DisplayMemberBinding="{Binding CallIdInTreatment}" Width="100"/>
-                    <GridViewColumn Header="Current Call Type" DisplayMemberBinding="{Binding CallType}" Width="120"/>
+                    <GridViewColumn Header="Current Call Type" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding CallType, Converter={StaticResource EnumToColorConverter}}">
+                                    <TextBlock Text="{Binding CallType}" HorizontalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Actions" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

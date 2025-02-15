@@ -15,7 +15,8 @@
             <local:BooleanToStartStopButtonTextConverter x:Key="BooleanToStartStopButtonTextConverter"/>
                 <!-- ממיר להמרת ערך בוליאני לפקודה להפעיל או להפסיק -->
             <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-           
+            <local:EnumToColorConverter x:Key="EnumToColorConverter"/>
+
             <!--<local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>-->
         </ResourceDictionary>
     </Application.Resources>

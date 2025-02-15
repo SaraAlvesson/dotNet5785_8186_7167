@@ -1,20 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer>
   <Volunteer>
-    <Id>697725983</Id>
-    <FullName>Yosef Cohen</FullName>
-    <PhoneNumber>0529378653</PhoneNumber>
-    <Email>volunteer1@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>admin</Position>
-    <Active>false</Active>
-    <Password>Q$y$kwhuyRR!</Password>
-    <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
-    <Latitude>32.099791</Latitude>
-    <Longitude>34.769077</Longitude>
-    <MaxDistance>13</MaxDistance>
-  </Volunteer>
-  <Volunteer>
     <Id>996908431</Id>
     <FullName>Shmuel Levi</FullName>
     <PhoneNumber>0569462575</PhoneNumber>
@@ -209,5 +195,19 @@
     <Latitude>32.065764</Latitude>
     <Longitude>34.770022</Longitude>
     <MaxDistance>5</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>697725983</Id>
+    <FullName>Yosef Cohen</FullName>
+    <PhoneNumber>0529378653</PhoneNumber>
+    <Email>volunteer1@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>admin</Position>
+    <Active>true</Active>
+    <Password>Q$y$kwhuyRR!</Password>
+    <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
+    <Latitude>32.099791</Latitude>
+    <Longitude>34.769077</Longitude>
+    <MaxDistance>13</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>
