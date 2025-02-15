@@ -43,20 +43,6 @@
     <MaxDistance>13</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>952805264</Id>
-    <FullName>Moshe Friedman</FullName>
-    <PhoneNumber>0511139500</PhoneNumber>
-    <Email>volunteer4@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>lhTISuae0ylx</Password>
-    <Location>Neve Tzedek, Tel Aviv, Israel</Location>
-    <Latitude>32.065764</Latitude>
-    <Longitude>34.770022</Longitude>
-    <MaxDistance>5</MaxDistance>
-  </Volunteer>
-  <Volunteer>
     <Id>975988470</Id>
     <FullName>Avraham Stein</FullName>
     <PhoneNumber>0587700681</PhoneNumber>
@@ -209,5 +195,19 @@
     <Latitude>32.071299</Latitude>
     <Longitude>34.767122</Longitude>
     <MaxDistance>7</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>952805264</Id>
+    <FullName>Moshe Friedman</FullName>
+    <PhoneNumber>0511139500</PhoneNumber>
+    <Email>volunteer4@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>lhTISuae0ylx</Password>
+    <Location>Neve Tzedek, Tel Aviv, Israel</Location>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <MaxDistance>5</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>
