@@ -1,4 +1,4 @@
-﻿using BlApi;
+using BlApi;
 using BO;
 using Helpers;
 using static BO.Enums;
@@ -70,6 +70,7 @@ internal class AdminImplementation : IAdmin
             lock (AdminManager.BlMutex)  // עוטף את הפעולה בנעילה
             {
                 DalTest.Initialization.Do();  // Initialize the database
+                AdminManager.UpdateClock(DateTime.Now);  // Set system clock to current time
             }
         }
         catch (Exception ex)

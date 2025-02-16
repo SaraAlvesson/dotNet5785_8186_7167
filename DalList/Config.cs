@@ -1,4 +1,4 @@
-﻿namespace Dal;
+namespace Dal;
 
 /// <summary>
 ///Static class for configuration settings

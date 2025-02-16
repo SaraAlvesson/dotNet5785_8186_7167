@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -115,6 +115,7 @@ namespace PL
 
             s_bl.Admin.AddConfigObserver(configObserver);
         }
+
 
         private void CloseAllOtherWindows()
         {

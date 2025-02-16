@@ -142,16 +142,15 @@
         <!-- Add/Update Button -->
 
         <Button Content="{Binding ButtonText}" 
-        Grid.Row="8" 
+        Grid.Row="7" 
         Style="{StaticResource CommonButtonStyle}"
         Background="#40E0D0"
         BorderBrush="#38B0A1"
         HorizontalAlignment="Left"
         Width="200"
-        Height="45"
-        Margin="250,10,0,0"
+        Margin="250,267,0,0"
         Click="ButtonAddUpdate_Click" 
-        Grid.ColumnSpan="2" VerticalAlignment="Top"/>
+        Grid.ColumnSpan="2" Grid.RowSpan="2"/>
 
     </Grid>
 </Window>

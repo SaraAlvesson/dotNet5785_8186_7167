@@ -11,6 +11,10 @@
         Closed="Window_Closed"
         Background="#D0F0FF">
     <!-- רקע תכלת בהיר -->
+    <Window.Resources>
+        <local:TimeSpanToFormattedStringConverter x:Key="TimeSpanToFormattedStringConverter"/>
+        <local:AppointmentTimeVisibilityConverter x:Key="AppointmentTimeVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,7 +45,7 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="25"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="30"/>
                 <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="200"/>
                 <DataGridTextColumn Header="Call Type" Width="115">
                     <DataGridTextColumn.CellStyle>
@@ -66,6 +70,13 @@
                         <Binding Path="FinishAppointmentType"/>
                     </DataGridTextColumn.Binding>
                 </DataGridTextColumn>
+                <DataGridTextColumn Header="Time Until Finish" 
+                    Binding="{Binding SumTimeUntilFinish, Converter={StaticResource TimeSpanToFormattedStringConverter}}" 
+                    Width="130"/>
+                <DataGridTextColumn Header="Appointment Time" 
+                    Binding="{Binding SumAppointmentTime, Converter={StaticResource TimeSpanToFormattedStringConverter}}" 
+                    Visibility="{Binding Status, Converter={StaticResource AppointmentTimeVisibilityConverter}, Mode=OneWay}"
+                    Width="130"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

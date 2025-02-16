@@ -46,14 +46,14 @@ namespace PL.Admin
             }
         }
 
-        private ObservableCollection<CallAssignInList> _assignments;
-        public ObservableCollection<CallAssignInList> Assignments
+        private ObservableCollection<CallAssignInList> _callAssignInLists;
+        public ObservableCollection<CallAssignInList> CallAssignInLists
         {
-            get { return _assignments; }
+            get { return _callAssignInLists; }
             set
             {
-                _assignments = value;
-                OnPropertyChanged(nameof(Assignments));
+                _callAssignInLists = value;
+                OnPropertyChanged(nameof(CallAssignInLists));
             }
         }
 
@@ -70,6 +70,7 @@ namespace PL.Admin
                     // קריאה חדשה
                     CurrentCall = new BO.Call
                     {
+                        Id = s_bl.Call.GetNextId(), // קבלת המספר הבא רק אם זו קריאה חדשה
                         OpenTime = DateTime.Now,
                     };
                 }
@@ -120,6 +121,7 @@ namespace PL.Admin
                     if (updatedCall != null)
                     {
                         CurrentCall = updatedCall;
+                        CallAssignInLists = new ObservableCollection<CallAssignInList>(updatedCall.CallAssignInLists ?? new List<CallAssignInList>());
                     }
                 }
                 catch (Exception ex)
@@ -179,13 +181,14 @@ namespace PL.Admin
                 // אם כל השדות תקינים
                 if (ButtonText == "Add")
                 {
+                    // לוודא שלא מתבצע עדכון אם מדובר בהוספה
                     s_bl.Call.AddCallAsync(CurrentCall); // הוספת קריאה חדשה
                     MessageBox.Show("Call added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     Close();
                 }
-                else
+                else if (ButtonText == "Update")
                 {
-                    // בדיקה אם הקריאה ניתנת לעדכון
+                    // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
                     if (!IsEditable())
                     {
                         MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -196,6 +199,7 @@ namespace PL.Admin
                     MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     Close();
                 }
+
                 UpdateCallList();
 
             }

@@ -77,7 +77,9 @@ internal class CallImplementation : ICall
                                  CallId = item.Id,
                                  CallType = (BO.Enums.CallTypeEnum)item.CallType,
                                  OpenTime = item.OpenTime,
-                                 SumTimeUntilFinish = TempTimeToEnd > TimeSpan.Zero ? TempTimeToEnd : null,
+                                 SumTimeUntilFinish = item.MaxTime > AdminManager.Now 
+                                     ? item.MaxTime - AdminManager.Now 
+                                     : null,
                                  LastVolunteerName = volunteer?.FullName,
                                  SumAppointmentTime = assignment != null && assignment.FinishAppointmentTime.HasValue
                                      ? assignment.FinishAppointmentTime.Value - item.OpenTime
@@ -146,7 +148,7 @@ internal class CallImplementation : ICall
                 {
                     RealFinishTime = a.FinishAppointmentTime,
                     FinishAppointmentType = a.FinishAppointmentType == null ? null : (BO.Enums.FinishAppointmentTypeEnum)a.FinishAppointmentType,
-                    OpenTime = a.AppointmentTime,
+                    StartAppointment = a.AppointmentTime,
                     VolunteerId = a.VolunteerId,
                     VolunteerName = volunteers.FirstOrDefault(v => v.Id == a.VolunteerId)?.FullName ?? "Unknown"
                 }).ToList();
@@ -181,6 +183,13 @@ internal class CallImplementation : ICall
     public  void UpdateCallDetails(BO.Call callDetails)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
+
+        // אם מדובר בקריאה חדשה, קרא ל-AddCallAsync
+        if (callDetails.Id == 0)
+        {
+            AddCallAsync(callDetails).Wait();
+            return;
+        }
 
         try
         {
@@ -287,15 +296,30 @@ internal class CallImplementation : ICall
 
         try
         {
+            Console.WriteLine($"Starting AddCallAsync with call ID: {call.Id}");
+            Console.WriteLine($"Call details: Address={call.Address}, OpenTime={call.OpenTime}, CallType={call.CallType}");
+
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
             CallManager.checkCallFormat(call);
             CallManager.checkCallLogic(call);
+            
+            Console.WriteLine("Call format and logic checks passed");
+
             double[] cordinate =  Tools.GetGeolocationCoordinatesAsync(call.Address);
+            Console.WriteLine($"Coordinates retrieved: Lat={cordinate[0]}, Lon={cordinate[1]}");
+
+            // הגדרת מזהה חדש עבור קריאות חדשות
+            int newCallId;
+            lock (AdminManager.BlMutex)  // 🔒 הוספת נעילה למניעת קריאות מקבילות
+            {
+                newCallId = _dal.config.NextCallId;
+                Console.WriteLine($"New call ID generated: {newCallId}");
+            }
 
             // שלב 4: המרת אובייקט BO.Call ל-DO.Call
             DO.Call newCall = new()
             {
-                Id = call.Id,
+                Id = newCallId,
                 OpenTime = call.OpenTime,
                 MaxTime = call.MaxFinishTime, // ודא שהשדה תומך בערך null במסד הנתונים
                 Longitude = cordinate[1],
@@ -305,21 +329,30 @@ internal class CallImplementation : ICall
                 VerbDesc = call.VerbDesc,
             };
 
+            Console.WriteLine("DO.Call object created successfully");
+
+            // עדכון המזהה החדש בקריאה המקורית
+            call.Id = newCallId;
+
             // שלב 5: עטיפת פעולת ה-DAL בנעילה
             lock (AdminManager.BlMutex)  // stage 7
             {
                 // עדכון הרשומה בשכבת הנתונים
                 _dal.call.Create(newCall);
-                CallManager.Observers.NotifyItemUpdated(newCall.Id);  // stage 5
+                Console.WriteLine($"Call created in DAL with ID: {newCallId}");
+                
+                CallManager.Observers.NotifyItemUpdated(newCallId);  // stage 5
                 CallManager.Observers.NotifyListUpdated();  // stage 5
             }
+
+            Console.WriteLine("AddCallAsync completed successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error occurred while adding call: {ex.Message}");
+            Console.WriteLine($"Error in AddCallAsync: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
             throw; // זורק מחדש את החריגה המקורית כפי שהיא
         }
-
     }
 
     public  IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)

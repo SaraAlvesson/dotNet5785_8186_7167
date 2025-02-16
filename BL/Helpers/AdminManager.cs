@@ -199,4 +199,12 @@ internal static class AdminManager // Stage 4
     }
 
     #endregion Stage 7 base
+
+    /// <summary>
+    /// Returns the current system time.
+    /// </summary>
+    public static DateTime GetCurrentSystemTime()
+    {
+        return DateTime.Now;
+    }
 }

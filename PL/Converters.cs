@@ -4,6 +4,8 @@ using System.Windows.Data;
 using System.Windows;
 using static BO.Enums;
 using System.Windows.Media;
+using BO;
+using DalApi; // הוספת using עבור IDal
 namespace PL;
 public class ConvertUpdateToReadOnly : IValueConverter
 {
@@ -189,3 +191,73 @@ public class EnumToColorConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class TimeSpanToFormattedStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is TimeSpan timeSpan)
+        {
+            int totalHours = (int)Math.Floor(timeSpan.TotalHours);
+            return $"{totalHours:00}:{timeSpan.Minutes:00}:{timeSpan.Seconds:00}";
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class AppointmentTimeVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is BO.Enums.CalltStatusEnum status)
+        {
+            return status == BO.Enums.CalltStatusEnum.CLOSED;
+        }
+        return false;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+  public class CanDeleteVolunteerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is BO.VolunteerInList volunteer)
+            {
+                // בדיקה האם למתנדב יש קריאה בטיפול
+                bool canDelete = volunteer.CallIdInTreatment == null;
+
+                // אם יש פרמטר, בדוק את סוג ההמרה
+                if (parameter is string converterParameter)
+                {
+                    switch (converterParameter)
+                    {
+                        case "Visibility":
+                            return canDelete ? Visibility.Visible : Visibility.Collapsed;
+                        
+                        case "IsEnabled":
+                            return canDelete;
+                    }
+                }
+
+                // החזרת ערך בוליאני בסיסי
+                return canDelete;
+            }
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+

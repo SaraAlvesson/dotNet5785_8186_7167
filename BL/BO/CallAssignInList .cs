@@ -12,7 +12,7 @@ namespace BO
         public string? VolunteerName { get; set; }
 
         // זמן כניסה לטיפול (חובה)
-        public DateTime OpenTime { get; set; }
+        public DateTime StartAppointment { get; set; }
 
         // זמן סיום הטיפול בפועל (יכול להיות null אם לא הסתיים)
         public DateTime? RealFinishTime { get; set; }

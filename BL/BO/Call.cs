@@ -1,4 +1,4 @@
-﻿using Helpers;
+using Helpers;
 using static BO.Enums;
 
 namespace BO
@@ -6,7 +6,7 @@ namespace BO
     public class Call
     {
         // מספר מזהה רץ של ישות הקריאה - חייב להיות מספר שלם (לא יכול להיות null)
-        public int Id { get; init; }
+        public int Id { get; set; } // שינוי מ-init ל-set כדי לאפשר עדכון מאוחר
 
         // סוג הקריאה - חייב להיות מוגדר כ-enum, לא יכול להיות null
         public CallTypeEnum CallType { get; set; }

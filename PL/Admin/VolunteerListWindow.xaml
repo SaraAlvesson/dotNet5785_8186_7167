@@ -40,6 +40,7 @@
             </Setter>
         </Style>
         <local:EnumToColorConverter x:Key="EnumToColorConverter"/>
+        <local:CanDeleteVolunteerConverter x:Key="CanDeleteVolunteerConverter"/>
     </Window.Resources>
 
     <Grid Margin="25">
@@ -128,6 +129,7 @@
                             <DataTemplate>
                                 <Button Content="Delete"
                                         Tag="{Binding Id}"
+                                        Visibility="{Binding Converter={StaticResource CanDeleteVolunteerConverter}, ConverterParameter=Visibility}"
                                         Click="DeleteButton_Click"
                                         Style="{StaticResource CommonButtonStyle}"
                                         Background="#FF6B6B"

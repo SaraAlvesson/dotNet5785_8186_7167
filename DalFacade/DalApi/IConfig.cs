@@ -1,4 +1,4 @@
-﻿namespace DalApi
+namespace DalApi
 {
     /// <summary>
     /// Defines configuration settings for the system.

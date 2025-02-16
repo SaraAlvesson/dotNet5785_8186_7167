@@ -52,11 +52,11 @@ internal static class CallManager
             throw new InvalidCallLogicException("Max finish time must be later than open time.");
     }
 
-    public static void checkCallFormat(BO.Call call)
+    public static void checkCallFormat(BO.Call call, bool isNewCall = false)
     {
         // בדיקת מזהה
-        if (call.Id <= 0)
-            throw new InvalidCallFormatException("Call ID must be a positive integer.");
+        if (call.Id < 0 || (call.Id == 0 && !isNewCall))
+            throw new InvalidCallFormatException("Call ID must be a positive integer for existing calls.");
 
         // בדיקת זמן פתיחה
         if (call.OpenTime == default)
@@ -266,7 +266,7 @@ internal static class CallManager
                 {
                     RealFinishTime = a.FinishAppointmentTime,
                     FinishAppointmentType = a.FinishAppointmentType == null ? null : (BO.Enums.FinishAppointmentTypeEnum)a.FinishAppointmentType,
-                    OpenTime = a.AppointmentTime,
+                    StartAppointment = a.AppointmentTime,
                     VolunteerId = a.VolunteerId,
                     VolunteerName = volunteers.FirstOrDefault(v => v.Id == a.VolunteerId)?.FullName ?? "Unknown"
                 }).ToList();
@@ -305,7 +305,7 @@ internal static class CallManager
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(callDetails);
+            CallManager.checkCallFormat(callDetails, false);
             CallManager.checkCallLogic(callDetails);
 
             lock (AdminManager.BlMutex) // stage 7
@@ -408,7 +408,7 @@ internal static class CallManager
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(call);
+            CallManager.checkCallFormat(call, true);
             CallManager.checkCallLogic(call);
             double[] cordinate = Tools.GetGeolocationCoordinatesAsync(call.Address);
 
