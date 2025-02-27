@@ -17,7 +17,7 @@ using static Helpers.Tools;
 
 namespace Helpers
 {
-    internal static class VolunteersManager
+    internal static class  VoluneerManager
     {
 
         internal static ObserverManager Observers = new(); //stage 5 
