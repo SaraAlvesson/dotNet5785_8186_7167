@@ -623,8 +623,8 @@ catch (Exception ex)
                 // Notify observers within the lock to ensure thread safety
                 CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call and observers etc.
                 CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-                BL.Helpers.VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
-                BL.Helpers.VolunteersManager.Observers.NotifyListUpdated();
+                BL.Helpers.VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
+                BL.Helpers.VolunteerManager.Observers.NotifyListUpdated();  //update list of volunteers and observers etc.
             }
         }
         catch (Exception ex)
@@ -689,8 +689,8 @@ catch (Exception ex)
             // Notify observers inside the lock to ensure thread safety
             CallManager.Observers.NotifyItemUpdated(call.Id);  //update current call and observers etc.
             CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-            BL.Helpers.VolunteersManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
-            BL.Helpers.VolunteersManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
+            BL.Helpers.VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
+            BL.Helpers.VolunteerManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
         }
     }
 
@@ -731,8 +731,8 @@ catch (Exception ex)
             // עדכון תצוגת הקריאות והמתנדבים
             CallManager.Observers.NotifyItemUpdated(callId);  // מעדכן את הקריאה הספציפית
             CallManager.Observers.NotifyListUpdated();  // מעדכן את רשימת הקריאות
-            BL.Helpers.VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  // מעדכן את המתנדב הספציפי
-            BL.Helpers.VolunteersManager.Observers.NotifyListUpdated();  // מעדכן את רשימת המתנדבים
+            BL.Helpers.VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  // מעדכן את המתנדב הספציפי
+            BL.Helpers.VolunteerManager.Observers.NotifyListUpdated();  // מעדכן את רשימת המתנדבים
         }
         catch (Exception ex)
         {

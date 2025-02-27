@@ -132,14 +132,14 @@ namespace Helpers
         {
             if (string.IsNullOrWhiteSpace(address))
             {
-                throw new InvalidAddressFormatException("Address cannot be empty or null.");
+                throw new AddressDoesNotExistException("Address cannot be empty or null.");
             }
 
             var addressParts = address.Split(',');
 
             if (addressParts.Length < 3)
             {
-                throw new InvalidAddressFormatException("Address must contain at least street, city, and country.");
+                throw new AddressDoesNotExistException("Address must contain at least street, city, and country.");
             }
 
             string street = addressParts[0].Trim();
@@ -148,7 +148,7 @@ namespace Helpers
 
             if (string.IsNullOrEmpty(street) || string.IsNullOrEmpty(city) || string.IsNullOrEmpty(country))
             {
-                throw new InvalidAddressFormatException("Address is missing essential parts like street, city, or country.");
+                throw new AddressDoesNotExistException("Address is missing essential parts like street, city, or country.");
             }
 
             string apiKey = "678694850f91d165965268skuda91dd";
@@ -172,17 +172,17 @@ namespace Helpers
                         }
                         else
                         {
-                            throw new InvalidGeolocationException("No geolocation data found for the provided address.");
+                            throw new BlInvalidLocationException("No geolocation data found for the provided address.");
                         }
                     }
                     else
                     {
-                        throw new InvalidGeolocationException($"Failed to retrieve data for the address. Status code: {response.StatusCode}");
+                        throw new BlInvalidLocationException($"Failed to retrieve data for the address. Status code: {response.StatusCode}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidGeolocationException("An error occurred while verifying the geolocation: " + ex.Message);
+                    throw new BlInvalidLocationException("An error occurred while verifying the geolocation: " + ex.Message);
                 }
             }
         }

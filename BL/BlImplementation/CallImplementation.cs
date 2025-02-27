@@ -558,8 +558,8 @@ internal class CallImplementation : ICall
                 // Notify observers within the lock to ensure thread safety
                 CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call and observers etc.
                 CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-                VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
-                VolunteersManager.Observers.NotifyListUpdated();
+                VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
+                VolunteerManager.Observers.NotifyListUpdated();
             }
         }
         catch (Exception ex)
@@ -624,8 +624,8 @@ internal class CallImplementation : ICall
             // Notify observers inside the lock to ensure thread safety
             CallManager.Observers.NotifyItemUpdated(call.Id);  //update current call and observers etc.
             CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-            VolunteersManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
-            VolunteersManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
+            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
+            VolunteerManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
         }
     }
 

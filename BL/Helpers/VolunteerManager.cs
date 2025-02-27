@@ -20,7 +20,7 @@ using BL.Helpers;
 
 namespace BL.Helpers
 {
-    internal static class  VoluneerManager
+    internal static class VolunteerManager 
     {
         private static readonly object _lockObject = new();
 

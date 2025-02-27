@@ -18,13 +18,13 @@ internal class VolunteerImplementation : IVolunteer
 
     #region Stage 5
     public void AddObserver(Action listObserver) =>
-    VolunteersManager.Observers.AddListObserver(listObserver); //stage 5
+    VolunteerManager.Observers.AddListObserver(listObserver); //stage 5
     public void AddObserver(int id, Action observer) =>
-    VolunteersManager.Observers.AddObserver(id, observer); //stage 5
+    VolunteerManager.Observers.AddObserver(id, observer); //stage 5
     public void RemoveObserver(Action listObserver) =>
-    VolunteersManager.Observers.RemoveListObserver(listObserver); //stage 5
+    VolunteerManager.Observers.RemoveListObserver(listObserver); //stage 5
     public void RemoveObserver(int id, Action observer) =>
-   VolunteersManager.Observers.RemoveObserver(id, observer); //stage 5
+   VolunteerManager.Observers.RemoveObserver(id, observer); //stage 5
     #endregion Stage 5
 
 
@@ -239,11 +239,13 @@ internal class VolunteerImplementation : IVolunteer
                 Console.WriteLine("Access authorization passed.");
 
                 // ??? 3: ????? ????? ?????? ?????
-                if (!VolunteersManager.checkVolunteerEmail(volunteerDetails))
+                if (!VolunteerManager.checkVolunteerEmail(volunteerDetails))
                     throw new BlEmailNotCorrect("Invalid email format.");
-                if (!VolunteersManager.IsPhoneNumberValid(volunteerDetails))
+                if (!VolunteerManager.IsValidId(volunteerDetails.Id))
+                    throw new BlIdNotValid("Invalid ID format.");
+                if (!VolunteerManager.IsPhoneNumberValid(volunteerDetails))
                     throw new BlPhoneNumberNotCorrect("Invalid phone number format.");
-                if (!VolunteersManager.IsValidId(volunteerDetails.Id))
+                if (!VolunteerManager.IsValidId(volunteerDetails.Id))
                     throw new BlIdNotValid("Invalid ID format.");
 
                 Console.WriteLine("Format checks passed.");
@@ -292,8 +294,8 @@ internal class VolunteerImplementation : IVolunteer
 
                 Console.WriteLine("Volunteer updated successfully in database.");
 
-                VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-                VolunteersManager.Observers.NotifyListUpdated();  // stage 5
+                VolunteerManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
+                VolunteerManager.Observers.NotifyListUpdated();  // stage 5
                 Console.WriteLine("Observers notified.");
             }
         }
@@ -377,8 +379,8 @@ internal class VolunteerImplementation : IVolunteer
                 _dal.Volunteer.Delete(volunteerId); // ???? ????? ?? ??????
             }
 
-            VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
-            VolunteersManager.Observers.NotifyListUpdated(); //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -411,11 +413,11 @@ internal class VolunteerImplementation : IVolunteer
             MaxDistance = volunteer.MaxDistance,
         };
 
-        if (!(VolunteersManager.checkVolunteerEmail(volunteer)))
+        if (!(VolunteerManager.checkVolunteerEmail(volunteer)))
             throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!(VolunteersManager.IsValidId(volunteer.Id)))
+        if (!(VolunteerManager.IsValidId(volunteer.Id)))
             throw new BlIdNotValid("Invalid ID format.");
-        if (!(VolunteersManager.IsPhoneNumberValid(volunteer)))
+        if (!(VolunteerManager.IsPhoneNumberValid(volunteer)))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
         if (!(Helpers.Tools.IsAddressValid(volunteer.Location)))
             throw new BlPhoneNumberNotCorrect("Invalid Location format.");
@@ -428,8 +430,8 @@ internal class VolunteerImplementation : IVolunteer
                 _dal.Volunteer.Create(newVolunteer);
             }
 
-            VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-            VolunteersManager.Observers.NotifyListUpdated(); // stage 5   
+            VolunteerManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
+            VolunteerManager.Observers.NotifyListUpdated(); // stage 5   
         }
         catch (DO.DalAlreadyExistException ex)
         {
