@@ -403,39 +403,83 @@ internal class VolunteerImplementation : IVolunteer
             FullName = volunteer.FullName,
             PhoneNumber = volunteer.PhoneNumber,
             Password = volunteer.Password,
-            Location = volunteer.Location,
             Email = volunteer.Email,
             Active = volunteer.Active,
             DistanceType = (DO.DistanceType)volunteer.DistanceType,
             Position = (DO.Position)volunteer.Position,
-            Latitude = volunteer.Latitude,
-            Longitude = volunteer.Longitude,
             MaxDistance = volunteer.MaxDistance,
+            // ?? ???? ?? Location, Latitude, Longitude ??? ?? ?? ??????? ????
         };
 
-        if (!(VolunteerManager.checkVolunteerEmail(volunteer)))
+        if (!VolunteerManager.checkVolunteerEmail(volunteer))
             throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!(VolunteerManager.IsValidId(volunteer.Id)))
+        if (!VolunteerManager.IsValidId(volunteer.Id))
             throw new BlIdNotValid("Invalid ID format.");
-        if (!(VolunteerManager.IsPhoneNumberValid(volunteer)))
+        if (!VolunteerManager.IsPhoneNumberValid(volunteer))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
-        if (!(Helpers.Tools.IsAddressValid(volunteer.Location)))
-            throw new BlPhoneNumberNotCorrect("Invalid Location format.");
 
         try
         {
-            // ????? ?-lock ???? ????? ?-DAL (????? ??????)
+            // ????? ????? ?-DAL ??? ????? ???????? ?????
             lock (AdminManager.BlMutex)
             {
                 _dal.Volunteer.Create(newVolunteer);
             }
 
             VolunteerManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-            VolunteerManager.Observers.NotifyListUpdated(); // stage 5   
+            VolunteerManager.Observers.NotifyListUpdated(); // stage 5  
+
+            // ????? ?????? ??????????? C ?????? ????? ?????? ?????? ?????? ????
+            _ = UpdateVolunteerLocationAsync(volunteer);
         }
-        catch (DO.DalAlreadyExistException ex)
+        catch (DO.DalAlreadyExistException)
         {
             throw new BLAlreadyExistException($"Volunteer with id {volunteer.Id} already exists");
         }
     }
+
+    /// <summary>
+    /// ????? ?????????? ?????? ?? ????? ???? ?????? ???? ?-DAL
+    /// </summary>
+    private async Task UpdateVolunteerLocationAsync(BO.Volunteer volunteer)
+    {
+        try
+        {
+            bool isValid = await Helpers.Tools.IsAddressValidAsync(volunteer.Location);
+            if (!isValid)
+            {
+                throw new BlPhoneNumberNotCorrect("Invalid Location format.");
+            }
+
+            // ????? ?????? ???????? ???? ???? ????? ?????
+            lock (AdminManager.BlMutex)
+            {
+                _dal.Volunteer.Update(new DO.Volunteer
+                {
+                    Id = volunteer.Id,
+                    FullName = volunteer.FullName,
+                    PhoneNumber = volunteer.PhoneNumber,
+                    Password = volunteer.Password,
+                    Email = volunteer.Email,
+                    Active = volunteer.Active,
+                    DistanceType = (DO.DistanceType)volunteer.DistanceType,
+                    Position = (DO.Position)volunteer.Position,
+                    MaxDistance = volunteer.MaxDistance,
+                    Location = volunteer.Location,
+                    Latitude = volunteer.Latitude,
+                    Longitude = volunteer.Longitude
+                });
+            }
+
+            VolunteerManager.Observers.NotifyItemUpdated(volunteer.Id);
+        }
+        catch (Exception ex)
+        {
+            // ????? ??????? ??? ????? ?? ????? ??????
+            Console.WriteLine($"Error updating volunteer location: {ex.Message}");
+        }
+    }
+
 }
+
+

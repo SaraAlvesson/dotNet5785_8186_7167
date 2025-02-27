@@ -44,7 +44,7 @@ public interface ICall:IObservable
     /// מוסיף קריאה חדשה למערכת. אם קיימת קריאה עם אותו מזהה, לא תתבצע ההוספה.
     /// </summary>
     /// <param name="call">הקריאה להוספה</param>
-    Task AddCallAsync(BO.Call call);
+    void  AddCallAsync(BO.Call call);
     /// <summary>
     /// מחזיר רשימה של קריאות סגורות שטופלו על ידי מתנדב, עם אפשרות לסינון ומיון.
     /// </summary>

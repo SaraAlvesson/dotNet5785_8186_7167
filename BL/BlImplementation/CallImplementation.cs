@@ -180,21 +180,21 @@ internal class CallImplementation : ICall
         }
     }
 
-    public  void UpdateCallDetails(BO.Call callDetails)
+    public void UpdateCallDetails(BO.Call callDetails)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
 
         // אם מדובר בקריאה חדשה, קרא ל-AddCallAsync
         if (callDetails.Id == 0)
         {
-            AddCallAsync(callDetails).Wait();
+            AddCallAsync(callDetails);
             return;
         }
 
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(callDetails);
+            CallManager.CheckCallFormat(callDetails);
             CallManager.checkCallLogic(callDetails);
 
             lock (AdminManager.BlMutex) // stage 7
@@ -290,7 +290,7 @@ internal class CallImplementation : ICall
 
 
 
-    public async Task AddCallAsync(BO.Call call)
+    public void AddCallAsync(BO.Call call)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
 
@@ -300,7 +300,7 @@ internal class CallImplementation : ICall
             Console.WriteLine($"Call details: Address={call.Address}, OpenTime={call.OpenTime}, CallType={call.CallType}");
 
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(call);
+            CallManager.CheckCallFormat(call);
             CallManager.checkCallLogic(call);
             
             Console.WriteLine("Call format and logic checks passed");

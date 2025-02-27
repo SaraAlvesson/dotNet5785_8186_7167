@@ -6,10 +6,9 @@ using System.Reflection;
 using System.Text.Json;
 using static BO.Exceptions;
 
-
 namespace Helpers
 {
-    public  static class Tools
+    public static class Tools
     {
         private static IDal s_dal = DalApi.Factory.Get;
 
@@ -77,7 +76,7 @@ namespace Helpers
             return str;
         }
 
-        public static double[] GetGeolocationCoordinatesAsync(string address)
+        public static async Task<double[]> GetGeolocationCoordinatesAsync(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
             {
@@ -91,15 +90,15 @@ namespace Helpers
             {
                 try
                 {
-                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
+                    HttpResponseMessage response = await client.GetAsync(requestUrl);
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        string errorContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        string errorContent = await response.Content.ReadAsStringAsync();
                         throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
                     }
 
-                    string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
                     var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
 
@@ -128,18 +127,19 @@ namespace Helpers
             }
         }
 
-        public static bool IsAddressValid(string address)
+
+        public static async Task<bool> IsAddressValidAsync(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
             {
-                throw new AddressDoesNotExistException("Address cannot be empty or null.");
+                throw new InvalidAddressFormatException("Address cannot be empty or null.");
             }
 
             var addressParts = address.Split(',');
 
             if (addressParts.Length < 3)
             {
-                throw new AddressDoesNotExistException("Address must contain at least street, city, and country.");
+                throw new InvalidAddressFormatException("Address must contain at least street, city, and country.");
             }
 
             string street = addressParts[0].Trim();
@@ -148,7 +148,7 @@ namespace Helpers
 
             if (string.IsNullOrEmpty(street) || string.IsNullOrEmpty(city) || string.IsNullOrEmpty(country))
             {
-                throw new AddressDoesNotExistException("Address is missing essential parts like street, city, or country.");
+                throw new InvalidAddressFormatException("Address is missing essential parts like street, city, or country.");
             }
 
             string apiKey = "678694850f91d165965268skuda91dd";
@@ -158,11 +158,11 @@ namespace Helpers
             {
                 try
                 {
-                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
+                    HttpResponseMessage response = await client.GetAsync(requestUrl);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
                         var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                         var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
 
@@ -172,17 +172,17 @@ namespace Helpers
                         }
                         else
                         {
-                            throw new BlInvalidLocationException("No geolocation data found for the provided address.");
+                            throw new InvalidGeolocationException("No geolocation data found for the provided address.");
                         }
                     }
                     else
                     {
-                        throw new BlInvalidLocationException($"Failed to retrieve data for the address. Status code: {response.StatusCode}");
+                        throw new InvalidGeolocationException($"Failed to retrieve data for the address. Status code: {response.StatusCode}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new BlInvalidLocationException("An error occurred while verifying the geolocation: " + ex.Message);
+                    throw new InvalidGeolocationException("An error occurred while verifying the geolocation: " + ex.Message);
                 }
             }
         }

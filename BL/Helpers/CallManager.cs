@@ -52,7 +52,7 @@ internal static class CallManager
             throw new InvalidCallLogicException("Max finish time must be later than open time.");
     }
 
-    public static void checkCallFormat(BO.Call call, bool isNewCall = false)
+    public static void CheckCallFormat(BO.Call call, bool isNewCall = false)
     {
         // בדיקת מזהה
         if (call.Id < 0 || (call.Id == 0 && !isNewCall))
@@ -63,7 +63,7 @@ internal static class CallManager
             throw new InvalidCallFormatException("Open time is not valid.");
 
         // בדיקת כתובת
-        if (!Tools.IsAddressValid(call.Address))
+        if (string.IsNullOrWhiteSpace(call.Address))
             throw new InvalidCallFormatException("Address cannot be empty.");
 
         if (call.Address.Length > 200)
@@ -75,7 +75,17 @@ internal static class CallManager
 
         if (call.Latitude < -90 || call.Latitude > 90)
             throw new InvalidCallFormatException("Latitude must be between -90 and 90 degrees.");
+
+        _ = UpdateComputedFieldsAsync(call);
     }
+
+    private static async Task UpdateComputedFieldsAsync(BO.Call call)
+    {
+        // בדיקת כתובת
+        if (!await Tools.IsAddressValidAsync(call.Address))
+            throw new InvalidCallFormatException("Address is not valid.");
+    }
+
 
     internal static void UpdateExpired()
     {
@@ -305,7 +315,7 @@ internal static class CallManager
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(callDetails, false);
+            CallManager.CheckCallFormat(callDetails, false);
             CallManager.checkCallLogic(callDetails);
 
             lock (AdminManager.BlMutex) // stage 7
@@ -408,7 +418,7 @@ internal static class CallManager
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(call, true);
+            CallManager.CheckCallFormat(call, true);
             CallManager.checkCallLogic(call);
             double[] cordinate = Tools.GetGeolocationCoordinatesAsync(call.Address);
 
