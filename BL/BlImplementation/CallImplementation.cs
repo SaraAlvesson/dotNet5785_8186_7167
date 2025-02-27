@@ -194,7 +194,7 @@ internal class CallImplementation : ICall
         try
         {
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(callDetails);
+            CallManager.CheckCallFormat(callDetails);
             CallManager.checkCallLogic(callDetails);
 
             lock (AdminManager.BlMutex) // stage 7
@@ -300,7 +300,7 @@ internal class CallImplementation : ICall
             Console.WriteLine($"Call details: Address={call.Address}, OpenTime={call.OpenTime}, CallType={call.CallType}");
 
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.checkCallFormat(call);
+            CallManager.CheckCallFormat(call);
             CallManager.checkCallLogic(call);
             
             Console.WriteLine("Call format and logic checks passed");
@@ -351,7 +351,7 @@ internal class CallImplementation : ICall
         {
             Console.WriteLine($"Error in AddCallAsync: {ex.GetType().Name} - {ex.Message}");
             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-            throw; // זורק מחדש את החריגה המקורית כפי שהיא
+           // throw; // זורק מחדש את החריגה המקורית כפי שהיא
         }
     }
 

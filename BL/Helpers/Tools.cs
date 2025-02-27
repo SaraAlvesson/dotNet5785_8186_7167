@@ -128,7 +128,7 @@ namespace Helpers
             }
         }
 
-        public static bool IsAddressValid(string address)
+        public static async Task<bool> IsAddressValidAsync(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
             {
@@ -158,11 +158,11 @@ namespace Helpers
             {
                 try
                 {
-                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
+                    HttpResponseMessage response = await client.GetAsync(requestUrl);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
                         var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                         var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
 
@@ -186,6 +186,7 @@ namespace Helpers
                 }
             }
         }
+
 
         public static bool IsValidAddress(string? address)
         {
