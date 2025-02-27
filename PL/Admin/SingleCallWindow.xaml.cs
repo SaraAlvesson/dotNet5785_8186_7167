@@ -188,16 +188,18 @@ namespace PL.Admin
                 }
                 else if (ButtonText == "Update")
                 {
-                    // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
-                    if (!IsEditable())
                     {
-                        MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
+                        // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
+                        if (!IsEditable())
+                        {
+                            MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
 
-                    s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
-                    MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Close();
+                        s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
+                        MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Close();
+                    }
                 }
 
                 UpdateCallList();
@@ -312,9 +314,7 @@ namespace PL.Admin
             s_bl?.Call.RemoveObserver(CallListObserver);
         }
 
-        private void ComboBox_SelectionChanged_1(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-        }
+     
 
         private void TextBox_TextChanged_2(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
