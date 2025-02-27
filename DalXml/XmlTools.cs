@@ -92,7 +92,20 @@ static class XMLTools
         {
             if (File.Exists(xmlFilePath))
                 return XElement.Load(xmlFilePath);
-            XElement rootElem = new(xmlFileName);
+            
+            // יצירת קובץ חדש עם ערכים התחלתיים נכונים
+            XElement rootElem = new("config");
+            if (xmlFileName == "data-config.xml")
+            {
+                rootElem.Add(new XElement("NextCallId", "1000")); // מתחיל מ-1000
+                rootElem.Add(new XElement("NextAssignmentId", "1")); // מתחיל מ-1
+                rootElem.Add(new XElement("Clock", DateTime.Now.ToString()));
+                rootElem.Add(new XElement("RiskRange", TimeSpan.Zero.ToString()));
+            }
+            else
+            {
+                rootElem = new(xmlFileName);
+            }
             rootElem.Save(xmlFilePath);
             return rootElem;
         }

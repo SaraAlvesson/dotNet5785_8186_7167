@@ -143,32 +143,4 @@ internal class Exceptions
         {
         }
     }
-    internal class InvalidAddressFormatException : Exception
-    {
-        public InvalidAddressFormatException()
-        {
-        }
-
-        public InvalidAddressFormatException(string? message) : base(message)
-        {
-        }
-
-        public InvalidAddressFormatException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-    }
-    internal class InvalidGeolocationException : Exception
-    {
-        public InvalidGeolocationException()
-        {
-        }
-
-        public InvalidGeolocationException(string? message) : base(message)
-        {
-        }
-
-        public InvalidGeolocationException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-    }
 }

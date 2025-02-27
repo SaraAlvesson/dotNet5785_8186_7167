@@ -6,10 +6,9 @@ using System.Reflection;
 using System.Text.Json;
 using static BO.Exceptions;
 
-
 namespace Helpers
 {
-    public  static class Tools
+    public static class Tools
     {
         private static IDal s_dal = DalApi.Factory.Get;
 

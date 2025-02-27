@@ -18,13 +18,13 @@ internal class VolunteerImplementation : IVolunteer
 
     #region Stage 5
     public void AddObserver(Action listObserver) =>
-    VolunteersManager.Observers.AddListObserver(listObserver); //stage 5
+    VolunteerManager.Observers.AddListObserver(listObserver); //stage 5
     public void AddObserver(int id, Action observer) =>
-    VolunteersManager.Observers.AddObserver(id, observer); //stage 5
+    VolunteerManager.Observers.AddObserver(id, observer); //stage 5
     public void RemoveObserver(Action listObserver) =>
-    VolunteersManager.Observers.RemoveListObserver(listObserver); //stage 5
+    VolunteerManager.Observers.RemoveListObserver(listObserver); //stage 5
     public void RemoveObserver(int id, Action observer) =>
-   VolunteersManager.Observers.RemoveObserver(id, observer); //stage 5
+   VolunteerManager.Observers.RemoveObserver(id, observer); //stage 5
     #endregion Stage 5
 
 
@@ -239,11 +239,13 @@ internal class VolunteerImplementation : IVolunteer
                 Console.WriteLine("Access authorization passed.");
 
                 // ??? 3: ????? ????? ?????? ?????
-                if (!VolunteersManager.checkVolunteerEmail(volunteerDetails))
+                if (!VolunteerManager.checkVolunteerEmail(volunteerDetails))
                     throw new BlEmailNotCorrect("Invalid email format.");
-                if (!VolunteersManager.IsPhoneNumberValid(volunteerDetails))
+                if (!VolunteerManager.IsValidId(volunteerDetails.Id))
+                    throw new BlIdNotValid("Invalid ID format.");
+                if (!VolunteerManager.IsPhoneNumberValid(volunteerDetails))
                     throw new BlPhoneNumberNotCorrect("Invalid phone number format.");
-                if (!VolunteersManager.IsValidId(volunteerDetails.Id))
+                if (!VolunteerManager.IsValidId(volunteerDetails.Id))
                     throw new BlIdNotValid("Invalid ID format.");
 
                 Console.WriteLine("Format checks passed.");
@@ -292,8 +294,8 @@ internal class VolunteerImplementation : IVolunteer
 
                 Console.WriteLine("Volunteer updated successfully in database.");
 
-                VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-                VolunteersManager.Observers.NotifyListUpdated();  // stage 5
+                VolunteerManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
+                VolunteerManager.Observers.NotifyListUpdated();  // stage 5
                 Console.WriteLine("Observers notified.");
             }
         }
@@ -377,8 +379,8 @@ internal class VolunteerImplementation : IVolunteer
                 _dal.Volunteer.Delete(volunteerId); // ???? ????? ?? ??????
             }
 
-            VolunteersManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
-            VolunteersManager.Observers.NotifyListUpdated(); //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -409,11 +411,11 @@ internal class VolunteerImplementation : IVolunteer
             // ?? ???? ?? Location, Latitude, Longitude ??? ?? ?? ??????? ????
         };
 
-        if (!VolunteersManager.checkVolunteerEmail(volunteer))
+        if (!VolunteerManager.checkVolunteerEmail(volunteer))
             throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!VolunteersManager.IsValidId(volunteer.Id))
+        if (!(VolunteersManager.IsValidId(volunteer.Id)))
             throw new BlIdNotValid("Invalid ID format.");
-        if (!VolunteersManager.IsPhoneNumberValid(volunteer))
+        if (!(VolunteersManager.IsPhoneNumberValid(volunteer)))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
 
         try
@@ -425,58 +427,11 @@ internal class VolunteerImplementation : IVolunteer
             }
 
             VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-            VolunteersManager.Observers.NotifyListUpdated(); // stage 5  
-
-            // ????? ?????? ??????????? C ?????? ????? ?????? ?????? ?????? ????
-            _ = UpdateVolunteerLocationAsync(volunteer);
+            VolunteersManager.Observers.NotifyListUpdated(); // stage 5   
         }
         catch (DO.DalAlreadyExistException)
         {
             throw new BLAlreadyExistException($"Volunteer with id {volunteer.Id} already exists");
         }
     }
-
-    /// <summary>
-    /// ????? ?????????? ?????? ?? ????? ???? ?????? ???? ?-DAL
-    /// </summary>
-    private async Task UpdateVolunteerLocationAsync(BO.Volunteer volunteer)
-    {
-        try
-        {
-            bool isValid = await Helpers.Tools.IsAddressValidAsync(volunteer.Location);
-            if (!isValid)
-            {
-                throw new BlPhoneNumberNotCorrect("Invalid Location format.");
-            }
-
-            // ????? ?????? ???????? ???? ???? ????? ?????
-            lock (AdminManager.BlMutex)
-            {
-                _dal.Volunteer.Update(new DO.Volunteer
-                {
-                    Id = volunteer.Id,
-                    FullName = volunteer.FullName,
-                    PhoneNumber = volunteer.PhoneNumber,
-                    Password = volunteer.Password,
-                    Email = volunteer.Email,
-                    Active = volunteer.Active,
-                    DistanceType = (DO.DistanceType)volunteer.DistanceType,
-                    Position = (DO.Position)volunteer.Position,
-                    MaxDistance = volunteer.MaxDistance,
-                    Location = volunteer.Location,
-                    Latitude = volunteer.Latitude,
-                    Longitude = volunteer.Longitude
-                });
-            }
-
-            VolunteersManager.Observers.NotifyItemUpdated(volunteer.Id);
-        }
-        catch (Exception ex)
-        {
-            // ????? ??????? ??? ????? ?? ????? ??????
-            Console.WriteLine($"Error updating volunteer location: {ex.Message}");
-        }
-    }
-
 }
-

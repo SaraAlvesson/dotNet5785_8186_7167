@@ -13,7 +13,7 @@ public static class Config
     private static int s_nextCallId = StartCallId; // Tracks the next available call ID
     internal static int NextCallId { get => s_nextCallId++; } // Property to get the next call ID and increment
 
-    internal const int StartAssignmentId = 10000; // Starting value for assignment IDs
+    internal const int StartAssignmentId = 1; // Starting value for assignment IDs
     private static int s_nextAssignmentId = StartAssignmentId; // Tracks the next available assignment ID
     internal static int NextAssignmentId { get => s_nextAssignmentId++; } // Property to get the next assignment ID and increment
 

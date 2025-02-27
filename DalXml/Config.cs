@@ -1,4 +1,4 @@
-﻿namespace Dal;
+namespace Dal;
 
 /// <summary>
 /// A static class that manages configuration data for the application.
@@ -64,10 +64,10 @@ public static class Config
     {
         try
         {
-            NextCallId = 1; // איפוס מזהה השיחה
-            NextAssignmentId = 1; // איפוס מזהה ההקצאה
-            Clock = DateTime.Now; // עדכון השעון לזמן הנוכחי
-            RiskRange = TimeSpan.Zero; // איפוס טווח הסיכון לערך אפס
+            NextCallId = 1000; // קריאות מתחילות מ-1000
+            NextAssignmentId = 1; // הקצאות מתחילות מ-1
+            Clock = DateTime.Now;
+            RiskRange = TimeSpan.Zero;
         }
         catch (Exception ex)
         {
