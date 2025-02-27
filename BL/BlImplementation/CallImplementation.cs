@@ -290,72 +290,94 @@ internal class CallImplementation : ICall
 
 
 
-    public async Task AddCallAsync(BO.Call call)
+    public void AddCall(BO.Call call)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
+        AdminManager.ThrowOnSimulatorIsRunning();
 
         try
         {
-            Console.WriteLine($"Starting AddCallAsync with call ID: {call.Id}");
+            Console.WriteLine($"Starting AddCall with call ID: {call.Id}");
             Console.WriteLine($"Call details: Address={call.Address}, OpenTime={call.OpenTime}, CallType={call.CallType}");
 
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
             CallManager.CheckCallFormat(call);
             CallManager.checkCallLogic(call);
-            
-            Console.WriteLine("Call format and logic checks passed");
 
-            double[] cordinate =  Tools.GetGeolocationCoordinatesAsync(call.Address);
-            Console.WriteLine($"Coordinates retrieved: Lat={cordinate[0]}, Lon={cordinate[1]}");
+            Console.WriteLine("Call format and logic checks passed");
 
             // הגדרת מזהה חדש עבור קריאות חדשות
             int newCallId;
-            lock (AdminManager.BlMutex)  // 🔒 הוספת נעילה למניעת קריאות מקבילות
+            lock (AdminManager.BlMutex)
             {
                 newCallId = _dal.config.NextCallId;
                 Console.WriteLine($"New call ID generated: {newCallId}");
             }
 
-            // שלב 4: המרת אובייקט BO.Call ל-DO.Call
+            // שלב 4: המרת אובייקט BO.Call ל-DO.Call ללא השדות המחושבים
             DO.Call newCall = new()
             {
                 Id = newCallId,
                 OpenTime = call.OpenTime,
-                MaxTime = call.MaxFinishTime, // ודא שהשדה תומך בערך null במסד הנתונים
-                Longitude = cordinate[1],
-                Latitude = cordinate[0],
+                MaxTime = call.MaxFinishTime,
                 Adress = call.Address,
                 CallType = (DO.CallType)call.CallType,
                 VerbDesc = call.VerbDesc,
             };
 
-            Console.WriteLine("DO.Call object created successfully");
+            Console.WriteLine("DO.Call object created successfully without coordinates");
 
             // עדכון המזהה החדש בקריאה המקורית
             call.Id = newCallId;
 
-            // שלב 5: עטיפת פעולת ה-DAL בנעילה
-            lock (AdminManager.BlMutex)  // stage 7
+            // שלב 5: עטיפת פעולת ה-DAL בנעילה ועדכון ראשוני
+            lock (AdminManager.BlMutex)
             {
-                // עדכון הרשומה בשכבת הנתונים
                 _dal.call.Create(newCall);
                 Console.WriteLine($"Call created in DAL with ID: {newCallId}");
-                
-                CallManager.Observers.NotifyItemUpdated(newCallId);  // stage 5
-                CallManager.Observers.NotifyListUpdated();  // stage 5
+
+                CallManager.Observers.NotifyItemUpdated(newCallId);
+                CallManager.Observers.NotifyListUpdated();
             }
 
-            Console.WriteLine("AddCallAsync completed successfully");
+            // שלב 6: קריאה למתודה האסינכרונית לעדכון השדות החסרים
+            _ = UpdateCallWithCoordinatesAsync(newCallId, call.Address);
+
+            Console.WriteLine("AddCall completed successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in AddCallAsync: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Error in AddCall: {ex.GetType().Name} - {ex.Message}");
             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-           // throw; // זורק מחדש את החריגה המקורית כפי שהיא
         }
     }
 
-    public  IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
+    private async Task UpdateCallWithCoordinatesAsync(int callId, string address)
+    {
+        try
+        {
+            Console.WriteLine($"Fetching coordinates asynchronously for call ID: {callId}");
+            double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(address);
+            Console.WriteLine($"Coordinates retrieved: Lat={coordinates[0]}, Lon={coordinates[1]}");
+
+            // שלב 7: עדכון הקריאה ב-DAL עם הקואורדינטות שהתקבלו
+            lock (AdminManager.BlMutex)
+            {
+                DO.Call updatedCall = _dal.call.Read(callId);
+                updatedCall.Latitude = coordinates[0];
+                updatedCall.Longitude = coordinates[1];
+                _dal.call.Update(updatedCall);
+                Console.WriteLine($"Call {callId} updated with coordinates");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in UpdateCallWithCoordinatesAsync: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+        }
+    }
+
+
+    public IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
     {
         // נעילה סביב קריאות ל-DAL
         lock (AdminManager.BlMutex)

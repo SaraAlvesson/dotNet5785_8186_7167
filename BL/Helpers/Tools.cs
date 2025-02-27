@@ -77,7 +77,7 @@ namespace Helpers
             return str;
         }
 
-        public static double[] GetGeolocationCoordinatesAsync(string address)
+        public static async Task<double[]> GetGeolocationCoordinatesAsync(string address)
         {
             if (string.IsNullOrWhiteSpace(address))
             {
@@ -91,15 +91,15 @@ namespace Helpers
             {
                 try
                 {
-                    HttpResponseMessage response = client.GetAsync(requestUrl).GetAwaiter().GetResult();
+                    HttpResponseMessage response = await client.GetAsync(requestUrl);
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        string errorContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        string errorContent = await response.Content.ReadAsStringAsync();
                         throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
                     }
 
-                    string jsonResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
                     var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var locationData = JsonSerializer.Deserialize<LocationResult[]>(jsonResponse, jsonOptions);
 
@@ -127,6 +127,7 @@ namespace Helpers
                 }
             }
         }
+
 
         public static async Task<bool> IsAddressValidAsync(string address)
         {
