@@ -129,9 +129,9 @@
         <!-- Status -->
         <Label Content="Status:" Grid.Row="6" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallStatus, Mode=TwoWay}" 
-                  Grid.Row="6" Grid.Column="1"
+                  Grid.Row="6" Grid.Column="1" IsReadOnly="True"
                   ItemsSource="{Binding Source={StaticResource StatusTypeCollectionKey}}" 
-                  IsEnabled="True" SelectionChanged="ComboBox_SelectionChanged_1" Margin="0,3,185,0" Height="30" VerticalAlignment="Top" />
+                  IsEnabled="True"  Margin="0,3,185,0" Height="30" VerticalAlignment="Top" />
         <!-- לא ניתן לערוך את הסטטוס -->
 
         <!-- List Assignments -->
