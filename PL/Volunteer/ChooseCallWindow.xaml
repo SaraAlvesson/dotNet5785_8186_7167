@@ -1,6 +1,7 @@
-﻿<Window x:Class="PL.Volunteer.ChooseCallWindow" 
+<Window x:Class="PL.Volunteer.ChooseCallWindow" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:PL"
         Title="Select Call for Handling" Height="600" Width="900" DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="Window_Loaded" Closed="Window_Closed" Background="#ADD8E6">
 
@@ -26,7 +27,7 @@
         <!-- TextBox עבור עדכון מיקום מתנדב -->
         <TextBox x:Name="textrr" 
                  Text="{Binding CurrentVolunteer.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                 VerticalAlignment="Top" Width="275" Height="45" Canvas.Left="400" Canvas.Top="479" HorizontalAlignment="Left"/>
+                 VerticalAlignment="Top" Width="275" Height="45" Canvas.Left="400" Canvas.Top="479" HorizontalAlignment="Left" TextChanged="textrr_TextChanged"/>
 
         <!-- כפתור לעדכון כתובת -->
         <Button Content="Update address" Width="150" Height="35" Click="update_click" Background="#40E0D0" Foreground="White" BorderBrush="#2980B9" Canvas.Left="205" Canvas.Top="484" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -44,7 +45,16 @@
                       Width="850">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="30"/>
-                    <DataGridTextColumn Header="Call Type" Binding="{Binding CallType}" Width="120"/>
+                    <DataGridTextColumn Header="Call Type" Width="120">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Setter Property="Background" Value="{Binding CallType, Converter={StaticResource EnumToColorConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="CallType"/>
+                        </DataGridTextColumn.Binding>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="200"/>
                     <DataGridTextColumn Header="Open Time" Binding="{Binding OpenTime}" Width="130"/>
                     <DataGridTextColumn Header="Distance (km)" Binding="{Binding DistanceOfCall}" Width="120"/>
@@ -73,7 +83,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Call Details Section -->
-            <StackPanel Grid.Column="3" Margin="180,79,-160,-59">
+            <StackPanel Grid.Column="3" Margin="180,79,0,-59" HorizontalAlignment="Left" Width="475">
                 <TextBlock FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Height="25"><Run Text="                                     "/><Run Text="Cal"/><Run Language="en-gb" Text="l Selected"/><Run Text=" Descriptio"/><Run Text="n:"/></TextBlock>
                 <TextBox TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Height="31" 
                          Text="{Binding SelectedCallDetails}" TextChanged="TextBox_TextChanged" Width="475" />

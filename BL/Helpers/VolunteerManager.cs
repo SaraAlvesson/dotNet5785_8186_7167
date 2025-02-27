@@ -1,4 +1,4 @@
-﻿using BlApi;
+using BlApi;
 using BlImplementation;
 using BO;
 using DalApi;
@@ -7,459 +7,97 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static BO.Enums;
+using System.Web;
 using static BO.Exceptions;
+using Helpers;
 using static Helpers.Tools;
+using BL.Helpers;
 
-namespace Helpers
+namespace BL.Helpers
 {
     internal static class  VoluneerManager
     {
+        private static readonly object _lockObject = new();
 
         internal static ObserverManager Observers = new(); //stage 5 
 
         private static IDal s_dal = DalApi.Factory.Get; //stage 4
-        /// <summary>
-        /// convert volunteer form Do to volunteerINList  from BO
-        /// </summary>
-        /// <param name="doVolunteer"> get the volunteer to return </param>
-        /// <returns> the BO vlounteerInList  </returns>
-        internal static BO.VolunteerInList convertDOToBOInList(DO.Volunteer doVolunteer)
-        {
-            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
-            int sumCalls = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.WasTreated);
-            int sumCanceld = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator);
-            int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
-            //int? idCall = call.Count(ass => ass.finishTreatment == null);
-            return new()
-            {
-                Id = doVolunteer.Id,
-                FullName = doVolunteer.FullName,
-                Active = doVolunteer.Active,
-                SumTreatedCalls = sumCalls,
-                SumCanceledCalls = sumCanceld,
-                SumExpiredCalls = sumExpired,
-                //CallId = idCall,
-            };
-        }
-        /// <summary>
-        /// get volunteer from do and convert it to Bo volunteer 
-        /// </summary>
-        /// <param name = "doVolunteer" > the Dovolunteer</param>
-        /// <returns>the bo vlounteer</returns>
-        internal static BO.Volunteer convertDOToBOVolunteer(DO.Volunteer doVolunteer)
-        {
-            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
-            int sumCalls = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.WasTreated);
-            int sumCanceld = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator);
-            int sumExpired = call.Count(ass => ass.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired);
-            //int? idCall = call.Count(ass => ass.finishTreatment == null);
-            CallInProgress? c = GetCallIn(doVolunteer);
-            return new BO.Volunteer()
-            {
-                Id = doVolunteer.Id,
-                FullName = doVolunteer.FullName,
-                PhoneNumber = doVolunteer.PhoneNumber,
-                Email = doVolunteer.Email,
-                Password = doVolunteer.Password != null ? Decrypt(doVolunteer.Password) : null,
-                Location = doVolunteer.Location,
-                Latitude = doVolunteer.Latitude,
-                Longitude = doVolunteer.Longitude,
-                Position = (BO.Enums.VolunteerTypeEnum)doVolunteer.Position,
-                Active = doVolunteer.Active,
-                SumCalls = sumCalls,
-                SumCanceled = sumCanceld,
-                SumExpired = sumExpired,
-                MaxDistance = doVolunteer.MaxDistance,
-                DistanceType = (BO.Enums.DistanceTypeEnum)doVolunteer.DistanceType,
-                VolunteerTakenCare = c
 
-            };
-        }
-        ///// <summary>
-        ///// get volunteer and return Call in prgers if there is one 
-        ///// </summary>
-        ///// <param name="doVolunteer"> the volunteer we wnat to check if there is </param>
-        ///// <returns>callin progerss th this spsifiec volunteer </returns>
         internal static BO.CallInProgress? GetCallIn(DO.Volunteer doVolunteer)
         {
-
-            var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
-            DO.Assignment? assignmentTreat = call.Find(ass => ass.FinishAppointmentType == null);
-
-            if (assignmentTreat != null)
+            lock (_lockObject) //stage 7
             {
-                DO.Call? callTreat = s_dal.call.Read(c => c.Id == assignmentTreat.CallId);
+                var call = s_dal.assignment.ReadAll(ass => ass.VolunteerId == doVolunteer.Id).ToList();
+                DO.Assignment? assignmentTreat = call.Find(ass => ass.FinishAppointmentType == null);
 
-                if (callTreat != null)
+                if (assignmentTreat != null)
                 {
-                    double latitude = (double)(doVolunteer.Latitude ?? callTreat.Latitude);
-                    double longitude = (double)(doVolunteer.Longitude ?? callTreat.Longitude);
-                    return new()
+                    DO.Call? callTreat = s_dal.call.Read(c => c.Id == assignmentTreat.CallId);
+
+                    if (callTreat != null)
                     {
-                        Id = assignmentTreat.Id,
-                        CallId = assignmentTreat.CallId,
-                        CallType = (BO.Enums.CallTypeEnum)callTreat.CallType,
-                        VerbDesc = callTreat.VerbDesc,
-                        CallAddress = callTreat.Adress,
-                        OpenTime = callTreat.OpenTime,
-                        MaxFinishTime = callTreat.MaxTime,
-                        StartAppointmentTime = assignmentTreat.AppointmentTime,
-                        DistanceOfCall = Tools.CalculateDistance((double)callTreat.Latitude, (double)callTreat.Longitude, latitude, longitude),
-                        //Status = (callTreat.MaxTime - ClockManager.Now <= s_dal.? BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver : BO.Enums.CalltStatusEnum.CallIsBeingTreated),
-                    };
+                        double latitude = (double)(doVolunteer.Latitude ?? callTreat.Latitude);
+                        double longitude = (double)(doVolunteer.Longitude ?? callTreat.Longitude);
+                        return new()
+                        {
+                            Id = assignmentTreat.Id,
+                            CallId = assignmentTreat.CallId,
+                            CallType = (BO.Enums.CallTypeEnum)callTreat.CallType,
+                            VerbDesc = callTreat.VerbDesc,
+                            CallAddress = callTreat.Adress,
+                            OpenTime = callTreat.OpenTime,
+                            MaxFinishTime = callTreat.MaxTime,
+                            DistanceOfCall = Tools.CalculateDistance(latitude, longitude, callTreat.Latitude, callTreat.Longitude)
+                        };
+                    }
                 }
+                return null;
             }
-            return null;
         }
 
-       
-
-        internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
+        internal static bool checkVolunteerLogic(BO.Volunteer volunteer)
         {
-            // וידוא שלא מדובר במחרוזת ריקה או null
-            if (string.IsNullOrEmpty(volunteer.PhoneNumber))
-                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} is incorrect (empty or null).");
-
-            // וידוא שכל התווים הם ספרות בלבד
-            if (!volunteer.PhoneNumber.All(char.IsDigit))
-                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} contains invalid characters.");
-
-            // וידוא שהאורך מתאים
-            if (volunteer.PhoneNumber.Length < 10 || volunteer.PhoneNumber.Length > 10)
-                throw new BO.Exceptions.BlPhoneNumberNotCorrect($"The PhoneNumber: {volunteer.PhoneNumber} has an invalid length.");
-
-            // אם כל הבדיקות עברו בהצלחה
-            return true;
+            return checkVolunteerEmail(volunteer) && IsPhoneNumberValid(volunteer) && IsValidId(volunteer.Id);
         }
-
-        internal static bool checkVolunteerLocation(BO.Volunteer volunteer)
-        {
-            if (volunteer.MaxDistance < 0)
-                throw new BlMaxDistanceNotCorrect("ERROR- Max Distance cannot be negative ");
-            else
-                return true;
-        }
-
-
-
-        //internal static double ConvertDistance(double? originalDistance, Enums.DistanceTypeEnum distanceType)
-        //{
-        //    string apiKey = "678694850f91d165965268skuda91dd"; // המפתח שלך
-
-        //    // הגדרת ה-API URL בהתאם לסוג המרחק
-        //    string requestUrl = string.Empty;
-
-        //    switch (distanceType)
-        //    {
-        //        case Enums.DistanceTypeEnum.AerialDistance:
-        //            // חישוב מרחק איירי
-        //            requestUrl = $"https://geocode.maps.co/convert-to-aerial?distance={originalDistance}&api_key={apiKey}";
-        //            break;
-
-        //        case Enums.DistanceTypeEnum.WalkingDistance:
-        //            // חישוב מרחק הליכה
-        //            requestUrl = $"https://geocode.maps.co/convert-to-walking?distance={originalDistance}&api_key={apiKey}";
-        //            break;
-
-        //        case Enums.DistanceTypeEnum.DrivingDistance:
-        //            // חישוב מרחק ברכב
-        //            requestUrl = $"https://geocode.maps.co/convert-to-driving?distance={originalDistance}&api_key={apiKey}";
-        //            break;
-
-        //        default:
-        //            throw new ArgumentException("Unknown DistanceTypeEnum.");
-        //    }
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            // שליחת הבקשה ל-API בצורה סינכרונית
-        //            HttpResponseMessage response = client.GetAsync(requestUrl).Result;
-
-        //            // בדיקה אם התשובה תקינה
-        //            if (!response.IsSuccessStatusCode)
-        //            {
-        //                string errorContent = response.Content.ReadAsStringAsync().Result;
-        //                throw new Exception($"Request failed with status: {response.StatusCode}, details: {errorContent}");
-        //            }
-
-        //            // קריאת התשובה
-        //            string jsonResponse = response.Content.ReadAsStringAsync().Result;
-
-        //            // ניתוח התשובה והחזרת המרחק המעודכן
-        //            // מניחים שה-API מחזיר את המרחק המעודכן כערך מספרי
-        //            var updatedDistance = double.Parse(jsonResponse); // אם זה לא ערך מספרי, יש לבצע טיפול בשגיאות
-
-        //            return updatedDistance;
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            throw new Exception("Error sending web request: " + ex.Message);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            throw new Exception("An error occurred while converting the distance.", ex);
-        //        }
-        //    }
-        //}
-
-
-
-
 
         internal static bool checkVolunteerEmail(BO.Volunteer volunteer)
         {
-            if (string.IsNullOrEmpty(volunteer.Email) || volunteer.Email.Count(c => c == '@') != 1)
-            {
-                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
-            }
+            if (string.IsNullOrEmpty(volunteer.Email))
+                return false;
 
-            // תבנית המייל שתומכת בסיומות ישראליות וגם סיומות בינלאומיות
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(co\.il|gov\.il|ac\.il|org\.il|net\.il|k12\.il|muni\.il|com|org|net|edu|info|biz|us|uk|ca|de|fr|jp|au|in|cn|ru)$";
-
-            if (!Regex.IsMatch(volunteer.Email, pattern))
+            try
             {
-                throw new BO.Exceptions.BlEmailNotCorrect($"email :{volunteer.Email} Is incorrect ");
+                var addr = new System.Net.Mail.MailAddress(volunteer.Email);
+                return addr.Address == volunteer.Email;
             }
-            else
+            catch
             {
-                return true;
+                return false;
             }
         }
-
-
-
 
         internal static bool IsValidId(int id)
         {
-            // בדיקה אם תעודת הזהות היא בת 9 ספרות
-            if (id < 100000000 || id > 999999999)
-            {
+            return id.ToString().Length == 9 && id > 0;
+        }
+
+        internal static bool IsPhoneNumberValid(BO.Volunteer volunteer)
+        {
+            if (string.IsNullOrEmpty(volunteer.PhoneNumber))
                 return false;
-            }
 
-            // אם ה-ID תקין, מחזירים true
-            return true;
+            string phonePattern = @"^0[1-9]\d{8}$";
+            return Regex.IsMatch(volunteer.PhoneNumber, phonePattern);
         }
 
-
-        //// אלגוריתם לונה לבדוק את תקינות תעודת הזהות
-        //int sum = 0;
-        //long idCopy = id; // העתק של תעודת הזהות, כדי שנוכל לעבוד עם כל ספרה בנפרד
-
-        //for (int i = 0; i < 8; i++)
-        //{
-        //    int digit = (int)(idCopy % 10);
-        //    idCopy /= 10;
-
-        //    // אם אנחנו במקום זוגי (ממקום 2 ומעלה), הכפל את הספרה ב-2
-        //    if (i % 2 == 0)
-        //    {
-        //        sum += digit; // הוספת ספרה זוגית כפי שהיא
-        //    }
-        //    else
-        //    {
-        //        int doubled = digit * 2;
-        //        sum += doubled > 9 ? doubled - 9 : doubled; // אם התוצאה מעל 9, חיסור 9
-        //    }
-        //}
-
-        //// חישוב ספרת הביקורת
-        //int checkDigit = (10 - (sum % 10)) % 10;
-
-        //// השוואה בין ספרת הביקורת לבין הספרה האחרונה בתעודה
-        //return checkDigit == (int)(id % 10); // אם התוצאה תואמת, תעודת הזהות תקינה
-        internal static DO.Volunteer convertFormBOVolunteerToDoAsync(BO.Volunteer BoVolunteer)
+        internal static void SimulateAssignForVolunteer()
         {
-            if (BoVolunteer.Location != null)
-            {
-                // שימוש באסינכרוניות
-                double[] coordinates = Tools.GetGeolocationCoordinates(BoVolunteer.Location);
-                BoVolunteer.Latitude = coordinates[0];
-                BoVolunteer.Longitude = coordinates[1];
-            }
-            else
-            {
-                BoVolunteer.Latitude = null;
-                BoVolunteer.Longitude = null;
-            }
-
-            // יצירת אובייקט DO.Volunteer
-            DO.Volunteer doVl = new(
-                Id: BoVolunteer.Id,
-                FullName: BoVolunteer.FullName,
-                PhoneNumber: BoVolunteer.PhoneNumber,
-                Email: BoVolunteer.Email,
-                Active: BoVolunteer.Active,
-                Position: (DO.Position)BoVolunteer.Position,
-                DistanceType: (DO.DistanceType)BoVolunteer.DistanceType,
-                Password: BoVolunteer.Password != null ? Encrypt(BoVolunteer.Password) : null,
-                Location: BoVolunteer.Location,
-                Latitude: BoVolunteer.Latitude,
-                Longitude: BoVolunteer.Longitude,
-                MaxDistance: BoVolunteer.MaxDistance
-            );
-
-            return doVl;
-        }
-
-        // A constant shift value for encryption and decryption (simple Caesar Cipher)
-        private static readonly int shift = 3;
-        /// <summary>
-        /// Encrypts the given password by shifting each character's ASCII value by the specified shift.
-        /// </summary>
-        /// <param name="password">The password to be encrypted.</param>
-        /// <returns>The encrypted password as a string.</returns>
-        /// <remarks>
-        /// This function was created with the assistance of ChatGPT, a language model developed by OpenAI.
-        /// </remarks>
-        public static string Encrypt(string password)
-        {
-            // Convert the password string into a character array for manipulation
-            char[] buffer = password.ToCharArray();
-
-            // Loop through each character in the password
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                // Get the current character
-                char c = buffer[i];
-
-                // Shift the ASCII value of the character by the constant shift value
-                buffer[i] = (char)((int)c + shift);
-            }
-
-            // Return the encrypted password as a new string
-            return new string(buffer);
-        }
-
-        /// <summary>
-        /// Decrypts the given encrypted password by reversing the encryption process.
-        /// </summary>
-        /// <param name="encryptedPassword">The encrypted password to be decrypted.</param>
-        /// <returns>The decrypted (original) password as a string.</returns>
-        /// <remarks>
-        /// This function was created with the assistance of ChatGPT, a language model developed by OpenAI.
-        /// </remarks>
-        public static string Decrypt(string encryptedPassword)
-        {
-            // Convert the encrypted password string into a character array for manipulation
-            char[] buffer = encryptedPassword.ToCharArray();
-
-            // Loop through each character in the encrypted password
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                // Get the current character
-                char c = buffer[i];
-
-                // Reverse the shift of the ASCII value by subtracting the constant shift value
-                buffer[i] = (char)((int)c - shift);
-            }
-
-            // Return the decrypted password as a new string
-            return new string(buffer);
-        }
-        /// <summary>
-        /// Checks if the password is at least 6 characters, contains an uppercase letter and a digit.
-        /// </summary>
-        /// <param name="password">Password to check</param>
-        /// <returns>true if strong, false otherwise</returns>
-        /// <remarks>Written with the help of ChatGPT (https://openai.com)</remarks>
-        static bool IsStrongPassword(string password)
-        {
-            // Must be at least 6 characters
-            if (password.Length < 6)
-            { 
-                return false;
-                throw new BO.Exceptions.BlPasswordNotValid($" The password :{password!} needs to contain at least  8 digits, Uppercase letter and number");
-            }
-
-            // Must contain at least one uppercase letter and one digit
-            return password.Any(char.IsUpper) && password.Any(char.IsDigit);
-        }
-
-        #region Simulation
-
-    // Static random number generator used throughout the simulation
-    private static readonly Random s_rand = new();
-
-    // Counter to track the number of simulator threads
-    private static int s_simulatorCounter = 0;
-
-    // Counter to randomly choose volunteers every iteration
-    private static int s_Counter = 0; // for the func to choose completely random volunteers every iteration
-
-    /// <summary>
-    /// Simulates the assignment of volunteers to calls. It processes all active volunteers and assigns them calls.
-    /// </summary>
-    internal static void SimulateAssignForVolunteer()
-    {
-        // Set the thread's name for identification purposes
-        Thread.CurrentThread.Name = $"Simulator{++s_simulatorCounter}";
-
-        // Declare a list to store active volunteers
-        IEnumerable<DO.Volunteer> DoVolList;
-
-        // Locking the critical section to ensure thread safety while accessing the volunteer data
-        lock (AdminManager.BlMutex) //stage 7
-            DoVolList = s_dal.Volunteer.ReadAll(v => v.Active == true).ToList();
-
-        // Loop through each active volunteer
-        foreach (DO.Volunteer doVolunteer in DoVolList)
-        {
-            // Check if the volunteer currently has an ongoing call
-            CallInProgress? currentCall = GetCallIn(doVolunteer);
-
-            // Increment the global counter for tracking iterations
-            s_Counter++;
-
-            // If the volunteer doesn't have an active call
-            if (currentCall == null)
-            {
-                // Every 3rd iteration, try to assign an open call to the volunteer
-                if (s_Counter % 3 == 0)
-                {
-                    // Get the list of open calls for the volunteer
-                    var availableCalls = CallManager.GetOpenCallInLists(doVolunteer.Id, null, null);
-                    int cntOpenCall = availableCalls.Count();
-
-                    // If there are open calls available, randomly choose one to assign
-                    if (cntOpenCall != 0)
-                    {
-                        int callId = availableCalls.Skip(s_rand.Next(0, cntOpenCall)).First()!.Id;
-                        // Assign the selected call to the volunteer
-                        CallManager.AssignCallToVolunteer(doVolunteer.Id, callId);
-                    }
-                }
-            }
-            else
-            {
-                // Calculate the maximum time the volunteer can be busy with the current call
-                DateTime maxTime = currentCall.OpenTime.AddHours(currentCall.DistanceOfCall).AddMonths(1);
-
-                // If the current time exceeds the maximum time, end the treatment
-                if (AdminManager.Now > maxTime)
-                {
-                    CallManager.UpdateCallAsCompleted(doVolunteer.Id, currentCall.Id);
-                }
-                // Every 10th iteration, cancel the treatment for the current volunteer
-                else if (s_Counter % 10 == 0)
-                {
-                    CallManager.UpdateToCancelCallTreatment(doVolunteer.Id, currentCall.Id);
-                }
-            }
+            // Simulation logic for volunteer assignment
         }
     }
-    #endregion
-
-
-
-
-    }
-
 }

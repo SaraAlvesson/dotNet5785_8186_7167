@@ -113,20 +113,32 @@
 
         <!-- כפתורי שינוי זמן – שמירת הגודל והמרווח כפי שהוגדר -->
         <StackPanel Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    Grid.Row="1" 
-                    Margin="0,20,0,20">
+            HorizontalAlignment="Center" 
+            Grid.Row="1" 
+            Margin="0,20,0,20">
+
             <Button Content="Add Minute" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
-                    Click="btnAddMin" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"/>
+            Click="btnAddMin" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"
+            IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+
             <Button Content="Add Hour" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
-                    Click="btnAddHour" Style="{StaticResource TimeButtonStyle}" Height="52" Width="111"/>
+            Click="btnAddHour" Style="{StaticResource TimeButtonStyle}" Height="52" Width="111"
+            IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+
             <Button Content="Add Day" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
-                    Click="btnAddDay" Style="{StaticResource TimeButtonStyle}" Height="52" Width="112"/>
+            Click="btnAddDay" Style="{StaticResource TimeButtonStyle}" Height="52" Width="112"
+            IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+
             <Button Content="Add Month" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
-                    Click="btnAddMonth" Style="{StaticResource TimeButtonStyle}" Height="52" Width="107"/>
+            Click="btnAddMonth" Style="{StaticResource TimeButtonStyle}" Height="52" Width="107"
+            IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+
             <Button Content="Add Year" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
-                    Click="btnAddYear" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"/>
+            Click="btnAddYear" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"
+            IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+
         </StackPanel>
+
 
         <!-- כפתורי פעולות במסד הנתונים -->
         <!-- חלוקה לתת-Grid עם 3 שורות: 
@@ -145,25 +157,40 @@
 
             <!-- שורה 1: כפתורי מתנדבים וקריאות -->
             <Button Grid.Row="0" Grid.Column="0" Content="Handle Volunteers" 
-                    Click="btnVolunteerList" Style="{StaticResource VolunteerCallButtonStyle}" Margin="195,5,75,-16" Grid.RowSpan="3" />
+                    Click="btnVolunteerList" Style="{StaticResource VolunteerCallButtonStyle}" Margin="185,5,75,-16" Grid.RowSpan="3" />
             <Button Grid.Row="0" Grid.Column="1" Content="Handle Calls" 
-                    Click="btnHandleCalls" Style="{StaticResource VolunteerCallButtonStyle}" Margin="90,3,175,-16" Grid.RowSpan="3" />
+                    Click="btnHandleCalls" Style="{StaticResource VolunteerCallButtonStyle}" Margin="80,3,185,-16" Grid.RowSpan="3" />
+            <Button Grid.Row="1" Content="{Binding IsSimulatorRunning, Converter={StaticResource BooleanToStartStopButtonTextConverter}}" 
+                    Click="StartStopSimulator" Style="{StaticResource TimeButtonStyle}" Margin="260,99,10,-111" Grid.RowSpan="2" />
 
-            <!-- שורה 2: כפתורי אתחול ואיפוס (משתמשים בסגנון DarkerButtonStyle, כאן מופיע תחת "RedButtonStyle" שמבוסס על DarkerButtonStyle) -->
+            <TextBox x:Name="txtClockSpeed"
+               Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" Margin="35,110,255,-101" Grid.Row="2" Grid.Column="1" TextChanged="txtClockSpeed_TextChanged"/>
+            <!-- כפתור אתחול מסד הנתונים -->
             <Button Grid.Row="2" Grid.Column="0" Content="Initialize DB" 
-                    Click="btnInit" Style="{StaticResource RedButtonStyle}" Margin="280,125,30,-136" />
-            <Button Grid.Row="2" Content="Reset DB" 
-                    Click="btnReset" Style="{StaticResource RedButtonStyle}" Margin="60,125,245,-136" Grid.Column="1" />
+        Click="btnInit" Style="{StaticResource RedButtonStyle}" Margin="45,195,260,-206"
+        IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
 
-            <!-- שורה 3: כפתור עידכון יחד עם תיבת הטקסט -->
-            <Button Grid.Row="2" Grid.Column="0" Content="Update Risk Range" 
-                    Click="update_click" Style="{StaticResource RedButtonStyle}" FontSize="20" Margin="215,246,20,-236" />
+            <!-- כפתור איפוס מסד הנתונים -->
+            <Button Grid.Row="2" Grid.Column="1" Content="Reset DB" 
+        Click="btnReset" Style="{StaticResource RedButtonStyle}" Margin="260,195,45,-206"
+        IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+            <Button Grid.Row="2" Grid.Column="0" Content="Risk Range" 
+        Click="update_click" Style="{StaticResource RedButtonStyle}" FontSize="20" 
+        Margin="260,250,10,-257" 
+        IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" />
+
             <TextBox Grid.Row="2" x:Name="textrr" 
-                     Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" 
-                     Background="#ECF0F1" 
-                     BorderBrush="#E74C3C" 
-                     Foreground="#2C3E50" 
-                     Margin="60,246,230,-236" Grid.Column="1"/>
+         Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" 
+         Background="#ECF0F1" 
+         BorderBrush="#E74C3C" 
+         Foreground="#2C3E50" 
+         Margin="30,265,260,-256" 
+         Grid.Column="1"
+         HorizontalAlignment="Stretch" VerticalAlignment="Top"
+         MinWidth="200" MinHeight="30"
+         IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" />
+
+
         </Grid>
     </Grid>
 </Window>

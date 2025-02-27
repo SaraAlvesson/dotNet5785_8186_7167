@@ -1,4 +1,4 @@
-﻿namespace DalTest;
+namespace DalTest;
 using Dal;
 
 using DalApi;
@@ -48,21 +48,21 @@ public static class Initialization
 
         var addresses = new List<Tuple<string, double, double>>()
     {
-        new Tuple<string, double, double>("Rothschild Boulevard, Tel Aviv, Israel", 32.065500, 34.767028),
+        new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
 new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
-new Tuple<string, double, double>("Jaffa, Tel Aviv, Israel", 32.055823, 34.759151),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Neve Tzedek, Tel Aviv, Israel", 32.065764, 34.770022),
-new Tuple<string, double, double>("Rothschild Theatre, Tel Aviv, Israel", 32.073743, 34.770498),
+new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
 new Tuple<string, double, double>("Carmel Market, Tel Aviv, Israel", 32.065013, 34.768370),
 new Tuple<string, double, double>("Dizengoff Square, Tel Aviv, Israel", 32.078323, 34.770340),
 new Tuple<string, double, double>("Yarkon Park, Tel Aviv, Israel", 32.087573, 34.781904),
 new Tuple<string, double, double>("Tel Aviv Museum of Art, Tel Aviv, Israel", 32.073418, 34.781046),
 new Tuple<string, double, double>("Florentin, Tel Aviv, Israel", 32.054186, 34.759738),
-new Tuple<string, double, double>("Jaffa Port, Tel Aviv, Israel", 32.053704, 34.756671),
-new Tuple<string, double, double>("Rabin Square, Tel Aviv, Israel", 32.078570, 34.768721),
-new Tuple<string, double, double>("Levinsky Market, Tel Aviv, Israel", 32.061425, 34.766412),
 new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
-new Tuple<string, double, double>("Azrieli Center, Tel Aviv, Israel", 32.073700, 34.791202),
+new Tuple<string, double, double>("Rabin Square, Tel Aviv, Israel", 32.078570, 34.768721),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 
     };
 
@@ -144,25 +144,25 @@ new Tuple<string, double, double>("Azrieli Center, Tel Aviv, Israel", 32.073700,
     {
            new Tuple<string, double, double>("Ben Yehuda Street, Tel Aviv, Israel", 32.065500, 34.767028),
 new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
-new Tuple<string, double, double>("Jaffa Road, Tel Aviv, Israel", 32.055823, 34.759151),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Neve Tzedek, Tel Aviv, Israel", 32.065764, 34.770022),
-new Tuple<string, double, double>("Rothschild, Tel Aviv, Israel", 32.073743, 34.770498),
+new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
 new Tuple<string, double, double>("Carmel Market, Tel Aviv, Israel", 32.065013, 34.768370),
 new Tuple<string, double, double>("Dizengoff Square, Tel Aviv, Israel", 32.078323, 34.770340),
 new Tuple<string, double, double>("Yarkon Park, Tel Aviv, Israel", 32.087573, 34.781904),
 new Tuple<string, double, double>("Tel Aviv Museum of Art, Tel Aviv, Israel", 32.073418, 34.781046),
 new Tuple<string, double, double>("Florentin, Tel Aviv, Israel", 32.054186, 34.759738),
-new Tuple<string, double, double>("Jaffa Port, Tel Aviv, Israel", 32.053704, 34.756671),
-new Tuple<string, double, double>("Rabin Square, Tel Aviv, Israel", 32.078570, 34.768721),
-new Tuple<string, double, double>("Levinsky Market, Tel Aviv, Israel", 32.061425, 34.766412),
 new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
-new Tuple<string, double, double>("Azrieli Center, Tel Aviv, Israel", 32.073700, 34.791202),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Tel Aviv Cinematheque, Tel Aviv, Israel", 32.070856, 34.772402),
-new Tuple<string, double, double>("Rothschild Boulevard, Tel Aviv, Israel", 32.065500, 34.767028),
+new Tuple<string, double, double>("Tel Aviv Port, Tel Aviv, Israel", 32.099791, 34.769077),
 new Tuple<string, double, double>("Neve Tzedek, Tel Aviv, Israel", 32.065764, 34.770022),
 new Tuple<string, double, double>("Carmel Market, Tel Aviv, Israel", 32.065013, 34.768370),
 new Tuple<string, double, double>("Teddy Stadium, Tel Aviv, Israel", 32.065713, 34.769120),
-new Tuple<string, double, double>("Jaffa, Tel Aviv, Israel", 32.050830, 34.752780),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Shalom Meir Tower, Tel Aviv, Israel", 32.063725, 34.774329),
 new Tuple<string, double, double>("Old Jaffa, Tel Aviv, Israel", 32.053241, 34.759167),
@@ -177,18 +177,18 @@ new Tuple<string, double, double>("Givatayim, Tel Aviv, Israel", 32.070946, 34.7
 new Tuple<string, double, double>("Kikar Hamedina, Tel Aviv, Israel", 32.078298, 34.786209),
 new Tuple<string, double, double>("Sarona Market, Tel Aviv, Israel", 32.073158, 34.782633),
 new Tuple<string, double, double>("Shuk HaCarmel, Tel Aviv, Israel", 32.065013, 34.768370),
-new Tuple<string, double, double>("Jaffa Flea Market, Tel Aviv, Israel", 32.053333, 34.757233),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Ramat Gan, Tel Aviv, Israel", 32.073208, 34.817878),
 new Tuple<string, double, double>("Tel Aviv University, Tel Aviv, Israel", 32.113120, 34.804338),
 new Tuple<string, double, double>("Hilton Beach, Tel Aviv, Israel", 32.095183, 34.768234),
 new Tuple<string, double, double>("Kikar Hamedina, Tel Aviv, Israel", 32.078298, 34.786209),
-new Tuple<string, double, double>("Azrieli Sarona Tower, Tel Aviv, Israel", 32.073719, 34.785553),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Tel Aviv-Yafo, Tel Aviv, Israel", 32.054166, 34.765746),
 new Tuple<string, double, double>("Alma Beach, Tel Aviv, Israel", 32.073487, 34.758676),
 new Tuple<string, double, double>("Gan Meir, Tel Aviv, Israel", 32.070504, 34.776377),
 new Tuple<string, double, double>("Shenkin Street, Tel Aviv, Israel", 32.065034, 34.770086),
 new Tuple<string, double, double>("Palmach Street, Tel Aviv, Israel", 32.070043, 34.767118),
-new Tuple<string, double, double>("Jaffa Clock Tower, Tel Aviv, Israel", 32.053076, 34.759602),
+new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 
 
         // Add more addresses as needed...

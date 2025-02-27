@@ -1,4 +1,4 @@
-﻿namespace Dal;
+namespace Dal;
 
 using DalApi;
 using DO;
@@ -23,14 +23,18 @@ static class XMLTools
 
         try
         {
-            using FileStream file = new(xmlFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
-            new XmlSerializer(typeof(List<T>)).Serialize(file, list);
+            // פתיחת הקובץ עם FileShare.ReadWrite כך שתהיה גישה לקריאה ולכתיבה בו זמנית
+            using (FileStream file = new(xmlFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+            {
+                new XmlSerializer(typeof(List<T>)).Serialize(file, list);
+            }
         }
         catch (Exception ex)
         {
             throw new DalXMLFileLoadCreateException($"fail to create xml file: {s_xmlDir + xmlFilePath}, {ex.Message}");
         }
     }
+
     public static List<T> LoadListFromXMLSerializer<T>(string xmlFileName) where T : class
     {
         string xmlFilePath = s_xmlDir + xmlFileName;
@@ -39,16 +43,19 @@ static class XMLTools
         {
             if (!File.Exists(xmlFilePath)) return new();
 
-            using FileStream file = new(xmlFilePath, FileMode.Open);
+            using FileStream file = new(xmlFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             XmlSerializer x = new(typeof(List<T>));
             List<T> result = x.Deserialize(file) as List<T> ?? new();
 
-            // הדפסת פרטי קריאת שדה זמן פתיחה
-            foreach (var item in result)
+            // רק אם זה קריאה חדשה נדפיס את הזמן
+            if (typeof(T) == typeof(Call))
             {
-                if (item is Call call)
+                foreach (var item in result.Take(1)) // בודקים רק את הפריט הראשון
                 {
-                    Console.WriteLine($"OpenTime: {call.OpenTime}");  // הדפסה לבדוק את ערך OpenTime
+                    if (item is Call call)
+                    {
+                        Console.WriteLine($"First Call OpenTime: {call.OpenTime}");
+                    }
                 }
             }
 

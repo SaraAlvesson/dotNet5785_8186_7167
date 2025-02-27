@@ -1,7 +1,11 @@
-﻿// Converter for IsReadOnly
+// Converter for IsReadOnly
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows;
+using static BO.Enums;
+using System.Windows.Media;
+using BO;
+using DalApi; // הוספת using עבור IDal
 namespace PL;
 public class ConvertUpdateToReadOnly : IValueConverter
 {
@@ -94,6 +98,31 @@ public class RoleToEditableConverter : IValueConverter
 //        throw new NotImplementedException();
 //    }
 //}
+public class BooleanToStartStopButtonTextConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (bool)value ? "Stop Simulator" : "Start Simulator";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return value.ToString() == "Stop Simulator";
+    }
+}
+
+public class InverseBooleanConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return !(bool)value;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return !(bool)value;
+    }
+}
 
 public class CallStatusToVisibilityConverter : IValueConverter
 {
@@ -117,4 +146,118 @@ public class CallStatusToVisibilityConverter : IValueConverter
     }
 }
 
+public class EnumToColorConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value == null)
+            return Brushes.Transparent;
+
+        return value switch
+        {
+            // צבעים עבור CallTypeEnum
+            CallTypeEnum.PreparingFood => Brushes.LightGreen,
+            CallTypeEnum.TransportingFood => Brushes.LightBlue,
+            CallTypeEnum.FixingEquipment => Brushes.LightSalmon,
+            CallTypeEnum.ProvidingShelter => Brushes.LightPink,
+            CallTypeEnum.TransportAssistance => Brushes.LightCyan,
+            CallTypeEnum.MedicalAssistance => Brushes.LightCoral,
+            CallTypeEnum.EmotionalSupport => Brushes.LightGoldenrodYellow,
+            CallTypeEnum.PackingSupplies => Brushes.LightSeaGreen,
+            CallTypeEnum.None => Brushes.Gray,
+
+            // צבעים עבור CalltStatusEnum
+            CalltStatusEnum.OPEN => Brushes.LightGreen,
+            CalltStatusEnum.EXPIRED => Brushes.LightSalmon,
+            CalltStatusEnum.CLOSED => Brushes.LightGray,
+            CalltStatusEnum.CallIsBeingTreated => Brushes.LightBlue,
+            CalltStatusEnum.CallAlmostOver => Brushes.Yellow,
+            CalltStatusEnum.CallTreatmentAlmostOver => Brushes.Orange,
+            CalltStatusEnum.Canceled => Brushes.Pink,
+            CalltStatusEnum.UNKNOWN => Brushes.Gray,
+
+            // צבעים עבור FinishAppointmentTypeEnum
+            FinishAppointmentTypeEnum.WasTreated => Brushes.LightGreen,
+            FinishAppointmentTypeEnum.SelfCancellation => Brushes.LightSalmon,
+            FinishAppointmentTypeEnum.CancelingAnAdministrator => Brushes.Pink,
+            FinishAppointmentTypeEnum.CancellationHasExpired => Brushes.Gray,
+
+            _ => Brushes.Transparent
+        };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class TimeSpanToFormattedStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is TimeSpan timeSpan)
+        {
+            int totalHours = (int)Math.Floor(timeSpan.TotalHours);
+            return $"{totalHours:00}:{timeSpan.Minutes:00}:{timeSpan.Seconds:00}";
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class AppointmentTimeVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is BO.Enums.CalltStatusEnum status)
+        {
+            return status == BO.Enums.CalltStatusEnum.CLOSED;
+        }
+        return false;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+  public class CanDeleteVolunteerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is BO.VolunteerInList volunteer)
+            {
+                // בדיקה האם למתנדב יש קריאה בטיפול
+                bool canDelete = volunteer.CallIdInTreatment == null;
+
+                // אם יש פרמטר, בדוק את סוג ההמרה
+                if (parameter is string converterParameter)
+                {
+                    switch (converterParameter)
+                    {
+                        case "Visibility":
+                            return canDelete ? Visibility.Visible : Visibility.Collapsed;
+                        
+                        case "IsEnabled":
+                            return canDelete;
+                    }
+                }
+
+                // החזרת ערך בוליאני בסיסי
+                return canDelete;
+            }
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 

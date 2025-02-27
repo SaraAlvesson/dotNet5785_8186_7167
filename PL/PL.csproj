@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.Wpf" Version="132.3.11" />
     <PackageReference Include="Microsoft.Maps.MapControl.WPF" Version="1.0.0.3" />
   </ItemGroup>
 
@@ -60,6 +59,34 @@
 
   <ItemGroup>
     <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.Core.Runtime.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.Core.Runtime.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\saraa\.nuget\packages\cefsharp.common\132.3.11\buildTransitive\..\CefSharp\x86\CefSharp.BrowserSubprocess.Core.dll" />
   </ItemGroup>
 
 </Project>

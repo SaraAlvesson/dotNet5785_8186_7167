@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading;
 using BO;
 using static BO.Enums;
 
@@ -11,12 +12,16 @@ namespace PL.Volunteer
     public partial class MainVolunteerWindow : Window, INotifyPropertyChanged
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private DispatcherTimer _timer;
 
         // Events for observers
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? CallCompleted;
         public event EventHandler? CallCancelled;
         public event EventHandler? VolunteerUpdated;
+
+        // Flag for handling async updates
+        private volatile bool isUpdateInProgress = false;
 
         // Property change notification
         protected void OnPropertyChanged(string propertyName)
@@ -89,8 +94,17 @@ namespace PL.Volunteer
             {
                 MessageBox.Show($"Error fetching volunteer details: {ex.Message}");
             }
+            StartAutoRefresh();
         }
-
+        private void StartAutoRefresh()
+        {
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5) // רענון כל 5 שניות
+            };
+            _timer.Tick += (s, e) => ObserveVolunteerListChanges();
+            _timer.Start();
+        }
         private void ButtonChosenCall_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentVolunteer?.VolunteerTakenCare == null && CurrentVolunteer?.Active == true)
@@ -108,7 +122,6 @@ namespace PL.Volunteer
             else
             {
                 MessageBox.Show("You cannot choose a call at the moment. You are either already handling a call or not active.");
-
             }
         }
 
@@ -137,6 +150,9 @@ namespace PL.Volunteer
             {
                 try
                 {
+                    if (isUpdateInProgress) return; // Skip if update is already in progress
+
+                    isUpdateInProgress = true;
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("Volunteer updated successfully.");
 
@@ -148,6 +164,10 @@ namespace PL.Volunteer
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error updating volunteer: {ex.Message}");
+                }
+                finally
+                {
+                    isUpdateInProgress = false; // Reset the flag after update is complete
                 }
             }
             else
@@ -166,17 +186,7 @@ namespace PL.Volunteer
             s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);
         }
 
-        private void ObserveVolunteerListChanges()
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (CurrentVolunteer != null)
-                {
-                    RefreshVolunteerData(CurrentVolunteer.Id);
-                }
-            });
-        }
-
+      
         private void ButtonComplete_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -262,6 +272,28 @@ namespace PL.Volunteer
             {
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        private volatile bool isUpdatingView = false;
+
+        private void ObserveVolunteerListChanges()
+        {
+            if (isUpdatingView) return; // אם יש כבר עדכון בתהליך, מתעלמים מהבקשה החדשה
+
+            isUpdatingView = true;
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                try
+                {
+                    if (CurrentVolunteer != null)
+                    {
+                        RefreshVolunteerData(CurrentVolunteer.Id);
+                    }
+                }
+                finally
+                {
+                    isUpdatingView = false; // משחררים את הדגל לאחר סיום העדכון
+                }
+            });
         }
 
         private bool IsValidUpdate()

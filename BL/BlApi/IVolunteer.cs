@@ -1,4 +1,3 @@
-﻿
 namespace BlApi;
 using BO;
 using static BO.Enums;
@@ -29,9 +28,11 @@ public interface IVolunteer: IObservable
     Volunteer RequestVolunteerDetails(int volunteerId);
 
     /// <summary>
-    /// Updates the details of an existing volunteer based on their ID.
+    /// מעדכן את פרטי המתנדב (למשל: שינוי מיקום או פרטי קשר).
     /// </summary>
-    void UpdateVolunteerDetails(int volunteerId, Volunteer volunteerDetails);
+    /// <param name="requesterId">מזהה המשתמש המבצע את העדכון</param>
+    /// <param name="volunteerDetails">אובייקט מתנדב עם הנתונים המעודכנים</param>
+   void UpdateVolunteerDetails(int requesterId, BO.Volunteer volunteerDetails);
 
     /// <summary>
     /// Deletes a volunteer from the system by their ID.
@@ -44,4 +45,3 @@ public interface IVolunteer: IObservable
     void AddVolunteer(BO.Volunteer volunteerDetails);
     
 }
-
