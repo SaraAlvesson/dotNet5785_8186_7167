@@ -187,7 +187,6 @@ namespace Helpers
             }
         }
 
-
         public static bool IsValidAddress(string? address)
         {
             if (string.IsNullOrWhiteSpace(address))

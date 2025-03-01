@@ -1,7 +1,7 @@
 <Window x:Class="PL.Admin.CallsListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:PL.Converters"
+        xmlns:local="clr-namespace:PL"
         Title="Manage Calls" Height="600" Width="900" 
         DataContext="{Binding RelativeSource={RelativeSource Self}}" 
         Loaded="Window_Loaded" Closed="Window_Closed"
@@ -64,7 +64,7 @@
             <Setter Property="Margin" Value="0,10"/>
         </Style>
 
-        <converters:TimeSpanToCustomFormatConverter x:Key="TimeSpanToCustomFormatConverter"/>
+       
     </Window.Resources>
 
     <Grid Margin="20">

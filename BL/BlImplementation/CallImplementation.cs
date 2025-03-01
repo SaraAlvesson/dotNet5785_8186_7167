@@ -292,20 +292,19 @@ internal class CallImplementation : ICall
 
     public void AddCallAsync(BO.Call call)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();
+        AdminManager.ThrowOnSimulatorIsRunning();  // שלב 7
 
         try
         {
-            Console.WriteLine($"Starting AddCall with call ID: {call.Id}");
+            Console.WriteLine($"Starting AddCallAsync with call ID: {call.Id}");
             Console.WriteLine($"Call details: Address={call.Address}, OpenTime={call.OpenTime}, CallType={call.CallType}");
 
             // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
             CallManager.CheckCallFormat(call);
             CallManager.checkCallLogic(call);
-
             Console.WriteLine("Call format and logic checks passed");
 
-            // הגדרת מזהה חדש עבור קריאות חדשות
+            // שלב 2: הגדרת מזהה חדש לקריאה חדשה
             int newCallId;
             lock (AdminManager.BlMutex)
             {
@@ -313,23 +312,21 @@ internal class CallImplementation : ICall
                 Console.WriteLine($"New call ID generated: {newCallId}");
             }
 
-            // שלב 4: המרת אובייקט BO.Call ל-DO.Call ללא השדות המחושבים
+            // שלב 3: יצירת אובייקט DO.Call ללא קואורדינטות
             DO.Call newCall = new()
             {
                 Id = newCallId,
                 OpenTime = call.OpenTime,
-                MaxTime = call.MaxFinishTime,
+                MaxTime = call.MaxFinishTime, // תומך בערך null
                 Adress = call.Address,
                 CallType = (DO.CallType)call.CallType,
-                VerbDesc = call.VerbDesc,
+                VerbDesc = call.VerbDesc
             };
 
-            Console.WriteLine("DO.Call object created successfully without coordinates");
-
-            // עדכון המזהה החדש בקריאה המקורית
+            // עדכון מזהה הקריאה
             call.Id = newCallId;
 
-            // שלב 5: עטיפת פעולת ה-DAL בנעילה ועדכון ראשוני
+            // שלב 4: שליחה ל-DAL ללא הקואורדינטות
             lock (AdminManager.BlMutex)
             {
                 _dal.call.Create(newCall);
@@ -339,43 +336,55 @@ internal class CallImplementation : ICall
                 CallManager.Observers.NotifyListUpdated();
             }
 
-            // שלב 6: קריאה למתודה האסינכרונית לעדכון השדות החסרים
-            _ = UpdateCallWithCoordinatesAsync(newCallId, call.Address);
-
-            Console.WriteLine("AddCall completed successfully");
+            // שלב 5: קריאה למתודה אסינכרונית שתביא את הקואורדינטות ותעדכן
+            Task.Run(() => UpdateCallWithCoordinatesAsync(newCall));
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in AddCall: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Error in AddCallAsync: {ex.GetType().Name} - {ex.Message}");
             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            throw;
         }
     }
 
-    private async Task UpdateCallWithCoordinatesAsync(int callId, string address)
+    // מתודה אסינכרונית שתעדכן את הקואורדינטות לאחר קבלתן מהרשת
+  private async Task UpdateCallWithCoordinatesAsync(DO.Call oldCall)
+{
+    try
     {
-        try
-        {
-            Console.WriteLine($"Fetching coordinates asynchronously for call ID: {callId}");
-            double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(address);
-            Console.WriteLine($"Coordinates retrieved: Lat={coordinates[0]}, Lon={coordinates[1]}");
+        Console.WriteLine($"Fetching coordinates for call ID: {oldCall.Id}");
 
-            // שלב 7: עדכון הקריאה ב-DAL עם הקואורדינטות שהתקבלו
-            lock (AdminManager.BlMutex)
-            {
-                DO.Call updatedCall = _dal.call.Read(callId);
-                updatedCall.Latitude = coordinates[0];
-                updatedCall.Longitude = coordinates[1];
-                _dal.call.Update(updatedCall);
-                Console.WriteLine($"Call {callId} updated with coordinates");
-            }
-        }
-        catch (Exception ex)
+        double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(oldCall.Adress);
+        Console.WriteLine($"Coordinates retrieved: Lat={coordinates[0]}, Lon={coordinates[1]}");
+
+        // יצירת אובייקט חדש עם הערכים הישנים + הקואורדינטות החדשות
+        DO.Call updatedCall = new()
         {
-            Console.WriteLine($"Error in UpdateCallWithCoordinatesAsync: {ex.GetType().Name} - {ex.Message}");
-            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            Id = oldCall.Id,
+            OpenTime = oldCall.OpenTime,
+            MaxTime = oldCall.MaxTime,
+            Longitude = coordinates[1],
+            Latitude = coordinates[0],
+            Adress = oldCall.Adress,
+            CallType = oldCall.CallType,
+            VerbDesc = oldCall.VerbDesc
+        };
+
+        // עדכון ה-DAL עם האובייקט החדש
+        lock (AdminManager.BlMutex)
+        {
+            _dal.call.Update(updatedCall);
+            Console.WriteLine($"Call updated in DAL with coordinates: {updatedCall.Id}");
         }
+
+        CallManager.Observers.NotifyItemUpdated(updatedCall.Id);
     }
-
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error in UpdateCallWithCoordinatesAsync: {ex.GetType().Name} - {ex.Message}");
+        Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+    }
+}
 
     public IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
     {
@@ -434,97 +443,100 @@ internal class CallImplementation : ICall
         }
     }
 
-    public  IEnumerable<BO.OpenCallInList> GetOpenCallInListsAsync(
-     int volunteerId,
-     BO.Enums.CallTypeEnum? filter = null,
-     BO.Enums.OpenCallEnum? toSort = null)
+    public async Task<IEnumerable<BO.OpenCallInList>> GetOpenCallInListsAsync(
+      int volunteerId,
+    BO.Enums.CallTypeEnum? filter = null,
+    BO.Enums.OpenCallEnum? toSort = null)
+{
+    lock (AdminManager.BlMutex)
     {
-        // נעילה סביב קריאות ל-DAL
-        lock (AdminManager.BlMutex)
+        var listCall = _dal.call.ReadAll();
+        var listAssignment = _dal.assignment.ReadAll();
+
+        if (!listCall.Any())
+            throw new Exception("No calls found in the database.");
+
+        if (!listAssignment.Any())
+            throw new Exception("No assignments found in the database.");
+
+        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId)
+            ?? throw new ArgumentException("Volunteer not found.");
+
+        string volunteerAddress = volunteer.Location;
+        if (string.IsNullOrWhiteSpace(volunteerAddress))
+            throw new ArgumentException("Volunteer location is not provided.");
+
+        // יצירת רשימת BO.OpenCallInList ללא חישוב DistanceOfCall
+        var openCalls = from call in listCall
+                        let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
+                        let status = Tools.callStatus(call.Id)
+                        where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
+                        select new BO.OpenCallInList
+                        {
+                            Id = call.Id,
+                            CallType = (BO.Enums.CallTypeEnum)call.CallType,
+                            Address = call.Adress,
+                            VerbDesc = call.VerbDesc,
+                            OpenTime = call.OpenTime,
+                            MaxFinishTime = call.MaxTime
+                            // DistanceOfCall יתעדכן במתודה האסינכרונית
+                        };
+
+        if (filter.HasValue)
+            openCalls = openCalls.Where(call => call.CallType == filter.Value);
+
+        openCalls = toSort switch
         {
-            // שליפת רשימות הקריאות והשיוכים
-            var listCall = _dal.call.ReadAll();
-            var listAssignment =_dal.assignment.ReadAll();
+            BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
+            BO.Enums.OpenCallEnum.Address => openCalls.OrderBy(call => call.Address),
+            BO.Enums.OpenCallEnum.OpenTime => openCalls.OrderBy(call => call.OpenTime),
+            BO.Enums.OpenCallEnum.MaxFinishTime => openCalls.OrderBy(call => call.MaxFinishTime),
+            _ => openCalls.OrderBy(call => call.Id)
+        };
 
-            if (!listCall.Any())
+        var openCallsList = openCalls.ToList();
+
+        // הפעלת המתודה האסינכרונית ברקע, ללא המתנה לסיומה
+        _ = UpdateCallDistancesAsync(openCallsList, volunteerAddress);
+
+        return openCallsList;
+    }
+}
+
+// מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
+private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, string volunteerAddress)
+{
+    try
+    {
+        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+
+        if (volunteerLocation == null || volunteerLocation.Length != 2)
+            throw new Exception("Invalid location data received for the volunteer.");
+
+        foreach (var openCall in openCalls)
+        {
+            // קריאת הישות המקורית מסוג DO.Call לפי המזהה
+            var doCall = _dal.call.Read(c => c.Id == openCall.Id);
+            if (doCall != null)
             {
-                throw new Exception("No calls found in the database.");
+                    // שימוש בשדות Latitude ו-Longitude של ה-DO.Call לחישוב המרחק
+                    openCall.DistanceOfCall = Tools.CalculateDistance(
+                    volunteerLocation[0], volunteerLocation[1],
+                    (double)doCall.Latitude, (double)doCall.Longitude);
+                
+                // עדכון הישות ב-DAL
+                _dal.call.Update(doCall);
             }
-
-            if (!listAssignment.Any())
-            {
-                throw new Exception("No assignments found in the database.");
-            }
-
-            var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId);
-
-            if (volunteer == null)
-            {
-                throw new ArgumentException("Volunteer not found.");
-            }
-
-            // שליפת מיקום המתנדב
-            string volunteerAddress = volunteer.Location;
-
-            if (string.IsNullOrWhiteSpace(volunteerAddress))
-            {
-                throw new ArgumentException("Volunteer location is not provided.");
-            }
-
-            // קריאה אסינכרונית לפעולה
-            double[] volunteerLocation;
-            try
-            {
-                volunteerLocation =  Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to fetch volunteer location for address: {volunteerAddress}. Error: {ex.Message}");
-            }
-
-
-            if (volunteerLocation == null || volunteerLocation.Length != 2)
-            {
-                throw new Exception("Invalid location data received for the volunteer.");
-            }
-
-            // סינון הקריאות הפתוחות לפי סטטוס
-            var openCalls = from call in listCall
-                            let assignment = listAssignment.FirstOrDefault(a => a.CallId == call.Id)
-                            let status = Tools.callStatus(call.Id)
-                            where status == BO.Enums.CalltStatusEnum.OPEN || status == BO.Enums.CalltStatusEnum.CallAlmostOver
-                            select new BO.OpenCallInList
-                            {
-                                Id = call.Id,
-                                CallType = (BO.Enums.CallTypeEnum)call.CallType,
-                                Address = call.Adress,
-                                VerbDesc = call.VerbDesc,
-                                OpenTime = call.OpenTime,
-                                MaxFinishTime = call.MaxTime,
-                                DistanceOfCall = Tools.CalculateDistance(volunteerLocation[0], volunteerLocation[1], (double)call.Latitude, (double)call.Longitude)
-                            };
-
-            // סינון לפי סוג הקריאה אם הוזן
-            if (filter.HasValue)
-            {
-                openCalls = openCalls.Where(call => call.CallType == filter.Value);
-            }
-
-            // מיון הקריאות לפי השדה שהוזן
-            openCalls = toSort switch
-            {
-                BO.Enums.OpenCallEnum.Id => openCalls.OrderBy(call => call.Id),
-                BO.Enums.OpenCallEnum.Address => openCalls.OrderBy(call => call.Address),
-                BO.Enums.OpenCallEnum.OpenTime => openCalls.OrderBy(call => call.OpenTime),
-                BO.Enums.OpenCallEnum.MaxFinishTime => openCalls.OrderBy(call => call.MaxFinishTime),
-                BO.Enums.OpenCallEnum.DistanceOfCall => openCalls.OrderBy(call => call.DistanceOfCall),
-                _ => openCalls.OrderBy(call => call.Id)
-            };
-
-            // החזרת הרשימה הממוינת
-            return openCalls.ToList();
         }
     }
+    catch (Exception ex)
+    {
+        // ניתן להוסיף לוג מתאים כאן
+        Console.WriteLine($"Failed to update call distances: {ex.Message}");
+    }
+}
+
+
 
     //public async<BO.Call> CalculateDistanceAndAssignVolunteer(int callId, int volunteerId)
     //{
@@ -547,7 +559,7 @@ internal class CallImplementation : ICall
     //    }
     //}
 
-    public  void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
+    public void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try

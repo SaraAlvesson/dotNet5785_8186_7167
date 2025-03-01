@@ -1,5 +1,4 @@
 namespace BlImplementation;
-
 using BL.Helpers;
 using BlApi;
 using BO;
@@ -413,9 +412,9 @@ internal class VolunteerImplementation : IVolunteer
 
         if (!VolunteerManager.checkVolunteerEmail(volunteer))
             throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!(VolunteersManager.IsValidId(volunteer.Id)))
+        if (!(VolunteerManager.IsValidId(volunteer.Id)))
             throw new BlIdNotValid("Invalid ID format.");
-        if (!(VolunteersManager.IsPhoneNumberValid(volunteer)))
+        if (!(VolunteerManager.IsPhoneNumberValid(volunteer)))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
 
         try
@@ -426,8 +425,8 @@ internal class VolunteerImplementation : IVolunteer
                 _dal.Volunteer.Create(newVolunteer);
             }
 
-            VolunteersManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-            VolunteersManager.Observers.NotifyListUpdated(); // stage 5   
+            VolunteerManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
+            VolunteerManager.Observers.NotifyListUpdated(); // stage 5   
         }
         catch (DO.DalAlreadyExistException)
         {

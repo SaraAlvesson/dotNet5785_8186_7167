@@ -72,10 +72,11 @@ public interface ICall:IObservable
     /// <param name="sortField">שדה למיון הקריאות</param>
     /// <returns>רשימה של קריאות פתוחות שניתן לבחור לעבודה על ידי המתנדב</returns>
     /// async Task<IEnumerable<BO.OpenCallInList>> GetOpenCallInListsAsync(int volunteerId, BO.Enums.CallTypeEnum? filter = null, BO.Enums.OpenCallEnum? toSort = null)
-    IEnumerable<BO.OpenCallInList> GetOpenCallInListsAsync(
-    int volunteerId,
-   BO.Enums.CallTypeEnum? filter = null,
-   BO.Enums.OpenCallEnum? toSort = null);
+    Task<IEnumerable<BO.OpenCallInList>> GetOpenCallInListsAsync(
+        int volunteerId,
+        BO.Enums.CallTypeEnum? filter = null,
+        BO.Enums.OpenCallEnum? toSort = null
+    );
     /// <summary>
     /// מעדכן את מצב הקריאה לסיום טיפול עבור משימה נתונה.
     /// </summary>
