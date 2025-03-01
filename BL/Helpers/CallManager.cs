@@ -54,9 +54,12 @@ internal static class CallManager
 
     public static void CheckCallFormat(BO.Call call, bool isNewCall = false)
     {
-        // בדיקת מזהה
-        if (call.Id < 0 || (call.Id == 0 && !isNewCall))
-            throw new InvalidCallFormatException("Call ID must be a positive integer for existing calls.");
+        // בדיקת מזהה - אם זו קריאה חדשה, ה-ID חייב להיות 0
+        if (isNewCall && call.Id != 0)
+            throw new InvalidCallFormatException("New calls must have ID set to 0.");
+        // אם זו קריאה קיימת, ה-ID חייב להיות חיובי
+        else if (!isNewCall && call.Id <= 0)
+            throw new InvalidCallFormatException("Existing calls must have a positive ID.");
 
         // בדיקת זמן פתיחה
         if (call.OpenTime == default)
