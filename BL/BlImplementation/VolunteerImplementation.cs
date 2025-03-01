@@ -1,5 +1,4 @@
 namespace BlImplementation;
-
 using BL.Helpers;
 using BlApi;
 using BO;
@@ -413,9 +412,9 @@ internal class VolunteerImplementation : IVolunteer
 
         if (!VolunteerManager.checkVolunteerEmail(volunteer))
             throw new BlEmailNotCorrect("Invalid Email format.");
-        if (!VolunteerManager.IsValidId(volunteer.Id))
+        if (!(VolunteerManager.IsValidId(volunteer.Id)))
             throw new BlIdNotValid("Invalid ID format.");
-        if (!VolunteerManager.IsPhoneNumberValid(volunteer))
+        if (!(VolunteerManager.IsPhoneNumberValid(volunteer)))
             throw new BlPhoneNumberNotCorrect("Invalid PhoneNumber format.");
 
         try
@@ -427,59 +426,11 @@ internal class VolunteerImplementation : IVolunteer
             }
 
             VolunteerManager.Observers.NotifyItemUpdated(newVolunteer.Id);  // stage 5
-            VolunteerManager.Observers.NotifyListUpdated(); // stage 5  
-
-            // ????? ?????? ??????????? C ?????? ????? ?????? ?????? ?????? ????
-            _ = UpdateVolunteerLocationAsync(volunteer);
+            VolunteerManager.Observers.NotifyListUpdated(); // stage 5   
         }
         catch (DO.DalAlreadyExistException)
         {
             throw new BLAlreadyExistException($"Volunteer with id {volunteer.Id} already exists");
         }
     }
-
-    /// <summary>
-    /// ????? ?????????? ?????? ?? ????? ???? ?????? ???? ?-DAL
-    /// </summary>
-    private async Task UpdateVolunteerLocationAsync(BO.Volunteer volunteer)
-    {
-        try
-        {
-            bool isValid = await Helpers.Tools.IsAddressValidAsync(volunteer.Location);
-            if (!isValid)
-            {
-                throw new BlPhoneNumberNotCorrect("Invalid Location format.");
-            }
-
-            // ????? ?????? ???????? ???? ???? ????? ?????
-            lock (AdminManager.BlMutex)
-            {
-                _dal.Volunteer.Update(new DO.Volunteer
-                {
-                    Id = volunteer.Id,
-                    FullName = volunteer.FullName,
-                    PhoneNumber = volunteer.PhoneNumber,
-                    Password = volunteer.Password,
-                    Email = volunteer.Email,
-                    Active = volunteer.Active,
-                    DistanceType = (DO.DistanceType)volunteer.DistanceType,
-                    Position = (DO.Position)volunteer.Position,
-                    MaxDistance = volunteer.MaxDistance,
-                    Location = volunteer.Location,
-                    Latitude = volunteer.Latitude,
-                    Longitude = volunteer.Longitude
-                });
-            }
-
-            VolunteerManager.Observers.NotifyItemUpdated(volunteer.Id);
-        }
-        catch (Exception ex)
-        {
-            // ????? ??????? ??? ????? ?? ????? ??????
-            Console.WriteLine($"Error updating volunteer location: {ex.Message}");
-        }
-    }
-
 }
-
-

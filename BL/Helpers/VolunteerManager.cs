@@ -60,7 +60,7 @@ namespace BL.Helpers
             }
         }
 
-        internal static bool checkVolunteerLogic(BO.Volunteer volunteer)
+        internal static bool CheckVolunteerLogic(BO.Volunteer volunteer)
         {
             return checkVolunteerEmail(volunteer) && IsPhoneNumberValid(volunteer) && IsValidId(volunteer.Id);
         }

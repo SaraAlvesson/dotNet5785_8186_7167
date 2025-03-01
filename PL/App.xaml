@@ -10,8 +10,8 @@
             <local:DistanceTypeCollection x:Key="DistanceTypeCollectionKey" />
             <local:StatusTypeCollection x:Key="StatusTypeCollectionKey" />
             <local:CallStatusToVisibilityConverter x:Key="CallStatusToVisibilityConverter"/>
-            
-                <!-- ממיר להמרת ערך בוליאני לתוכן הכפתור -->
+            <local:TimeSpanToCustomFormatConverter x:Key="TimeSpanToCustomFormatConverter"/>
+            <!-- ממיר להמרת ערך בוליאני לתוכן הכפתור -->
             <local:BooleanToStartStopButtonTextConverter x:Key="BooleanToStartStopButtonTextConverter"/>
                 <!-- ממיר להמרת ערך בוליאני לפקודה להפעיל או להפסיק -->
             <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>

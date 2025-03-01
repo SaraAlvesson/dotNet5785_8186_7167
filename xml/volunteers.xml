@@ -1,213 +1,213 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer>
   <Volunteer>
-    <Id>141382430</Id>
+    <Id>194837425</Id>
     <FullName>Yosef Cohen</FullName>
-    <PhoneNumber>0577274714</PhoneNumber>
+    <PhoneNumber>0563080535</PhoneNumber>
     <Email>volunteer1@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
+    <DistanceType>AerialDistance</DistanceType>
     <Position>admin</Position>
     <Active>true</Active>
-    <Password>ZVgrlSPUGno6</Password>
+    <Password>urEbF8Wk*EdO</Password>
     <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
     <Latitude>32.099791</Latitude>
     <Longitude>34.769077</Longitude>
-    <MaxDistance>9</MaxDistance>
+    <MaxDistance>17</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>111732477</Id>
+    <Id>444982809</Id>
     <FullName>Shmuel Levi</FullName>
-    <PhoneNumber>0530668200</PhoneNumber>
+    <PhoneNumber>0541280125</PhoneNumber>
     <Email>volunteer2@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
+    <DistanceType>AerialDistance</DistanceType>
     <Position>admin</Position>
     <Active>false</Active>
-    <Password>X4&amp;pEllU&amp;i#b</Password>
+    <Password>JF$yy)VgOV9Z</Password>
+    <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
+    <Latitude>32.099791</Latitude>
+    <Longitude>34.769077</Longitude>
+    <MaxDistance>16</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>865254830</Id>
+    <FullName>Yaakov Goldstein</FullName>
+    <PhoneNumber>0585354475</PhoneNumber>
+    <Email>volunteer3@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>FT8NI$1BA@PT</Password>
+    <Location>Gordon Beach, Tel Aviv, Israel</Location>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <MaxDistance>10</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>575632151</Id>
+    <FullName>Moshe Friedman</FullName>
+    <PhoneNumber>0582359018</PhoneNumber>
+    <Email>volunteer4@gmail.com</Email>
+    <DistanceType>AerialDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>bksJoIbIk18A</Password>
+    <Location>Neve Tzedek, Tel Aviv, Israel</Location>
+    <Latitude>32.065764</Latitude>
+    <Longitude>34.770022</Longitude>
+    <MaxDistance>16</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>425626007</Id>
+    <FullName>Avraham Stein</FullName>
+    <PhoneNumber>0522075223</PhoneNumber>
+    <Email>volunteer5@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>J54dyY!gsFgv</Password>
     <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
     <Latitude>32.099791</Latitude>
     <Longitude>34.769077</Longitude>
     <MaxDistance>5</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>734351869</Id>
-    <FullName>Yaakov Goldstein</FullName>
-    <PhoneNumber>0519552113</PhoneNumber>
-    <Email>volunteer3@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>S7%@OL)o1Dph</Password>
-    <Location>Gordon Beach, Tel Aviv, Israel</Location>
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
-    <MaxDistance>7</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>326869580</Id>
-    <FullName>Moshe Friedman</FullName>
-    <PhoneNumber>0527954866</PhoneNumber>
-    <Email>volunteer4@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>skE!jb7&amp;bjet</Password>
-    <Location>Neve Tzedek, Tel Aviv, Israel</Location>
-    <Latitude>32.065764</Latitude>
-    <Longitude>34.770022</Longitude>
-    <MaxDistance>14</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>190670436</Id>
-    <FullName>Avraham Stein</FullName>
-    <PhoneNumber>0572600598</PhoneNumber>
-    <Email>volunteer5@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>false</Active>
-    <Password>Chq#PVRnl2hI</Password>
-    <Location>Tel Aviv Port, Tel Aviv, Israel</Location>
-    <Latitude>32.099791</Latitude>
-    <Longitude>34.769077</Longitude>
-    <MaxDistance>10</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>270050878</Id>
+    <Id>136183636</Id>
     <FullName>Daniel Green</FullName>
-    <PhoneNumber>0586942264</PhoneNumber>
+    <PhoneNumber>0580482500</PhoneNumber>
     <Email>volunteer6@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>true</Active>
-    <Password>chJ$(DD#dZQL</Password>
+    <Password>De!CbjZgtDy1</Password>
     <Location>Carmel Market, Tel Aviv, Israel</Location>
     <Latitude>32.065013</Latitude>
     <Longitude>34.76837</Longitude>
     <MaxDistance>9</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>244407361</Id>
+    <Id>768631199</Id>
     <FullName>David Weiss</FullName>
-    <PhoneNumber>0573972372</PhoneNumber>
+    <PhoneNumber>0549022380</PhoneNumber>
     <Email>volunteer7@gmail.com</Email>
-    <DistanceType>AerialDistance</DistanceType>
+    <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>true</Active>
-    <Password>MJC1fo)$8Vf!</Password>
+    <Password>vDLJG3%KfMGW</Password>
     <Location>Dizengoff Square, Tel Aviv, Israel</Location>
     <Latitude>32.078323</Latitude>
     <Longitude>34.77034</Longitude>
-    <MaxDistance>19</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>565089585</Id>
-    <FullName>Yonatan Rubin</FullName>
-    <PhoneNumber>0582554580</PhoneNumber>
-    <Email>volunteer8@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>Xp8YBi9NEHYK</Password>
-    <Location>Yarkon Park, Tel Aviv, Israel</Location>
-    <Latitude>32.087573</Latitude>
-    <Longitude>34.781904</Longitude>
-    <MaxDistance>9</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>721141188</Id>
-    <FullName>Hanan Levy</FullName>
-    <PhoneNumber>0550457904</PhoneNumber>
-    <Email>volunteer9@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>false</Active>
-    <Password>(u4&amp;LGkghObt</Password>
-    <Location>Tel Aviv Museum of Art, Tel Aviv, Israel</Location>
-    <Latitude>32.073418</Latitude>
-    <Longitude>34.781046</Longitude>
     <MaxDistance>15</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>762256368</Id>
-    <FullName>Eli Karp</FullName>
-    <PhoneNumber>0586273872</PhoneNumber>
-    <Email>volunteer10@gmail.com</Email>
+    <Id>373853038</Id>
+    <FullName>Yonatan Rubin</FullName>
+    <PhoneNumber>0515745936</PhoneNumber>
+    <Email>volunteer8@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>mW9!IBJOQGPJ</Password>
-    <Location>Florentin, Tel Aviv, Israel</Location>
-    <Latitude>32.054186</Latitude>
-    <Longitude>34.759738</Longitude>
-    <MaxDistance>7</MaxDistance>
+    <Password>r5hfxt8tfp6v</Password>
+    <Location>Yarkon Park, Tel Aviv, Israel</Location>
+    <Latitude>32.087573</Latitude>
+    <Longitude>34.781904</Longitude>
+    <MaxDistance>6</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>464519512</Id>
-    <FullName>Uzi Sharoni</FullName>
-    <PhoneNumber>0567043226</PhoneNumber>
-    <Email>volunteer11@gmail.com</Email>
+    <Id>722316465</Id>
+    <FullName>Hanan Levy</FullName>
+    <PhoneNumber>0551666730</PhoneNumber>
+    <Email>volunteer9@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>true</Active>
-    <Password>KV9&amp;(WSwqY7w</Password>
-    <Location>Gordon Beach, Tel Aviv, Israel</Location>
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
+    <Password>&amp;m)hqRPBpk0V</Password>
+    <Location>Tel Aviv Museum of Art, Tel Aviv, Israel</Location>
+    <Latitude>32.073418</Latitude>
+    <Longitude>34.781046</Longitude>
+    <MaxDistance>13</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>848435955</Id>
+    <FullName>Eli Karp</FullName>
+    <PhoneNumber>0513491266</PhoneNumber>
+    <Email>volunteer10@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>87G6psFk4z0j</Password>
+    <Location>Florentin, Tel Aviv, Israel</Location>
+    <Latitude>32.054186</Latitude>
+    <Longitude>34.759738</Longitude>
     <MaxDistance>14</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>354069188</Id>
+    <Id>255540893</Id>
+    <FullName>Uzi Sharoni</FullName>
+    <PhoneNumber>0594892859</PhoneNumber>
+    <Email>volunteer11@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>false</Active>
+    <Password>3&amp;9@^&amp;7lGSzU</Password>
+    <Location>Gordon Beach, Tel Aviv, Israel</Location>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <MaxDistance>5</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>745176178</Id>
     <FullName>Shimon Ben-David</FullName>
-    <PhoneNumber>0551395227</PhoneNumber>
+    <PhoneNumber>0592228291</PhoneNumber>
     <Email>volunteer12@gmail.com</Email>
     <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>true</Active>
-    <Password>hTs$ULxn1f#E</Password>
+    <Password>nhT4M0bMr(zl</Password>
     <Location>Rabin Square, Tel Aviv, Israel</Location>
     <Latitude>32.07857</Latitude>
     <Longitude>34.768721</Longitude>
-    <MaxDistance>6</MaxDistance>
+    <MaxDistance>12</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>279073918</Id>
+    <Id>178455084</Id>
     <FullName>Matan Shalev</FullName>
-    <PhoneNumber>0530814549</PhoneNumber>
+    <PhoneNumber>0599011681</PhoneNumber>
     <Email>volunteer13@gmail.com</Email>
-    <DistanceType>AerialDistance</DistanceType>
+    <DistanceType>DrivingDistance</DistanceType>
     <Position>volunteer</Position>
-    <Active>true</Active>
-    <Password>V1Auy9SIntS1</Password>
+    <Active>false</Active>
+    <Password>m!df^843AxkN</Password>
     <Location>Gordon Beach, Tel Aviv, Israel</Location>
     <Latitude>32.071299</Latitude>
     <Longitude>34.767122</Longitude>
-    <MaxDistance>18</MaxDistance>
+    <MaxDistance>13</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>205071211</Id>
+    <Id>965212812</Id>
     <FullName>Asher Tzukrel</FullName>
-    <PhoneNumber>0555342535</PhoneNumber>
+    <PhoneNumber>0564163013</PhoneNumber>
     <Email>volunteer14@gmail.com</Email>
     <DistanceType>AerialDistance</DistanceType>
     <Position>volunteer</Position>
     <Active>false</Active>
-    <Password>yuln!H4H&amp;yd#</Password>
-    <Location>Gordon Beach, Tel Aviv, Israel</Location>
-    <Latitude>32.071299</Latitude>
-    <Longitude>34.767122</Longitude>
-    <MaxDistance>16</MaxDistance>
-  </Volunteer>
-  <Volunteer>
-    <Id>533494705</Id>
-    <FullName>Oren Regev</FullName>
-    <PhoneNumber>0515675016</PhoneNumber>
-    <Email>volunteer15@gmail.com</Email>
-    <DistanceType>AerialDistance</DistanceType>
-    <Position>volunteer</Position>
-    <Active>false</Active>
-    <Password>7^YttQ3QpYG2</Password>
+    <Password>$(6Q!NUv9@*l</Password>
     <Location>Gordon Beach, Tel Aviv, Israel</Location>
     <Latitude>32.071299</Latitude>
     <Longitude>34.767122</Longitude>
     <MaxDistance>19</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>557639263</Id>
+    <FullName>Oren Regev</FullName>
+    <PhoneNumber>0511999084</PhoneNumber>
+    <Email>volunteer15@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>volunteer</Position>
+    <Active>true</Active>
+    <Password>e77zJ)cN3v87</Password>
+    <Location>Gordon Beach, Tel Aviv, Israel</Location>
+    <Latitude>32.071299</Latitude>
+    <Longitude>34.767122</Longitude>
+    <MaxDistance>11</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>

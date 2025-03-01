@@ -87,26 +87,28 @@ namespace PL.Volunteer
             LoadCalls();
         }
 
-        private void LoadCalls()
+        private async void LoadCalls()
         {
-            if (_isUpdatingCalls) return; // אם כבר מתבצע עדכון, לא נבצע עדכון נוסף
+            if (_isUpdatingCalls) return;
             _isUpdatingCalls = true;
 
             try
             {
                 BO.Enums.CallTypeEnum? callTypeEnum = null;
-                if (!string.IsNullOrEmpty(SelectedTypeFilter) && SelectedTypeFilter != "None" && Enum.TryParse<BO.Enums.CallTypeEnum>(SelectedTypeFilter, out var tempCallType))
+                if (!string.IsNullOrEmpty(SelectedTypeFilter) && SelectedTypeFilter != "None" &&
+                    Enum.TryParse<BO.Enums.CallTypeEnum>(SelectedTypeFilter, out var tempCallType))
                 {
                     callTypeEnum = tempCallType;
                 }
 
                 BO.Enums.OpenCallEnum? openCallEnum = null;
-                if (!string.IsNullOrEmpty(AddressFilter) && AddressFilter != "None" && Enum.TryParse<BO.Enums.OpenCallEnum>(AddressFilter, out var tempOpenCall))
+                if (!string.IsNullOrEmpty(AddressFilter) && AddressFilter != "None" &&
+                    Enum.TryParse<BO.Enums.OpenCallEnum>(AddressFilter, out var tempOpenCall))
                 {
                     openCallEnum = tempOpenCall;
                 }
 
-                var calls = s_bl.Call.GetOpenCallInListsAsync(CurrentVolunteer.Id, callTypeEnum, openCallEnum);
+                var calls = await s_bl.Call.GetOpenCallInListsAsync(CurrentVolunteer.Id, callTypeEnum, openCallEnum);
 
                 Calls.Clear();
                 foreach (var call in calls)
@@ -124,7 +126,7 @@ namespace PL.Volunteer
             }
         }
 
-        private void ApplyFilters()
+        private async Task ApplyFilters()
         {
             BO.Enums.CallTypeEnum? callTypeFilter = string.IsNullOrEmpty(SelectedCallType) || SelectedCallType == "None"
                 ? (BO.Enums.CallTypeEnum?)null
@@ -138,7 +140,7 @@ namespace PL.Volunteer
                     ? parsedOpenCall
                     : (BO.Enums.OpenCallEnum?)null;
 
-            var filteredCalls = s_bl.Call.GetOpenCallInListsAsync(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
+            var filteredCalls = await s_bl.Call.GetOpenCallInListsAsync(CurrentVolunteer.Id, callTypeFilter, openCallFilter);
             Calls.Clear();
             foreach (var call in filteredCalls)
             {
@@ -146,12 +148,14 @@ namespace PL.Volunteer
             }
         }
 
+
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.CommandParameter is OpenCallInList selectedCall)
             {
                 ChooseCall(selectedCall);
             }
+            Close();
         }
 
         private void ChooseCall(OpenCallInList selectedCall)

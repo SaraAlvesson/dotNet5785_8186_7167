@@ -3,6 +3,10 @@ namespace Dal;
 /// <summary>
 ///Static class for configuration settings
 /// </summary>
+/// 
+
+
+
 public static class Config
 {
     internal const int StartCallId = 1000; // Starting value for call IDs

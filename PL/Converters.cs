@@ -5,7 +5,6 @@ using System.Windows;
 using static BO.Enums;
 using System.Windows.Media;
 using BO;
-using DalApi; // הוספת using עבור IDal
 namespace PL;
 public class ConvertUpdateToReadOnly : IValueConverter
 {
@@ -226,38 +225,66 @@ public class AppointmentTimeVisibilityConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
-  public class CanDeleteVolunteerConverter : IValueConverter
+public class CanDeleteVolunteerConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        if (value is BO.VolunteerInList volunteer)
         {
-            if (value is BO.VolunteerInList volunteer)
+            // בדיקה האם למתנדב יש קריאה בטיפול
+            bool canDelete = volunteer.CallIdInTreatment == null;
+
+            // אם יש פרמטר, בדוק את סוג ההמרה
+            if (parameter is string converterParameter)
             {
-                // בדיקה האם למתנדב יש קריאה בטיפול
-                bool canDelete = volunteer.CallIdInTreatment == null;
-
-                // אם יש פרמטר, בדוק את סוג ההמרה
-                if (parameter is string converterParameter)
+                switch (converterParameter)
                 {
-                    switch (converterParameter)
-                    {
-                        case "Visibility":
-                            return canDelete ? Visibility.Visible : Visibility.Collapsed;
-                        
-                        case "IsEnabled":
-                            return canDelete;
-                    }
-                }
+                    case "Visibility":
+                        return canDelete ? Visibility.Visible : Visibility.Collapsed;
 
-                // החזרת ערך בוליאני בסיסי
-                return canDelete;
+                    case "IsEnabled":
+                        return canDelete;
+                }
             }
 
-            return false;
+            // החזרת ערך בוליאני בסיסי
+            return canDelete;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        return false;
     }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+public class TimeSpanToCustomFormatConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is TimeSpan timeSpan)
+        {
+            int hours = timeSpan.Hours;
+            int minutes = timeSpan.Minutes;
+            int seconds = timeSpan.Seconds;
+
+            if (timeSpan.Days > 0)
+            {
+                return $"{timeSpan.Days} Days and {hours:D2}:{minutes:D2}:{seconds:D2}";
+            }
+            else
+            {
+                return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
+            }
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 

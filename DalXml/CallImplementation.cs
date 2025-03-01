@@ -30,7 +30,7 @@ internal class CallImplementation : ICall
     static XElement createCallElement(Call item)
     {
         return new XElement("Call",
-            new XElement("Id", Config.NextAssignmentId),
+            new XElement("Id",item.Id),
             new XElement("CallType", item.CallType),
             new XElement("VerbDesc", item.VerbDesc),
             new XElement("Adress", item.Adress),
