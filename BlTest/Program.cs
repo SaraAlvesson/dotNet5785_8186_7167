@@ -422,7 +422,7 @@ internal class Program
     }
 
     // תפריט ניהול קריאות
-    private static void RunCallMenu()
+    private static async Task RunCallMenu()
     {
         while (true)
         {
@@ -581,7 +581,7 @@ internal class Program
                                 ? (Enums.OpenCallEnum?)sortFieldResultOpen
                                 : null;
 
-                        var openCalls = s_bl.Call.GetOpenCallInListsAsync(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // Renamed to match method signature
+                        var openCalls = await s_bl.Call.GetOpenCallInListsAsync(volunteerIdOpen, callTypeEnumOpen, sortFieldEnumOpen);  // הוספת await
 
                         Console.WriteLine("Open calls: ");
                         if (!openCalls.Any())
@@ -590,7 +590,7 @@ internal class Program
                         }
                         else
                         {
-                            foreach (var openCall in openCalls)  // Renamed to avoid conflict with 'call'
+                            foreach (var openCall in openCalls)
                             {
                                 Console.WriteLine(openCall);
                             }
@@ -706,9 +706,3 @@ internal class Program
     }
 
 }
-
-
-
-
-
-

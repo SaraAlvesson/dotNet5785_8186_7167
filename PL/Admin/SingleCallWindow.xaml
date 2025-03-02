@@ -96,24 +96,24 @@
         <!-- Id -->
         <Label Content="Id:" Grid.Row="0" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.Id, Mode=TwoWay}" 
-                 Grid.Row="0" Grid.Column="1" IsReadOnly="True" Margin="0,3,185,0" Height="30" TextChanged="TextBox_TextChanged" VerticalAlignment="Top"/>
+                 Grid.Row="0" Grid.Column="1" IsReadOnly="True" Margin="0,3,185,0" Height="30"  VerticalAlignment="Top"/>
 
         <!-- Call type -->
         <Label Content="Call Type:" Grid.Row="1" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallType, Mode=TwoWay}" 
-                  Grid.Row="1" Grid.Column="1"
+                  Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsEditable}" 
                   ItemsSource="{Binding Source={StaticResource CallTypeCollectionKey}}" 
-                  SelectionChanged="ComboBox_SelectionChanged" Margin="0,3,185,3"/>
+                  Margin="0,3,185,3" />
 
         <!-- Address -->
         <Label Content="Address:" Grid.Row="2" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.Address, Mode=TwoWay}" 
-                 Grid.Row="2" Grid.Column="1" Margin="0,3,185,3" TextChanged="TextBox_TextChanged_1"/>
+                 Grid.Row="2" Grid.Column="1" Margin="0,3,185,3"  IsEnabled="{Binding IsEditable}"/>
 
         <!-- Description -->
         <Label Content="Description:" Grid.Row="3" Grid.Column="0"/>
         <TextBox Text="{Binding CurrentCall.VerbDesc, Mode=TwoWay}" 
-                 Grid.Row="3" Grid.Column="1" Margin="0,3,185,3" TextChanged="TextBox_TextChanged_2"/>
+                 Grid.Row="3" Grid.Column="1" Margin="0,3,185,3"  IsEnabled="{Binding IsEditable}"/>
 
         <!-- Open Time -->
         <Label Content="Open Time:" Grid.Row="4" Grid.Column="0"/>
@@ -124,21 +124,21 @@
         <Label Content="Max Finish Time:" Grid.Row="5" Grid.Column="0"/>
         <DatePicker SelectedDate="{Binding CurrentCall.MaxFinishTime, Mode=TwoWay}" 
                     Grid.Row="5" Grid.Column="1" 
-                    IsEnabled="{Binding SetEditableFields}" Margin="0,3,185,3"/>
+                     IsEnabled="{Binding CanEditMaxFinishTime}"  Margin="0,3,185,3"/>
 
         <!-- Status -->
         <Label Content="Status:" Grid.Row="6" Grid.Column="0"/>
         <ComboBox SelectedValue="{Binding CurrentCall.CallStatus, Mode=TwoWay}" 
-                  Grid.Row="6" Grid.Column="1" IsReadOnly="True"
+                  Grid.Row="6" Grid.Column="1"  IsEditable="False"
                   ItemsSource="{Binding Source={StaticResource StatusTypeCollectionKey}}" 
-                  IsEnabled="True"  Margin="0,3,185,0" Height="30" VerticalAlignment="Top" />
+                  IsEnabled="False"  Margin="0,3,185,0" Height="30" VerticalAlignment="Top" />
         <!-- לא ניתן לערוך את הסטטוס -->
 
         <!-- List Assignments -->
         <Label Content="List Assignments:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top"/>
-        <ListView ItemsSource="{Binding CurrentCall.CallAssignInLists}" 
+        <ListView ItemsSource="{Binding CurrentCall.CallAssignInLists}" IsEnabled="False" 
                   Grid.Row="7" Grid.Column="1" 
-                  SelectionChanged="ListView_SelectionChanged"/>
+                  />
         <!-- Add/Update Button -->
 
         <Button Content="{Binding ButtonText}" 
@@ -147,6 +147,7 @@
         Background="#40E0D0"
         BorderBrush="#38B0A1"
         HorizontalAlignment="Left"
+        IsEnabled="{Binding CanEdit}"        
         Width="200"
         Margin="250,267,0,0"
         Click="ButtonAddUpdate_Click" 

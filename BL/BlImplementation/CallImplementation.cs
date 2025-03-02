@@ -85,7 +85,7 @@ internal class CallImplementation : ICall
                                      ? assignment.FinishAppointmentTime.Value - item.OpenTime
                                      : null,
                                  Status = Tools.callStatus(item.Id),
-                                 SumAssignment = assignments.Count()
+                                 SumAssignment = assignments.Count(s => s.CallId == item.Id)
                              };
 
             if (filter.HasValue && toFilter != null)
@@ -444,23 +444,28 @@ internal class CallImplementation : ICall
     }
 
     public async Task<IEnumerable<BO.OpenCallInList>> GetOpenCallInListsAsync(
-      int volunteerId,
-    BO.Enums.CallTypeEnum? filter = null,
-    BO.Enums.OpenCallEnum? toSort = null)
-{
-    lock (AdminManager.BlMutex)
+       int volunteerId,
+     BO.Enums.CallTypeEnum? filter = null,
+     BO.Enums.OpenCallEnum? toSort = null)
     {
-        var listCall = _dal.call.ReadAll();
-        var listAssignment = _dal.assignment.ReadAll();
+        IEnumerable<DO.Call> listCall;
+        IEnumerable<DO.Assignment> listAssignment;
+        DO.Volunteer volunteer;
 
-        if (!listCall.Any())
-            throw new Exception("No calls found in the database.");
+        lock (AdminManager.BlMutex)
+        {
+            listCall = _dal.call.ReadAll();
+            listAssignment = _dal.assignment.ReadAll();
 
-        if (!listAssignment.Any())
-            throw new Exception("No assignments found in the database.");
+            if (!listCall.Any())
+                throw new Exception("No calls found in the database.");
 
-        var volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId)
-            ?? throw new ArgumentException("Volunteer not found.");
+            if (!listAssignment.Any())
+                throw new Exception("No assignments found in the database.");
+
+            volunteer = _dal.Volunteer.Read(v => v.Id == volunteerId)
+                ?? throw new ArgumentException("Volunteer not found.");
+        }
 
         string volunteerAddress = volunteer.Location;
         if (string.IsNullOrWhiteSpace(volunteerAddress))
@@ -479,7 +484,6 @@ internal class CallImplementation : ICall
                             VerbDesc = call.VerbDesc,
                             OpenTime = call.OpenTime,
                             MaxFinishTime = call.MaxTime
-                            // DistanceOfCall יתעדכן במתודה האסינכרונית
                         };
 
         if (filter.HasValue)
@@ -496,45 +500,45 @@ internal class CallImplementation : ICall
 
         var openCallsList = openCalls.ToList();
 
-        // הפעלת המתודה האסינכרונית ברקע, ללא המתנה לסיומה
-        _ = UpdateCallDistancesAsync(openCallsList, volunteerAddress);
+        // חישוב המרחקים מחוץ לבלוק הנעילה
+        await UpdateCallDistancesAsync(openCallsList, volunteerAddress);
 
         return openCallsList;
     }
-}
 
-// מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
-private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, string volunteerAddress)
-{
-    try
+
+    // מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
+    private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, string volunteerAddress)
     {
-        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
-
-        if (volunteerLocation == null || volunteerLocation.Length != 2)
-            throw new Exception("Invalid location data received for the volunteer.");
-
-        foreach (var openCall in openCalls)
+        try
         {
-            // קריאת הישות המקורית מסוג DO.Call לפי המזהה
-            var doCall = _dal.call.Read(c => c.Id == openCall.Id);
-            if (doCall != null)
+            double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+
+            if (volunteerLocation == null || volunteerLocation.Length != 2)
+                throw new Exception("Invalid location data received for the volunteer.");
+
+            foreach (var openCall in openCalls)
             {
+                // קריאת הישות המקורית מסוג DO.Call לפי המזהה
+                var doCall = _dal.call.Read(c => c.Id == openCall.Id);
+                if (doCall != null)
+                {
                     // שימוש בשדות Latitude ו-Longitude של ה-DO.Call לחישוב המרחק
                     openCall.DistanceOfCall = Tools.CalculateDistance(
                     volunteerLocation[0], volunteerLocation[1],
                     (double)doCall.Latitude, (double)doCall.Longitude);
-                
-                // עדכון הישות ב-DAL
-                _dal.call.Update(doCall);
+
+                    // עדכון הישות ב-DAL
+                    _dal.call.Update(doCall);
+                }
             }
         }
+        catch (Exception ex)
+        {
+            // ניתן להוסיף לוג מתאים כאן
+            Console.WriteLine($"Failed to update call distances: {ex.Message}");
+        }
     }
-    catch (Exception ex)
-    {
-        // ניתן להוסיף לוג מתאים כאן
-        Console.WriteLine($"Failed to update call distances: {ex.Message}");
-    }
-}
 
 
 
@@ -679,7 +683,7 @@ private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, s
                 throw new InvalidOperationException("Call has already been treated or expired.");
 
             // בדיקת אם קיימת הקצאה פתוחה על הקריאה
-            var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
+            var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null && a.FinishAppointmentType == null);
             if (existingAssignments != null)
                 throw new InvalidOperationException("Call is already assigned to a volunteer.");
 

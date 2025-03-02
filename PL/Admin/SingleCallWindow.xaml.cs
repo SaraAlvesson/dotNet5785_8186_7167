@@ -13,9 +13,11 @@ namespace PL.Admin
 {
     public partial class SingleCallWindow : Window, INotifyPropertyChanged
     {
+
         // דגלים למניעת עדכונים מרובים
         private CallFieldEnum _selectedCallField = CallFieldEnum.ID;
         private volatile bool isUpdating = false;
+
 
         public CallFieldEnum SelectedFilter
         {
@@ -26,9 +28,24 @@ namespace PL.Admin
                 {
                     _selectedCallField = value;
                     OnPropertyChanged(nameof(SelectedFilter));
+                    OnPropertyChanged(nameof(IsEditable)); // עדכון שדות ה-UI
+                    OnPropertyChanged(nameof(CanEditMaxFinishTime)); // להפעיל עדכון גם ל-MaxFinishTime
+                    OnPropertyChanged(nameof(CanEdit));
                     UpdateCallList();
                 }
             }
+        }
+
+        public bool IsEditable
+        {
+            get => CurrentCall != null && (CurrentCall?.CallStatus == CalltStatusEnum.OPEN ||
+                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver);
+        }
+
+        public bool CanEdit
+        {
+            get => CurrentCall != null && (CurrentCall?.CallStatus == CalltStatusEnum.OPEN ||
+                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver || CurrentCall?.CallStatus == CalltStatusEnum.CallIsBeingTreated || CurrentCall?.CallStatus == CalltStatusEnum.CallTreatmentAlmostOver);
         }
 
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
@@ -36,6 +53,7 @@ namespace PL.Admin
         public event PropertyChangedEventHandler PropertyChanged;
 
         private BO.Call _currentCall;
+
         public BO.Call CurrentCall
         {
             get { return _currentCall; }
@@ -43,6 +61,24 @@ namespace PL.Admin
             {
                 _currentCall = value;
                 OnPropertyChanged(nameof(CurrentCall));
+                OnPropertyChanged(nameof(IsEditable)); // עדכון שדות UI
+                OnPropertyChanged(nameof(CanEditMaxFinishTime)); // להפעיל עדכון גם ל-MaxFinishTime
+                OnPropertyChanged(nameof(CanEdit));
+            }
+        }
+
+
+
+
+        public bool CanEditMaxFinishTime
+        {
+            get
+            {
+                if (CurrentCall == null)
+                    return false;
+
+                return CurrentCall.CallStatus == CalltStatusEnum.CallIsBeingTreated ||
+                       CurrentCall.CallStatus == CalltStatusEnum.CallTreatmentAlmostOver || CurrentCall.CallStatus == CalltStatusEnum.OPEN || CurrentCall.CallStatus == CalltStatusEnum.CallAlmostOver;
             }
         }
 
@@ -111,12 +147,19 @@ namespace PL.Admin
             }
         }
 
+
+
+
+
         private void LoadCurrentCallDetails()
         {
             if (CurrentCall?.Id > 0) // רק אם יש קריאה קיימת
             {
                 try
                 {
+                    if (IsEditable || CanEditMaxFinishTime) // אם הקריאה ניתנת לעריכה, לא נעדכן מהשרת!
+                        return;
+
                     var updatedCall = s_bl.Call.readCallData(CurrentCall.Id);
                     if (updatedCall != null)
                     {
@@ -131,11 +174,8 @@ namespace PL.Admin
             }
         }
 
-        public bool IsEditable()
-        {
-            return CurrentCall?.CallStatus == CalltStatusEnum.OPEN || 
-                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver;
-        }
+
+
 
         // Notify UI of property changes
         private void OnPropertyChanged(string propertyName)
@@ -190,11 +230,11 @@ namespace PL.Admin
                 {
                     {
                         // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
-                        if (!IsEditable())
-                        {
-                            MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
+                        //if (!IsEditable())
+                        //{
+                        //    MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        //    return;
+                        //}
 
                         s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
                         MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -314,33 +354,8 @@ namespace PL.Admin
             s_bl?.Call.RemoveObserver(CallListObserver);
         }
 
-     
 
-        private void TextBox_TextChanged_2(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-        }
 
-        private void TextBox_TextChanged_1(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-        }
 
-        private void ComboBox_SelectionChanged_2(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-        }
-
-        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-
-        }
-
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

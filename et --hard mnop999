@@ -1,0 +1,151 @@
+[33mac631ee[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~5
+[33m175b064[m HEAD@{1}: reset: moving to HEAD~5
+[33maf8203c[m HEAD@{2}: reset: moving to HEAD~5
+[33m6abc06c[m[33m ([m[1;33mtag: [m[1;33mstage0[m[33m)[m HEAD@{3}: reset: moving to HEAD~5
+[33m35c6528[m HEAD@{4}: reset: moving to HEAD~5
+[33m1a33708[m HEAD@{5}: reset: moving to HEAD~5
+[33mf1225a8[m HEAD@{6}: reset: moving to HEAD~4
+[33m68087b8[m HEAD@{7}: reset: moving to HEAD~4
+[33mad02c35[m HEAD@{8}: reset: moving to HEAD~4
+[33m1996a8c[m HEAD@{9}: reset: moving to HEAD~4
+[33mfdcb14b[m HEAD@{10}: reset: moving to HEAD~4
+[33m93da1c2[m HEAD@{11}: reset: moving to HEAD~4
+[33m6c3b186[m HEAD@{12}: reset: moving to HEAD~4
+[33md532fff[m HEAD@{13}: reset: moving to HEAD~4
+[33mbdeda13[m HEAD@{14}: reset: moving to HEAD~4
+[33m3f95a60[m HEAD@{15}: reset: moving to HEAD~4
+[33m528d3a0[m[33m ([m[1;33mtag: [m[1;33mStage-5[m[33m)[m HEAD@{16}: reset: moving to HEAD~4
+[33m0c14587[m HEAD@{17}: reset: moving to HEAD~4
+[33m2e8efce[m HEAD@{18}: reset: moving to HEAD~4
+[33m0da5922[m HEAD@{19}: reset: moving to HEAD~4
+[33ma535b2a[m HEAD@{20}: reset: moving to HEAD~4
+[33ma019aa3[m HEAD@{21}: reset: moving to HEAD~4
+[33m7562a41[m HEAD@{22}: reset: moving to HEAD~3
+[33m7fe3dda[m HEAD@{23}: reset: moving to HEAD~3
+[33m82e99b3[m HEAD@{24}: reset: moving to HEAD~3
+[33m08b515e[m HEAD@{25}: reset: moving to HEAD~3
+[33m0c7d4c3[m HEAD@{26}: reset: moving to HEAD~3
+[33me911f0e[m HEAD@{27}: reset: moving to HEAD~3
+[33m1cbd29e[m HEAD@{28}: reset: moving to HEAD~3
+[33meebdbc3[m HEAD@{29}: reset: moving to HEAD~2
+[33mde75d5e[m HEAD@{30}: reset: moving to HEAD~2
+[33me8b7889[m HEAD@{31}: reset: moving to HEAD~1
+[33mf9688ba[m HEAD@{32}: reset: moving to HEAD
+[33mf9688ba[m HEAD@{33}: reset: moving to HEAD
+[33mf9688ba[m HEAD@{34}: commit (merge): tttt
+[33me8b7889[m HEAD@{35}: commit: uuuu
+[33m0f4aa34[m HEAD@{36}: commit: uuuu
+[33mde75d5e[m HEAD@{37}: reset: moving to HEAD~1
+[33me1c62de[m HEAD@{38}: reset: moving to HEAD~1
+[33mb4e0a64[m HEAD@{39}: reset: moving to HEAD
+[33mb4e0a64[m HEAD@{40}: reset: moving to HEAD
+[33mb4e0a64[m HEAD@{41}: commit (merge): ררר
+[33me1c62de[m HEAD@{42}: commit: הודעת commit
+[33mde75d5e[m HEAD@{43}: commit: ddd
+[33mb7fe9ef[m HEAD@{44}: commit: rtr
+[33meebdbc3[m HEAD@{45}: commit: e
+[33m6e35bda[m HEAD@{46}: commit: eee
+[33mdc027c1[m HEAD@{47}: commit: dada
+[33m1cbd29e[m HEAD@{48}: commit: saraaaa
+[33m88bf132[m HEAD@{49}: commit: motsash
+[33m9e1c32d[m HEAD@{50}: commit (merge): save
+[33me911f0e[m HEAD@{51}: commit: bad
+[33m1fe104f[m HEAD@{52}: commit: save 2
+[33m9fb22ba[m HEAD@{53}: commit: save
+[33m0c7d4c3[m HEAD@{54}: commit: save
+[33m009593d[m HEAD@{55}: commit: ddddd
+[33m9d12a7a[m HEAD@{56}: commit: sara
+[33m08b515e[m HEAD@{57}: reset: moving to HEAD
+[33m08b515e[m HEAD@{58}: reset: moving to HEAD
+[33m08b515e[m HEAD@{59}: reset: moving to HEAD
+[33m08b515e[m HEAD@{60}: reset: moving to HEAD
+[33m08b515e[m HEAD@{61}: reset: moving to HEAD
+[33m08b515e[m HEAD@{62}: reset: moving to HEAD
+[33m08b515e[m HEAD@{63}: reset: moving to HEAD
+[33m08b515e[m HEAD@{64}: reset: moving to HEAD
+[33m08b515e[m HEAD@{65}: reset: moving to HEAD
+[33m08b515e[m HEAD@{66}: reset: moving to HEAD
+[33m08b515e[m HEAD@{67}: reset: moving to HEAD
+[33m08b515e[m HEAD@{68}: reset: moving to HEAD
+[33m08b515e[m HEAD@{69}: reset: moving to HEAD
+[33m08b515e[m HEAD@{70}: commit: ddd
+[33mcc5e724[m HEAD@{71}: reset: moving to HEAD
+[33mcc5e724[m HEAD@{72}: reset: moving to HEAD
+[33mcc5e724[m HEAD@{73}: reset: moving to HEAD
+[33mcc5e724[m HEAD@{74}: commit: jjjjj
+[33m2458a83[m HEAD@{75}: commit: cimatmochan
+[33m82e99b3[m HEAD@{76}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33mefa3104[m HEAD@{77}: commit: ddd
+[33mdfe9c7b[m HEAD@{78}: commit: muchan
+[33m7fe3dda[m HEAD@{79}: commit: ssss
+[33m553450e[m HEAD@{80}: commit: ghghghgh
+[33mc984558[m HEAD@{81}: commit: yom rishon
+[33m7562a41[m HEAD@{82}: reset: moving to origin/main
+[33m7562a41[m HEAD@{83}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Fast-forward
+[33m89a7cb5[m HEAD@{84}: commit (merge): kkkk
+[33mcb60132[m HEAD@{85}: commit: xxxxxxxxxxxxxxxxx
+[33me0344d2[m HEAD@{86}: commit: uuuuuu
+[33m95f4815[m HEAD@{87}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33m63604bc[m HEAD@{88}: commit: gggg
+[33mf460664[m HEAD@{89}: commit: ייייייייייייייייייייייייי
+[33ma535b2a[m HEAD@{90}: commit: save
+[33m4946a60[m HEAD@{91}: commit: new update
+[33ma96a087[m HEAD@{92}: commit: ttttuuuuu
+[33m56b2cee[m HEAD@{93}: commit: gggyyy
+[33m0da5922[m HEAD@{94}: commit: ggg
+[33mbbc86a8[m HEAD@{95}: commit: g
+[33m36e9834[m HEAD@{96}: reset: moving to HEAD
+[33m36e9834[m HEAD@{97}: commit: new
+[33m71f41ed[m HEAD@{98}: commit: sara
+[33m2e8efce[m HEAD@{99}: commit: ss
+[33m771cf4d[m HEAD@{100}: commit: finalll2
+[33mc822548[m HEAD@{101}: commit: finalll
+[33m1d02193[m HEAD@{102}: commit: hachi chadash
+[33m0c14587[m HEAD@{103}: commit: xxxxggggg
+[33m2617366[m HEAD@{104}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33m5bbc613[m HEAD@{105}: commit: dd
+[33m9cd6e14[m HEAD@{106}: commit: nama save now
+[33m528d3a0[m[33m ([m[1;33mtag: [m[1;33mStage-5[m[33m)[m HEAD@{107}: commit: Stage 5 Final commit
+[33m27c7b61[m HEAD@{108}: commit: llastt
+[33mea0d224[m HEAD@{109}: commit: hayom
+[33m266b519[m HEAD@{110}: commit: help
+[33m3f95a60[m HEAD@{111}: commit: xcxcxcxcxcxc
+[33mb53779f[m HEAD@{112}: commit: ggg
+[33m9f7a259[m HEAD@{113}: commit (merge): trying to merge
+[33m15b9782[m HEAD@{114}: commit: lst alms
+[33mbdeda13[m HEAD@{115}: reset: moving to HEAD
+[33mbdeda13[m HEAD@{116}: commit: sara
+[33md73adc0[m HEAD@{117}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33m33969d9[m HEAD@{118}: commit: ff
+[33m5a2c516[m HEAD@{119}: commit: sara 05/01
+[33md532fff[m HEAD@{120}: commit: xxx
+[33m473fd03[m HEAD@{121}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Fast-forward
+[33md2e1241[m HEAD@{122}: commit: ttttt
+[33m039ae56[m HEAD@{123}: commit: aaaa
+[33m6c3b186[m HEAD@{124}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Fast-forward
+[33mf648a41[m HEAD@{125}: commit: sss
+[33m4f3e30f[m HEAD@{126}: commit: yyy
+[33m07a44c7[m HEAD@{127}: commit (merge): erer
+[33m93da1c2[m HEAD@{128}: commit: ssss
+[33ma174cdb[m HEAD@{129}: commit (merge): nowww
+[33maee7d18[m HEAD@{130}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33m7b302c1[m HEAD@{131}: commit: ddddddddd
+[33mfdcb14b[m HEAD@{132}: commit: ssss
+[33m5e2520a[m HEAD@{133}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33md9950e2[m HEAD@{134}: commit (merge): ss
+[33m2b08ea6[m HEAD@{135}: commit: ss
+[33m1996a8c[m HEAD@{136}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33me71959b[m HEAD@{137}: commit: sss
+[33ma4b4622[m HEAD@{138}: commit: nnnnn
+[33m0ca03da[m HEAD@{139}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Merge made by the 'ort' strategy.
+[33mad02c35[m HEAD@{140}: commit (merge): sar
+[33m0ae56e6[m HEAD@{141}: commit: nama
+[33m19de591[m[33m ([m[1;33mtag: [m[1;33mStage-4[m[33m)[m HEAD@{142}: pull --progress --no-edit --no-stat --recurse-submodules=no origin: Fast-forward
+[33mc2e5736[m HEAD@{143}: commit: Stage 4 Final commit
+[33m4524637[m HEAD@{144}: commit: ccccccccccccccc
+[33ma9e758b[m HEAD@{145}: commit: ddddd
+[33m04fc4e3[m HEAD@{146}: commit: chanuka
+[33mc495e98[m HEAD@{147}: commit: nammaaaaa
+[33mdde7ac0[m HEAD@{148}: commit (merge): namma hamishi
+[33m54838a6[m HEAD@{149}: commit: important
+[33m97b214e[
