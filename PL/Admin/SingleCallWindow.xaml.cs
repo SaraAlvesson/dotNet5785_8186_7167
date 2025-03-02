@@ -288,6 +288,8 @@ namespace PL.Admin
                 {
                     CurrentCall.CallStatus = CalltStatusEnum.CLOSED; // Update to closed status
                 }
+                if (CurrentCall.MaxFinishTime <= DateTime.Now)
+                { }
                 else
                 {
                     CurrentCall.CallStatus = CalltStatusEnum.OPEN; // Update to open status
