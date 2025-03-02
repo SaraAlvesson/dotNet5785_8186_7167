@@ -631,16 +631,6 @@
     <MaxTime>2025-03-03T02:28:58</MaxTime>
   </Call>
   <Call>
-    <Id>1062</Id>
-    <Adress>Tel Aviv Cinematheque, Tel Aviv, Israel</Adress>
-    <Latitude>32.070856</Latitude>
-    <Longitude>34.772402</Longitude>
-    <OpenTime>2025-03-02T06:31:20</OpenTime>
-    <CallType>PreparingFood</CallType>
-    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
-    <MaxTime>2025-03-03T00:31:20</MaxTime>
-  </Call>
-  <Call>
     <Id>1001</Id>
     <Adress>Neve Tzedek, Tel Aviv, Israel</Adress>
     <Latitude>32.065764</Latitude>
@@ -689,6 +679,16 @@
     <CallType>TransportAssistance</CallType>
     <VerbDesc>Helping with vehicle issues or emergency rides.</VerbDesc>
     <MaxTime>2025-03-02T09:01:35</MaxTime>
+  </Call>
+  <Call>
+    <Id>1062</Id>
+    <Adress>Tel Aviv Cinematheque, Tel Aviv, Israel</Adress>
+    <Latitude>32.070856</Latitude>
+    <Longitude>34.772402</Longitude>
+    <OpenTime>2025-03-02T06:31:20</OpenTime>
+    <CallType>PreparingFood</CallType>
+    <VerbDesc>Cooking or assembling meals for those in need.</VerbDesc>
+    <MaxTime>2025-03-03T00:31:20</MaxTime>
   </Call>
   <Call>
     <Id>1068</Id>
