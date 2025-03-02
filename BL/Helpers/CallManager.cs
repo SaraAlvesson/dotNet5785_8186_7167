@@ -134,7 +134,9 @@ internal static class CallManager
                 };
 
                 lock (AdminManager.BlMutex)
+                {
                     s_dal.assignment.Update(updatedAssignment);
+                }
 
                 updatedCallsIds.Add(call.Id); // הוספת מזהה הקריאה לרשימה
             }
@@ -150,7 +152,7 @@ internal static class CallManager
 
 
     #region implementation
-    public static IEnumerable<int> CallsAmount()
+    internal static IEnumerable<int> CallsAmount()
     {
         // שליפת כל הקריאות
         var allCalls = GetCallList(null, null, null);
@@ -177,10 +179,106 @@ internal static class CallManager
         return result;
     }
 
+    internal static  void AddCallAsync(BO.Call call)
+    {
+        AdminManager.ThrowOnSimulatorIsRunning();  // שלב 7
+
+        try
+        {
+            Console.WriteLine($"Starting AddCallAsync with call ID: {call.Id}");
+            Console.WriteLine($"Call details: Address={call.Address}, OpenTime={call.OpenTime}, CallType={call.CallType}");
+
+            // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
+            CallManager.CheckCallFormat(call);
+            CallManager.checkCallLogic(call);
+            Console.WriteLine("Call format and logic checks passed");
+
+            // שלב 2: הגדרת מזהה חדש לקריאה חדשה
+            int newCallId;
+            lock (AdminManager.BlMutex)
+            {
+                newCallId = s_dal.config.NextCallId;
+                Console.WriteLine($"New call ID generated: {newCallId}");
+            }
+
+            // שלב 3: יצירת אובייקט DO.Call ללא קואורדינטות
+            DO.Call newCall = new()
+            {
+                Id = newCallId,
+                OpenTime = call.OpenTime,
+                MaxTime = call.MaxFinishTime, // תומך בערך null
+                Adress = call.Address,
+                CallType = (DO.CallType)call.CallType,
+                VerbDesc = call.VerbDesc
+            };
+
+            // עדכון מזהה הקריאה
+            call.Id = newCallId;
+
+            // שלב 4: שליחה ל-DAL ללא הקואורדינטות
+            lock (AdminManager.BlMutex)
+            {
+                s_dal.call.Create(newCall);
+                Console.WriteLine($"Call created in DAL with ID: {newCallId}");
+
+                CallManager.Observers.NotifyItemUpdated(newCallId);
+                CallManager.Observers.NotifyListUpdated();
+            }
+
+            // שלב 5: קריאה למתודה אסינכרונית שתביא את הקואורדינטות ותעדכן
+            Task.Run(() => UpdateCallWithCoordinatesAsync(newCall));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in AddCallAsync: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            throw;
+        }
+    }
+
+    // מתודה אסינכרונית שתעדכן את הקואורדינטות לאחר קבלתן מהרשת
+    private static  async Task UpdateCallWithCoordinatesAsync(DO.Call oldCall)
+    {
+        try
+        {
+            Console.WriteLine($"Fetching coordinates for call ID: {oldCall.Id}");
+
+            double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(oldCall.Adress);
+            Console.WriteLine($"Coordinates retrieved: Lat={coordinates[0]}, Lon={coordinates[1]}");
+
+            // יצירת אובייקט חדש עם הערכים הישנים + הקואורדינטות החדשות
+            DO.Call updatedCall = new()
+            {
+                Id = oldCall.Id,
+                OpenTime = oldCall.OpenTime,
+                MaxTime = oldCall.MaxTime,
+                Longitude = coordinates[1],
+                Latitude = coordinates[0],
+                Adress = oldCall.Adress,
+                CallType = oldCall.CallType,
+                VerbDesc = oldCall.VerbDesc
+            };
+
+            // עדכון ה-DAL עם האובייקט החדש
+            lock (AdminManager.BlMutex)
+            {
+                s_dal.call.Update(updatedCall);
+                Console.WriteLine($"Call updated in DAL with coordinates: {updatedCall.Id}");
+            }
+
+            CallManager.Observers.NotifyItemUpdated(updatedCall.Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in UpdateCallWithCoordinatesAsync: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+        }
+    }
 
 
 
-    public static IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
+
+    internal static IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
     {
         lock (AdminManager.BlMutex) // 🔒 הוספת נעילה לקריאות מה-DAL
         {
@@ -251,7 +349,7 @@ internal static class CallManager
     }
 
 
-    public static BO.Call readCallData(int ID)
+    internal static BO.Call readCallData(int ID)
     {
         lock (AdminManager.BlMutex) // 🔒 נעילה למניעת קריאות מקבילות
         {
@@ -299,7 +397,7 @@ internal static class CallManager
         }
     }
 
-    public  static void UpdateCallDetails(BO.Call callDetails)
+    internal  static void UpdateCallDetails(BO.Call callDetails)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
 
@@ -329,7 +427,10 @@ internal static class CallManager
                 };
 
                 // שלב 5: עדכון הרשומה בשכבת הנתונים
-                s_dal.call.Update(newCall);
+                lock (AdminManager.BlMutex)
+                {
+                    s_dal.call.Update(newCall);
+                }
             }
 
             CallManager.Observers.NotifyItemUpdated(callDetails.Id);  // stage 5
@@ -344,7 +445,7 @@ internal static class CallManager
             throw new CannotUpdateCallException("Invalid call details provided.", ex);
         }
     }
-    public static void DeleteCall(int callId)
+    internal static void DeleteCall(int callId)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
         try
@@ -498,7 +599,7 @@ internal static class CallManager
     //    }
     //}
 
-    public static  IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
+    internal static  IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
     {
         // נעילה סביב קריאות ל-DAL
         lock (AdminManager.BlMutex)
@@ -646,7 +747,7 @@ internal static class CallManager
 //        }
 //    }
 
-    public static  void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
+    internal static  void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         try
@@ -674,7 +775,10 @@ internal static class CallManager
                 DO.Assignment newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.WasTreated };
 
                 // Attempt to update the assignment in the database
-                s_dal.assignment.Update(newAssign);
+                lock (AdminManager.BlMutex)
+                {
+                    s_dal.assignment.Update(newAssign);
+                }
 
                 // Notify observers within the lock to ensure thread safety
                 CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call and observers etc.
@@ -689,10 +793,7 @@ internal static class CallManager
             throw new InvalidOperationException($"Error updating call as completed: {ex.Message}", ex);
         }
     }
-
-
-
-    public static void UpdateToCancelCallTreatment(int RequesterId, int AssignmentId)
+    internal static void UpdateToCancelCallTreatment(int RequesterId, int AssignmentId)
     {
         // Locking the block to ensure thread safety for DAL operations
         lock (AdminManager.BlMutex)
@@ -731,10 +832,14 @@ internal static class CallManager
             else
                 newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.SelfCancellation };
 
+            BO.Call Updatecall = readCallData(assignment.CallId);
+
+
             try
             {
                 // Update the assignment in the data layer.
-                s_dal.assignment.Update(newAssign);
+                lock (AdminManager.BlMutex)
+                    s_dal.assignment.Update(newAssign);
             }
             catch (DO.DalDoesNotExistException ex)
             {
@@ -745,13 +850,17 @@ internal static class CallManager
             // Notify observers inside the lock to ensure thread safety
             CallManager.Observers.NotifyItemUpdated(call.Id);  //update current call and observers etc.
             CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-            BL.Helpers.VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
-            BL.Helpers.VolunteerManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
+            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //update current volunteer and observers etc.
+            VolunteerManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
         }
     }
 
 
-    public static void AssignCallToVolunteer(int volunteerId, int callId)
+
+
+
+
+    internal static void AssignCallToVolunteer(int volunteerId, int callId)
     {
         try
         {
@@ -760,6 +869,10 @@ internal static class CallManager
 
             if (call == null)
                 throw new InvalidOperationException("Call not found.");
+
+            // בדיקת אם הקריאה לא טופלה ולא פג תוקפה
+            if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN && call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
+                throw new InvalidOperationException("Call has already been treated or expired.");
 
             // בדיקת אם קיימת הקצאה פתוחה על הקריאה
             var existingAssignments = s_dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
@@ -772,7 +885,7 @@ internal static class CallManager
                 Id = 0,
                 VolunteerId = volunteerId,
                 CallId = callId,
-                AppointmentTime = AdminManager.Now, // זמן כניסה לטיפול
+                AppointmentTime = DateTime.Now, // זמן כניסה לטיפול
                 FinishAppointmentTime = null,  // עדיין לא מעודכן
                 FinishAppointmentType = null   // עדיין לא מעודכן
             };
@@ -784,11 +897,9 @@ internal static class CallManager
                 s_dal.assignment.Create(newAssignment);
             }
 
-            // עדכון תצוגת הקריאות והמתנדבים
-            CallManager.Observers.NotifyItemUpdated(callId);  // מעדכן את הקריאה הספציפית
-            CallManager.Observers.NotifyListUpdated();  // מעדכן את רשימת הקריאות
-            BL.Helpers.VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  // מעדכן את המתנדב הספציפי
-            BL.Helpers.VolunteerManager.Observers.NotifyListUpdated();  // מעדכן את רשימת המתנדבים
+            // עדכון תצוגת הקריאות
+            CallManager.Observers.NotifyItemUpdated(newAssignment.Id);
+            CallManager.Observers.NotifyListUpdated();
         }
         catch (Exception ex)
         {
@@ -797,6 +908,5 @@ internal static class CallManager
         }
     }
 }
-
 
 #endregion

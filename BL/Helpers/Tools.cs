@@ -23,9 +23,9 @@ namespace Helpers
                 DO.Assignment? a = s_dal.assignment.Read(item => item.CallId == ID);
                 if (a == null)
                     if (s_dal.config.Clock - c.OpenTime > s_dal.config.RiskRange)
-                        return BO.Enums.CalltStatusEnum.CallAlmostOver;
-                    else
                         return BO.Enums.CalltStatusEnum.OPEN;
+                    else
+                        return BO.Enums.CalltStatusEnum.CallAlmostOver;
 
                 if (a.FinishAppointmentType is null)
                     if (s_dal.config.Clock - a.AppointmentTime > s_dal.config.RiskRange)
@@ -40,8 +40,12 @@ namespace Helpers
                     return BO.Enums.CalltStatusEnum.CLOSED;
 
                 if (a.FinishAppointmentType == DO.FinishAppointmentType.SelfCancellation || a.FinishAppointmentType == DO.FinishAppointmentType.CancelingAnAdministrator)
-                    return BO.Enums.CalltStatusEnum.Canceled;
-
+                {
+                    if (s_dal.config.Clock - c.OpenTime > s_dal.config.RiskRange)
+                        return BO.Enums.CalltStatusEnum.OPEN;
+                    else
+                        return BO.Enums.CalltStatusEnum.CallAlmostOver;
+                }
                 else
                     return BO.Enums.CalltStatusEnum.UNKNOWN;
             }
