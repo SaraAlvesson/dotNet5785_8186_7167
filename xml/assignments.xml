@@ -528,4 +528,20 @@
     <FinishAppointmentTime>2025-03-02T09:32:01</FinishAppointmentTime>
     <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
+  <Assignment>
+    <Id>67</Id>
+    <CallId>1040</CallId>
+    <VolunteerId>337819460</VolunteerId>
+    <AppointmentTime>2025-03-02T17:42:49.8156513+02:00</AppointmentTime>
+    <FinishAppointmentTime>2025-03-02T09:32:01</FinishAppointmentTime>
+    <FinishAppointmentType>SelfCancellation</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>68</Id>
+    <CallId>1040</CallId>
+    <VolunteerId>337819460</VolunteerId>
+    <AppointmentTime>2025-03-02T17:43:09.0901094+02:00</AppointmentTime>
+    <FinishAppointmentTime xsi:nil="true" />
+    <FinishAppointmentType xsi:nil="true" />
+  </Assignment>
 </ArrayOfAssignment>
