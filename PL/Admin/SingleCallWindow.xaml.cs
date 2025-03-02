@@ -183,82 +183,7 @@ namespace PL.Admin
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void ButtonAddUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (CurrentCall == null)
-                {
-                    MessageBox.Show("No call data available", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // בדיקות שדות חסרים או לא תקינים ב-CurrentCall
-                if (CurrentCall.CallType == null)
-                {
-                    MessageBox.Show("Call type is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(CurrentCall.Address))
-                {
-                    MessageBox.Show("Address is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (CurrentCall.OpenTime == null)
-                {
-                    MessageBox.Show("Open time is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (CurrentCall.MaxFinishTime == null)
-                {
-                    MessageBox.Show("Max finish time is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // אם כל השדות תקינים
-                if (ButtonText == "Add")
-                {
-                    // לוודא שלא מתבצע עדכון אם מדובר בהוספה
-                    s_bl.Call.AddCallAsync(CurrentCall); // הוספת קריאה חדשה
-                    MessageBox.Show("Call added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Close();
-                }
-                else if (ButtonText == "Update")
-                {
-                    { 
-                        // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
-                        //if (!IsEditable())
-                        //{
-                        //    MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        //    return;
-                        //}
-
-                        s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
-                        MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        Close();
-                    }
-                }
-
-                UpdateCallList();
-
-            }
-            catch (InvalidCallLogicException ex)
-            {
-                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (InvalidCallFormatException ex)
-            {
-                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
+       
         private void UpdateCallList()
         {
             if (CurrentCall?.Id > 0) // רק אם יש קריאה קיימת
@@ -354,8 +279,97 @@ namespace PL.Admin
             s_bl?.Call.RemoveObserver(CallListObserver);
         }
 
-     
+        private void UpdateCallStatusBasedOnFinishTime()
+        {
+            if (CurrentCall != null)
+            {
+                // Check if the finish time is in the past
+                if (CurrentCall.MaxFinishTime <= DateTime.Now)
+                {
+                    CurrentCall.CallStatus = CalltStatusEnum.CLOSED; // Update to closed status
+                }
+                else
+                {
+                    CurrentCall.CallStatus = CalltStatusEnum.OPEN; // Update to open status
+                }
+            }
+        }
 
-       
+        private void ButtonAddUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (CurrentCall == null)
+                {
+                    MessageBox.Show("No call data available", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // בדיקות שדות חסרים או לא תקינים ב-CurrentCall
+                if (CurrentCall.CallType == null)
+                {
+                    MessageBox.Show("Call type is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(CurrentCall.Address))
+                {
+                    MessageBox.Show("Address is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (CurrentCall.OpenTime == null)
+                {
+                    MessageBox.Show("Open time is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (CurrentCall.MaxFinishTime == null)
+                {
+                    MessageBox.Show("Max finish time is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // אם כל השדות תקינים
+                if (ButtonText == "Add")
+                {
+                    // לוודא שלא מתבצע עדכון אם מדובר בהוספה
+                    s_bl.Call.AddCallAsync(CurrentCall); // הוספת קריאה חדשה
+                    MessageBox.Show("Call added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
+                }
+                else if (ButtonText == "Update")
+                {
+                    { 
+                        // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
+                        //if (!IsEditable())
+                        //{
+                        //    MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        //    return;
+                        //}
+
+                        s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
+                        UpdateCallStatusBasedOnFinishTime();
+                        MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Close();
+                    }
+                }
+
+                UpdateCallList();
+
+            }
+            catch (InvalidCallLogicException ex)
+            {
+                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (InvalidCallFormatException ex)
+            {
+                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }

@@ -138,47 +138,43 @@ namespace PL.Volunteer
             }
         }
 
-       private async void ButtonUpdate_Click(object sender, RoutedEventArgs e)
-{
-    if (CurrentVolunteer == null)
-    {
-        MessageBox.Show("לא נבחר מתנדב.");
-        return;
-    }
-
-    if (!IsValidUpdate())
-    {
-        MessageBox.Show("נא למלא את כל השדות הנדרשים.");
-        return;
-    }
-
-    if (isUpdateInProgress) return;
-
-    isUpdateInProgress = true;
-    try
-    {
-        var updatedActive = CurrentVolunteer.Active; // שמירת הערך לפני העדכון
-
-        await Task.Run(() => s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer));
-
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"המתנדב עודכן. Active: {CurrentVolunteer.Active}"); // לבדוק אם הערך מתעדכן
-            OnVolunteerUpdated();
-            RefreshVolunteerData(CurrentVolunteer.Id);
-            MessageBox.Show($"אחרי הרענון: Active: {CurrentVolunteer.Active}"); // לוודא שהערך נשמר
-        });
-    }
-    catch (Exception ex)
-    {
-        MessageBox.Show($"שגיאה: {ex.Message}");
-    }
-    finally
-    {
-        isUpdateInProgress = false;
-    }
-}
+            if (CurrentVolunteer == null)
+            {
+                MessageBox.Show("No volunteer selected.");
+                return;
+            }
 
+            if (IsValidUpdate())
+            {
+                try
+                {
+                    if (isUpdateInProgress) return; // Skip if update is already in progress
+
+                    isUpdateInProgress = true;
+                    s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
+                    MessageBox.Show("Volunteer updated successfully.");
+
+                    // Notify observers
+                    OnVolunteerUpdated();
+
+                    RefreshVolunteerData(CurrentVolunteer.Id);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error updating volunteer: {ex.Message}");
+                }
+                finally
+                {
+                    isUpdateInProgress = false; // Reset the flag after update is complete
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please fill in all required fields correctly.");
+            }
+        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -278,9 +274,6 @@ namespace PL.Volunteer
             }
         }
         private volatile bool isUpdatingView = false;
-
-
-
 
         private void ObserveVolunteerListChanges()
         {
