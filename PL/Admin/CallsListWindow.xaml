@@ -114,7 +114,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Open Time" DisplayMemberBinding="{Binding OpenTime}" Width="130" />
-                    <GridViewColumn Header="Time Until Finish" DisplayMemberBinding="{Binding SumTimeUntilFinish}" Width="125" />
+                    <GridViewColumn Header="Time Until Finish" DisplayMemberBinding="{Binding SumTimeUntilFinish, Converter={StaticResource TimeSpanToCustomFormatConverter}}" Width="125" />
                     <GridViewColumn Header="Last Volunteer Name" DisplayMemberBinding="{Binding LastVolunteerName}" Width="120" />
                     <GridViewColumn Header="Sum Appointment Time" DisplayMemberBinding="{Binding SumAppointmentTime, Converter={StaticResource TimeSpanToCustomFormatConverter}}" Width="150" />
                     <GridViewColumn Header="Total Assignments" DisplayMemberBinding="{Binding SumAssignment}" Width="30" />

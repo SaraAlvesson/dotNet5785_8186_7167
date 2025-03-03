@@ -48,6 +48,18 @@ namespace PL.Admin
                    CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver|| CurrentCall?.CallStatus==CalltStatusEnum.CallIsBeingTreated || CurrentCall?.CallStatus==CalltStatusEnum.CallTreatmentAlmostOver);
         }
 
+        public bool IsEditable
+        {
+            get => CurrentCall != null && (CurrentCall?.CallStatus == CalltStatusEnum.OPEN ||
+                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver);
+        }
+
+        public bool CanEdit
+        {
+            get => CurrentCall != null && (CurrentCall?.CallStatus == CalltStatusEnum.OPEN ||
+                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver || CurrentCall?.CallStatus == CalltStatusEnum.CallIsBeingTreated || CurrentCall?.CallStatus == CalltStatusEnum.CallTreatmentAlmostOver);
+        }
+
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         public string ButtonText { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -79,6 +91,21 @@ namespace PL.Admin
 
                 return CurrentCall.CallStatus == CalltStatusEnum.CallIsBeingTreated ||
                        CurrentCall.CallStatus == CalltStatusEnum.CallTreatmentAlmostOver|| CurrentCall.CallStatus == CalltStatusEnum.OPEN|| CurrentCall.CallStatus == CalltStatusEnum.CallAlmostOver;
+            }
+        }
+
+
+
+
+        public bool CanEditMaxFinishTime
+        {
+            get
+            {
+                if (CurrentCall == null)
+                    return false;
+
+                return CurrentCall.CallStatus == CalltStatusEnum.CallIsBeingTreated ||
+                       CurrentCall.CallStatus == CalltStatusEnum.CallTreatmentAlmostOver || CurrentCall.CallStatus == CalltStatusEnum.OPEN || CurrentCall.CallStatus == CalltStatusEnum.CallAlmostOver;
             }
         }
 

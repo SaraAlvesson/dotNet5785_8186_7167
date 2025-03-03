@@ -85,7 +85,7 @@ internal class CallImplementation : ICall
                                      ? assignment.FinishAppointmentTime.Value - item.OpenTime
                                      : null,
                                  Status = Tools.callStatus(item.Id),
-                                 SumAssignment = assignments.Count()
+                                 SumAssignment = assignments.Count(s => s.CallId == item.Id)
                              };
 
             if (filter.HasValue && toFilter != null)
@@ -348,9 +348,9 @@ internal class CallImplementation : ICall
     }
 
     public async Task<IEnumerable<BO.OpenCallInList>> GetOpenCallInListsAsync(
-      int volunteerId,
-    BO.Enums.CallTypeEnum? filter = null,
-    BO.Enums.OpenCallEnum? toSort = null)
+       int volunteerId,
+     BO.Enums.CallTypeEnum? filter = null,
+     BO.Enums.OpenCallEnum? toSort = null)
     {
         IEnumerable<DO.Call> listCall;
         IEnumerable<DO.Assignment> listAssignment;
@@ -410,12 +410,12 @@ internal class CallImplementation : ICall
         return openCallsList;
     }
 
-    // מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
-    private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, string volunteerAddress)
+// מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
+private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, string volunteerAddress)
+{
+    try
     {
-        try
-        {
-            double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
 
             if (volunteerLocation == null || volunteerLocation.Length != 2)
                 throw new Exception("Invalid location data received for the volunteer.");
@@ -517,6 +517,43 @@ internal class CallImplementation : ICall
         CallManager.UpdateToCancelCallTreatment(RequesterId, AssignmentId);
     }
 
+
+    public  void AssignCallToVolunteer(int volunteerId, int callId)
+    {
+        try
+        {
+            // שליפת פרטי הקריאה
+            BO.Call call = readCallData(callId);
+
+            if (call == null)
+                throw new InvalidOperationException("Call not found.");
+
+            // בדיקת אם הקריאה לא טופלה ולא פג תוקפה
+            if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN && call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
+                throw new InvalidOperationException("Call has already been treated or expired.");
+
+            // בדיקת אם קיימת הקצאה פתוחה על הקריאה
+            var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
+            if (existingAssignments != null)
+                throw new InvalidOperationException("Call is already assigned to a volunteer.");
+
+            // יצירת הקצאה חדשה
+            DO.Assignment newAssignment = new DO.Assignment
+            {
+                Id = 0,
+                VolunteerId = volunteerId,
+                CallId = callId,
+                AppointmentTime = DateTime.Now, // זמן כניסה לטיפול
+                FinishAppointmentTime = null,  // עדיין לא מעודכן
+                FinishAppointmentType = null   // עדיין לא מעודכן
+            };
+
+            // עטיפת פנייה ל DAL בבלוק נעילה
+            lock (AdminManager.BlMutex)
+            {
+                // ניסיון הוספה לשכבת הנתונים
+                _dal.assignment.Create(newAssignment);
+            }
 
     public void AssignCallToVolunteer(int volunteerId, int callId)
     {
