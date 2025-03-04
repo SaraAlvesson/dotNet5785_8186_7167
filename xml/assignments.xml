@@ -97,14 +97,6 @@
     <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
   <Assignment>
-    <Id>13</Id>
-    <CallId>1024</CallId>
-    <VolunteerId>556567111</VolunteerId>
-    <AppointmentTime>2025-03-04T23:35:17</AppointmentTime>
-    <FinishAppointmentTime xsi:nil="true" />
-    <FinishAppointmentType xsi:nil="true" />
-  </Assignment>
-  <Assignment>
     <Id>14</Id>
     <CallId>1009</CallId>
     <VolunteerId>556567111</VolunteerId>
@@ -462,6 +454,54 @@
     <VolunteerId>0</VolunteerId>
     <AppointmentTime>2025-03-04T04:26:50</AppointmentTime>
     <FinishAppointmentTime>2025-03-04T04:26:50</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>59</Id>
+    <CallId>1049</CallId>
+    <VolunteerId>0</VolunteerId>
+    <AppointmentTime>2025-03-04T05:46:50</AppointmentTime>
+    <FinishAppointmentTime>2025-03-04T05:46:50</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>60</Id>
+    <CallId>1064</CallId>
+    <VolunteerId>0</VolunteerId>
+    <AppointmentTime>2025-03-04T06:06:50</AppointmentTime>
+    <FinishAppointmentTime>2025-03-04T06:06:50</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>13</Id>
+    <CallId>1024</CallId>
+    <VolunteerId>556567111</VolunteerId>
+    <AppointmentTime>2025-03-04T23:35:17</AppointmentTime>
+    <FinishAppointmentTime>2025-03-04T06:36:50</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>61</Id>
+    <CallId>1044</CallId>
+    <VolunteerId>0</VolunteerId>
+    <AppointmentTime>2025-03-04T06:41:50</AppointmentTime>
+    <FinishAppointmentTime>2025-03-04T06:41:50</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>62</Id>
+    <CallId>1060</CallId>
+    <VolunteerId>0</VolunteerId>
+    <AppointmentTime>2025-03-04T08:01:50</AppointmentTime>
+    <FinishAppointmentTime>2025-03-04T08:01:50</FinishAppointmentTime>
+    <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
+  </Assignment>
+  <Assignment>
+    <Id>63</Id>
+    <CallId>1046</CallId>
+    <VolunteerId>0</VolunteerId>
+    <AppointmentTime>2025-03-04T08:16:50</AppointmentTime>
+    <FinishAppointmentTime>2025-03-04T08:16:50</FinishAppointmentTime>
     <FinishAppointmentType>CancellationHasExpired</FinishAppointmentType>
   </Assignment>
 </ArrayOfAssignment>

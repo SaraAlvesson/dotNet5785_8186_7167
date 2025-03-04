@@ -225,20 +225,6 @@
     <MaxDistance>15</MaxDistance>
   </Volunteer>
   <Volunteer>
-    <Id>328177167</Id>
-    <FullName>Nama</FullName>
-    <PhoneNumber>0539310665</PhoneNumber>
-    <Email>volunteer17@gmail.com</Email>
-    <DistanceType>DrivingDistance</DistanceType>
-    <Position>admin</Position>
-    <Active>true</Active>
-    <Password>nb2025*</Password>
-    <Location>Dizengoff Square, Tel Aviv, Israel</Location>
-    <Latitude>32.078323</Latitude>
-    <Longitude>34.77034</Longitude>
-    <MaxDistance>9</MaxDistance>
-  </Volunteer>
-  <Volunteer>
     <Id>123456789</Id>
     <FullName>Sari</FullName>
     <PhoneNumber>0566758903</PhoneNumber>
@@ -251,5 +237,19 @@
     <Latitude>32.078323</Latitude>
     <Longitude>34.77034</Longitude>
     <MaxDistance>19</MaxDistance>
+  </Volunteer>
+  <Volunteer>
+    <Id>328177167</Id>
+    <FullName>Nama</FullName>
+    <PhoneNumber>0539310665</PhoneNumber>
+    <Email>volunteer17@gmail.com</Email>
+    <DistanceType>DrivingDistance</DistanceType>
+    <Position>admin</Position>
+    <Active>false</Active>
+    <Password>nb2025</Password>
+    <Location>Rabin Square, Tel Aviv, Israel</Location>
+    <Latitude>32.0809313</Latitude>
+    <Longitude>34.7808127539372</Longitude>
+    <MaxDistance>9</MaxDistance>
   </Volunteer>
 </ArrayOfVolunteer>
