@@ -3,7 +3,7 @@ using BO;
 /// <summary>
 /// 
 /// </summary>
-public interface ICall:IObservable
+public interface ICall : IObservable
 {
     /// <summary>
     /// מבצע חישוב של כמות הקריאות לכל מצב (Status), ומחזיר מערך עם הכמויות עבור כל מצב.
@@ -21,8 +21,8 @@ public interface ICall:IObservable
     (
         Enums.CallFieldEnum? filter = null,
         object? toFilter = null,
-        Enums.CallFieldEnum? toSort = null
-    );
+        Enums.CallFieldEnum? toSort = null,
+       Enums.CalltStatusEnum? filterStatus = null);
     /// <summary>
     /// מחזיר את פרטי הקריאה עבור מזהה קריאה נתון.
     /// </summary>
@@ -44,7 +44,7 @@ public interface ICall:IObservable
     /// מוסיף קריאה חדשה למערכת. אם קיימת קריאה עם אותו מזהה, לא תתבצע ההוספה.
     /// </summary>
     /// <param name="call">הקריאה להוספה</param>
-    void  AddCallAsync(BO.Call call);
+    void AddCallAsync(BO.Call call);
     /// <summary>
     /// מחזיר רשימה של קריאות סגורות שטופלו על ידי מתנדב, עם אפשרות לסינון ומיון.
     /// </summary>
@@ -53,7 +53,7 @@ public interface ICall:IObservable
     /// <param name="sortField">שדה למיון הקריאות</param>
     /// <returns>רשימה של קריאות סגורות שטופלו על ידי המתנדב</returns>
     IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(
-        int volunteerId, 
+        int volunteerId,
         BO.Enums.CallTypeEnum? filter,
         BO.Enums.ClosedCallFieldEnum? toSort);
 

@@ -13,12 +13,16 @@ namespace PL.Volunteer
     {
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private DispatcherTimer _timer;
+       
+
+
+
 
         // Events for observers
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler? CallCompleted;
         public event EventHandler? CallCancelled;
-        public event EventHandler? VolunteerUpdated;
+        
 
         // Flag for handling async updates
         private volatile bool isUpdateInProgress = false;
@@ -41,24 +45,11 @@ namespace PL.Volunteer
             CallCancelled?.Invoke(this, EventArgs.Empty);
         }
 
-        protected void OnVolunteerUpdated()
-        {
-            VolunteerUpdated?.Invoke(this, EventArgs.Empty);
-        }
+       
 
-        // Dependency properties
-        public IEnumerable<BO.Volunteer> Volunteer
-        {
-            get { return (IEnumerable<BO.Volunteer>)GetValue(VolunteerFieldListProperty); }
-            set { SetValue(VolunteerFieldListProperty, value); }
-        }
+       
 
-        public static readonly DependencyProperty VolunteerFieldListProperty =
-           DependencyProperty.Register(
-               "Volunteer",
-               typeof(IEnumerable<BO.Volunteer>),
-               typeof(MainVolunteerWindow),
-               new PropertyMetadata(null));
+       
 
         public BO.Volunteer? CurrentVolunteer
         {
@@ -86,6 +77,7 @@ namespace PL.Volunteer
         {
             InitializeComponent();
             this.DataContext = this;
+           
             try
             {
                 RefreshVolunteerData(id);
@@ -100,7 +92,7 @@ namespace PL.Volunteer
         {
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(5) // רענון כל 5 שניות
+                Interval = TimeSpan.FromSeconds(10) // רענון כל 5 שניות
             };
             _timer.Tick += (s, e) => ObserveVolunteerListChanges();
             _timer.Start();
@@ -113,6 +105,7 @@ namespace PL.Volunteer
                 {
                     new Volunteer.ChooseCallWindow(CurrentVolunteer).Show();
                     RefreshVolunteerData(CurrentVolunteer.Id);
+                    NotifyObservers();
                 }
                 catch (Exception ex)
                 {
@@ -131,12 +124,14 @@ namespace PL.Volunteer
             {
                 CurrentVolunteer = s_bl.Volunteer.RequestVolunteerDetails(volunteerId);
                 OnPropertyChanged(nameof(CurrentVolunteer)); // Ensure property change notification
+                NotifyObservers();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error refreshing volunteer data: {ex.Message}");
             }
         }
+        
 
         private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -154,12 +149,16 @@ namespace PL.Volunteer
 
                     isUpdateInProgress = true;
                     s_bl.Volunteer.UpdateVolunteerDetails(CurrentVolunteer.Id, CurrentVolunteer);
+
                     MessageBox.Show("Volunteer updated successfully.");
 
                     // Notify observers
-                    OnVolunteerUpdated();
+
+                   
+                    NotifyObservers(); // Notify observers after update
 
                     RefreshVolunteerData(CurrentVolunteer.Id);
+
                 }
                 catch (Exception ex)
                 {
@@ -176,6 +175,9 @@ namespace PL.Volunteer
             }
         }
 
+        
+
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             s_bl?.Volunteer.AddObserver(ObserveVolunteerListChanges);
@@ -186,7 +188,7 @@ namespace PL.Volunteer
             s_bl?.Volunteer.RemoveObserver(ObserveVolunteerListChanges);
         }
 
-      
+
         private void ButtonComplete_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -213,6 +215,7 @@ namespace PL.Volunteer
                 MessageBox.Show("Call ended successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 OnCallCompleted();
+                NotifyObservers(); // Notify observers after call completion
                 RefreshVolunteerData(CurrentVolunteer.Id);
             }
             catch (Exception ex)
@@ -261,6 +264,7 @@ namespace PL.Volunteer
                     s_bl.Call.UpdateToCancelCallTreatment(CurrentVolunteer.Id, CurrentVolunteer.VolunteerTakenCare.Id);
                     MessageBox.Show("Call canceled successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     OnCallCancelled();
+                    NotifyObservers(); // Notify observers after call cancellation
                     RefreshVolunteerData(CurrentVolunteer.Id);
                 }
                 else
@@ -301,9 +305,11 @@ namespace PL.Volunteer
             return !string.IsNullOrEmpty(CurrentVolunteer?.Email) && !string.IsNullOrEmpty(CurrentVolunteer?.Location);
         }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void NotifyObservers()
         {
-
+            CallCompleted?.Invoke(this, EventArgs.Empty);
+            CallCancelled?.Invoke(this, EventArgs.Empty);
         }
+
     }
 }

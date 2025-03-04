@@ -90,11 +90,16 @@ namespace PL.Admin
             }
         }
 
+
+
+
         public SingleVolunteerWindow(int id = 0)
         {
             ButtonText = id == 0 ? "Add" : "Update";
             InitializeComponent();
             this.DataContext = this;
+
+
 
             try
             {
@@ -109,6 +114,7 @@ namespace PL.Admin
                     IsIdEnabled = false;
                     LoadVolunteerTakenCare();
                     StartAutoRefresh(); // מתחיל את הרענון האוטומטי
+                    s_bl.Volunteer.AddObserver(CurrentVolunteer.Id, volunteerListObserver);
                 }
             }
             catch (Exception ex)
@@ -117,20 +123,18 @@ namespace PL.Admin
             }
         }
 
-        private void StartAutoRefresh()
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_timer != null) return;
-
-            _timer = new DispatcherTimer(DispatcherPriority.Background)
-            {
-                Interval = TimeSpan.FromMilliseconds(500)
-            };
-            _timer.Tick += Timer_Tick;
-            _timer.Start();
+            IsEditing = true;
         }
+
+
+
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+            if (IsEditing) return; // אם המשתמש עורך, לא נרענן
+
             try
             {
                 var updatedVolunteer = s_bl.Volunteer.RequestVolunteerDetails(CurrentVolunteer.Id);
@@ -150,6 +154,9 @@ namespace PL.Admin
             }
         }
 
+
+
+
         private void LoadVolunteerTakenCare()
         {
             if (CurrentVolunteer?.Id == null || CurrentVolunteer.Id == 0) return;
@@ -157,7 +164,7 @@ namespace PL.Admin
             try
             {
                 var volunteerDetails = s_bl.Volunteer.RequestVolunteerDetails(CurrentVolunteer.Id);
-                
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (volunteerDetails != null && !_isUpdating)
@@ -202,6 +209,28 @@ namespace PL.Admin
             }
         }
 
+        private void StopAutoRefresh()
+        {
+            if (_timer != null)
+            {
+                _timer.Stop();
+            }
+        }
+
+        private void StartAutoRefresh()
+        {
+            if (_timer == null)
+            {
+                _timer = new DispatcherTimer(DispatcherPriority.Background)
+                {
+                    Interval = TimeSpan.FromMilliseconds(500)
+                };
+                _timer.Tick += Timer_Tick;
+            }
+            _timer.Start();
+        }
+
+
         private void Window_Closed(object sender, EventArgs e)
         {
             if (_timer != null)
@@ -209,9 +238,8 @@ namespace PL.Admin
                 _timer.Stop();
                 _timer = null;
             }
-            if (CurrentVolunteer?.Id > 0)
+            if (CurrentVolunteer != null && CurrentVolunteer.Id > 0)
             {
-                // מסיר את הרישום לעדכונים
                 s_bl.Volunteer.RemoveObserver(CurrentVolunteer.Id, volunteerListObserver);
             }
         }
@@ -219,9 +247,9 @@ namespace PL.Admin
         private void volunteerListObserver()
         {
             if (_isUpdating) return;
-            
+
             _isUpdating = true;
-            
+
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 try
@@ -341,6 +369,25 @@ namespace PL.Admin
             }
         }
 
+        private bool _isEditing = false;
+        public bool IsEditing
+        {
+            get => _isEditing;
+            set
+            {
+                if (_isEditing != value)
+                {
+                    _isEditing = value;
+                    OnPropertyChanged(nameof(IsEditing));
+                    if (_isEditing)
+                        StopAutoRefresh();  // עוצר רענון בזמן עריכה
+                    else
+                        StartAutoRefresh(); // מפעיל מחדש אחרי שמירה
+                }
+            }
+        }
+
+
         private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -362,7 +409,8 @@ namespace PL.Admin
                     MessageBox.Show("Volunteer updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
-                UpdateVolunteerList(); 
+                IsEditing = false; // מסמן שהעריכה הסתיימה
+                UpdateVolunteerList();
                 Close();
             }
             catch (Exception ex)
@@ -371,9 +419,10 @@ namespace PL.Admin
             }
         }
 
+
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Handle selection change if necessary
-        }
+        }
     }
 }

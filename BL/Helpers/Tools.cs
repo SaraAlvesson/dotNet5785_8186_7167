@@ -29,9 +29,9 @@ namespace Helpers
 
                 if (a.FinishAppointmentType is null)
                     if (s_dal.config.Clock - a.AppointmentTime > s_dal.config.RiskRange)
-                        return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver;
-                    else
                         return BO.Enums.CalltStatusEnum.CallIsBeingTreated;
+                    else
+                        return BO.Enums.CalltStatusEnum.CallTreatmentAlmostOver;
 
                 if (a.FinishAppointmentType == DO.FinishAppointmentType.CancellationHasExpired)
                     return BO.Enums.CalltStatusEnum.EXPIRED;

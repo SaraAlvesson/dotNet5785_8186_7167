@@ -18,7 +18,7 @@ public static class Config
     internal static int NextAssignmentId { get => s_nextAssignmentId++; } // Property to get the next assignment ID and increment
 
     internal static DateTime Clock { get; set; } = DateTime.Now; // Property for the current date and time
-    internal static TimeSpan RiskRange { get; set; } = TimeSpan.Zero; // Property for the risk range duration
+    internal static TimeSpan RiskRange { get; set; } = RiskRange = TimeSpan.FromHours(5); // Reset the risk range to z
 
     /// <summary>
     ///Method to reset configuration settings
@@ -28,6 +28,6 @@ public static class Config
         s_nextAssignmentId = StartAssignmentId; // Reset the assignment ID counter
         s_nextCallId = StartCallId; // Reset the call ID counter
         Clock = DateTime.Now; // Reset the clock to the current time
-        RiskRange = TimeSpan.Zero; // Reset the risk range to zero
+        RiskRange = TimeSpan.FromHours(5); // Reset the risk range to zer
     }
 }

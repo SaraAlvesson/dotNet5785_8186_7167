@@ -89,18 +89,18 @@ namespace PL.Volunteer
         {
             // בדיקה אם הסימולטור פועל
             bool currentSimulatorState = Application.Current.MainWindow is MainWindow mainWindow && mainWindow.IsSimulatorRunning;
-            
+
             if (currentSimulatorState != _isSimulatorRunning)
             {
                 _isSimulatorRunning = currentSimulatorState;
-                
+
                 if (_isSimulatorRunning)
                 {
                     // הפעלת עדכון מיידי כאשר הסימולטור מתחיל
                     ObserveCallsListChanges();
                 }
             }
-            
+
             // עדכון רק אם הסימולטור פועל
             if (_isSimulatorRunning)
             {
@@ -111,7 +111,7 @@ namespace PL.Volunteer
         private void Window_Closed(object sender, EventArgs e)
         {
             s_bl?.Volunteer.RemoveObserver(ObserveCallsListChanges);
-            
+
             // עצירת הטיימר
             _simulatorUpdateTimer?.Stop();
             _simulatorUpdateTimer = null;
@@ -127,10 +127,10 @@ namespace PL.Volunteer
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                try 
+                try
                 {
                     // קבלת רשימת הקריאות הסגורות העדכנית
-                    var updatedClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList() 
+                    var updatedClosedCalls = s_bl.Call.GetVolunteerClosedCalls(_volunteerId, null, null)?.ToList()
                                              ?? new List<BO.ClosedCallInList>();
 
                     // עדכון הרשימה רק אם יש שינוי

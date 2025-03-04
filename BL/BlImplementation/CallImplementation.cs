@@ -6,8 +6,9 @@ using Helpers;
 using BL.Helpers;
 using static BO.Enums;
 using static BO.Exceptions;
+using DalApi;
 
-internal class CallImplementation : ICall
+internal class CallImplementation : BlApi.ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
@@ -25,7 +26,7 @@ internal class CallImplementation : ICall
     public IEnumerable<int> CallsAmount()
     {
         // שליפת כל הקריאות
-        var allCalls = GetCallList(null, null, null);
+        var allCalls = GetCallList(null, null, null,null);
 
         // קיבוץ וספירה לפי סטטוס, תוך שימוש בערך המספרי של ה-Enum
         var grouped = allCalls
@@ -59,236 +60,74 @@ internal class CallImplementation : ICall
     }
 
 
-    public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort)
+    public IEnumerable<BO.CallInList> GetCallList(BO.Enums.CallFieldEnum? filter, object? toFilter, BO.Enums.CallFieldEnum? toSort, BO.Enums.CalltStatusEnum? toSort2)
     {
-        lock (AdminManager.BlMutex) // 🔒 הוספת נעילה לקריאות מה-DAL
-        {
-            var listCall = _dal.call.ReadAll();
-            var listAssignment = _dal.assignment.ReadAll();
-
-            var callInList = from item in listCall
-                             let assignments = listAssignment.Where(s => s.CallId == item.Id).OrderByDescending(s => s.AppointmentTime).ToList()
-                             let assignment = assignments.FirstOrDefault()
-                             let volunteer = assignment != null ? _dal.Volunteer.Read(assignment.VolunteerId) : null
-                             let TempTimeToEnd = item.MaxTime - AdminManager.Now
-                             select new BO.CallInList
-                             {
-                                 Id = assignment?.Id,
-                                 CallId = item.Id,
-                                 CallType = (BO.Enums.CallTypeEnum)item.CallType,
-                                 OpenTime = item.OpenTime,
-                                 SumTimeUntilFinish = item.MaxTime > AdminManager.Now
-                                     ? item.MaxTime - AdminManager.Now
-                                     : null,
-                                 LastVolunteerName = volunteer?.FullName,
-                                 SumAppointmentTime = assignment != null && assignment.FinishAppointmentTime.HasValue
-                                     ? assignment.FinishAppointmentTime.Value - item.OpenTime
-                                     : null,
-                                 Status = Tools.callStatus(item.Id),
-                                 SumAssignment = assignments.Count(s => s.CallId == item.Id)
-                             };
-
-            if (filter.HasValue && toFilter != null)
-            {
-                callInList = callInList.Where(call =>
-                {
-                    return filter switch
-                    {
-                        BO.Enums.CallFieldEnum.ID => call.Id?.Equals(toFilter) == true,
-                        BO.Enums.CallFieldEnum.CallId => call.CallId.Equals(toFilter),
-                        BO.Enums.CallFieldEnum.OpenTime => call.OpenTime.Equals(toFilter),
-                        BO.Enums.CallFieldEnum.SumTimeUntilFinish => call.SumTimeUntilFinish?.Equals(toFilter) == true,
-                        BO.Enums.CallFieldEnum.LastVolunteerName => call.LastVolunteerName?.Equals(toFilter) == true,
-                        BO.Enums.CallFieldEnum.SumAppointmentTime => call.SumAppointmentTime?.Equals(toFilter) == true,
-                        BO.Enums.CallFieldEnum.Status => call.Status.Equals(toFilter),
-                        BO.Enums.CallFieldEnum.SumAssignment => call.SumAssignment.Equals(toFilter),
-                        _ => true
-                    };
-                });
-            }
-
-            if (toSort.HasValue)
-            {
-                callInList = toSort switch
-                {
-                    BO.Enums.CallFieldEnum.ID => callInList.OrderBy(call => call.Id),
-                    BO.Enums.CallFieldEnum.CallId => callInList.OrderBy(call => call.CallId),
-                    BO.Enums.CallFieldEnum.OpenTime => callInList.OrderBy(call => call.OpenTime),
-                    BO.Enums.CallFieldEnum.SumTimeUntilFinish => callInList.OrderBy(call => call.SumTimeUntilFinish),
-                    BO.Enums.CallFieldEnum.LastVolunteerName => callInList.OrderBy(call => call.LastVolunteerName),
-                    BO.Enums.CallFieldEnum.SumAppointmentTime => callInList.OrderBy(call => call.SumAppointmentTime),
-                    BO.Enums.CallFieldEnum.Status => callInList.OrderBy(call => call.Status),
-                    BO.Enums.CallFieldEnum.SumAssignment => callInList.OrderBy(call => call.SumAssignment),
-                    _ => callInList
-                };
-            }
-            else
-            {
-                callInList = callInList.OrderBy(call => call.CallId);
-            }
-
-            return callInList.ToList();
-        }
+        return CallManager.GetCallList(filter, toFilter, toSort,toSort2);
     }
 
 
     public BO.Call readCallData(int ID)
     {
-        lock (AdminManager.BlMutex) // 🔒 נעילה למניעת קריאות מקבילות
-        {
-            var doCall = _dal.call.Read(ID) ??
-                throw new BO.Exceptions.BlDoesNotExistException($"Call with ID={ID} does Not exist");
-
-            IEnumerable<DO.Assignment> assignments = _dal.assignment.ReadAll();
-            IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll();
-
-            List<BO.CallAssignInList> myAssignments = assignments
-                .Where(a => a.CallId == ID)
-                .Select(a => new BO.CallAssignInList
-                {
-                    RealFinishTime = a.FinishAppointmentTime,
-                    FinishAppointmentType = a.FinishAppointmentType == null ? null : (BO.Enums.FinishAppointmentTypeEnum)a.FinishAppointmentType,
-                    StartAppointment = a.AppointmentTime,
-                    VolunteerId = a.VolunteerId,
-                    VolunteerName = volunteers.FirstOrDefault(v => v.Id == a.VolunteerId)?.FullName ?? "Unknown"
-                }).ToList();
-
-            return new BO.Call
-            {
-                Id = ID,
-                CallType = doCall.CallType switch
-                {
-                    DO.CallType.PreparingFood => BO.Enums.CallTypeEnum.PreparingFood,
-                    DO.CallType.TransportingFood => BO.Enums.CallTypeEnum.TransportingFood,
-                    DO.CallType.FixingEquipment => BO.Enums.CallTypeEnum.FixingEquipment,
-                    DO.CallType.ProvidingShelter => BO.Enums.CallTypeEnum.ProvidingShelter,
-                    DO.CallType.TransportAssistance => BO.Enums.CallTypeEnum.TransportAssistance,
-                    DO.CallType.MedicalAssistance => BO.Enums.CallTypeEnum.MedicalAssistance,
-                    DO.CallType.EmotionalSupport => BO.Enums.CallTypeEnum.EmotionalSupport,
-                    DO.CallType.PackingSupplies => BO.Enums.CallTypeEnum.PackingSupplies,
-                    _ => throw new FormatException("Unknown Call Type!")
-                },
-                Address = doCall.Adress,
-                OpenTime = doCall.OpenTime,
-                Latitude = doCall.Latitude,
-                Longitude = doCall.Longitude,
-                VerbDesc = doCall.VerbDesc,
-                MaxFinishTime = doCall.MaxTime,
-                CallStatus = Tools.callStatus(ID),
-                CallAssignInLists = myAssignments
-            };
-        }
+        return CallManager.readCallData(ID);
     }
 
     public void UpdateCallDetails(BO.Call callDetails)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
-
-        try
-        {
-            // שלב 1: בדיקת תקינות הערכים (פורמט ולוגיקה)
-            CallManager.CheckCallFormat(callDetails);
-            CallManager.checkCallLogic(callDetails);
-
-            lock (AdminManager.BlMutex) // stage 7
-            {
-                // שלב 2: בקשת רשומת הקריאה משכבת הנתונים
-                var existingCall = _dal.call.Read(v => v.Id == callDetails.Id)
-                    ?? throw new DalDoesNotExistException($"Call with ID {callDetails.Id} not found.");
-
-                // שלב 4: המרת אובייקט BO.Call ל-DO.Call
-                DO.Call newCall = new()
-                {
-                    Id = callDetails.Id,
-                    OpenTime = callDetails.OpenTime,
-                    MaxTime = callDetails.MaxFinishTime,
-                    Longitude = (double)callDetails.Longitude,
-                    Latitude = (double)callDetails.Latitude,
-                    Adress = callDetails.Address,
-                    CallType = (DO.CallType)callDetails.CallType,
-                    VerbDesc = callDetails.VerbDesc,
-                };
-
-                // שלב 5: עדכון הרשומה בשכבת הנתונים
-                _dal.call.Update(newCall);
-            }
-
-            CallManager.Observers.NotifyItemUpdated(callDetails.Id);  // stage 5
-            CallManager.Observers.NotifyListUpdated();  // stage 5
-        }
-        catch (DO.DalDoesNotExistException ex)
-        {
-            throw new CannotUpdateCallException($"Error updating call details for ID: {callDetails.Id}.", ex);
-        }
-        catch (InvalidCallFormatException ex)
-        {
-            throw new CannotUpdateCallException("Invalid call details provided.", ex);
-        }
+        CallManager.UpdateCallDetails(callDetails);
     }
     public void DeleteCall(int callId)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();  // stage 7
-        try
-        {
-            // הגדרת המשתנים מחוץ לבלוק הנעילה
-            BO.Call c = null;
-            DO.Assignment assignment = null;
-
-            // שלב 1: בקשת הקריאה משכבת הנתונים עם נעילה
-            lock (AdminManager.BlMutex)  // stage 7
-            {
-                var existingCall = _dal.call.Read(v => v.Id == callId)
-                    ?? throw new DalDoesNotExistException("Call not found.");
-
-                c = readCallData(existingCall.Id);  // שמירה במשתנה מחוץ לבלוק
-                assignment = _dal.assignment.Read(a => a.CallId == callId);  // שמירה במשתנה מחוץ לבלוק
-            }
-
-            // שלב 2: בדיקת סטטוס הקריאה והתאמת התנאים למחיקה
-            Console.WriteLine($"Call status: {c.CallStatus}");  // הדפסת סטטוס לקריאה
-            if (c.CallStatus != Enums.CalltStatusEnum.OPEN && c.CallStatus != Enums.CalltStatusEnum.CallAlmostOver)
-            {
-                throw new BLDeletionImpossible("Only open calls can be deleted.");
-            }
-
-            // שלב 3: בדיקה אם הקריאה הוקצתה למתנדב
-            if (assignment?.VolunteerId != null)
-            {
-                Console.WriteLine($"Assignment VolunteerId: {assignment.VolunteerId}");  // הדפסת מזהה המתנדב אם קיים
-                throw new BLDeletionImpossible("Cannot delete call as it has been assigned to a volunteer.");
-            }
-
-            // שלב 4: ניסיון מחיקת הקריאה משכבת הנתונים עם נעילה
-            lock (AdminManager.BlMutex)  // stage 7
-            {
-                Console.WriteLine($"Attempting to delete call with ID {callId}");
-                _dal.call.Delete(callId);
-                CallManager.Observers.NotifyItemUpdated(callId);  // stage 5
-                CallManager.Observers.NotifyListUpdated();  // stage 5
-            }
-        }
-        catch (DO.DalDeletionImpossible ex)
-        {
-            // שלב 5: אם יש בעיה במחיקה בשכבת הנתונים, זריקת חריגה מתאימה לכיוון שכבת התצוגה
-            Console.WriteLine($"Error deleting call from DAL: {ex.Message}");
-            throw new ArgumentException("Error deleting call from data layer.", ex);
-        }
-        catch (Exception ex)
-        {
-            // שלב 6: טיפול בחריגות וזריקתן מחדש עם מידע ברור לשכבת התצוגה
-            Console.WriteLine($"Error processing delete call request for call ID {callId}: {ex.Message}");
-            throw new ArgumentException($"Error processing delete call request for call ID {callId}.", ex);
-        }
+        CallManager.DeleteCall(callId);
     }
 
 
 
     public void AddCallAsync(BO.Call call)
     {
-       CallManager.AddCallAsync(call);
+        CallManager.AddCallAsync(call);
     }
 
-   
+    // מתודה אסינכרונית שתעדכן את הקואורדינטות לאחר קבלתן מהרשת
+    public async Task UpdateCallWithCoordinatesAsync(DO.Call oldCall)
+    {
+        try
+        {
+            Console.WriteLine($"Fetching coordinates for call ID: {oldCall.Id}");
+
+            double[] coordinates = await Tools.GetGeolocationCoordinatesAsync(oldCall.Adress);
+            Console.WriteLine($"Coordinates retrieved: Lat={coordinates[0]}, Lon={coordinates[1]}");
+
+            // יצירת אובייקט חדש עם הערכים הישנים + הקואורדינטות החדשות
+            DO.Call updatedCall = new()
+            {
+                Id = oldCall.Id,
+                OpenTime = oldCall.OpenTime,
+                MaxTime = oldCall.MaxTime,
+                Longitude = coordinates[1],
+                Latitude = coordinates[0],
+                Adress = oldCall.Adress,
+                CallType = oldCall.CallType,
+                VerbDesc = oldCall.VerbDesc
+            };
+
+            // עדכון ה-DAL עם האובייקט החדש
+            lock (AdminManager.BlMutex)
+            {
+
+                _dal.call.Update(updatedCall);
+                Console.WriteLine($"Call updated in DAL with coordinates: {updatedCall.Id}");
+            }
+
+            CallManager.Observers.NotifyItemUpdated(updatedCall.Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in UpdateCallWithCoordinatesAsync: {ex.GetType().Name} - {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+        }
+    }
+
+    // מתודה אסינכרונית שתעדכן את הקואורדינטות לאחר קבלתן מהרשת
 
     public IEnumerable<BO.ClosedCallInList> GetVolunteerClosedCalls(int volunteerId, BO.Enums.CallTypeEnum? filter, BO.Enums.ClosedCallFieldEnum? toSort)
     {
@@ -348,9 +187,9 @@ internal class CallImplementation : ICall
     }
 
     public async Task<IEnumerable<BO.OpenCallInList>> GetOpenCallInListsAsync(
-       int volunteerId,
-     BO.Enums.CallTypeEnum? filter = null,
-     BO.Enums.OpenCallEnum? toSort = null)
+    int volunteerId,
+    BO.Enums.CallTypeEnum? filter = null,
+    BO.Enums.OpenCallEnum? toSort = null)
     {
         IEnumerable<DO.Call> listCall;
         IEnumerable<DO.Assignment> listAssignment;
@@ -405,109 +244,48 @@ internal class CallImplementation : ICall
         var openCallsList = openCalls.ToList();
 
         // חישוב המרחקים מחוץ לבלוק הנעילה
-        await UpdateCallDistancesAsync(openCallsList, volunteerAddress);
+        await UpdateCallDistancesAsync(openCallsList, volunteer);
+
+        // **סינון הקריאות לפי MaxDistance**
+        openCallsList = openCallsList
+            .Where(call => call.DistanceOfCall <= volunteer.MaxDistance)
+            .ToList();
 
         return openCallsList;
     }
 
-// מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
-private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, string volunteerAddress)
-{
-    try
+    // מתודה אסינכרונית לחישוב המרחק ועדכון הישות ב-DAL
+    private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, DO.Volunteer volunteer)
     {
-        double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
+        try
+        {
+            double[] volunteerLocation = await Tools.GetGeolocationCoordinatesAsync(volunteer.Location);
 
             if (volunteerLocation == null || volunteerLocation.Length != 2)
                 throw new Exception("Invalid location data received for the volunteer.");
 
             foreach (var openCall in openCalls)
             {
-                // קריאת הישות המקורית מסוג DO.Call לפי המזהה
                 var doCall = _dal.call.Read(c => c.Id == openCall.Id);
                 if (doCall != null)
                 {
-                    // שימוש בשדות Latitude ו-Longitude של ה-DO.Call לחישוב המרחק
                     openCall.DistanceOfCall = Tools.CalculateDistance(
-                    volunteerLocation[0], volunteerLocation[1],
-                    (double)doCall.Latitude, (double)doCall.Longitude);
-
-                    // עדכון הישות ב-DAL
-                    _dal.call.Update(doCall);
+                        volunteerLocation[0], volunteerLocation[1],
+                        (double)doCall.Latitude, (double)doCall.Longitude);
                 }
             }
         }
         catch (Exception ex)
         {
-            // ניתן להוסיף לוג מתאים כאן
             Console.WriteLine($"Failed to update call distances: {ex.Message}");
         }
     }
 
 
 
-    //public async<BO.Call> CalculateDistanceAndAssignVolunteer(int callId, int volunteerId)
-    //{
-    //    lock (AdminManager.BlMutex)
-    //    {
-    //        var call = _dal.call.Read(callId);
-    //        var volunteer = _dal.Volunteer.Read(volunteerId);
-
-    //        if (call == null || volunteer == null)
-    //            throw new BlDoesNotExistException("Call or Volunteer not found");
-
-    //        string volunteerAddress = volunteer.Location;
-    //        string callAddress = call.Adress;
-
-    //        // הוספת await כאן
-    //        double[] volunteerLocation =Tools.GetGeolocationCoordinatesAsync(volunteerAddress);
-    //        double[] callLocation = Tools.GetGeolocationCoordinatesAsync(callAddress);
-
-    //        // ... (שאר הקוד)
-    //    }
-    //}
-
     public void UpdateCallAsCompleted(int volunteerId, int AssignmentId)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
-        try
-        {
-            // Locking the block to ensure thread safety for DAL operations
-            lock (AdminManager.BlMutex)  //stage 7
-            {
-                // Retrieve the assignment by ID
-                var assignment = _dal.assignment.Read(AssignmentId);
-
-                if (assignment == null)
-                    throw new InvalidOperationException($"Assignment with id={AssignmentId} does not exist.");
-
-                BO.Call call = readCallData(assignment.CallId);
-
-                // Check if the volunteer is not the one assigned to this assignment
-                if (assignment.VolunteerId != volunteerId)
-                    throw new InvalidOperationException($"Volunteer with id={volunteerId} can't change this assignment to end.");
-
-                // Check if the assignment has already ended
-                if (assignment.FinishAppointmentTime.HasValue)
-                    throw new InvalidOperationException("This assignment already ended.");
-
-                // Create a new assignment object with updated end time and end type
-                DO.Assignment newAssign = assignment with { FinishAppointmentTime = AdminManager.Now, FinishAppointmentType = DO.FinishAppointmentType.WasTreated };
-
-                // Attempt to update the assignment in the database
-                _dal.assignment.Update(newAssign);
-
-                // Notify observers within the lock to ensure thread safety
-                CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //update current call and observers etc.
-                CallManager.Observers.NotifyListUpdated();  //update list of calls and observers etc.
-                VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //update current volunteer and observers etc.
-                VolunteerManager.Observers.NotifyListUpdated();
-            }
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions
-            throw new InvalidOperationException($"Error updating call as completed: {ex.Message}", ex);
-        }
+        CallManager.UpdateCallAsCompleted(volunteerId, AssignmentId);
     }
 
 
@@ -518,45 +296,8 @@ private async Task UpdateCallDistancesAsync(List<BO.OpenCallInList> openCalls, s
     }
 
 
-    public  void AssignCallToVolunteer(int volunteerId, int callId)
-    {
-        try
-        {
-            // שליפת פרטי הקריאה
-            BO.Call call = readCallData(callId);
-
-            if (call == null)
-                throw new InvalidOperationException("Call not found.");
-
-            // בדיקת אם הקריאה לא טופלה ולא פג תוקפה
-            if (call.CallStatus != BO.Enums.CalltStatusEnum.OPEN && call.CallStatus != BO.Enums.CalltStatusEnum.CallAlmostOver)
-                throw new InvalidOperationException("Call has already been treated or expired.");
-
-            // בדיקת אם קיימת הקצאה פתוחה על הקריאה
-            var existingAssignments = _dal.assignment.Read(a => a.CallId == callId && a.FinishAppointmentTime == null);
-            if (existingAssignments != null)
-                throw new InvalidOperationException("Call is already assigned to a volunteer.");
-
-            // יצירת הקצאה חדשה
-            DO.Assignment newAssignment = new DO.Assignment
-            {
-                Id = 0,
-                VolunteerId = volunteerId,
-                CallId = callId,
-                AppointmentTime = DateTime.Now, // זמן כניסה לטיפול
-                FinishAppointmentTime = null,  // עדיין לא מעודכן
-                FinishAppointmentType = null   // עדיין לא מעודכן
-            };
-
-            // עטיפת פנייה ל DAL בבלוק נעילה
-            lock (AdminManager.BlMutex)
-            {
-                // ניסיון הוספה לשכבת הנתונים
-                _dal.assignment.Create(newAssignment);
-            }
-
     public void AssignCallToVolunteer(int volunteerId, int callId)
     {
-        CallManager.AssignCallToVolunteer(volunteerId , callId);
+        CallManager.AssignCallToVolunteer(volunteerId, callId);
     }
 }

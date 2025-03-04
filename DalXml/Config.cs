@@ -67,7 +67,7 @@ public static class Config
             NextCallId = 1000; // קריאות מתחילות מ-1000
             NextAssignmentId = 1; // הקצאות מתחילות מ-1
             Clock = DateTime.Now;
-            RiskRange = TimeSpan.Zero;
+            RiskRange = TimeSpan.FromHours(5); // Reset the risk range to zer
         }
         catch (Exception ex)
         {

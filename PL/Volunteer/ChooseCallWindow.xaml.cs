@@ -78,13 +78,21 @@ namespace PL.Volunteer
 
             CurrentVolunteer = volunteer;
 
+            // התחברות לאירועים של סיום וביטול קריאה מ- MainVolunteerWindow
+            var mainVolunteerWindow = Application.Current.Windows.OfType<MainVolunteerWindow>().FirstOrDefault();
+            if (mainVolunteerWindow != null)
+            {
+                mainVolunteerWindow.CallCompleted += (s, e) => LoadCalls(); // טוען קריאות מחדש
+                mainVolunteerWindow.CallCancelled += (s, e) => LoadCalls(); // טוען קריאות מחדש
+            }
+
             textrr.SetBinding(TextBox.TextProperty, new Binding("CurrentVolunteer.Location")
             {
                 Mode = BindingMode.TwoWay,
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
             });
 
-            LoadCalls();
+            LoadCalls(); // טוען את הקריאות הראשוניות
         }
 
         private async void LoadCalls()

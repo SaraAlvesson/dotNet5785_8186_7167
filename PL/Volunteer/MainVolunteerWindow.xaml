@@ -43,7 +43,7 @@
             <!-- Full Name -->
             <Label Grid.Row="1" Grid.Column="0" Margin="5" Content="Full Name:" VerticalAlignment="Center" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5,5,345,5"
-                     Text="{Binding CurrentVolunteer.FullName, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Background="#E5F5FF" TextChanged="TextBox_TextChanged"/>
+                     Text="{Binding CurrentVolunteer.FullName, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Background="#E5F5FF" />
 
             <!-- Email -->
             <Label Grid.Row="3" Grid.Column="0" Margin="5" Content="Email:" VerticalAlignment="Center" />
@@ -178,8 +178,8 @@
 
             <!-- Buttons for Choose Call and Historic Calls -->
             <Button Grid.Row="3" Grid.Column="1" Margin="340,1,0,31" Width="120" Height="40" Content="History" Click="ButtonHistory_Click" Background="#40E0D0" Foreground="White" HorizontalAlignment="Left" Grid.RowSpan="2"/>
-            <Button Grid.Row="5" Grid.Column="1" Margin="340,24,0,8" Width="120" Height="40" Content="Update" Click="ButtonUpdate_Click" Background="#40E0D0" Foreground="White" HorizontalAlignment="Left" Grid.RowSpan="2"/>
-            <Button Grid.Row="8" Grid.Column="1" Margin="340,16,0,0" Width="120" Content="Choose Call" Click="ButtonChosenCall_Click" Background="#40E0D0" Foreground="White" HorizontalAlignment="Left" Grid.RowSpan="2" Height="40" VerticalAlignment="Top"/>
+            <Button Grid.Row="5" Grid.Column="1" Margin="340,24,0,0" Width="120" Height="40" Content="Update" Click="ButtonUpdate_Click" Background="#40E0D0" Foreground="White" HorizontalAlignment="Left" Grid.RowSpan="2" VerticalAlignment="Top"/>
+            <Button Grid.Row="8" Grid.Column="1" Margin="340,16,0,16" Width="120" Content="Choose Call" Click="ButtonChosenCall_Click" Background="#40E0D0" Foreground="White" HorizontalAlignment="Left" Grid.RowSpan="2"/>
 
         </Grid>
     </ScrollViewer>

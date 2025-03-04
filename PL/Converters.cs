@@ -5,6 +5,7 @@ using System.Windows;
 using static BO.Enums;
 using System.Windows.Media;
 using BO;
+using System.Text.RegularExpressions;
 namespace PL;
 public class ConvertUpdateToReadOnly : IValueConverter
 {
@@ -20,22 +21,22 @@ public class ConvertUpdateToReadOnly : IValueConverter
     }
 }
 
-    public class BoolToVisibilityConverter : IValueConverter
+public class BoolToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        if (value is bool boolValue)
         {
-            if (value is bool boolValue)
-            {
-                return boolValue ? Visibility.Visible : Visibility.Collapsed;
-            }
-            return Visibility.Collapsed;
+            return boolValue ? Visibility.Visible : Visibility.Collapsed;
         }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        return Visibility.Collapsed;
     }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
 
 
 //if there is no current call, the currentCall details will not be displayed
@@ -191,23 +192,7 @@ public class EnumToColorConverter : IValueConverter
     }
 }
 
-public class TimeSpanToFormattedStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is TimeSpan timeSpan)
-        {
-            int totalHours = (int)Math.Floor(timeSpan.TotalHours);
-            return $"{totalHours:00}:{timeSpan.Minutes:00}:{timeSpan.Seconds:00}";
-        }
-        return string.Empty;
-    }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
 
 public class AppointmentTimeVisibilityConverter : IValueConverter
 {
@@ -259,7 +244,24 @@ public class CanDeleteVolunteerConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
-public class TimeSpanToCustomFormatConverter : IValueConverter
+public class TimeSpanToFormattedStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is TimeSpan timeSpan)
+        {
+            int totalHours = (int)Math.Floor(timeSpan.TotalHours);
+            return $"{totalHours:00}:{timeSpan.Minutes:00}:{timeSpan.Seconds:00}";
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+public class TimeSpanToCustomFormatConverter2 : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -287,4 +289,43 @@ public class TimeSpanToCustomFormatConverter : IValueConverter
     }
 }
 
+public class TimeSpanToCustomFormatConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is TimeSpan timeSpan)
+        {
+            int hours = timeSpan.Hours + timeSpan.Days * 24; // מחשבים את השעות הכוללות כולל ימים
+            int minutes = timeSpan.Minutes;
+            int seconds = timeSpan.Seconds;
+
+            return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string timeString)
+        {
+            try
+            {
+                var timeParts = timeString.Split(':');
+                if (timeParts.Length == 3)
+                {
+                    int hours = int.Parse(timeParts[0]);
+                    int minutes = int.Parse(timeParts[1]);
+                    int seconds = int.Parse(timeParts[2]);
+
+                    return new TimeSpan(0, hours, minutes, seconds);  // אין צורך לנתח ימים, רק שעות, דקות ושניות
+                }
+            }
+            catch
+            {
+                return TimeSpan.Zero;  // במקרה של שגיאה, מחזירים TimeSpan אפס
+            }
+        }
+        return TimeSpan.Zero;
+    }
+}
 

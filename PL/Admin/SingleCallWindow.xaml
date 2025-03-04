@@ -137,7 +137,7 @@
         <!-- List Assignments -->
         <Label Content="List Assignments:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Top"/>
         <ListView ItemsSource="{Binding CurrentCall.CallAssignInLists}" IsEnabled="False" 
-                  Grid.Row="7" Grid.Column="1" 
+                  Grid.Row="7" Grid.Column="1" Margin="0,0,145,95" 
                   />
         <!-- Add/Update Button -->
 
@@ -148,10 +148,10 @@
         BorderBrush="#38B0A1"
         HorizontalAlignment="Left"
         IsEnabled="{Binding CanEdit}"        
-        Width="200"
-        Margin="250,267,0,0"
+        Width="185"
+        Margin="260,242,0,10"
         Click="ButtonAddUpdate_Click" 
-        Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+        Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>

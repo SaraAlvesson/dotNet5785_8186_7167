@@ -8,16 +8,29 @@ using BO;
 using DO;
 using static BO.Enums;
 using System.Windows.Threading;
+using System.Runtime.CompilerServices;
 
 namespace PL.Admin
 {
     public partial class SingleCallWindow : Window, INotifyPropertyChanged
     {
-       
+        private bool _isSimulatorRunning;
+
+        public bool IsSimulatorRunning
+        {
+            get { return _isSimulatorRunning; }
+            set
+            {
+                if (_isSimulatorRunning != value)
+                {
+                    _isSimulatorRunning = value;
+                    OnPropertyChanged(nameof(IsSimulatorRunning)); // זה יעדכן את ה-binding
+                }
+            }
+        }
         // דגלים למניעת עדכונים מרובים
         private CallFieldEnum _selectedCallField = CallFieldEnum.ID;
         private volatile bool isUpdating = false;
-
 
         public CallFieldEnum SelectedFilter
         {
@@ -34,18 +47,6 @@ namespace PL.Admin
                     UpdateCallList();
                 }
             }
-        }
-
-        public bool IsEditable
-        {
-            get => CurrentCall!=null&& (CurrentCall?.CallStatus == CalltStatusEnum.OPEN ||
-                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver);
-        }
-
-        public bool CanEdit 
-        { 
-            get=>CurrentCall!=null && (CurrentCall?.CallStatus == CalltStatusEnum.OPEN ||
-                   CurrentCall?.CallStatus == CalltStatusEnum.CallAlmostOver|| CurrentCall?.CallStatus==CalltStatusEnum.CallIsBeingTreated || CurrentCall?.CallStatus==CalltStatusEnum.CallTreatmentAlmostOver);
         }
 
         public bool IsEditable
@@ -78,24 +79,54 @@ namespace PL.Admin
                 OnPropertyChanged(nameof(CanEdit));
             }
         }
-
-
-
-
-        public bool CanEditMaxFinishTime
+        private DateTime? _maxFinishTime; // שדה שנשמר את הזמן המקסימ
+        public DateTime? MaxFinishTime
         {
-            get
+            get => _maxFinishTime;
+            set
             {
-                if (CurrentCall == null)
-                    return false;
+                if (_maxFinishTime != value)
+                {
+                    _maxFinishTime = value;
+                    OnPropertyChanged(nameof(MaxFinishTime)); // עדכון ה-UI
 
-                return CurrentCall.CallStatus == CalltStatusEnum.CallIsBeingTreated ||
-                       CurrentCall.CallStatus == CalltStatusEnum.CallTreatmentAlmostOver|| CurrentCall.CallStatus == CalltStatusEnum.OPEN|| CurrentCall.CallStatus == CalltStatusEnum.CallAlmostOver;
+                    // עדכון הסטטוס של הקריאה בהתאם לזמן המקסימלי
+                    try
+                    {
+                        // עדכון הקריאה מחדש לאחר שינוי זמן הסיום המקסימלי
+                        CurrentCall = s_bl.Call.readCallData(CurrentCall.Id); // קריאה מחדש לשרת
+                        OnPropertyChanged(nameof(CurrentCall)); // עדכון ה-UI על כל האובייקט
+
+                        // עדכון שדות UI אם יש צורך
+                        LoadCurrentCallDetails();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error updating call status: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
 
+        public int SelectedHour { get; set; } = 0;  // משתנה לשעה שנבחרה
+        public int SelectedMinute { get; set; } = 0; // משתנה לדקה שנבחרה
 
+        private void OnSetMaxFinishTimeClick(object sender, RoutedEventArgs e)
+        {
+            // תאריך שנבחר ב-DatePicker
+            DateTime? selectedDate = CurrentCall.MaxFinishTime; // נניח שמדובר בתאריך מ-Binding
 
+            if (selectedDate.HasValue)
+            {
+                // הוספת שעה ודקה לתאריך
+                DateTime finalDateTime = selectedDate.Value
+                                          .AddHours(SelectedHour)
+                                          .AddMinutes(SelectedMinute);
+
+                // עדכון ה-MaxFinishTime עם הזמן החדש
+                CurrentCall.MaxFinishTime = finalDateTime;
+            }
+        }
 
         public bool CanEditMaxFinishTime
         {
@@ -174,10 +205,6 @@ namespace PL.Admin
             }
         }
 
-
-
-
-
         private void LoadCurrentCallDetails()
         {
             if (CurrentCall?.Id > 0) // רק אם יש קריאה קיימת
@@ -201,16 +228,49 @@ namespace PL.Admin
             }
         }
 
-
-      
-
         // Notify UI of property changes
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-       
+        private void ButtonAddUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+
+                // עדכון הסטטוס למקסימום זמן סיום
+                if (ButtonText == "Add")
+                {
+                    s_bl.Call.AddCallAsync(CurrentCall); // הוספת קריאה חדשה
+                    MessageBox.Show("Call added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
+                }
+                else if (ButtonText == "Update")
+                {
+                    s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
+                    MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
+                }
+
+                // לאחר עדכון, נוודא שהסטטוס יתעדכן ושלא יתבצע עדכון נוסף
+                UpdateCallList();
+            }
+            catch (InvalidCallLogicException ex)
+            {
+                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (InvalidCallFormatException ex)
+            {
+                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void UpdateCallList()
         {
             if (CurrentCall?.Id > 0) // רק אם יש קריאה קיימת
@@ -235,6 +295,7 @@ namespace PL.Admin
             get { return (IEnumerable<BO.CallInList>)GetValue(callInListFieldListProperty); }
             set { SetValue(callInListFieldListProperty, value); }
         }
+
         public static readonly DependencyProperty callInListFieldListProperty =
            DependencyProperty.Register(
                "CallInList",
@@ -242,51 +303,17 @@ namespace PL.Admin
                typeof(SingleCallWindow),
                new PropertyMetadata(null));
 
-        private IEnumerable<BO.CallInList> queryCallList()
-        {
-            IEnumerable<BO.CallInList> calls;
-
-            switch (SelectedFilter)
-            {
-                case CallFieldEnum.ID:
-                    calls = s_bl.Call.GetCallList(CallFieldEnum.ID, null).OrderBy(v => v.Id);
-                    break;
-                case CallFieldEnum.CallId:
-                    calls = s_bl.Call.GetCallList(CallFieldEnum.CallId, null).OrderBy(v => v.CallId);
-                    break;
-                case CallFieldEnum.Status:
-                    calls = s_bl.Call.GetCallList(CallFieldEnum.Status, null).OrderBy(v => v.Status);
-                    break;
-                case CallFieldEnum.LastVolunteerName:
-                    calls = s_bl.Call.GetCallList(null, CallFieldEnum.LastVolunteerName).OrderBy(v => v.LastVolunteerName);
-                    break;
-                case CallFieldEnum.OpenTime:
-                    calls = s_bl.Call.GetCallList(CallFieldEnum.OpenTime, null).OrderBy(v => v.OpenTime);
-                    break;
-                case CallFieldEnum.SumAssignment:
-                    calls = s_bl.Call.GetCallList(CallFieldEnum.SumAssignment, null).OrderBy(v => v.SumAssignment);
-                    break;
-                default:
-                    calls = s_bl.Call.GetCallList(null, null);
-                    break;
-            }
-
-            return calls;
-        }
-
-        // Automatically refresh list of assignments whenever current call is updated
+        // Observer update call list and close window after status update
         private void CallListObserver()
         {
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                // אם יש עדכון שממתין, לא נבצע עדכון נוסף
                 if (isUpdating)
                     return;
 
                 isUpdating = true;
                 try
                 {
-                    // הוספתי קריאה ל-Dispatcher.Invoke לעדכון סטטוס בצורה בטוחה
                     UpdateCallList();
                 }
                 finally
@@ -306,99 +333,9 @@ namespace PL.Admin
             s_bl?.Call.RemoveObserver(CallListObserver);
         }
 
-        private void UpdateCallStatusBasedOnFinishTime()
+        private void MaxFinishHourComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (CurrentCall != null)
-            {
-                // Check if the finish time is in the past
-                if (CurrentCall.MaxFinishTime <= DateTime.Now)
-                {
-                    CurrentCall.CallStatus = CalltStatusEnum.CLOSED; // Update to closed status
-                }
-                if (CurrentCall.MaxFinishTime <= DateTime.Now)
-                { }
-                else
-                {
-                    CurrentCall.CallStatus = CalltStatusEnum.OPEN; // Update to open status
-                }
-            }
-        }
 
-        private void ButtonAddUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (CurrentCall == null)
-                {
-                    MessageBox.Show("No call data available", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // בדיקות שדות חסרים או לא תקינים ב-CurrentCall
-                if (CurrentCall.CallType == null)
-                {
-                    MessageBox.Show("Call type is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(CurrentCall.Address))
-                {
-                    MessageBox.Show("Address is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (CurrentCall.OpenTime == null)
-                {
-                    MessageBox.Show("Open time is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (CurrentCall.MaxFinishTime == null)
-                {
-                    MessageBox.Show("Max finish time is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // אם כל השדות תקינים
-                if (ButtonText == "Add")
-                {
-                    // לוודא שלא מתבצע עדכון אם מדובר בהוספה
-                    s_bl.Call.AddCallAsync(CurrentCall); // הוספת קריאה חדשה
-                    MessageBox.Show("Call added successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Close();
-                }
-                else if (ButtonText == "Update")
-                {
-                    { 
-                        // כאן מטפלים רק בעדכון, לוודא לא קוראים לעדכון אם הכפתור לא מתכוון לעדכן
-                        //if (!IsEditable())
-                        //{
-                        //    MessageBox.Show("You cannot edit this call because it is either not open or currently in progress.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        //    return;
-                        //}
-
-                        s_bl.Call.UpdateCallDetails(CurrentCall); // עדכון קריאה קיימת
-                        UpdateCallStatusBasedOnFinishTime();
-                        MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        Close();
-                    }
-                }
-
-                UpdateCallList();
-
-            }
-            catch (InvalidCallLogicException ex)
-            {
-                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (InvalidCallFormatException ex)
-            {
-                MessageBox.Show($"Logic error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
     }
 }

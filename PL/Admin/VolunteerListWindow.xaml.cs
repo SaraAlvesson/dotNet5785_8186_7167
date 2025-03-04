@@ -21,8 +21,8 @@ namespace PL.Admin
         public IEnumerable<CallTypeEnum> CallTypeOptions => Enum.GetValues(typeof(CallTypeEnum)).Cast<CallTypeEnum>();
 
         private CallTypeEnum _selectedCallType;
-        private bool _isUpdating = false; 
-        private bool _isInitializing = false; 
+        private bool _isUpdating = false;
+        private bool _isInitializing = false;
 
         public CallTypeEnum SelectedCallType
         {
@@ -90,7 +90,7 @@ namespace PL.Admin
                 if (_volunteers != value)
                 {
                     _volunteers = value;
-                    OnPropertyChanged(nameof(Volunteers)); 
+                    OnPropertyChanged(nameof(Volunteers));
                 }
             }
         }
@@ -121,10 +121,10 @@ namespace PL.Admin
 
         private void ApplyFilters()
         {
-            if (_isUpdating) 
+            if (_isUpdating)
                 return;
 
-            _isUpdating = true; 
+            _isUpdating = true;
 
             // הגדרת סינון לפי קריאה וסוג הפעילות
             CallTypeEnum? callTypeFilter = SelectedCallType != CallTypeEnum.None ? SelectedCallType : (CallTypeEnum?)null;
@@ -174,7 +174,7 @@ namespace PL.Admin
                 }
                 finally
                 {
-                    _isUpdating = false; 
+                    _isUpdating = false;
                 }
             }), DispatcherPriority.Background);
         }
@@ -207,7 +207,7 @@ namespace PL.Admin
         {
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(5) 
+                Interval = TimeSpan.FromSeconds(5)
             };
             _timer.Tick += (s, e) => ObserveVolunteerListChanges();
             _timer.Start();
@@ -316,7 +316,7 @@ namespace PL.Admin
                 try
                 {
                     var singleVolunteerWindow = new SingleVolunteerWindow(selectedVolunteer.Id);
-                    singleVolunteerWindow.Owner = this; 
+                    singleVolunteerWindow.Owner = this;
                     singleVolunteerWindow.Show();
                 }
                 catch (Exception ex)
@@ -357,5 +357,5 @@ namespace PL.Admin
         }
 
         #endregion
-    }
+    }
 }

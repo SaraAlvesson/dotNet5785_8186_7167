@@ -66,7 +66,7 @@
                           SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
                           SelectedValue="None"
                           SelectionChanged="CallTypeFilter_SelectionChanged"
-                          ToolTip="Filter by Call Type" />
+                          ToolTip="Filter by Call Type" Width="180" />
             </StackPanel>
 
             <!-- Filter by Active/Inactive -->
@@ -76,7 +76,7 @@
                           ItemsSource="{Binding ActiveFilterOptions}"
                           SelectedItem="{Binding SelectedActiveFilter}"
                           SelectionChanged="IsActiveFilter_SelectionChanged"
-                          ToolTip="Filter by Active Status" />
+                          ToolTip="Filter by Active Status" Width="187" />
             </StackPanel>
 
             <!-- Sort by Field -->
@@ -86,7 +86,7 @@
                           ItemsSource="{Binding SortOptions}"
                           SelectedItem="{Binding SelectedSortOption}"
                           SelectionChanged="SortField_SelectionChanged"
-                          ToolTip="Sort By" />
+                          ToolTip="Sort By" Width="178" />
             </StackPanel>
         </Grid>
 
@@ -146,8 +146,8 @@
                 Content="Add New Volunteer"
                 Click="ButtonAdd_Click"
                 Style="{StaticResource CommonButtonStyle}"
-                HorizontalAlignment="Right"
-                Background="#4CAF50"
-                Foreground="White"/>
+                HorizontalAlignment="Left"
+                Background="#40E0D0"
+                Foreground="White" Margin="382,5,0,5"/>
     </Grid>
 </Window>

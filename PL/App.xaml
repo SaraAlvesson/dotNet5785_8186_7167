@@ -11,12 +11,14 @@
             <local:StatusTypeCollection x:Key="StatusTypeCollectionKey" />
             <local:CallStatusToVisibilityConverter x:Key="CallStatusToVisibilityConverter"/>
             <local:TimeSpanToCustomFormatConverter x:Key="TimeSpanToCustomFormatConverter"/>
+            <local:TimeSpanToCustomFormatConverter2 x:Key="TimeSpanToCustomFormatConverter2"/>
             <!-- ממיר להמרת ערך בוליאני לתוכן הכפתור -->
             <local:BooleanToStartStopButtonTextConverter x:Key="BooleanToStartStopButtonTextConverter"/>
-                <!-- ממיר להמרת ערך בוליאני לפקודה להפעיל או להפסיק -->
+            <!-- ממיר להמרת ערך בוליאני לפקודה להפעיל או להפסיק -->
             <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <local:EnumToColorConverter x:Key="EnumToColorConverter"/>
             <local:CanDeleteVolunteerConverter x:Key="CanDeleteVolunteerConverter"/>
+
             <!--<local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>-->
         </ResourceDictionary>
     </Application.Resources>

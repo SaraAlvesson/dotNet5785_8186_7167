@@ -44,7 +44,8 @@ public static class Initialization
     {
         string[] volunteerNames = { "Yosef Cohen", "Shmuel Levi", "Yaakov Goldstein", "Moshe Friedman", "Avraham Stein",
                                "Daniel Green", "David Weiss", "Yonatan Rubin", "Hanan Levy", "Eli Karp",
-                               "Uzi Sharoni", "Shimon Ben-David", "Matan Shalev", "Asher Tzukrel", "Oren Regev" };
+                               "Uzi Sharoni", "Shimon Ben-David", "Matan Shalev", "Asher Tzukrel", "Oren Regev",
+                               "Sara", "Nama", "Sari" };
 
         var addresses = new List<Tuple<string, double, double>>()
     {
@@ -63,46 +64,47 @@ new Tuple<string, double, double>("Rabin Square, Tel Aviv, Israel", 32.078570, 3
 new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
 new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 34.767122),
-
+new Tuple<string, double, double>("Dizengoff Square, Tel Aviv, Israel", 32.078323, 34.770340),
+new Tuple<string, double, double>("Dizengoff Square, Tel Aviv, Israel", 32.078323, 34.770340),
+new Tuple<string, double, double>("Dizengoff Square, Tel Aviv, Israel", 32.078323, 34.770340),
     };
 
         string GenerateRandomPassword()
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
             return new string(Enumerable.Range(0, 12)
-                .Select(_ => chars[s_rand.Next(chars.Length)])
-                .ToArray());
+                .Select(_ => chars[s_rand.Next(chars.Length)]).ToArray());
         }
 
-        // מנגנון יצירת IDs ייחודיים
-        var usedIds = new HashSet<int>();
+        var usedIds = new HashSet<int> { 328958186, 328177167, 123456789 };
         int GenerateUniqueId()
         {
             int id;
             do
             {
-                id = s_rand.Next(100000000, 999999999); // מספר בן 9 ספרות
+                id = s_rand.Next(100000000, 999999999);
             } while (usedIds.Contains(id));
             usedIds.Add(id);
             return id;
         }
 
+        string[] predefinedPasswords = { "sara2005", "nb2025*", "new123!" };
+        int[] predefinedIds = { 328958186, 328177167, 123456789 };
+        Position[] predefinedPositions = { Position.admin, Position.admin, Position.volunteer };
+
         for (int i = 0; i < volunteerNames.Length; i++)
         {
-            int id = GenerateUniqueId();
+            int id = (i >= volunteerNames.Length - 3) ? predefinedIds[i - (volunteerNames.Length - 3)] : GenerateUniqueId();
+            string password = (i >= volunteerNames.Length - 3) ? predefinedPasswords[i - (volunteerNames.Length - 3)] : GenerateRandomPassword();
+            Position position = (i >= volunteerNames.Length - 3) ? predefinedPositions[i - (volunteerNames.Length - 3)] : (i == 0 || i == 1) ? Position.admin : Position.volunteer;
 
-            // החלטת על סוג המרחק לפי MaxDistance
             DistanceType distanceType = DistanceType.AerialDistance;
             int maxDistance = s_rand.Next(5, 20);
 
             if (maxDistance < 5)
-            {
                 distanceType = DistanceType.WalkingDistance;
-            }
             else if (maxDistance >= 5 && maxDistance <= 15)
-            {
                 distanceType = DistanceType.DrivingDistance;
-            }
 
             try
             {
@@ -114,12 +116,12 @@ new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 3
                     Email = $"volunteer{i + 1}@gmail.com",
                     Location = addresses[i].Item1,
                     MaxDistance = maxDistance,
-                    Position = (i == 0 || i == 1) ? Position.admin : Position.volunteer,
+                    Position = position,
                     Latitude = addresses[i].Item2,
                     Longitude = addresses[i].Item3,
                     Active = s_rand.Next(0, 2) == 1,
                     DistanceType = distanceType,
-                    Password = GenerateRandomPassword(),
+                    Password = password,
                 });
 
                 Console.WriteLine($"Volunteer {i + 1} created successfully.");
@@ -130,6 +132,7 @@ new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 3
             }
         }
     }
+
 
 
     /// <summary>
@@ -420,4 +423,3 @@ new Tuple<string, double, double>("Gordon Beach, Tel Aviv, Israel", 32.071299, 3
 
 
 }
-

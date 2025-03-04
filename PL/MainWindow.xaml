@@ -101,9 +101,8 @@
                    FontSize="50" 
                    FontWeight="Bold" 
                    Foreground="#2C3E50" 
-                   HorizontalAlignment="Center" 
                    Height="84" 
-                   Width="366"/>
+                   Width="337"/>
             <Label Content="{Binding CurrentTime}" 
                    FontSize="24" 
                    FontWeight="Bold" 
@@ -116,6 +115,7 @@
             HorizontalAlignment="Center" 
             Grid.Row="1" 
             Margin="0,20,0,20">
+
 
             <Button Content="Add Minute" MinWidth="80" MinHeight="30" MaxWidth="120" MaxHeight="50" 
             Click="btnAddMin" Style="{StaticResource TimeButtonStyle}" Height="52" Width="113"
@@ -161,36 +161,72 @@
             <Button Grid.Row="0" Grid.Column="1" Content="Handle Calls" 
                     Click="btnHandleCalls" Style="{StaticResource VolunteerCallButtonStyle}" Margin="80,3,185,-16" Grid.RowSpan="3" />
             <Button Grid.Row="1" Content="{Binding IsSimulatorRunning, Converter={StaticResource BooleanToStartStopButtonTextConverter}}" 
-                    Click="StartStopSimulator" Style="{StaticResource TimeButtonStyle}" Margin="260,99,10,-111" Grid.RowSpan="2" />
+                    Click="StartStopSimulator" Style="{StaticResource TimeButtonStyle}" Margin="260,75,10,-87" Grid.RowSpan="2" />
 
             <TextBox x:Name="txtClockSpeed"
-               Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" Margin="35,110,255,-101" Grid.Row="2" Grid.Column="1" TextChanged="txtClockSpeed_TextChanged"/>
+               Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" Margin="35,85,255,-76" Grid.Row="2" Grid.Column="1" TextChanged="txtClockSpeed_TextChanged"/>
             <!-- כפתור אתחול מסד הנתונים -->
             <Button Grid.Row="2" Grid.Column="0" Content="Initialize DB" 
-        Click="btnInit" Style="{StaticResource RedButtonStyle}" Margin="45,195,260,-206"
+        Click="btnInit" Style="{StaticResource RedButtonStyle}" Margin="25,195,280,-206"
         IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
 
             <!-- כפתור איפוס מסד הנתונים -->
             <Button Grid.Row="2" Grid.Column="1" Content="Reset DB" 
-        Click="btnReset" Style="{StaticResource RedButtonStyle}" Margin="260,195,45,-206"
+        Click="btnReset" Style="{StaticResource RedButtonStyle}" Margin="280,195,25,-206"
         IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}"/>
             <Button Grid.Row="2" Grid.Column="0" Content="Risk Range" 
         Click="update_click" Style="{StaticResource RedButtonStyle}" FontSize="20" 
         Margin="260,250,10,-257" 
         IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" />
 
-            <TextBox Grid.Row="2" x:Name="textrr" 
-         Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" 
-         Background="#ECF0F1" 
-         BorderBrush="#E74C3C" 
-         Foreground="#2C3E50" 
-         Margin="30,265,260,-256" 
-         Grid.Column="1"
-         HorizontalAlignment="Stretch" VerticalAlignment="Top"
-         MinWidth="200" MinHeight="30"
-         IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBooleanConverter}}" />
+            <TextBox 
+    Grid.Row="2" 
+    x:Name="textrr" 
+    Text="{Binding RiskRange, Converter={StaticResource TimeSpanToCustomFormatConverter}, UpdateSourceTrigger=PropertyChanged}" 
+    Background="#ECF0F1" 
+    Foreground="#2C3E50" 
+    Margin="30,265,260,-256" 
+    Grid.Column="1"
+    HorizontalAlignment="Stretch" 
+    VerticalAlignment="Top"
+    MinWidth="200" 
+    MinHeight="30"
+    IsEnabled="{Binding IsSimulatorRunning,Converter={StaticResource InverseBooleanConverter}}" />
+
 
 
         </Grid>
+        <!-- כפתורים עם התוכן החדש בעיצוב המבוקש ובינדינג למספר הקריאות -->
+        <Button Content= "Open Calls:"  HorizontalAlignment="Left" Margin="200,161,0,0" Grid.Row="3" VerticalAlignment="Top" Width="100" 
+                Click="OnStatusClicked" Tag= "Open Calls:"  Background="#E6E6E6"/>
+
+
+        <Button Content= "In-Progress Calls:" HorizontalAlignment="Center" Margin="0,161,0,0" Grid.Row="3" VerticalAlignment="Top" Width="100" 
+                Click="OnStatusClicked" Tag= "In-Progress Calls:" Background="#E6E6E6"/>
+
+
+        <Button Content=  "Closed Calls:"  HorizontalAlignment="Left" Margin="550,116,0,0" Grid.Row="3" VerticalAlignment="Top" Width="100" 
+                Click="OnStatusClicked" Tag="Closed Calls:" Background="#E6E6E6"/>
+
+
+        <Button Content=  "Expired Calls:" HorizontalAlignment="Center" Margin="0,111,0,0" Grid.Row="3" VerticalAlignment="Top" Width="100"
+                Click="OnStatusClicked" Tag="Expired Calls:" Background="#E6E6E6"/>
+
+
+        <Button Content = "Risk Treatment:"  HorizontalAlignment="Left" Margin="200,116,0,0" Grid.Row="3" VerticalAlignment="Top" Width="100" 
+                Click="OnStatusClicked" Tag= "Risk Treatment:"  Background="#E6E6E6"/>
+
+
+        <Button Content= "Risk Open Calls:" HorizontalAlignment="Left" Margin="550,156,0,0" Grid.Row="3" VerticalAlignment="Top" Width="100" 
+                Click="OnStatusClicked" Tag= "Risk Open Calls:" Background="#E6E6E6"/>
+
+        <TextBlock Text="{Binding CallAmounts[2]}" HorizontalAlignment="Left" Margin="671,116,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Height="15" Width="29"/>
+        <TextBlock Text="{Binding CallAmounts[1]}" HorizontalAlignment="Left" Margin="491,111,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="39"/>
+        <TextBlock Text="{Binding CallAmounts[5]}" HorizontalAlignment="Left" Margin="310,116,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="35"/>
+        <TextBlock Text="{Binding CallAmounts[0]}" HorizontalAlignment="Left" Margin="310,156,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="34"/>
+        <TextBlock Text="{Binding CallAmounts[3]}" HorizontalAlignment="Left" Margin="495,161,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Height="16" Width="34"/>
+        <TextBlock Text="{Binding CallAmounts[4]}" HorizontalAlignment="Left" Margin="670,156,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="35"/>
     </Grid>
+
+
 </Window>
