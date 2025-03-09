@@ -88,7 +88,7 @@ new Tuple<string, double, double>("Dizengoff Square, Tel Aviv, Israel", 32.07832
             return id;
         }
 
-        string[] predefinedPasswords = { "sara2005", "nb2025*", "new123!" };
+        string[] predefinedPasswords = { "sara2005!", "nb2025*", "new123!" };
         int[] predefinedIds = { 328958186, 328177167, 123456789 };
         Position[] predefinedPositions = { Position.admin, Position.admin, Position.volunteer };
 
